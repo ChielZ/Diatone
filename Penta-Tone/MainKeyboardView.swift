@@ -49,6 +49,25 @@ struct MainKeyboardView: View {
     
     @State private var showingOptions: Bool = false
     
+    // MARK: - Key Color Calculation
+    
+    /// Calculates the color name for a given key index (0-17) based on current rotation
+    /// Keys cycle through 5 colors corresponding to the 5 scale degrees
+    /// With rotation, the color assignment shifts to match the new note mapping
+    private func keyColor(for keyIndex: Int) -> String {
+        // Base color pattern (without rotation): cycles 1,2,3,4,5,1,2,3,4,5...
+        // Each key normally maps to: (keyIndex % 5) + 1
+        let baseColorIndex = keyIndex % 5
+        
+        // Apply rotation offset (sign flipped to match note rotation direction)
+        // Positive rotation shifts colors to the left (earlier colors move to later keys)
+        // Negative rotation shifts colors to the right (later colors move to earlier keys)
+        let rotatedColorIndex = (baseColorIndex + currentScale.rotation + 5) % 5
+        
+        // Map to color name (1-5)
+        return "KeyColour\(rotatedColorIndex + 1)"
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             let centerConfig = CenterStripConfig.calculate(
@@ -62,15 +81,15 @@ struct MainKeyboardView: View {
                 HStack(spacing: 0) {
                     // Left column - Keys
                     VStack {
-                        KeyButton(colorName: "KeyColour2") { oscillator17.trigger() }
-                        KeyButton(colorName: "KeyColour5") { oscillator15.trigger() }
-                        KeyButton(colorName: "KeyColour3") { oscillator13.trigger() }
-                        KeyButton(colorName: "KeyColour1") { oscillator11.trigger() }
-                        KeyButton(colorName: "KeyColour4") { oscillator09.trigger() }
-                        KeyButton(colorName: "KeyColour2") { oscillator07.trigger() }
-                        KeyButton(colorName: "KeyColour5") { oscillator05.trigger() }
-                        KeyButton(colorName: "KeyColour3") { oscillator03.trigger() }
-                        KeyButton(colorName: "KeyColour1") { oscillator01.trigger() }
+                        KeyButton(colorName: keyColor(for: 16)) { oscillator17.trigger() }
+                        KeyButton(colorName: keyColor(for: 14)) { oscillator15.trigger() }
+                        KeyButton(colorName: keyColor(for: 12)) { oscillator13.trigger() }
+                        KeyButton(colorName: keyColor(for: 10)) { oscillator11.trigger() }
+                        KeyButton(colorName: keyColor(for: 8)) { oscillator09.trigger() }
+                        KeyButton(colorName: keyColor(for: 6)) { oscillator07.trigger() }
+                        KeyButton(colorName: keyColor(for: 4)) { oscillator05.trigger() }
+                        KeyButton(colorName: keyColor(for: 2)) { oscillator03.trigger() }
+                        KeyButton(colorName: keyColor(for: 0)) { oscillator01.trigger() }
                     }
                     .padding(5)
                     
@@ -115,15 +134,15 @@ struct MainKeyboardView: View {
                     
                     // Right column - Keys
                     VStack {
-                        KeyButton(colorName: "KeyColour3") { oscillator18.trigger() }
-                        KeyButton(colorName: "KeyColour1") { oscillator16.trigger() }
-                        KeyButton(colorName: "KeyColour4") { oscillator14.trigger() }
-                        KeyButton(colorName: "KeyColour2") { oscillator12.trigger() }
-                        KeyButton(colorName: "KeyColour5") { oscillator10.trigger() }
-                        KeyButton(colorName: "KeyColour3") { oscillator08.trigger() }
-                        KeyButton(colorName: "KeyColour1") { oscillator06.trigger() }
-                        KeyButton(colorName: "KeyColour4") { oscillator04.trigger() }
-                        KeyButton(colorName: "KeyColour2") { oscillator02.trigger() }
+                        KeyButton(colorName: keyColor(for: 17)) { oscillator18.trigger() }
+                        KeyButton(colorName: keyColor(for: 15)) { oscillator16.trigger() }
+                        KeyButton(colorName: keyColor(for: 13)) { oscillator14.trigger() }
+                        KeyButton(colorName: keyColor(for: 11)) { oscillator12.trigger() }
+                        KeyButton(colorName: keyColor(for: 9)) { oscillator10.trigger() }
+                        KeyButton(colorName: keyColor(for: 7)) { oscillator08.trigger() }
+                        KeyButton(colorName: keyColor(for: 5)) { oscillator06.trigger() }
+                        KeyButton(colorName: keyColor(for: 3)) { oscillator04.trigger() }
+                        KeyButton(colorName: keyColor(for: 1)) { oscillator02.trigger() }
                     }
                     .padding(5)
                 }
