@@ -81,15 +81,15 @@ struct MainKeyboardView: View {
                 HStack(spacing: 0) {
                     // Left column - Keys
                     VStack {
-                        KeyButton(colorName: keyColor(for: 16), trigger: { oscillator17.trigger() }, release: { oscillator17.release() })
-                        KeyButton(colorName: keyColor(for: 14), trigger: { oscillator15.trigger() }, release: { oscillator15.release() })
-                        KeyButton(colorName: keyColor(for: 12), trigger: { oscillator13.trigger() }, release: { oscillator13.release() })
-                        KeyButton(colorName: keyColor(for: 10), trigger: { oscillator11.trigger() }, release: { oscillator11.release() })
-                        KeyButton(colorName: keyColor(for: 8), trigger: { oscillator09.trigger() }, release: { oscillator09.release() })
-                        KeyButton(colorName: keyColor(for: 6), trigger: { oscillator07.trigger() }, release: { oscillator07.release() })
-                        KeyButton(colorName: keyColor(for: 4), trigger: { oscillator05.trigger() }, release: { oscillator05.release() })
-                        KeyButton(colorName: keyColor(for: 2), trigger: { oscillator03.trigger() }, release: { oscillator03.release() })
-                        KeyButton(colorName: keyColor(for: 0), trigger: { oscillator01.trigger() }, release: { oscillator01.release() })
+                        KeyButton(colorName: keyColor(for: 16), voiceIndex: 16, isLeftSide: true, trigger: { oscillator17.trigger() }, release: { oscillator17.release() })
+                        KeyButton(colorName: keyColor(for: 14), voiceIndex: 14, isLeftSide: true, trigger: { oscillator15.trigger() }, release: { oscillator15.release() })
+                        KeyButton(colorName: keyColor(for: 12), voiceIndex: 12, isLeftSide: true, trigger: { oscillator13.trigger() }, release: { oscillator13.release() })
+                        KeyButton(colorName: keyColor(for: 10), voiceIndex: 10, isLeftSide: true, trigger: { oscillator11.trigger() }, release: { oscillator11.release() })
+                        KeyButton(colorName: keyColor(for: 8), voiceIndex: 8, isLeftSide: true, trigger: { oscillator09.trigger() }, release: { oscillator09.release() })
+                        KeyButton(colorName: keyColor(for: 6), voiceIndex: 6, isLeftSide: true, trigger: { oscillator07.trigger() }, release: { oscillator07.release() })
+                        KeyButton(colorName: keyColor(for: 4), voiceIndex: 4, isLeftSide: true, trigger: { oscillator05.trigger() }, release: { oscillator05.release() })
+                        KeyButton(colorName: keyColor(for: 2), voiceIndex: 2, isLeftSide: true, trigger: { oscillator03.trigger() }, release: { oscillator03.release() })
+                        KeyButton(colorName: keyColor(for: 0), voiceIndex: 0, isLeftSide: true, trigger: { oscillator01.trigger() }, release: { oscillator01.release() })
                     }
                     .padding(5)
                     
@@ -134,15 +134,15 @@ struct MainKeyboardView: View {
                     
                     // Right column - Keys
                     VStack {
-                        KeyButton(colorName: keyColor(for: 17), trigger: { oscillator18.trigger() }, release: { oscillator18.release() })
-                        KeyButton(colorName: keyColor(for: 15), trigger: { oscillator16.trigger() }, release: { oscillator16.release() })
-                        KeyButton(colorName: keyColor(for: 13), trigger: { oscillator14.trigger() }, release: { oscillator14.release() })
-                        KeyButton(colorName: keyColor(for: 11), trigger: { oscillator12.trigger() }, release: { oscillator12.release() })
-                        KeyButton(colorName: keyColor(for: 9), trigger: { oscillator10.trigger() }, release: { oscillator10.release() })
-                        KeyButton(colorName: keyColor(for: 7), trigger: { oscillator08.trigger() }, release: { oscillator08.release() })
-                        KeyButton(colorName: keyColor(for: 5), trigger: { oscillator06.trigger() }, release: { oscillator06.release() })
-                        KeyButton(colorName: keyColor(for: 3), trigger: { oscillator04.trigger() }, release: { oscillator04.release() })
-                        KeyButton(colorName: keyColor(for: 1), trigger: { oscillator02.trigger() }, release: { oscillator02.release() })
+                        KeyButton(colorName: keyColor(for: 17), voiceIndex: 17, isLeftSide: false, trigger: { oscillator18.trigger() }, release: { oscillator18.release() })
+                        KeyButton(colorName: keyColor(for: 15), voiceIndex: 15, isLeftSide: false, trigger: { oscillator16.trigger() }, release: { oscillator16.release() })
+                        KeyButton(colorName: keyColor(for: 13), voiceIndex: 13, isLeftSide: false, trigger: { oscillator14.trigger() }, release: { oscillator14.release() })
+                        KeyButton(colorName: keyColor(for: 11), voiceIndex: 11, isLeftSide: false, trigger: { oscillator12.trigger() }, release: { oscillator12.release() })
+                        KeyButton(colorName: keyColor(for: 9), voiceIndex: 9, isLeftSide: false, trigger: { oscillator10.trigger() }, release: { oscillator10.release() })
+                        KeyButton(colorName: keyColor(for: 7), voiceIndex: 7, isLeftSide: false, trigger: { oscillator08.trigger() }, release: { oscillator08.release() })
+                        KeyButton(colorName: keyColor(for: 5), voiceIndex: 5, isLeftSide: false, trigger: { oscillator06.trigger() }, release: { oscillator06.release() })
+                        KeyButton(colorName: keyColor(for: 3), voiceIndex: 3, isLeftSide: false, trigger: { oscillator04.trigger() }, release: { oscillator04.release() })
+                        KeyButton(colorName: keyColor(for: 1), voiceIndex: 1, isLeftSide: false, trigger: { oscillator02.trigger() }, release: { oscillator02.release() })
                     }
                     .padding(5)
                 }
@@ -228,6 +228,8 @@ private struct NavigationStrip: View {
 /// Reusable key button component
 private struct KeyButton: View {
     let colorName: String
+    let voiceIndex: Int  // Which voice this key controls (0-17)
+    let isLeftSide: Bool  // Whether this key is on the left side of the keyboard
     let trigger: () -> Void
     let release: () -> Void
     
@@ -235,36 +237,49 @@ private struct KeyButton: View {
     @State private var hasFiredCurrentTouch = false
     
     var body: some View {
-        RoundedRectangle(cornerRadius: radius)
-            .fill(Color(colorName))
-            .opacity(isDimmed ? 0.5 : 1.0)
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { _ in
-                        if !hasFiredCurrentTouch {
-                            hasFiredCurrentTouch = true
-                            trigger()
-                            //print("onChanged")
-                            isDimmed = true
-                            //DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-                            //    withAnimation(.easeOut(duration: 0.28)) {
-                            //        isDimmed = false
-                            //    }
-                            //}
-                        }
-                    }
-                    .onEnded { _ in
-                        hasFiredCurrentTouch = false
-                        //print("onEnded")
-                        release()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                            withAnimation(.easeOut(duration: 0.28)) {
-                                isDimmed = false
+        GeometryReader { geometry in
+            RoundedRectangle(cornerRadius: radius)
+                .fill(Color(colorName))
+                .opacity(isDimmed ? 0.5 : 1.0)
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            if !hasFiredCurrentTouch {
+                                hasFiredCurrentTouch = true
+                                
+                                // Calculate touch position, inverting for left side
+                                // Left side: outer edge = high cutoff, center edge = low cutoff
+                                // Right side: center edge = low cutoff, outer edge = high cutoff
+                                let touchX = isLeftSide 
+                                    ? geometry.size.width - value.location.x  // Reverse for left side
+                                    : value.location.x
+                                
+                                // Map touch X position to filter cutoff
+                                AudioParameterManager.shared.mapTouchToFilterCutoff(
+                                    voiceIndex: voiceIndex,
+                                    touchX: touchX,
+                                    viewWidth: geometry.size.width
+                                )
+                                
+                                trigger()
+                                isDimmed = true
                             }
                         }
-                        
-                    }
-            )
+                        .onEnded { _ in
+                            hasFiredCurrentTouch = false
+                            release()
+                            
+                            // Clear the override so the voice returns to template settings
+                            AudioParameterManager.shared.clearVoiceOverride(at: voiceIndex)
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                                withAnimation(.easeOut(duration: 0.28)) {
+                                    isDimmed = false
+                                }
+                            }
+                        }
+                )
+        }
     }
 }
 

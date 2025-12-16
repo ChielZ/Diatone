@@ -51,8 +51,8 @@ struct OscillatorParameters: Codable, Equatable {
         carrierMultiplier: 1.0,
         modulatingMultiplier: 2.0,
         modulationIndex: 0.95,
-        amplitude: 0.15,
-        waveform: .sine
+        amplitude: 0.5,
+        waveform: .triangle
     )
 }
 
@@ -80,10 +80,10 @@ struct EnvelopeParameters: Codable, Equatable {
     var releaseDuration: Double
     
     static let `default` = EnvelopeParameters(
-        attackDuration: 0.02,
-        decayDuration: 0.5,
+        attackDuration: 0.2,
+        decayDuration: 0.6,
         sustainLevel: 0.0,
-        releaseDuration: 0.02
+        releaseDuration: 0.2
     )
 }
 
@@ -124,7 +124,7 @@ struct DelayParameters: Codable, Equatable {
     static let `default` = DelayParameters(
         time: 0.5,
         feedback: 0.2,
-        dryWetMix: 0.5,
+        dryWetMix: 1.0,
         pingPong: true
     )
 }
@@ -294,8 +294,8 @@ final class AudioParameterManager: ObservableObject {
         guard (0..<18).contains(voiceIndex) else { return }
         
         // Map 0-1 to reasonable filter range (200 Hz - 12 kHz)
-        let minFreq = 200.0
-        let maxFreq = 12_000.0
+        let minFreq = 20.0
+        let maxFreq = 12000.0
         let cutoff = minFreq + (normalizedValue * (maxFreq - minFreq))
         
         var voiceParams = voiceOverrides[voiceIndex] ?? voiceTemplate
@@ -462,6 +462,7 @@ extension AudioParameterManager {
 extension AudioParameterManager {
     
     /// Maps a touch location to filter cutoff frequency for a voice
+    /// Uses exponential mapping for more musical response across the entire key width
     /// - Parameters:
     ///   - voiceIndex: The voice to modify (0-17)
     ///   - touchX: The x position of the touch in the view's coordinate space
@@ -471,12 +472,29 @@ extension AudioParameterManager {
         voiceIndex: Int,
         touchX: CGFloat,
         viewWidth: CGFloat,
-        range: ClosedRange<Double> = 200...12_000
+        range: ClosedRange<Double> = 20...20_000
     ) {
         guard viewWidth > 0 else { return }
+        
+        // Normalize touch position to 0...1
         let normalized = max(0, min(1, touchX / viewWidth))
-        let cutoff = range.lowerBound + (normalized * (range.upperBound - range.lowerBound))
-        updateVoiceFilterCutoff(at: voiceIndex, normalizedValue: (cutoff - range.lowerBound) / (range.upperBound - range.lowerBound))
+        
+        // Apply exponential mapping for more musical response
+        // Formula: cutoff = minFreq * (maxFreq/minFreq)^normalized
+        // This ensures equal perceptual spacing across the key width
+        let minFreq = range.lowerBound
+        let maxFreq = range.upperBound
+        let ratio = maxFreq / minFreq
+        let cutoff = minFreq * pow(ratio, normalized)
+        
+        // Apply to voice
+        var voiceParams = voiceOverrides[voiceIndex] ?? voiceTemplate
+        voiceParams.filter.cutoffFrequency = cutoff
+        voiceOverrides[voiceIndex] = voiceParams
+        
+        if let voice = getVoice(at: voiceIndex) {
+            voice.filter.cutoffFrequency = AUValue(cutoff)
+        }
     }
     
     /// Maps a touch location to pan position for a voice
