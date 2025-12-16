@@ -236,6 +236,10 @@ private struct KeyButton: View {
     @State private var isDimmed = false
     @State private var hasFiredCurrentTouch = false
     @State private var initialTouchX: CGFloat? = nil  // Track initial touch position for aftertouch
+    @State private var lastAftertouchX: CGFloat? = nil  // Track last processed aftertouch position
+    
+    // Minimum movement threshold (in points) before aftertouch responds
+    private let movementThreshold: CGFloat = 3.0
     
     var body: some View {
         GeometryReader { geometry in
@@ -256,6 +260,7 @@ private struct KeyButton: View {
                                 // INITIAL TOUCH - Set amplitude and trigger note
                                 hasFiredCurrentTouch = true
                                 initialTouchX = touchX
+                                lastAftertouchX = touchX  // Initialize for threshold calculation
                                 
                                 // Map initial touch X position to amplitude
                                 AudioParameterManager.shared.mapTouchToAmplitude(
@@ -272,18 +277,24 @@ private struct KeyButton: View {
                                 isDimmed = true
                             } else {
                                 // AFTERTOUCH - Update filter cutoff based on X movement
-                                // Movement toward center (decreasing touchX) = brighter (higher cutoff)
-                                // Movement toward edge (increasing touchX) = darker (lower cutoff)
-                                AudioParameterManager.shared.mapAftertouchToFilterCutoff(
-                                    voiceIndex: voiceIndex,
-                                    touchX: touchX,
-                                    viewWidth: geometry.size.width
-                                )
+                                // Only respond if movement exceeds threshold
+                                if let lastX = lastAftertouchX, abs(touchX - lastX) >= movementThreshold {
+                                    lastAftertouchX = touchX
+                                    
+                                    // Movement toward center (decreasing touchX) = brighter (higher cutoff)
+                                    // Movement toward edge (increasing touchX) = darker (lower cutoff)
+                                    AudioParameterManager.shared.mapAftertouchToFilterCutoffSmoothed(
+                                        voiceIndex: voiceIndex,
+                                        touchX: touchX,
+                                        viewWidth: geometry.size.width
+                                    )
+                                }
                             }
                         }
                         .onEnded { _ in
                             hasFiredCurrentTouch = false
                             initialTouchX = nil
+                            lastAftertouchX = nil
                             release()
                             
                             // Clear the voice override so next touch uses template settings

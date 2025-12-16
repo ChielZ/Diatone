@@ -195,6 +195,10 @@ final class AudioParameterManager: ObservableObject {
     /// These are temporary overrides that don't affect the template
     private var voiceOverrides: [Int: VoiceParameters] = [:]
     
+    /// Per-voice last filter cutoff values for smoothing (indexed 0-17)
+    /// Used for interpolation during aftertouch
+    private var lastFilterCutoffs: [Int: Double] = [:]
+    
     // MARK: - Initialization
     
     private init() {
@@ -340,6 +344,7 @@ final class AudioParameterManager: ObservableObject {
     /// Clear all per-voice overrides (revert to template)
     func clearVoiceOverrides() {
         voiceOverrides.removeAll()
+        lastFilterCutoffs.removeAll()  // Clear all smoothing state
         applyTemplateToAllVoices()
     }
     
@@ -347,6 +352,7 @@ final class AudioParameterManager: ObservableObject {
     func clearVoiceOverride(at voiceIndex: Int) {
         guard (0..<18).contains(voiceIndex) else { return }
         voiceOverrides.removeValue(forKey: voiceIndex)
+        lastFilterCutoffs.removeValue(forKey: voiceIndex)  // Clear smoothing state
         applyParametersToVoice(at: voiceIndex, parameters: voiceTemplate)
     }
     
@@ -548,6 +554,63 @@ extension AudioParameterManager {
         
         if let voice = getVoice(at: voiceIndex) {
             voice.filter.cutoffFrequency = AUValue(cutoff)
+        }
+    }
+    
+    /// Maps aftertouch to filter cutoff with smoothing/interpolation for glitch-free parameter changes
+    /// Uses linear interpolation (lerp) between the current and target cutoff values
+    /// - Parameters:
+    ///   - voiceIndex: The voice to modify (0-17)
+    ///   - touchX: The current x position of the touch
+    ///   - viewWidth: The total width of the touchable area
+    ///   - range: Optional custom frequency range (default: 300-15000 Hz)
+    ///   - smoothingFactor: Amount of smoothing (0 = no smoothing, 1 = maximum smoothing). Default: 0.25
+    func mapAftertouchToFilterCutoffSmoothed(
+        voiceIndex: Int,
+        touchX: CGFloat,
+        viewWidth: CGFloat,
+        range: ClosedRange<Double> = 300...15_000,
+        smoothingFactor: Double = 0.25
+    ) {
+        guard viewWidth > 0 else { return }
+        guard (0..<18).contains(voiceIndex) else { return }
+        
+        // Normalize touch position to 0...1
+        let normalized = max(0, min(1, touchX / viewWidth))
+        
+        // Calculate target cutoff frequency using exponential mapping
+        let minFreq = range.lowerBound
+        let maxFreq = range.upperBound
+        let ratio = maxFreq / minFreq
+        let targetCutoff = minFreq * pow(ratio, normalized)
+        
+        // Get current cutoff (either from last smoothed value or current voice parameter)
+        let currentCutoff: Double
+        if let lastCutoff = lastFilterCutoffs[voiceIndex] {
+            currentCutoff = lastCutoff
+        } else {
+            // First time - use current voice parameter
+            let voiceParams = voiceOverrides[voiceIndex] ?? voiceTemplate
+            currentCutoff = voiceParams.filter.cutoffFrequency
+        }
+        
+        // Apply linear interpolation (lerp) for smoothing
+        // Formula: smoothedValue = currentValue + (targetValue - currentValue) * (1 - smoothingFactor)
+        // Higher smoothingFactor = more smoothing (slower response)
+        // Lower smoothingFactor = less smoothing (faster response)
+        let interpolationAmount = 1.0 - smoothingFactor
+        let smoothedCutoff = currentCutoff + (targetCutoff - currentCutoff) * interpolationAmount
+        
+        // Store for next iteration
+        lastFilterCutoffs[voiceIndex] = smoothedCutoff
+        
+        // Apply to voice
+        var voiceParams = voiceOverrides[voiceIndex] ?? voiceTemplate
+        voiceParams.filter.cutoffFrequency = smoothedCutoff
+        voiceOverrides[voiceIndex] = voiceParams
+        
+        if let voice = getVoice(at: voiceIndex) {
+            voice.filter.cutoffFrequency = AUValue(smoothedCutoff)
         }
     }
     
