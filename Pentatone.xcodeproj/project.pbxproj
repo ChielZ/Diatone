@@ -13,26 +13,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7F3D45E12EDCF9AC00538543 /* Penta-Tone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Penta-Tone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F3D45E12EDCF9AC00538543 /* Pentatone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pentatone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		7F3D46522EDD1FD400538543 /* Exceptions for "Penta-Tone" folder in "Penta-Tone" target */ = {
+		7F3D46522EDD1FD400538543 /* Exceptions for "Pentatone" folder in "Pentatone" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 7F3D45E02EDCF9AC00538543 /* Penta-Tone */;
+			target = 7F3D45E02EDCF9AC00538543 /* Pentatone */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		7F3D45E32EDCF9AC00538543 /* Penta-Tone */ = {
+		7F3D45E32EDCF9AC00538543 /* Pentatone */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				7F3D46522EDD1FD400538543 /* Exceptions for "Penta-Tone" folder in "Penta-Tone" target */,
+				7F3D46522EDD1FD400538543 /* Exceptions for "Pentatone" folder in "Pentatone" target */,
 			);
-			path = "Penta-Tone";
+			path = Pentatone;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -54,7 +54,7 @@
 		7F3D45D82EDCF9AC00538543 = {
 			isa = PBXGroup;
 			children = (
-				7F3D45E32EDCF9AC00538543 /* Penta-Tone */,
+				7F3D45E32EDCF9AC00538543 /* Pentatone */,
 				7F3D45E22EDCF9AC00538543 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,7 +62,7 @@
 		7F3D45E22EDCF9AC00538543 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7F3D45E12EDCF9AC00538543 /* Penta-Tone.app */,
+				7F3D45E12EDCF9AC00538543 /* Pentatone.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,9 +70,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		7F3D45E02EDCF9AC00538543 /* Penta-Tone */ = {
+		7F3D45E02EDCF9AC00538543 /* Pentatone */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7F3D45EC2EDCF9AD00538543 /* Build configuration list for PBXNativeTarget "Penta-Tone" */;
+			buildConfigurationList = 7F3D45EC2EDCF9AD00538543 /* Build configuration list for PBXNativeTarget "Pentatone" */;
 			buildPhases = (
 				7F3D45DD2EDCF9AC00538543 /* Sources */,
 				7F3D45DE2EDCF9AC00538543 /* Frameworks */,
@@ -83,16 +83,16 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				7F3D45E32EDCF9AC00538543 /* Penta-Tone */,
+				7F3D45E32EDCF9AC00538543 /* Pentatone */,
 			);
-			name = "Penta-Tone";
+			name = Pentatone;
 			packageProductDependencies = (
 				7F94C6D12EDE355800CEE22F /* AudioKit */,
 				7F94C6DA2EDE3A4D00CEE22F /* SoundpipeAudioKit */,
 				7FF3103A2EF0955D004F4A98 /* DunneAudioKit */,
 			);
 			productName = "Penta-Tone";
-			productReference = 7F3D45E12EDCF9AC00538543 /* Penta-Tone.app */;
+			productReference = 7F3D45E12EDCF9AC00538543 /* Pentatone.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -129,7 +129,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7F3D45E02EDCF9AC00538543 /* Penta-Tone */,
+				7F3D45E02EDCF9AC00538543 /* Pentatone */,
 			);
 		};
 /* End PBXProject section */
@@ -284,7 +284,7 @@
 				DEVELOPMENT_TEAM = 444ZDGZM22;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Penta-Tone/Info.plist";
+				INFOPLIST_FILE = Pentatone/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -296,7 +296,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "cz.Penta-Tone";
+				PRODUCT_BUNDLE_IDENTIFIER = cz.Pentatone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -318,7 +318,7 @@
 				DEVELOPMENT_TEAM = 444ZDGZM22;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Penta-Tone/Info.plist";
+				INFOPLIST_FILE = Pentatone/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -330,7 +330,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "cz.Penta-Tone";
+				PRODUCT_BUNDLE_IDENTIFIER = cz.Pentatone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -354,7 +354,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7F3D45EC2EDCF9AD00538543 /* Build configuration list for PBXNativeTarget "Penta-Tone" */ = {
+		7F3D45EC2EDCF9AD00538543 /* Build configuration list for PBXNativeTarget "Pentatone" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7F3D45ED2EDCF9AD00538543 /* Debug */,
