@@ -23,7 +23,7 @@ struct VoiceView: View {
                                 .adaptiveFont("Futura", size: 30)
                         )
                     Spacer()
-                    Text("TUNE: 0 CT")
+                    Text("TIPS ON")
                         .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("Futura", size: 30)
                     Spacer()
@@ -47,8 +47,11 @@ struct VoiceView: View {
             ZStack { // Row 5
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
-                HStack {
-                    
+                GeometryReader { geometry in
+                    Text("Pentatone")
+                        .foregroundColor(Color("KeyColour1"))
+                        .adaptiveFont("Signpainter", size: 85)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
                 }
             }
             ZStack { // Row 6
@@ -58,14 +61,8 @@ struct VoiceView: View {
                     
                 }
             }
+            
             ZStack { // Row 7
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    
-                }
-            }
-            ZStack { // Row 8
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
                 HStack {
@@ -92,6 +89,33 @@ struct VoiceView: View {
                         )
                 }
             }
+            ZStack { // Row 8
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("BackgroundColour"))
+                HStack {
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(Color("SupportColour"))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay(
+                            Text("<")
+                                .foregroundColor(Color("BackgroundColour"))
+                                .adaptiveFont("Futura", size: 30)
+                        )
+                    Spacer()
+                    Text("OCTAVE: 0")
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("Futura", size: 30)
+                    Spacer()
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(Color("SupportColour"))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay(
+                            Text(">")
+                                .foregroundColor(Color("BackgroundColour"))
+                                .adaptiveFont("Futura", size: 30)
+                        )
+                }
+            }
             ZStack { // Row 9
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
@@ -105,7 +129,7 @@ struct VoiceView: View {
                                 .adaptiveFont("Futura", size: 30)
                         )
                     Spacer()
-                    Text("TENOR")
+                    Text("TUNE: 0")
                         .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("Futura", size: 30)
                     Spacer()

@@ -47,7 +47,7 @@ struct MainKeyboardView: View {
     var onCycleTerrestrial: ((Bool) -> Void)? = nil
     var onCycleRotation: ((Bool) -> Void)? = nil
     
-    @State private var showingOptions: Bool = false
+    @State private var showingOptions: Bool = true
     
     // MARK: - Key Color Calculation
     

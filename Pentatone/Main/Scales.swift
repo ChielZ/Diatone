@@ -247,3 +247,26 @@ struct ScalesCatalog {
         }
     }
 }
+
+/*
+ 
+ KEY TRANSPOSITION
+ 
+ Key    ET pitch factor     JI pitch factor
+ Ab     -6 semitones        * 512/729
+ Eb     +1 semitones        * 256/243
+ Bb     -4 semitones        * 64/81
+ F      +3 semitones        * 32/27
+ C      -2 semitones        * 8/9
+ G      +5 semitones        * 4/3
+ D       0 semitones        * 1
+ A      -5 semitones        * 3/4
+ E      +2 semitones        * 9/8
+ B      -3 semitones        * 27/32
+ F#     +4 semitones        * 81/64
+ C#     -1 semitones        * 243/256
+ G#     +6 semitones        * 729/512
+ 
+
+ 
+ */

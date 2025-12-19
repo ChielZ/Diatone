@@ -47,7 +47,7 @@ enum OptionsSubView: CaseIterable {
         switch self {
         case .scale: return "SCALE"
         case .sound: return "SOUND"
-        case .voice: return "VOICE"
+        case .voice: return "SETTINGS"
         }
     }
 }
