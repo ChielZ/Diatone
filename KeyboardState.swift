@@ -49,8 +49,9 @@ final class KeyboardState: ObservableObject {
     /// - Parameters:
     ///   - scale: The initial scale (default: Center Meridian JI)
     ///   - key: The initial musical key (default: D)
-    init(scale: Scale = ScalesCatalog.centerMeridian_JI, key: MusicalKey = .D) {
-        self.currentScale = scale
+    init(scale: Scale? = nil, key: MusicalKey = .D) {
+        // Use provided scale or default to Center Meridian JI
+        self.currentScale = scale ?? ScalesCatalog.centerMeridian_JI
         self.currentKey = key
         
         // Compute initial frequencies
