@@ -72,10 +72,15 @@ struct ScaleView: View {
             }
             .overlay(
                 GeometryReader { geometry in
+                    let scaleFactor: CGFloat = currentScale.intonation == .et ? 0.6 : 1.0
+                    let fullHeight: CGFloat = geometry.size.height * 2 + 11
+                    let imageHeight: CGFloat = fullHeight * scaleFactor
+                    
                     Image(scaleImageName)
                         .resizable()
                         .scaledToFit()
-                        .frame(height: geometry.size.height * 2 + 11)
+                        .frame(height: imageHeight)
+                        .frame(width: geometry.size.width, height: fullHeight)
                         .offset(y: -(geometry.size.height + 11))
                         .padding(0)
                         
