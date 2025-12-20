@@ -640,7 +640,11 @@ struct NewVoicePoolTestView: View {
     @State private var isAudioReady = false
     @State private var statusMessage = "Initializing audio..."
     @State private var currentScaleIndex = 0
-    @State private var frequencyOffset: Double = 1.0  // 1.0 to 1.01 (0 to 34 cents spread)
+    
+    // Detune controls
+    @State private var detuneMode: DetuneMode = .proportional
+    @State private var frequencyOffsetRatio: Double = 1.0     // Proportional mode: 1.0 to 1.01
+    @State private var frequencyOffsetHz: Double = 0.0        // Constant mode: 0 to 10 Hz
     
     // Test scale
     private var testScale: Scale {
@@ -735,18 +739,54 @@ struct NewVoicePoolTestView: View {
                                 .font(.headline)
                                 .foregroundColor(.white)
                             
-                            HStack {
-                                Text("Offset:")
-                                    .foregroundColor(.white)
-                                    .frame(width: 80, alignment: .leading)
-                                
-                                Slider(value: $frequencyOffset, in: 1.0...1.01) { _ in
-                                    voicePool.updateFrequencyOffset(frequencyOffset)
+                            // Detune mode toggle
+                            Picker("Detune Mode", selection: $detuneMode) {
+                                ForEach(DetuneMode.allCases, id: \.self) { mode in
+                                    Text(mode.displayName).tag(mode)
                                 }
-                                
-                                Text("\(centsSpread, specifier: "%.1f") cents")
-                                    .foregroundColor(.white)
-                                    .frame(width: 80)
+                            }
+                            .pickerStyle(.segmented)
+                            .onChange(of: detuneMode) { newMode in
+                                voicePool.updateDetuneMode(newMode)
+                            }
+                            
+                            // Mode description
+                            Text(detuneMode.description)
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .multilineTextAlignment(.center)
+                            
+                            // Slider for current mode
+                            if detuneMode == .proportional {
+                                // Proportional mode: cents-based
+                                HStack {
+                                    Text("Offset:")
+                                        .foregroundColor(.white)
+                                        .frame(width: 80, alignment: .leading)
+                                    
+                                    Slider(value: $frequencyOffsetRatio, in: 1.0...1.01) { _ in
+                                        voicePool.updateFrequencyOffsetRatio(frequencyOffsetRatio)
+                                    }
+                                    
+                                    Text("\(centsSpreadProportional, specifier: "%.1f") cents")
+                                        .foregroundColor(.white)
+                                        .frame(width: 80)
+                                }
+                            } else {
+                                // Constant mode: Hz-based
+                                HStack {
+                                    Text("Offset:")
+                                        .foregroundColor(.white)
+                                        .frame(width: 80, alignment: .leading)
+                                    
+                                    Slider(value: $frequencyOffsetHz, in: 0...2.5) { _ in
+                                        voicePool.updateFrequencyOffsetHz(frequencyOffsetHz)
+                                    }
+                                    
+                                    Text("\(beatRateConstant, specifier: "%.1f") Hz")
+                                        .foregroundColor(.white)
+                                        .frame(width: 80)
+                                }
                             }
                         }
                         .padding()
@@ -849,6 +889,18 @@ struct NewVoicePoolTestView: View {
                                 .font(.caption)
                                 .foregroundColor(.gray)
                             
+                            Text("• Switch between Proportional and Constant modes")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            
+                            Text("• Proportional: higher notes beat faster (natural)")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            
+                            Text("• Constant: same beat rate for all notes (uniform)")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            
                             Text("• Adjust stereo spread slider while playing")
                                 .font(.caption)
                                 .foregroundColor(.gray)
@@ -877,10 +929,15 @@ struct NewVoicePoolTestView: View {
     
     // MARK: - Computed Properties
     
-    private var centsSpread: Double {
-        // Convert frequency offset to cents spread (symmetric, so multiply by 2)
-        let cents = 1200.0 * log2(frequencyOffset)
+    private var centsSpreadProportional: Double {
+        // Convert frequency offset ratio to cents spread (symmetric, so multiply by 2)
+        let cents = 1200.0 * log2(frequencyOffsetRatio)
         return cents * 2.0  // Symmetric spread
+    }
+    
+    private var beatRateConstant: Double {
+        // Beat rate is twice the Hz offset (symmetric: +Hz on left, -Hz on right)
+        return frequencyOffsetHz * 2.0
     }
     
     // MARK: - Audio Initialization

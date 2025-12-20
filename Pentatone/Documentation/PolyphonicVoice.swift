@@ -11,6 +11,28 @@ import AudioKitEX
 import AVFAudio
 import DunneAudioKit
 
+// MARK: - Detune Mode
+
+/// Defines how stereo spread is calculated
+enum DetuneMode: String, CaseIterable {
+    case proportional  // Constant cents (natural, more beating at higher pitches)
+    case constant      // Constant Hz (uniform beating across all pitches)
+    
+    var displayName: String {
+        switch self {
+        case .proportional: return "Proportional (Cents)"
+        case .constant: return "Constant (Hz)"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .proportional: return "More beating at higher notes (natural)"
+        case .constant: return "Same beat rate for all notes (uniform)"
+        }
+    }
+}
+
 /// A single voice in the polyphonic synthesizer with stereo dual-oscillator architecture
 /// Signal path: [Osc Left (hard L) + Osc Right (hard R)] → Stereo Mixer → Filter → Envelope
 final class PolyphonicVoice {
@@ -54,16 +76,45 @@ final class PolyphonicVoice {
     
     // MARK: - Parameters
     
-    /// Frequency offset multiplier for stereo spread
-    /// 1.0 = no offset (both oscillators at same frequency)
-    /// 1.01 = ±17 cents (34 cents total spread)
-    /// Left oscillator multiplies by this value, right divides by it
-    var frequencyOffset: Double = 1.0 {
+    /// Detune mode determines how stereo spread is calculated
+    var detuneMode: DetuneMode = .proportional {
         didSet {
             if isInitialized {
                 updateOscillatorFrequencies()
             }
         }
+    }
+    
+    /// Frequency offset for PROPORTIONAL mode (multiplier)
+    /// 1.0 = no offset (both oscillators at same frequency)
+    /// 1.01 = ±17 cents (34 cents total spread)
+    /// Left oscillator multiplies by this value, right divides by it
+    var frequencyOffsetRatio: Double = 1.0 {
+        didSet {
+            if isInitialized && detuneMode == .proportional {
+                updateOscillatorFrequencies()
+            }
+        }
+    }
+    
+    /// Frequency offset for CONSTANT mode (Hz)
+    /// 0 Hz = no offset (mono)
+    /// 2 Hz = 4 Hz beat rate (2 Hz each side)
+    /// 5 Hz = 10 Hz beat rate (5 Hz each side)
+    /// Left oscillator adds this value, right subtracts it
+    var frequencyOffsetHz: Double = 0.0 {
+        didSet {
+            if isInitialized && detuneMode == .constant {
+                updateOscillatorFrequencies()
+            }
+        }
+    }
+    
+    // DEPRECATED: Use frequencyOffsetRatio or frequencyOffsetHz depending on mode
+    @available(*, deprecated, renamed: "frequencyOffsetRatio")
+    var frequencyOffset: Double {
+        get { frequencyOffsetRatio }
+        set { frequencyOffsetRatio = newValue }
     }
     
     // MARK: - Modulation (Phase 5 - placeholder)
@@ -146,9 +197,24 @@ final class PolyphonicVoice {
     }
     
     /// Updates oscillator frequencies with symmetric offset
+    /// Supports both proportional (cents) and constant (Hz) detune modes
     private func updateOscillatorFrequencies() {
-        let leftFreq = currentFrequency * frequencyOffset
-        let rightFreq = currentFrequency / frequencyOffset
+        let leftFreq: Double
+        let rightFreq: Double
+        
+        switch detuneMode {
+        case .proportional:
+            // Constant cents: higher notes beat faster (natural)
+            // Formula: left = freq × ratio, right = freq ÷ ratio
+            leftFreq = currentFrequency * frequencyOffsetRatio
+            rightFreq = currentFrequency / frequencyOffsetRatio
+            
+        case .constant:
+            // Constant Hz: all notes beat at same rate (uniform)
+            // Formula: left = freq + Hz, right = freq - Hz
+            leftFreq = currentFrequency + frequencyOffsetHz
+            rightFreq = currentFrequency - frequencyOffsetHz
+        }
         
         oscLeft.baseFrequency = AUValue(leftFreq)
         oscRight.baseFrequency = AUValue(rightFreq)

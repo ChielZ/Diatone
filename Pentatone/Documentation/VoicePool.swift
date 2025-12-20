@@ -219,11 +219,31 @@ final class VoicePool {
         }
     }
     
-    /// Updates frequency offset for all voices
-    func updateFrequencyOffset(_ offset: Double) {
+    /// Updates detune mode for all voices
+    func updateDetuneMode(_ mode: DetuneMode) {
         for voice in voices {
-            voice.frequencyOffset = offset
+            voice.detuneMode = mode
         }
+    }
+    
+    /// Updates frequency offset ratio for all voices (proportional mode)
+    func updateFrequencyOffsetRatio(_ ratio: Double) {
+        for voice in voices {
+            voice.frequencyOffsetRatio = ratio
+        }
+    }
+    
+    /// Updates frequency offset in Hz for all voices (constant mode)
+    func updateFrequencyOffsetHz(_ hz: Double) {
+        for voice in voices {
+            voice.frequencyOffsetHz = hz
+        }
+    }
+    
+    /// DEPRECATED: Use updateFrequencyOffsetRatio instead
+    @available(*, deprecated, renamed: "updateFrequencyOffsetRatio")
+    func updateFrequencyOffset(_ offset: Double) {
+        updateFrequencyOffsetRatio(offset)
     }
     
     // MARK: - Modulation (Phase 5)
