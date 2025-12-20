@@ -263,7 +263,7 @@ struct ScalesCatalog {
         intonation: .ji, celestial: .moon, terrestrial: .meridian,
         notes: [1.0, 6.0/5.0, 4.0/3.0, 3.0/2.0, 8.0/5.0],
         semitonePattern: [0, 3, 5, 7, 8],
-        letterPattern: [0, 1, 3, 4, 5]
+        letterPattern: [0, 2, 3, 4, 5]
     )
 
     static let moonOccident_JI = Scale(
@@ -271,7 +271,7 @@ struct ScalesCatalog {
         intonation: .ji, celestial: .moon, terrestrial: .occident,
         notes: [1.0, 6.0/5.0, 4.0/3.0, 3.0/2.0, 9.0/5.0],
         semitonePattern: [0, 3, 5, 7, 10],
-        letterPattern: [0, 1, 3, 4, 6]
+        letterPattern: [0, 2, 3, 4, 6]
     )
 
     static let centerOrient_JI = Scale(
@@ -295,7 +295,7 @@ struct ScalesCatalog {
         intonation: .ji, celestial: .center, terrestrial: .occident,
         notes: [1.0, 6.0/5.0, 4.0/3.0, 3.0/2.0, 5.0/3.0],
         semitonePattern: [0, 3, 5, 7, 9],
-        letterPattern: [0, 1, 3, 4, 5]
+        letterPattern: [0, 2, 3, 4, 5]
     )
 
     static let sunOrient_JI = Scale(
@@ -337,7 +337,7 @@ struct ScalesCatalog {
         intonation: .et, celestial: .moon, terrestrial: .meridian,
         notes: et([0, 3, 5, 7, 8]),
         semitonePattern: [0, 3, 5, 7, 8],
-        letterPattern: [0, 1, 3, 4, 5]
+        letterPattern: [0, 2, 3, 4, 5]
     )
 
     static let moonOccident_ET = Scale(
@@ -345,7 +345,7 @@ struct ScalesCatalog {
         intonation: .et, celestial: .moon, terrestrial: .occident,
         notes: et([0, 3, 5, 7, 10]),
         semitonePattern: [0, 3, 5, 7, 10],
-        letterPattern: [0, 1, 3, 4, 6]
+        letterPattern: [0, 2, 3, 4, 6]
     )
 
     static let centerOrient_ET = Scale(
@@ -369,7 +369,7 @@ struct ScalesCatalog {
         intonation: .et, celestial: .center, terrestrial: .occident,
         notes: et([0, 3, 5, 7, 9]),
         semitonePattern: [0, 3, 5, 7, 9],
-        letterPattern: [0, 1, 3, 4, 5]
+        letterPattern: [0, 2, 3, 4, 5]
     )
 
     static let sunOrient_ET = Scale(

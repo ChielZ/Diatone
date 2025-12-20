@@ -59,6 +59,54 @@ struct NoteSpellingTests {
         #expect(names[4].display == "E", "Fifth note should be E")
     }
     
+    @Test("Moon Occident in D produces D, F, G, A, C")
+    func testMoonOccidentInD() async throws {
+        let scale = ScalesCatalog.moonOccident_JI
+        let names = noteNames(forScale: scale, inKey: .D)
+        
+        #expect(names[0].display == "D", "First note should be D")
+        #expect(names[1].display == "F", "Second note should be F")
+        #expect(names[2].display == "G", "Third note should be G")
+        #expect(names[3].display == "A", "Fourth note should be A")
+        #expect(names[4].display == "C", "Fifth note should be C")
+    }
+    
+    @Test("Center Occident in D produces D, F, G, A, B")
+    func testCenterOccidentInD() async throws {
+        let scale = ScalesCatalog.centerOccident_JI
+        let names = noteNames(forScale: scale, inKey: .D)
+        
+        #expect(names[0].display == "D", "First note should be D")
+        #expect(names[1].display == "F", "Second note should be F")
+        #expect(names[2].display == "G", "Third note should be G")
+        #expect(names[3].display == "A", "Fourth note should be A")
+        #expect(names[4].display == "B", "Fifth note should be B")
+    }
+    
+    @Test("Moon Occident in A produces A, C, D, E, G")
+    func testMoonOccidentInA() async throws {
+        let scale = ScalesCatalog.moonOccident_JI
+        let names = noteNames(forScale: scale, inKey: .A)
+        
+        #expect(names[0].display == "A", "First note should be A")
+        #expect(names[1].display == "C", "Second note should be C (not B♯)")
+        #expect(names[2].display == "D", "Third note should be D")
+        #expect(names[3].display == "E", "Fourth note should be E")
+        #expect(names[4].display == "G", "Fifth note should be G")
+    }
+    
+    @Test("Center Occident in A produces A, C, D, E, F♯")
+    func testCenterOccidentInA() async throws {
+        let scale = ScalesCatalog.centerOccident_JI
+        let names = noteNames(forScale: scale, inKey: .A)
+        
+        #expect(names[0].display == "A", "First note should be A")
+        #expect(names[1].display == "C", "Second note should be C (not B♯)")
+        #expect(names[2].display == "D", "Third note should be D")
+        #expect(names[3].display == "E", "Fourth note should be E")
+        #expect(names[4].display == "F♯", "Fifth note should be F♯")
+    }
+    
     @Test("Equal temperament produces same note names as JI")
     func testETandJISameName() async throws {
         let scaleJI = ScalesCatalog.centerMeridian_JI
