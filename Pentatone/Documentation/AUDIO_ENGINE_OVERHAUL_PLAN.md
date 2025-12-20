@@ -137,8 +137,23 @@ This document outlines a phased approach to overhauling the audio engine from a 
 
 ---
 
-### Phase 4: Expand Voice Parameters for Dual Oscillators (ENHANCEMENT)
-**Goal:** Add second oscillator parameters to the parameter system
+### Phase 4: ~~Expand Voice Parameters for Dual Oscillators~~ **SKIPPED** ✅
+**Decision:** Skip this phase entirely. The dual oscillators implemented in Phase 1 already behave identically (except for tuning offset), which is exactly what's needed. No per-oscillator parameter differences required.
+
+**Original goal:** Add separate parameters for each oscillator (different waveforms, mix control, etc.)  
+**Why skipped:** Both oscillators should always behave identically for this app's sonic goals  
+**What we already have:** Dual stereo oscillators with frequency offset control (Phase 1 + 1.5)
+
+---
+
+### Phase 5: Add Modulation System (MODULATION)
+**Goal:** Implement LFOs and modulation envelopes
+
+**Architecture Decision:** Hybrid approach (Option B)
+- Keep `AmplitudeEnvelope` for output volume control (ADSR)
+- Add modulation envelope to control FM `modulationIndex` (timbral evolution)
+- Keep carrier level fixed in FMOscillator (no separate carrier envelope needed)
+- This provides full FM expressiveness with moderate complexity
 
 **Files to modify:**
 - `SoundParameters.swift` - Expand parameter structures
@@ -174,7 +189,7 @@ This document outlines a phased approach to overhauling the audio engine from a 
 - `ModulationSystem.swift` - Modulator definitions and routing
 
 **Implementation steps:**
-1. Create modulator types:
+1. Create modulator types (already done in ModulationSystem.swift):
    ```swift
    struct LFOModulator {
        var rate: Double  // Hz
@@ -191,36 +206,49 @@ This document outlines a phased approach to overhauling the audio engine from a 
        var depth: Double
        var destination: ModulationDestination
    }
-   
-   enum ModulationDestination {
-       case filterCutoff
-       case osc1Amplitude
-       case osc2Amplitude
-       case osc2Detune
-       case pan
-   }
    ```
 
 2. Add to `VoiceParameters`:
    ```swift
    struct VoiceParameters {
-       var dualOscillator: DualOscillatorParameters
+       var oscillator: OscillatorParameters
        var filter: FilterParameters
-       var envelope: EnvelopeParameters
-       var pan: PanParameters
-       var lfos: [LFOModulator]  // Up to 2 LFOs
-       var modEnvelopes: [ModulationEnvelope]  // Up to 2 mod envelopes
+       var envelope: EnvelopeParameters  // Output amplitude (keep existing)
+       var pan: PanParameters  // No longer needed (oscillators are hard-panned)
+       var modulationEnvelope: ModulationEnvelope  // NEW: For FM modulationIndex
+       var voiceLFO: LFOModulator  // Per-voice LFO
    }
    ```
 
 3. Implement modulation in `PolyphonicVoice`:
-   - Use AudioKit's built-in LFO nodes where possible
-   - Create control-rate update loop (not audio-rate)
-   - Apply modulation values to destinations
+   - Add control-rate update loop (~60 Hz)
+   - ModulationEnvelope controls `modulationIndex` parameter
+   - Tracks time since trigger for envelope stages
+   - Updates both oscLeft and oscRight with same modIndex value
+   - Keep AmplitudeEnvelope unchanged (it controls output volume)
 
-4. Add modulation to AudioParameterManager
+4. Add global LFO to `VoicePool`:
+   - Global LFO can target global parameters (delay time, reverb mix)
+   - Per-voice LFO targets voice parameters (filter cutoff, etc.)
+   - Control-rate timer in VoicePool triggers all modulation updates
 
-**Testing:** Create test preset with visible/audible modulation (e.g., LFO on filter)
+5. Example modulation destinations:
+   - **Modulation Envelope** → FM modulationIndex (timbral evolution)
+   - **Voice LFO** → Filter cutoff, oscillator detune
+   - **Global LFO** → Delay time, reverb mix, global filter
+
+**Why this architecture works:**
+- ✅ Output volume controlled by familiar AmplitudeEnvelope (openGate/closeGate)
+- ✅ FM timbre evolution via modulation envelope on modulationIndex
+- ✅ Classic FM sounds possible (bells, brass, evolving pads)
+- ✅ Fixed carrier level is musically sufficient
+- ✅ Per-preset control (some presets use it, some don't)
+- ✅ Moderate complexity, maximum expressiveness
+
+**Testing:** Create test preset with visible/audible modulation:
+- ModulationEnvelope on modulationIndex (hear timbre evolve from bright to warm)
+- Voice LFO on filter cutoff (hear wobble)
+- Global LFO on delay time (hear rhythmic delay)
 
 ---
 
@@ -340,19 +368,21 @@ This document outlines a phased approach to overhauling the audio engine from a 
 4. **Risk mitigation:** Can halt at any phase if issues arise
 
 ### Key Touch Points per Phase:
-- **Phase 1-2:** No user-visible changes
+- **Phase 1-2:** No user-visible changes ✅ COMPLETE
+- **Phase 1.5:** Enhanced stereo width control ✅ COMPLETE
 - **Phase 3:** Major internal change, should be transparent to user
-- **Phase 4:** Enhanced sound quality
-- **Phase 5:** New sonic possibilities with modulation
+- **Phase 4:** SKIPPED - dual oscillators already correct ✅
+- **Phase 5:** New sonic possibilities with modulation (FM timbral evolution!)
 - **Phase 6-7:** New features (presets, macros)
 - **Phase 8:** Performance improvements, UI polish
 
 ### Estimated Complexity:
-- **Phase 1:** Medium (new architecture)
-- **Phase 2:** Low (mostly refactoring)
+- **Phase 1:** Medium (new architecture) ✅ COMPLETE
+- **Phase 1.5:** Low (detune modes) ✅ COMPLETE
+- **Phase 2:** Low (mostly refactoring) ✅ COMPLETE
 - **Phase 3:** High (critical transition point)
-- **Phase 4:** Medium (parameter expansion)
-- **Phase 5:** High (complex modulation routing)
+- **Phase 4:** SKIPPED ✅
+- **Phase 5:** High (modulation + FM envelope routing)
 - **Phase 6:** Low (data management)
 - **Phase 7:** Medium (macro mapping logic)
 - **Phase 8:** Medium (cleanup and optimization)
@@ -387,16 +417,19 @@ This document outlines a phased approach to overhauling the audio engine from a 
 
 ## Recommended Implementation Order Summary:
 
-1. ✅ **Phase 1** (1-2 days) → New voice architecture alongside old
-2. ✅ **Phase 2** (1 day) → Key-frequency mapping separation  
-3. 🎯 **Phase 3** (2-3 days) → **CRITICAL** Switch to new voice pool
-4. ✅ **Phase 4** (1-2 days) → Add dual oscillators
-5. ⚠️ **Phase 5** (3-4 days) → **COMPLEX** Modulation system
-6. ✅ **Phase 6** (2-3 days) → Preset management + sound design
-7. ✅ **Phase 7** (2 days) → Macro controls
-8. ✅ **Phase 8** (2-3 days) → Cleanup and polish
+1. ✅ **Phase 1** (1-2 days) → New voice architecture alongside old [COMPLETE]
+2. ✅ **Phase 1.5** (0.5 days) → Detune modes (proportional/constant) [COMPLETE]
+3. ✅ **Phase 2** (1 day) → Key-frequency mapping separation [COMPLETE]
+4. 🎯 **Phase 3** (2-3 days) → **CRITICAL** Switch to new voice pool
+5. ~~**Phase 4** → SKIPPED (dual oscillators already implemented correctly)~~
+6. ⚠️ **Phase 5** (3-4 days) → **COMPLEX** Modulation system (LFOs + mod envelope for FM)
+7. ✅ **Phase 6** (2-3 days) → Preset management + sound design
+8. ✅ **Phase 7** (2 days) → Macro controls
+9. ✅ **Phase 8** (2-3 days) → Cleanup and polish
 
-**Total estimated time:** 3-4 weeks
+**Total estimated time:** 2.5-3 weeks (reduced from 3-4 weeks by skipping Phase 4)
 
 **Point of no return:** Phase 3 (once switched to new system, old system becomes obsolete)
+
+**Phases completed:** 1, 1.5, 2
 
