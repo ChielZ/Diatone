@@ -257,9 +257,7 @@ struct OptionsView: View {
         let allCases = OptionsSubView.allCases
         if let currentIndex = allCases.firstIndex(of: currentSubView) {
             let nextIndex = (currentIndex + 1) % allCases.count
-            withAnimation(.easeInOut(duration: 0.2)) {
-                currentSubView = allCases[nextIndex]
-            }
+            currentSubView = allCases[nextIndex]
         }
     }
     
@@ -267,9 +265,7 @@ struct OptionsView: View {
         let allCases = OptionsSubView.allCases
         if let currentIndex = allCases.firstIndex(of: currentSubView) {
             let previousIndex = (currentIndex - 1 + allCases.count) % allCases.count
-            withAnimation(.easeInOut(duration: 0.2)) {
-                currentSubView = allCases[previousIndex]
-            }
+            currentSubView = allCases[previousIndex]
         }
     }
 }

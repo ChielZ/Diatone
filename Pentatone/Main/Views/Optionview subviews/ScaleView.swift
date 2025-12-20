@@ -17,6 +17,14 @@ struct ScaleView: View {
     var onCycleRotation: ((Bool) -> Void)? = nil
     var onCycleKey: ((Bool) -> Void)? = nil
     
+    // Computed property to get the correct image name based on current scale
+    private var scaleImageName: String {
+        let intonationPrefix = currentScale.intonation == .ji ? "JI" : "ET"
+        let celestialPart = currentScale.celestial.rawValue.capitalized
+        let terrestrialPart = currentScale.terrestrial.rawValue.capitalized
+        return "\(intonationPrefix)_\(celestialPart)\(terrestrialPart)"
+    }
+    
     var body: some View {
         Group {
             ZStack { // Row 3 - Intonation
@@ -64,12 +72,13 @@ struct ScaleView: View {
             }
             .overlay(
                 GeometryReader { geometry in
-                    Image("JI_CenterMeridian")
+                    Image(scaleImageName)
                         .resizable()
                         .scaledToFit()
                         .frame(height: geometry.size.height * 2 + 11)
                         .offset(y: -(geometry.size.height + 11))
-                        .padding(3)
+                        .padding(0)
+                        
                 }
             )
             ZStack { // Row 6 - Musical Key
