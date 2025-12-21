@@ -176,6 +176,14 @@ final class PolyphonicVoice {
     func initialize() {
         guard !isInitialized else { return }
         
+        // Set ramp duration to 0 for instant frequency changes (no pitch sliding)
+        oscLeft.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0)
+        oscRight.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0)
+        
+        // Also disable ramping for other parameters to ensure instant response
+        oscLeft.$amplitude.ramp(to: oscLeft.amplitude, duration: 0)
+        oscRight.$amplitude.ramp(to: oscRight.amplitude, duration: 0)
+        
         oscLeft.start()
         oscRight.start()
         isInitialized = true

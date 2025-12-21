@@ -45,6 +45,19 @@ struct Penta_ToneApp: App {
     @State private var rotation: Int = 0 // Range: -2 to +2
     @State private var musicalKey: MusicalKey = .D // Default to D (center key)
     
+    // MARK: - Phase 3: New Voice System
+    
+    /// Keyboard state manages frequency calculations
+    /// Created once and updated as scale/key changes
+    @State private var keyboardState: KeyboardState = KeyboardState(
+        scale: ScalesCatalog.centerMeridian_JI,
+        key: .D
+    )
+    
+    /// Feature flag to switch between old and new voice systems
+    /// Set to true to use new VoicePool, false to use old oscillator01-18
+    @State private var useNewVoiceSystem: Bool = true
+    
     var body: some Scene {
         WindowGroup {
             ZStack {
@@ -58,7 +71,9 @@ struct Penta_ToneApp: App {
                         onCycleCelestial: { cycleCelestial(forward: $0) },
                         onCycleTerrestrial: { cycleTerrestrial(forward: $0) },
                         onCycleRotation: { cycleRotation(forward: $0) },
-                        onCycleKey: { cycleKey(forward: $0) }
+                        onCycleKey: { cycleKey(forward: $0) },
+                        keyboardState: keyboardState,
+                        useNewVoiceSystem: useNewVoiceSystem
                     )
                     .transition(.opacity)
                 } else {
@@ -111,8 +126,13 @@ struct Penta_ToneApp: App {
             musicalKey: musicalKey
         )
         
+        // OLD SYSTEM: Apply to oscillator01-18
         // Pass Double array directly (no conversion needed)
         EngineManager.applyScale(frequencies: frequencies)
+        
+        // NEW SYSTEM: Update KeyboardState
+        // This will automatically recalculate frequencies for the new voice pool
+        keyboardState.updateScaleAndKey(scale: currentScale, key: musicalKey)
     }
     
     private func incrementScale() {

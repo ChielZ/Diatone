@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import AudioKit
+import AudioKitEX
+import SoundpipeAudioKit
 
 /// Determines the width of the center strip based on device, orientation, and fold state
 struct CenterStripConfig {
@@ -49,6 +52,15 @@ struct MainKeyboardView: View {
     var onCycleRotation: ((Bool) -> Void)? = nil
     var onCycleKey: ((Bool) -> Void)? = nil
     
+    // MARK: - Phase 3: New Voice System
+    
+    /// Keyboard state providing frequency calculations
+    var keyboardState: KeyboardState
+    
+    /// Feature flag to switch between old and new voice systems
+    /// Set to false to use old oscillator01-18, true to use new VoicePool
+    var useNewVoiceSystem: Bool = true
+    
     @State private var showingOptions: Bool = true
     
     // MARK: - Key Color Calculation
@@ -83,15 +95,15 @@ struct MainKeyboardView: View {
                 HStack(spacing: 0) {
                     // Left column - Keys
                     VStack {
-                        KeyButton(colorName: keyColor(for: 16), voiceIndex: 16, isLeftSide: true, trigger: { oscillator17.trigger() }, release: { oscillator17.release() })
-                        KeyButton(colorName: keyColor(for: 14), voiceIndex: 14, isLeftSide: true, trigger: { oscillator15.trigger() }, release: { oscillator15.release() })
-                        KeyButton(colorName: keyColor(for: 12), voiceIndex: 12, isLeftSide: true, trigger: { oscillator13.trigger() }, release: { oscillator13.release() })
-                        KeyButton(colorName: keyColor(for: 10), voiceIndex: 10, isLeftSide: true, trigger: { oscillator11.trigger() }, release: { oscillator11.release() })
-                        KeyButton(colorName: keyColor(for: 8), voiceIndex: 8, isLeftSide: true, trigger: { oscillator09.trigger() }, release: { oscillator09.release() })
-                        KeyButton(colorName: keyColor(for: 6), voiceIndex: 6, isLeftSide: true, trigger: { oscillator07.trigger() }, release: { oscillator07.release() })
-                        KeyButton(colorName: keyColor(for: 4), voiceIndex: 4, isLeftSide: true, trigger: { oscillator05.trigger() }, release: { oscillator05.release() })
-                        KeyButton(colorName: keyColor(for: 2), voiceIndex: 2, isLeftSide: true, trigger: { oscillator03.trigger() }, release: { oscillator03.release() })
-                        KeyButton(colorName: keyColor(for: 0), voiceIndex: 0, isLeftSide: true, trigger: { oscillator01.trigger() }, release: { oscillator01.release() })
+                        KeyButton(colorName: keyColor(for: 16), keyIndex: 16, isLeftSide: true, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator17.trigger() }, oldSystemRelease: { oscillator17.release() })
+                        KeyButton(colorName: keyColor(for: 14), keyIndex: 14, isLeftSide: true, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator15.trigger() }, oldSystemRelease: { oscillator15.release() })
+                        KeyButton(colorName: keyColor(for: 12), keyIndex: 12, isLeftSide: true, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator13.trigger() }, oldSystemRelease: { oscillator13.release() })
+                        KeyButton(colorName: keyColor(for: 10), keyIndex: 10, isLeftSide: true, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator11.trigger() }, oldSystemRelease: { oscillator11.release() })
+                        KeyButton(colorName: keyColor(for: 8), keyIndex: 8, isLeftSide: true, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator09.trigger() }, oldSystemRelease: { oscillator09.release() })
+                        KeyButton(colorName: keyColor(for: 6), keyIndex: 6, isLeftSide: true, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator07.trigger() }, oldSystemRelease: { oscillator07.release() })
+                        KeyButton(colorName: keyColor(for: 4), keyIndex: 4, isLeftSide: true, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator05.trigger() }, oldSystemRelease: { oscillator05.release() })
+                        KeyButton(colorName: keyColor(for: 2), keyIndex: 2, isLeftSide: true, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator03.trigger() }, oldSystemRelease: { oscillator03.release() })
+                        KeyButton(colorName: keyColor(for: 0), keyIndex: 0, isLeftSide: true, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator01.trigger() }, oldSystemRelease: { oscillator01.release() })
                     }
                     .padding(5)
                     
@@ -140,15 +152,15 @@ struct MainKeyboardView: View {
                     
                     // Right column - Keys
                     VStack {
-                        KeyButton(colorName: keyColor(for: 17), voiceIndex: 17, isLeftSide: false, trigger: { oscillator18.trigger() }, release: { oscillator18.release() })
-                        KeyButton(colorName: keyColor(for: 15), voiceIndex: 15, isLeftSide: false, trigger: { oscillator16.trigger() }, release: { oscillator16.release() })
-                        KeyButton(colorName: keyColor(for: 13), voiceIndex: 13, isLeftSide: false, trigger: { oscillator14.trigger() }, release: { oscillator14.release() })
-                        KeyButton(colorName: keyColor(for: 11), voiceIndex: 11, isLeftSide: false, trigger: { oscillator12.trigger() }, release: { oscillator12.release() })
-                        KeyButton(colorName: keyColor(for: 9), voiceIndex: 9, isLeftSide: false, trigger: { oscillator10.trigger() }, release: { oscillator10.release() })
-                        KeyButton(colorName: keyColor(for: 7), voiceIndex: 7, isLeftSide: false, trigger: { oscillator08.trigger() }, release: { oscillator08.release() })
-                        KeyButton(colorName: keyColor(for: 5), voiceIndex: 5, isLeftSide: false, trigger: { oscillator06.trigger() }, release: { oscillator06.release() })
-                        KeyButton(colorName: keyColor(for: 3), voiceIndex: 3, isLeftSide: false, trigger: { oscillator04.trigger() }, release: { oscillator04.release() })
-                        KeyButton(colorName: keyColor(for: 1), voiceIndex: 1, isLeftSide: false, trigger: { oscillator02.trigger() }, release: { oscillator02.release() })
+                        KeyButton(colorName: keyColor(for: 17), keyIndex: 17, isLeftSide: false, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator18.trigger() }, oldSystemRelease: { oscillator18.release() })
+                        KeyButton(colorName: keyColor(for: 15), keyIndex: 15, isLeftSide: false, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator16.trigger() }, oldSystemRelease: { oscillator16.release() })
+                        KeyButton(colorName: keyColor(for: 13), keyIndex: 13, isLeftSide: false, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator14.trigger() }, oldSystemRelease: { oscillator14.release() })
+                        KeyButton(colorName: keyColor(for: 11), keyIndex: 11, isLeftSide: false, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator12.trigger() }, oldSystemRelease: { oscillator12.release() })
+                        KeyButton(colorName: keyColor(for: 9), keyIndex: 9, isLeftSide: false, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator10.trigger() }, oldSystemRelease: { oscillator10.release() })
+                        KeyButton(colorName: keyColor(for: 7), keyIndex: 7, isLeftSide: false, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator08.trigger() }, oldSystemRelease: { oscillator08.release() })
+                        KeyButton(colorName: keyColor(for: 5), keyIndex: 5, isLeftSide: false, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator06.trigger() }, oldSystemRelease: { oscillator06.release() })
+                        KeyButton(colorName: keyColor(for: 3), keyIndex: 3, isLeftSide: false, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator04.trigger() }, oldSystemRelease: { oscillator04.release() })
+                        KeyButton(colorName: keyColor(for: 1), keyIndex: 1, isLeftSide: false, keyboardState: keyboardState, useNewVoiceSystem: useNewVoiceSystem, oldSystemTrigger: { oscillator02.trigger() }, oldSystemRelease: { oscillator02.release() })
                     }
                     .padding(5)
                 }
@@ -205,15 +217,22 @@ private struct NavigationStrip: View {
 /// Reusable key button component
 private struct KeyButton: View {
     let colorName: String
-    let voiceIndex: Int  // Which voice this key controls (0-17)
+    let keyIndex: Int  // Which keyboard key this is (0-17)
     let isLeftSide: Bool  // Whether this key is on the left side of the keyboard
-    let trigger: () -> Void
-    let release: () -> Void
+    let keyboardState: KeyboardState  // Provides frequencies
+    let useNewVoiceSystem: Bool  // Feature flag
+    
+    // Old system callbacks (only used when useNewVoiceSystem = false)
+    let oldSystemTrigger: (() -> Void)?
+    let oldSystemRelease: (() -> Void)?
     
     @State private var isDimmed = false
     @State private var hasFiredCurrentTouch = false
     @State private var initialTouchX: CGFloat? = nil  // Track initial touch position for relative aftertouch
     @State private var lastAftertouchX: CGFloat? = nil  // Track last processed aftertouch position
+    
+    // NEW: Store allocated voice for new system
+    @State private var allocatedVoice: PolyphonicVoice? = nil
     
     // Minimum movement threshold (in points) before aftertouch responds
     private let movementThreshold: CGFloat = 1.0
@@ -239,23 +258,14 @@ private struct KeyButton: View {
                                 initialTouchX = touchX
                                 lastAftertouchX = touchX  // Initialize for threshold calculation
                                 
+                                if useNewVoiceSystem {
+                                    // NEW SYSTEM: Allocate voice from pool
+                                    handleNewSystemTrigger(touchX: touchX, viewWidth: geometry.size.width)
+                                } else {
+                                    // OLD SYSTEM: Use hard-coded oscillator
+                                    handleOldSystemTrigger(touchX: touchX, viewWidth: geometry.size.width)
+                                }
                                 
-                                
-                                // Reset filter cutoff to template default
-                                // This ensures the note starts with the stored cutoff value
-                                AudioParameterManager.shared.resetVoiceFilterToTemplate(at: voiceIndex)
-                                
-                                // Clear the voice override so next touch uses template settings
-                                AudioParameterManager.shared.clearVoiceOverride(at: voiceIndex)
-                                // Map initial touch X position to amplitude
-                                
-                                AudioParameterManager.shared.mapTouchToAmplitude(
-                                    voiceIndex: voiceIndex,
-                                    touchX: touchX,
-                                    viewWidth: geometry.size.width
-                                )
-                                
-                                trigger()
                                 isDimmed = true
                             } else {
                                 // AFTERTOUCH - Update filter cutoff based on X movement from initial position
@@ -264,26 +274,33 @@ private struct KeyButton: View {
                                    let initialX = initialTouchX {
                                     lastAftertouchX = touchX
                                     
-                                    // RELATIVE aftertouch: movement from initial position adjusts cutoff
-                                    // Movement toward center (increasing touchX) = brighter (higher cutoff)
-                                    // Movement toward edge (decreasing touchX) = darker (lower cutoff)
-                                    AudioParameterManager.shared.mapAftertouchToFilterCutoffSmoothed(
-                                        voiceIndex: voiceIndex,
-                                        initialTouchX: initialX,
-                                        currentTouchX: touchX,
-                                        viewWidth: geometry.size.width
-                                    )
+                                    if useNewVoiceSystem {
+                                        // NEW SYSTEM: Update allocated voice filter
+                                        handleNewSystemAftertouch(initialX: initialX, currentX: touchX, viewWidth: geometry.size.width)
+                                    } else {
+                                        // OLD SYSTEM: Update oscillator filter via parameter manager
+                                        AudioParameterManager.shared.mapAftertouchToFilterCutoffSmoothed(
+                                            voiceIndex: keyIndex,
+                                            initialTouchX: initialX,
+                                            currentTouchX: touchX,
+                                            viewWidth: geometry.size.width
+                                        )
+                                    }
                                 }
                             }
                         }
                         .onEnded { _ in
+                            if useNewVoiceSystem {
+                                // NEW SYSTEM: Release allocated voice
+                                handleNewSystemRelease()
+                            } else {
+                                // OLD SYSTEM: Release oscillator
+                                handleOldSystemRelease()
+                            }
+                            
                             hasFiredCurrentTouch = false
                             initialTouchX = nil
                             lastAftertouchX = nil
-                            release()
-                            
-                            // Clear the voice override so next touch uses template settings
-                            //AudioParameterManager.shared.clearVoiceOverride(at: voiceIndex)
                             
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                                 withAnimation(.easeOut(duration: 0.28)) {
@@ -293,6 +310,104 @@ private struct KeyButton: View {
                         }
                 )
         }
+    }
+    
+    // MARK: - New Voice System Handlers
+    
+    private func handleNewSystemTrigger(touchX: CGFloat, viewWidth: CGFloat) {
+        // Get frequency from KeyboardState
+        guard let frequency = keyboardState.frequencyForKey(at: keyIndex) else {
+            print("⚠️ Could not get frequency for key \(keyIndex)")
+            return
+        }
+        
+        // Allocate voice from pool
+        let voice = voicePool.allocateVoice(frequency: frequency, forKey: keyIndex)
+        allocatedVoice = voice
+        
+        // Use the same amplitude mapping as the old system
+        // Normalize touch position to 0...1
+        let normalized = max(0.0, min(1.0, touchX / viewWidth))
+        
+        // Apply amplitude to voice (matching old system behavior)
+        voice.oscLeft.amplitude = AUValue(normalized)
+        voice.oscRight.amplitude = AUValue(normalized)
+        
+        print("🎹 Key \(keyIndex): Allocated voice, freq \(String(format: "%.2f", frequency)) Hz, amp \(String(format: "%.2f", normalized))")
+    }
+    
+    private func handleNewSystemAftertouch(initialX: CGFloat, currentX: CGFloat, viewWidth: CGFloat) {
+        guard let voice = allocatedVoice else { return }
+        
+        // Use the same logarithmic/exponential mapping as the old system
+        // This matches AudioParameterManager.mapAftertouchToFilterCutoffSmoothed behavior
+        
+        // Get the base cutoff from voice parameters
+        let baseCutoff = AudioParameterManager.shared.voiceTemplate.filter.cutoffFrequency
+        
+        // Calculate movement delta from initial touch
+        let movementDelta = currentX - initialX
+        
+        // Sensitivity in octaves per point (matching old system)
+        let sensitivity = 2.5
+        let octaveChange = Double(movementDelta) * (sensitivity / 100.0)
+        
+        // Apply exponential scaling (logarithmic frequency response)
+        var targetCutoff = baseCutoff * pow(2.0, octaveChange)
+        
+        // Clamp to valid range (matching old system)
+        let range = 500.0...12_000.0
+        targetCutoff = max(range.lowerBound, min(range.upperBound, targetCutoff))
+        
+        // Apply smoothing (matching old system's smoothingFactor of 0.5)
+        let smoothingFactor = 0.5
+        let currentCutoff = Double(voice.filter.cutoffFrequency)
+        let interpolationAmount = 1.0 - smoothingFactor
+        let smoothedCutoff = currentCutoff + (targetCutoff - currentCutoff) * interpolationAmount
+        
+        // Apply to voice filter
+        voice.filter.cutoffFrequency = AUValue(smoothedCutoff)
+        
+        // Debug (throttled)
+        // print("🎛️ Key \(keyIndex): Aftertouch cutoff \(String(format: "%.0f", smoothedCutoff)) Hz")
+    }
+    
+    private func handleNewSystemRelease() {
+        guard let voice = allocatedVoice else { return }
+        
+        // Release voice back to pool
+        voicePool.releaseVoice(forKey: keyIndex)
+        allocatedVoice = nil
+        
+        print("🎹 Key \(keyIndex): Released voice")
+    }
+    
+    // MARK: - Old Voice System Handlers
+    
+    private func handleOldSystemTrigger(touchX: CGFloat, viewWidth: CGFloat) {
+        // Reset filter cutoff to template default
+        AudioParameterManager.shared.resetVoiceFilterToTemplate(at: keyIndex)
+        
+        // Clear the voice override so next touch uses template settings
+        AudioParameterManager.shared.clearVoiceOverride(at: keyIndex)
+        
+        // Map initial touch X position to amplitude
+        AudioParameterManager.shared.mapTouchToAmplitude(
+            voiceIndex: keyIndex,
+            touchX: touchX,
+            viewWidth: viewWidth
+        )
+        
+        // Trigger the oscillator
+        oldSystemTrigger?()
+    }
+    
+    private func handleOldSystemRelease() {
+        // Release the oscillator
+        oldSystemRelease?()
+        
+        // Note: Voice override clearing is handled separately in old system
+        // AudioParameterManager.shared.clearVoiceOverride(at: keyIndex)
     }
 }
 
@@ -306,7 +421,9 @@ private struct KeyButton: View {
         onCycleCelestial: { _ in },
         onCycleTerrestrial: { _ in },
         onCycleRotation: { _ in },
-        onCycleKey: { _ in }
+        onCycleKey: { _ in },
+        keyboardState: KeyboardState(scale: ScalesCatalog.centerMeridian_JI, key: .D),
+        useNewVoiceSystem: true
     )
 }
 
