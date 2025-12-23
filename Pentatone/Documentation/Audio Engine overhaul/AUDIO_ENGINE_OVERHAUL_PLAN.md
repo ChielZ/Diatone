@@ -146,44 +146,10 @@ This document outlines a phased approach to overhauling the audio engine from a 
 
 ---
 
-### Phase 5: Add Modulation System (MODULATION)
-**Goal:** Implement LFOs and modulation envelopes
-
-**Architecture Decision:** Hybrid approach (Option B)
-- Keep `AmplitudeEnvelope` for output volume control (ADSR)
-- Add modulation envelope to control FM `modulationIndex` (timbral evolution)
-- Keep carrier level fixed in FMOscillator (no separate carrier envelope needed)
-- This provides full FM expressiveness with moderate complexity
-
-**Files to modify:**
-- `SoundParameters.swift` - Expand parameter structures
-- `PolyphonicVoice.swift` - Implement dual oscillator mixing
-
-**Implementation steps:**
-1. Expand `OscillatorParameters`:
-   ```swift
-   struct DualOscillatorParameters: Codable, Equatable {
-       var osc1: OscillatorParameters
-       var osc2: OscillatorParameters
-       var mix: Double  // 0.0 = all osc1, 1.0 = all osc2
-       var detune: Double  // Frequency offset for osc2 (in cents)
-   }
-   ```
-
-2. Update `VoiceParameters` to use `DualOscillatorParameters`
-
-3. Implement oscillator mixing in `PolyphonicVoice`:
-   - Mix oscillator outputs before filter
-   - Apply detune to osc2 frequency
-
-4. Update AudioParameterManager methods
-
-**Testing:** Create test preset with audible dual oscillator characteristics
-
----
 
 ### Phase 5: Add Modulation System (MODULATION)
 **Goal:** Implement LFOs and modulation envelopes
+
 
 **Files to create:**
 - `ModulationSystem.swift` - Modulator definitions and routing
@@ -221,7 +187,7 @@ This document outlines a phased approach to overhauling the audio engine from a 
    ```
 
 3. Implement modulation in `PolyphonicVoice`:
-   - Add control-rate update loop (~60 Hz)
+   - Add control-rate update loop (~200 Hz for snappy envelopes and super smooth LFOs)
    - ModulationEnvelope controls `modulationIndex` parameter
    - Tracks time since trigger for envelope stages
    - Updates both oscLeft and oscRight with same modIndex value
@@ -249,6 +215,115 @@ This document outlines a phased approach to overhauling the audio engine from a 
 - ModulationEnvelope on modulationIndex (hear timbre evolve from bright to warm)
 - Voice LFO on filter cutoff (hear wobble)
 - Global LFO on delay time (hear rhythmic delay)
+
+
+
+
+>> INSERTED INTO PLAN AS REFERENCE FOR STAGE 5: 
+THIS MY FULL CONCEPT FOR THE FINAL STRUCTURE OF EDITABLE PARAMETERS / SOUND EDITING SCREENS
+ 
+ 1. VOICE [the voice strutucre itself is already implemented]
+ 
+ a) Oscillator (the same parameter values will be applied to both the left-panned and right-panned FMOscillators
+ - Waveform (shared between Carrier and Modulator, options: sine, triangle, square)
+ - Carrier multiplier (=>carrierMultiplier)
+ - Modulator multiplier coarse (=>modulatingMultiplier, integer values)
+ - Modulator multiplier fine (=> modulatingMultiplier, .00 - .99)
+ - Modulator base level (=> modulationIndex)
+ - Amplitude (=>amplitude)
+ 
+ b) Stereo spread
+ - Offset mode (absolute vs relative)
+ - Offset amount
+ 
+ c) Filter
+ - Cutoff
+ - Resonance
+ - Saturation
+ 
+ d) AmplitudeEnvelope
+ - Attack time
+ - Decay time
+ - Sustain level
+ - Release time
+ 
+ 
+ 2. FX CHAIN [the fx chain itself is already implemented]
+ 
+ a) Delay
+ - Delay time (implement as sync to master tempo?)
+ - Delay feedback
+ - Delay PingPong
+ - Delay mix
+ 
+ b) Reverb
+ - Reverb size
+ - Reverb tone
+ - Reverb mix
+ 
+ 
+ 3. MASTER [most of this yet to be implemented]
+ 
+ - Tempo
+ - Voice mode (polyphonic/monophonic)
+ - Root frequency
+ - Octave
+ - Fine tune
+ - Master volume (pre or post fx? For pre fx, could be mapped to voicemixer volume)
+ 
+ 
+ 4. MODULATION [most of this yet to be implemented]
+ 
+ a) Modulator envelope (should exist per-voice, destination is 'hard wired' to oscillators' modulationIndex)
+ - Attack time
+ - Decay time
+ - Sustain level
+ - Release time
+ - Envelope amount (=> modulationIndex + Modulation envelope value * envelope amount)
+ 
+ b) Auxiliary Envelope (should exist per-voice)
+ - Attack time
+ - Decay time
+ - Sustain level
+ - Release time
+ - destination (Oscillator baseFrequency, modulatingMultiplier, Filter frequency [default], Voice LFO frequency, Voice LFO mod amount)
+ - amount (unipolar modulation, so positive and negative amount)
+
+ c) Voice LFO (should exist per-voice)
+ - waveform (sine, triangle, square, sawtooth, reversed sawtooth)
+ - reset mode (free, trigger, sync)
+ - frequency (0-10 Hz or tempo multipliers depending on mode)
+ - destination (Oscillator baseFrequency [default], modulationIndex, modulatingMultiplier, Filter frequency, stereo spread offset amount)
+ - amount (bipolar modulation, so only positive amounts)
+
+ d) Global LFO (should exist as a single LFO on global level
+ - waveform (sine, triangle, square, sawtooth, reversed sawtooth)
+ - reset mode (free, sync)
+ - frequency (0-10 Hz or tempo multipliers depending on mode)
+ - destination (Oscillator amplitude [default], Oscillator baseFrequency, modulationIndex, modulatingMultiplier, Filter frequency, delay time, delay amount)
+ - amount (bipolar modulation, so only positive amounts)
+ 
+ e) Key tracking (value proportional to frequency of triggered key)
+  - destination (Oscillator amplitude, modulationIndex, modulatingMultiplier, Filter frequency, Voice LFO frequency, Voice LFO mod amount)
+  - amount (unipolar modulation, so positive and negative amount)
+
+ e) X initial touch (x position of key trigger touch) [already implemented but currently hardwired to filter frequency]
+ - destination (Oscillator amplitude, modulationIndex, modulatingMultiplier, Filter frequency, Voice LFO frequency, Voice LFO mod amount)
+ - amount (unipolar modulation, so positive and negative amount)
+ 
+ f) X aftertouch (change in x position of touch while key is being held) [already implemented but currently hardwired to volume]
+ - destination (Oscillator amplitude, modulationIndex, modulatingMultiplier, Filter frequency, Voice LFO frequency, Voice LFO mod amount)
+ - amount (bipolar modulation, so only positive amounts)
+ ? toggle for relative/absolute mode ?
+ 
+ 
+
+
+
+
+
+
+
 
 ---
 
