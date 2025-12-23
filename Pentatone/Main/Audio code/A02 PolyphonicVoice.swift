@@ -119,8 +119,18 @@ final class PolyphonicVoice {
     
     // MARK: - Modulation (Phase 5 - placeholder)
     
-    /// Per-voice LFO (will be implemented in Phase 5)
-    var voiceLFO: LFOModulator = .default
+    /// Modulation parameters for this voice (Phase 5)
+    var voiceModulation: VoiceModulationParameters = .default
+    
+    /// Modulation runtime state (Phase 5)
+    var modulationState: ModulationState = ModulationState()
+    
+    // DEPRECATED: Use voiceModulation.voiceLFO
+    @available(*, deprecated, renamed: "voiceModulation")
+    var voiceLFO: LFOParameters {
+        get { voiceModulation.voiceLFO }
+        set { voiceModulation.voiceLFO = newValue }
+    }
     
     // MARK: - Initialization
     
@@ -243,12 +253,18 @@ final class PolyphonicVoice {
         envelope.openGate()
         isAvailable = false
         triggerTime = Date()
+        
+        // Phase 5: Initialize modulation state
+        modulationState.reset(frequency: currentFrequency, touchX: 0.5)
     }
     
     /// Releases this voice (starts envelope release)
     /// The voice will be marked available after the release duration
     func release() {
         envelope.closeGate()
+        
+        // Phase 5: Update modulation state
+        modulationState.closeGate()
         
         // Mark voice available after release completes
         let releaseTime = envelope.releaseDuration
@@ -292,13 +308,27 @@ final class PolyphonicVoice {
         envelope.releaseDuration = AUValue(parameters.releaseDuration)
     }
     
+    /// Updates modulation parameters (Phase 5)
+    func updateModulationParameters(_ parameters: VoiceModulationParameters) {
+        voiceModulation = parameters
+        // Note: Runtime state (modulationState) is not reset here
+        // It continues tracking from current position
+    }
+    
     // MARK: - Modulation Application (Phase 5)
     
     /// Applies modulation from LFOs and envelopes
-    /// Will be implemented in Phase 5
-    func applyModulation(globalLFOValue: Double) {
-        // TODO: Phase 5 - Implement modulation application
-        // Will read voiceLFO.currentValue() and combine with globalLFOValue
-        // Then apply to appropriate destinations (filter cutoff, etc.)
+    /// Will be implemented in Phase 5B+
+    /// This method will be called from the control-rate timer
+    func applyModulation(globalLFOValue: Double, deltaTime: Double) {
+        // TODO: Phase 5B+ - Implement modulation application
+        // Will:
+        // 1. Update envelope times (modulationState.modulatorEnvelopeTime += deltaTime)
+        // 2. Calculate envelope values
+        // 3. Update LFO phases
+        // 4. Calculate LFO values
+        // 5. Apply touch/key tracking
+        // 6. Route all modulation to destinations using ModulationRouter
+        // 7. Apply modulated values to oscillator/filter parameters
     }
 }

@@ -104,11 +104,13 @@ struct VoiceParameters: Codable, Equatable {
     var oscillator: OscillatorParameters
     var filter: FilterParameters
     var envelope: EnvelopeParameters
+    var modulation: VoiceModulationParameters  // Phase 5: Modulation system
     
     static let `default` = VoiceParameters(
         oscillator: .default,
         filter: .default,
-        envelope: .default
+        envelope: .default,
+        modulation: .default
     )
 }
 
@@ -144,10 +146,14 @@ struct ReverbParameters: Codable, Equatable {
 struct MasterParameters: Codable, Equatable {
     var delay: DelayParameters
     var reverb: ReverbParameters
+    var globalLFO: GlobalLFOParameters     // Phase 5C: Global modulation
+    var tempo: Double                      // BPM for tempo-synced modulation
     
     static let `default` = MasterParameters(
         delay: .default,
-        reverb: .default
+        reverb: .default,
+        globalLFO: .default,
+        tempo: 120.0
     )
 }
 
