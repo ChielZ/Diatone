@@ -44,8 +44,11 @@ final class VoicePool {
     
     // MARK: - Global Modulation (Phase 5)
     
-    /// Global LFO affecting all voices (will be implemented in Phase 5)
+    /// Global LFO parameters affecting all voices or global parameters
     var globalLFO: GlobalLFOParameters = .default
+    
+    /// Global modulation runtime state (phase tracking, tempo)
+    var globalModulationState = GlobalModulationState()
     
     // MARK: - Initialization
     
@@ -248,17 +251,61 @@ final class VoicePool {
     
     // MARK: - Modulation (Phase 5)
     
-    /// Starts the modulation update loop
-    /// Will be implemented in Phase 5 with control-rate LFO updates
+    /// Control-rate timer for modulation updates (Phase 5B+)
+    private var modulationTimer: Timer?
+    
+    /// Updates global LFO parameters
+    func updateGlobalLFO(_ parameters: GlobalLFOParameters) {
+        globalLFO = parameters
+    }
+    
+    /// Updates modulation parameters for all voices
+    func updateAllVoiceModulation(_ parameters: VoiceModulationParameters) {
+        for voice in voices {
+            voice.updateModulationParameters(parameters)
+        }
+    }
+    
+    /// Starts the modulation update loop (Phase 5B)
+    /// Control rate: 200 Hz (5ms intervals) for smooth LFOs and snappy envelopes
     func startModulation() {
-        // TODO: Phase 5 - Implement modulation timer
-        // Update at ~60 Hz control rate
-        // Apply global LFO and trigger per-voice LFO updates
+        // TODO: Phase 5B - Implement control-rate timer
+        // Will be implemented as:
+        // modulationTimer = Timer.scheduledTimer(
+        //     withTimeInterval: ControlRateConfig.updateInterval,
+        //     repeats: true
+        // ) { [weak self] _ in
+        //     self?.updateModulation()
+        // }
+        print("🎵 Modulation system ready (timer will start in Phase 5B)")
     }
     
     /// Stops the modulation update loop
     func stopModulation() {
-        // TODO: Phase 5 - Stop modulation timer
+        modulationTimer?.invalidate()
+        modulationTimer = nil
+    }
+    
+    /// Updates modulation for all active voices (Phase 5B+)
+    /// Called by control-rate timer at 200 Hz
+    private func updateModulation() {
+        // TODO: Phase 5B - Implement modulation calculation
+        // let deltaTime = ControlRateConfig.updateInterval
+        //
+        // // Update global LFO phase
+        // if globalLFO.isEnabled {
+        //     globalModulationState.globalLFOPhase += deltaTime * globalLFO.frequency
+        //     globalModulationState.globalLFOPhase = 
+        //         globalModulationState.globalLFOPhase.truncatingRemainder(dividingBy: 1.0)
+        // }
+        //
+        // // Calculate global LFO value
+        // let globalLFOValue = globalLFO.currentValue(phase: globalModulationState.globalLFOPhase)
+        //
+        // // Update all active voices
+        // for voice in voices where !voice.isAvailable {
+        //     voice.applyModulation(globalLFOValue: globalLFOValue, deltaTime: deltaTime)
+        // }
     }
     
     // MARK: - Diagnostics
@@ -275,5 +322,7 @@ final class VoicePool {
         print("   Active voices: \(activeVoiceCount)")
         print("   Available voices: \(voiceCount - activeVoiceCount)")
         print("   Keys pressed: \(keyToVoiceMap.count)")
+        print("   Global LFO: \(globalLFO.isEnabled ? "enabled" : "disabled")")
+        print("   Modulation timer: \(modulationTimer != nil ? "running" : "stopped")")
     }
 }
