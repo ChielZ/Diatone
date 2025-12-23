@@ -45,7 +45,7 @@ struct Penta_ToneApp: App {
     @State private var rotation: Int = 0 // Range: -2 to +2
     @State private var musicalKey: MusicalKey = .D // Default to D (center key)
     
-    // MARK: - Phase 3: New Voice System
+    // MARK: - Voice System
     
     /// Keyboard state manages frequency calculations
     /// Created once and updated as scale/key changes
@@ -53,10 +53,6 @@ struct Penta_ToneApp: App {
         scale: ScalesCatalog.centerMeridian_JI,
         key: .D
     )
-    
-    /// Feature flag to switch between old and new voice systems
-    /// Set to true to use new VoicePool, false to use old oscillator01-18
-    @State private var useNewVoiceSystem: Bool = true
     
     var body: some Scene {
         WindowGroup {
@@ -72,8 +68,7 @@ struct Penta_ToneApp: App {
                         onCycleTerrestrial: { cycleTerrestrial(forward: $0) },
                         onCycleRotation: { cycleRotation(forward: $0) },
                         onCycleKey: { cycleKey(forward: $0) },
-                        keyboardState: keyboardState,
-                        useNewVoiceSystem: useNewVoiceSystem
+                        keyboardState: keyboardState
                     )
                     .transition(.opacity)
                 } else {
@@ -101,9 +96,6 @@ struct Penta_ToneApp: App {
             try EngineManager.startEngine()
             try await Task.sleep(nanoseconds: 100_000_000) // 100ms
             
-            EngineManager.initializeVoices(count: 18)
-            try await Task.sleep(nanoseconds: 100_000_000) // 100ms
-            
             applyCurrentScale()
             try await Task.sleep(nanoseconds: 50_000_000) // 50ms
             
@@ -118,20 +110,8 @@ struct Penta_ToneApp: App {
     // MARK: - Scale Management
     
     private func applyCurrentScale() {
-        // Use the computed currentScale property which includes rotation
-        // Pass the current musical key for transposition
-        let frequencies = makeKeyFrequencies(
-            for: currentScale,
-            baseFrequency: MusicalKey.baseFrequency,
-            musicalKey: musicalKey
-        )
-        
-        // OLD SYSTEM: Apply to oscillator01-18
-        // Pass Double array directly (no conversion needed)
-        EngineManager.applyScale(frequencies: frequencies)
-        
-        // NEW SYSTEM: Update KeyboardState
-        // This will automatically recalculate frequencies for the new voice pool
+        // Update KeyboardState with current scale and key
+        // This automatically recalculates frequencies for the voice pool
         keyboardState.updateScaleAndKey(scale: currentScale, key: musicalKey)
     }
     

@@ -420,16 +420,17 @@ This document outlines a phased approach to overhauling the audio engine from a 
 1. ✅ **Phase 1** (1-2 days) → New voice architecture alongside old [COMPLETE]
 2. ✅ **Phase 1.5** (0.5 days) → Detune modes (proportional/constant) [COMPLETE]
 3. ✅ **Phase 2** (1 day) → Key-frequency mapping separation [COMPLETE]
-4. ✅ **Phase 3** (2-3 days) → **CRITICAL** Switch to new voice pool
-5. ~~**Phase 4** → SKIPPED (dual oscillators already implemented correctly)~~
-6. ⚠️ **Phase 5** (3-4 days) → **COMPLEX** Modulation system (LFOs + mod envelope for FM)
-7. ✅ **Phase 6** (2-3 days) → Preset management + sound design
-8. ✅ **Phase 7** (2 days) → Macro controls
-9. ✅ **Phase 8** (2-3 days) → Cleanup and polish
+4. ✅ **Phase 3** (2-3 days) → **CRITICAL** Switch to new voice pool [COMPLETE]
+5. ✅ **Old System Cleanup** (0.5 days) → Remove obsolete code [COMPLETE]
+6. ~~**Phase 4** → SKIPPED (dual oscillators already implemented correctly)~~
+7. ⚠️ **Phase 5** (3-4 days) → **COMPLEX** Modulation system (LFOs + mod envelope for FM)
+8. **Phase 6** (2-3 days) → Preset management + sound design
+9. **Phase 7** (2 days) → Macro controls
+10. **Phase 8** (2-3 days) → Cleanup and polish
 
-**Total estimated time:** 2.5-3 weeks (reduced from 3-4 weeks by skipping Phase 4)
+**Total estimated time:** 2-2.5 weeks remaining (reduced from 3-4 weeks by skipping Phase 4 and completing cleanup early)
 
-**Point of no return:** Phase 3 (once switched to new system, old system becomes obsolete)
+**Phases completed:** 1, 1.5, 2, 3, Old System Cleanup
 
-**Phases completed:** 1, 1.5, 2, 3
+**Current status:** Clean codebase, ready for Phase 5 (Modulation System)
 
