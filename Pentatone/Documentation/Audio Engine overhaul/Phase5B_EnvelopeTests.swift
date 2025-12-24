@@ -5,7 +5,7 @@
 //  Created for testing Phase 5B modulation envelopes
 //
 
-/*
+
 import Foundation
 import AudioKit
 
@@ -218,7 +218,11 @@ extension AudioParameterManager {
         
         print("🎵 Applied envelope test preset")
         print("   Modulator: \(preset.modulatorEnvelope.isEnabled ? "enabled" : "disabled")")
-        print("   Auxiliary: \(preset.auxiliaryEnvelope.isEnabled ? "enabled") → \(preset.auxiliaryEnvelope.destination.displayName)" : "disabled")")
+        if preset.auxiliaryEnvelope.isEnabled {
+            print("   Auxiliary: enabled → \(preset.auxiliaryEnvelope.destination.displayName)")
+        } else {
+            print("   Auxiliary: disabled")
+        }
     }
 }
 
@@ -267,4 +271,4 @@ extension VoicePool {
  // Play and hold a note - you should hear a slow, evolving pad
  
  */
-*/
+

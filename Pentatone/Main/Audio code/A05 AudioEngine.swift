@@ -136,6 +136,9 @@ struct VoicePoolTestView: View {
     @State private var frequencyOffsetRatio: Double = 1.0     // Proportional mode: 1.0 to 1.01
     @State private var frequencyOffsetHz: Double = 0.0        // Constant mode: 0 to 2.5 Hz
     
+    // Phase 5B: Envelope test presets
+    @State private var currentEnvelopePreset: String = "None"
+    
     // Test scale (synced with keyboardState)
     private var testScale: Scale {
         keyboardState.currentScale
@@ -301,6 +304,80 @@ struct VoicePoolTestView: View {
                         }
                         .padding()
                         
+                        // Phase 5B: Envelope Test Presets
+                        VStack(spacing: 15) {
+                            Text("Envelope Presets (Phase 5B)")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            
+                            Text("Current: \(currentEnvelopePreset)")
+                                .font(.caption)
+                                .foregroundColor(Color("HighlightColour"))
+                            
+                            // Row 1: Basic presets
+                            HStack(spacing: 10) {
+                                Button("FM Bell") {
+                                    applyEnvelopePreset(EnvelopeTestPresets.fmBell, name: "FM Bell")
+                                }
+                                .buttonStyle(.bordered)
+                                
+                                Button("Filter Sweep") {
+                                    applyEnvelopePreset(EnvelopeTestPresets.filterSweep, name: "Filter Sweep")
+                                }
+                                .buttonStyle(.bordered)
+                                
+                                Button("Combined") {
+                                    applyEnvelopePreset(EnvelopeTestPresets.combinedEvolution, name: "Combined")
+                                }
+                                .buttonStyle(.bordered)
+                            }
+                            
+                            // Row 2: Advanced presets
+                            HStack(spacing: 10) {
+                                Button("Pitch Drop") {
+                                    applyEnvelopePreset(EnvelopeTestPresets.pitchDrop, name: "Pitch Drop")
+                                }
+                                .buttonStyle(.bordered)
+                                
+                                Button("Brass") {
+                                    applyEnvelopePreset(EnvelopeTestPresets.brass, name: "Brass")
+                                }
+                                .buttonStyle(.bordered)
+                                
+                                Button("Pluck") {
+                                    applyEnvelopePreset(EnvelopeTestPresets.pluck, name: "Pluck")
+                                }
+                                .buttonStyle(.bordered)
+                            }
+                            
+                            // Row 3: Pad + Reset
+                            HStack(spacing: 10) {
+                                Button("Pad") {
+                                    applyEnvelopePreset(EnvelopeTestPresets.pad, name: "Pad")
+                                }
+                                .buttonStyle(.bordered)
+                                
+                                Spacer()
+                                
+                                Button("Reset (None)") {
+                                    resetEnvelopes()
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(.red)
+                            }
+                            
+                            // Preset descriptions
+                            Text(envelopePresetDescription)
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .multilineTextAlignment(.center)
+                                .frame(height: 30)
+                        }
+                        .padding()
+                        .background(Color.black.opacity(0.2))
+                        .cornerRadius(10)
+                        .padding(.horizontal)
+                        
                         Spacer()
                         
                         // Test keyboard (9 keys)
@@ -391,6 +468,10 @@ struct VoicePoolTestView: View {
                                 .font(.headline)
                                 .foregroundColor(.white)
                             
+                            Text("Voice Allocation:")
+                                .font(.caption)
+                                .foregroundColor(Color("HighlightColour"))
+                            
                             Text("• Press multiple keys simultaneously")
                                 .font(.caption)
                                 .foregroundColor(.gray)
@@ -399,15 +480,12 @@ struct VoicePoolTestView: View {
                                 .font(.caption)
                                 .foregroundColor(.gray)
                             
+                            Text("Stereo Spread:")
+                                .font(.caption)
+                                .foregroundColor(Color("HighlightColour"))
+                                .padding(.top, 5)
+                            
                             Text("• Switch between Proportional and Constant modes")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                            
-                            Text("• Proportional: higher notes beat faster (natural)")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                            
-                            Text("• Constant: same beat rate for all notes (uniform)")
                                 .font(.caption)
                                 .foregroundColor(.gray)
                             
@@ -415,7 +493,24 @@ struct VoicePoolTestView: View {
                                 .font(.caption)
                                 .foregroundColor(.gray)
                             
-                            Text("• Watch voice pool status update")
+                            Text("Envelope Modulation (Phase 5B):")
+                                .font(.caption)
+                                .foregroundColor(Color("HighlightColour"))
+                                .padding(.top, 5)
+                            
+                            Text("• Select an envelope preset above")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            
+                            Text("• Play notes to hear timbral evolution")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            
+                            Text("• FM Bell: bright → mellow (classic FM)")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            
+                            Text("• Filter Sweep: bright → dark (analog sweep)")
                                 .font(.caption)
                                 .foregroundColor(.gray)
                         }
@@ -448,6 +543,27 @@ struct VoicePoolTestView: View {
     private var beatRateConstant: Double {
         // Beat rate is twice the Hz offset (symmetric: +Hz on left, -Hz on right)
         return frequencyOffsetHz * 2.0
+    }
+    
+    private var envelopePresetDescription: String {
+        switch currentEnvelopePreset {
+        case "FM Bell":
+            return "Bright metallic attack → warm mellow sustain"
+        case "Filter Sweep":
+            return "Classic analog filter sweep (bright → dark)"
+        case "Combined":
+            return "FM + filter evolution (complex timbre)"
+        case "Pitch Drop":
+            return "808-style pitch drop (starts high, drops)"
+        case "Brass":
+            return "Brass instrument simulation"
+        case "Pluck":
+            return "Plucked string (quick decay, no sustain)"
+        case "Pad":
+            return "Slow evolving pad (long attack/release)"
+        default:
+            return "No envelope modulation active"
+        }
     }
     
     // MARK: - Audio Initialization
@@ -486,6 +602,23 @@ struct VoicePoolTestView: View {
         let baseColorIndex = keyIndex % 5
         let rotatedColorIndex = (baseColorIndex + testScale.rotation + 5) % 5
         return "KeyColour\(rotatedColorIndex + 1)"
+    }
+    
+    // MARK: - Envelope Preset Management
+    
+    private func applyEnvelopePreset(_ preset: VoiceModulationParameters, name: String) {
+        voicePool.applyEnvelopeTestPreset(preset)
+        currentEnvelopePreset = name
+        print("🎵 Applied envelope preset: \(name)")
+    }
+    
+    private func resetEnvelopes() {
+        var defaultModulation = VoiceModulationParameters.default
+        defaultModulation.modulatorEnvelope.isEnabled = false
+        defaultModulation.auxiliaryEnvelope.isEnabled = false
+        voicePool.updateAllVoiceModulation(defaultModulation)
+        currentEnvelopePreset = "None"
+        print("🎵 Reset all envelope modulation")
     }
 }
 
