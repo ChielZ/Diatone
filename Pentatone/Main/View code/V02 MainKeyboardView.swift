@@ -220,7 +220,6 @@ private struct KeyButton: View {
     @State private var isDimmed = false
     @State private var hasFiredCurrentTouch = false
     @State private var initialTouchX: CGFloat? = nil  // Track initial touch position for relative aftertouch
-    @State private var lastAftertouchX: CGFloat? = nil  // Track last processed aftertouch position
     
     // Store allocated voice
     @State private var allocatedVoice: PolyphonicVoice? = nil
@@ -228,8 +227,9 @@ private struct KeyButton: View {
     // Track last smoothed cutoff for aftertouch
     @State private var lastSmoothedCutoff: Double? = nil
     
-    // Minimum movement threshold (in points) before aftertouch responds
-    private let movementThreshold: CGFloat = 1.0
+    // Minimum movement threshold - removed for smooth modulation
+    // The modulation system will handle updates at 200Hz
+    // private let movementThreshold: CGFloat = 1.0
     
     var body: some View {
         GeometryReader { geometry in
@@ -250,16 +250,12 @@ private struct KeyButton: View {
                                 // INITIAL TOUCH - Set amplitude and trigger note
                                 hasFiredCurrentTouch = true
                                 initialTouchX = touchX
-                                lastAftertouchX = touchX  // Initialize for threshold calculation
                                 
                                 handleTrigger(touchX: touchX, viewWidth: geometry.size.width)
                                 isDimmed = true
                             } else {
                                 // AFTERTOUCH - Update filter cutoff based on X movement from initial position
-                                // Only respond if movement exceeds threshold
-                                if let lastX = lastAftertouchX, abs(touchX - lastX) >= movementThreshold,
-                                   let initialX = initialTouchX {
-                                    lastAftertouchX = touchX
+                                if let initialX = initialTouchX {
                                     handleAftertouch(initialX: initialX, currentX: touchX, viewWidth: geometry.size.width)
                                 }
                             }
@@ -269,7 +265,6 @@ private struct KeyButton: View {
                             
                             hasFiredCurrentTouch = false
                             initialTouchX = nil
-                            lastAftertouchX = nil
                             
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                                 withAnimation(.easeOut(duration: 0.28)) {
@@ -294,62 +289,40 @@ private struct KeyButton: View {
         let voice = voicePool.allocateVoice(frequency: frequency, forKey: keyIndex)
         allocatedVoice = voice
         
-        // Reset filter to template default (this is now the base value)
+        // Normalize touch position to 0...1
+        let normalized = max(0.0, min(1.0, touchX / viewWidth))
+        
+        // ALWAYS update modulation state with touch position
+        // This allows the touch modulation system to route it to any destination
+        voice.modulationState.initialTouchX = normalized
+        voice.modulationState.currentTouchX = normalized
+        
+        // OLD HARDWIRED CONTROL (DISABLED FOR TESTING)
+        // Set neutral base values - the routable modulation system will handle touch
+        voice.setAmplitudeFromTouch(0.0)  // Neutral base (modulation will add touch value)
+        
+        // Reset filter to template default
         let templateCutoff = AudioParameterManager.shared.voiceTemplate.filter.cutoffFrequency
         voice.setFilterCutoffFromTouch(templateCutoff)
         
         // Clear smoothing state (start fresh for new note)
         lastSmoothedCutoff = nil
         
-        // Use the same amplitude mapping as before
-        // Normalize touch position to 0...1
-        let normalized = max(0.0, min(1.0, touchX / viewWidth))
-        
-        // Apply amplitude using the new method that stores base value
-        voice.setAmplitudeFromTouch(normalized)
-        
-        print("🎹 Key \(keyIndex): Allocated voice, freq \(String(format: "%.2f", frequency)) Hz, amp \(String(format: "%.2f", normalized))")
+        print("🎹 Key \(keyIndex): Allocated voice, freq \(String(format: "%.2f", frequency)) Hz, touchX \(String(format: "%.2f", normalized))")
     }
     
     private func handleAftertouch(initialX: CGFloat, currentX: CGFloat, viewWidth: CGFloat) {
         guard let voice = allocatedVoice else { return }
         
-        // Get the base cutoff from template (what the note started with)
-        let baseCutoff = AudioParameterManager.shared.voiceTemplate.filter.cutoffFrequency
+        // ALWAYS update the current touch X position in modulation state
+        // This allows the modulation system to route it to any destination
+        let normalizedCurrentX = max(0.0, min(1.0, currentX / viewWidth))
+        voice.modulationState.currentTouchX = normalizedCurrentX
         
-        // Calculate movement delta from initial touch
-        let movementDelta = currentX - initialX
-        
-        // Sensitivity in octaves per point
-        let sensitivity = 2.5
-        let octaveChange = Double(movementDelta) * (sensitivity / 100.0)
-        
-        // Apply exponential scaling (logarithmic frequency response)
-        var targetCutoff = baseCutoff * pow(2.0, octaveChange)
-        
-        // Clamp to valid range
-        let range = 500.0...12_000.0
-        targetCutoff = max(range.lowerBound, min(range.upperBound, targetCutoff))
-        
-        // Get current cutoff for smoothing
-        let currentCutoff: Double
-        if let lastCutoff = lastSmoothedCutoff {
-            currentCutoff = lastCutoff
-        } else {
-            // First aftertouch - start from base cutoff
-            currentCutoff = baseCutoff
-        }
-        
-        // Apply linear interpolation (lerp) for smoothing
-        let smoothingFactor = 0.5
-        let interpolationAmount = 1.0 - smoothingFactor
-        let smoothedCutoff = currentCutoff + (targetCutoff - currentCutoff) * interpolationAmount
-        
-        // Store for next iteration (maintains smoothing state)
-        lastSmoothedCutoff = smoothedCutoff
-        
-        // Apply using the new method that stores base value
-        voice.setFilterCutoffFromTouch(smoothedCutoff)
+        // OLD HARDWIRED AFTERTOUCH CONTROL (DISABLED FOR TESTING)
+        // The routable modulation system will handle aftertouch
+        // Note: The old system had logarithmic scaling and smoothing
+        // The new system uses raw delta values, which may feel different
     }
     
     private func handleRelease() {

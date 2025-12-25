@@ -373,9 +373,17 @@ final class PolyphonicVoice {
     ) {
         // FIRST: Apply base values from touch control (always, even if no modulation)
         // This ensures touch gestures update smoothly at 200 Hz
-        oscLeft.amplitude = AUValue(modulationState.baseAmplitude)
-        oscRight.amplitude = AUValue(modulationState.baseAmplitude)
-        filter.cutoffFrequency = AUValue(modulationState.baseFilterCutoff)
+        // NOTE: Only apply base values if touch modulation is NOT handling them
+        if !voiceModulation.touchInitial.isEnabled || voiceModulation.touchInitial.destination != .oscillatorAmplitude {
+            // Touch modulation not controlling amplitude - apply base value
+            oscLeft.amplitude = AUValue(modulationState.baseAmplitude)
+            oscRight.amplitude = AUValue(modulationState.baseAmplitude)
+        }
+        
+        if !voiceModulation.touchAftertouch.isEnabled || voiceModulation.touchAftertouch.destination != .filterCutoff {
+            // Touch modulation not controlling filter - apply base value
+            filter.cutoffFrequency = AUValue(modulationState.baseFilterCutoff)
+        }
         
         // Update envelope times
         modulationState.modulatorEnvelopeTime += deltaTime
@@ -446,7 +454,22 @@ final class PolyphonicVoice {
             applyGlobalLFO(value: globalLFOValue, destination: globalLFODestination)
         }
         
-        // Phase 5D: Touch/key tracking will be added here
+        // Phase 5D: Touch modulation
+        // Only apply initial touch once (it doesn't change after first touch)
+        if voiceModulation.touchInitial.isEnabled && !modulationState.hasAppliedInitialTouch {
+            applyTouchInitial()
+            modulationState.hasAppliedInitialTouch = true
+        }
+        
+        // Apply aftertouch on every frame (it changes continuously)
+        if voiceModulation.touchAftertouch.isEnabled {
+            applyTouchAftertouch()
+        }
+        
+        // Phase 5D: Key tracking modulation
+        if voiceModulation.keyTracking.isEnabled {
+            applyKeyTracking()
+        }
     }
     
     // MARK: - Voice LFO Phase Update (Phase 5C)
@@ -765,6 +788,210 @@ final class PolyphonicVoice {
             
         case .voiceLFOFrequency, .voiceLFOAmount, .delayTime, .delayMix:
             break  // Already handled above
+        }
+    }
+    
+    // MARK: - Touch Modulation (Phase 5D)
+    
+    /// Applies initial touch X position as a modulation source
+    /// The touch X value is normalized (0.0 = inner edge, 1.0 = outer edge)
+    /// This provides unipolar modulation (amount can be positive or negative)
+    private func applyTouchInitial() {
+        let params = voiceModulation.touchInitial
+        let destination = params.destination
+        
+        // Only apply to voice-level destinations
+        guard destination.isVoiceLevel else { return }
+        
+        // Touch X is already stored in modulationState.initialTouchX (0.0 - 1.0)
+        let touchValue = modulationState.initialTouchX
+        
+        // Get the base value for the destination
+        let baseValue = getBaseValue(for: destination)
+        
+        // Apply touch modulation using envelope modulation logic (unipolar)
+        // touchValue acts like an envelope value (0.0 - 1.0)
+        let modulated = ModulationRouter.applyEnvelopeModulation(
+            baseValue: baseValue,
+            envelopeValue: touchValue,
+            amount: params.amount,
+            destination: destination
+        )
+        
+        // Apply the modulated value
+        applyModulatedValue(modulated, to: destination)
+    }
+    
+    /// Applies aftertouch X movement as a modulation source
+    /// Aftertouch tracks the change in X position while key is held
+    /// This provides bipolar modulation (oscillates around center)
+    private func applyTouchAftertouch() {
+        let params = voiceModulation.touchAftertouch
+        let destination = params.destination
+        
+        // Only apply to voice-level destinations
+        guard destination.isVoiceLevel else { return }
+        
+        // Calculate aftertouch delta from initial position
+        // This gives us a bipolar value: negative = moved left, positive = moved right
+        let initialX = modulationState.initialTouchX
+        let currentX = modulationState.currentTouchX
+        let aftertouchDelta = currentX - initialX  // Range: -1.0 to +1.0
+        
+        // DEBUG: Print values to diagnose choppiness
+        if destination == .filterCutoff {
+            print("🎚️ Aftertouch: initialX=\(String(format: "%.3f", initialX)) currentX=\(String(format: "%.3f", currentX)) delta=\(String(format: "%.3f", aftertouchDelta))")
+        }
+        
+        // Scale the delta by the amount parameter
+        let scaledValue = aftertouchDelta * params.amount
+        
+        // Get the base value for the destination
+        let baseValue = getBaseValue(for: destination)
+        
+        // Apply aftertouch modulation using LFO logic (bipolar)
+        let targetValue = ModulationRouter.applyLFOModulation(
+            baseValue: baseValue,
+            lfoValue: scaledValue,
+            destination: destination
+        )
+        
+        // Apply smoothing for filter cutoff destination
+        let finalValue: Double
+        if destination == .filterCutoff {
+            // Get current smoothed value
+            let currentValue = modulationState.lastSmoothedFilterCutoff ?? targetValue
+            
+            // Apply linear interpolation (lerp)
+            let smoothingFactor = modulationState.filterSmoothingFactor
+            let interpolationAmount = 1.0 - smoothingFactor
+            finalValue = currentValue + (targetValue - currentValue) * interpolationAmount
+            
+            // Store for next iteration
+            modulationState.lastSmoothedFilterCutoff = finalValue
+            
+            // DEBUG: Print smoothing
+            print("   target=\(String(format: "%.1f", targetValue)) smoothed=\(String(format: "%.1f", finalValue))")
+        } else {
+            // No smoothing for other destinations
+            finalValue = targetValue
+        }
+        
+        // Apply the modulated value
+        applyModulatedValue(finalValue, to: destination)
+    }
+    
+    /// Applies key tracking (frequency-based modulation)
+    /// Higher notes produce higher modulation values
+    private func applyKeyTracking() {
+        let params = voiceModulation.keyTracking
+        let destination = params.destination
+        
+        // Only apply to voice-level destinations
+        guard destination.isVoiceLevel else { return }
+        
+        // Calculate tracking value from current frequency
+        let trackingValue = params.trackingValue(forFrequency: modulationState.currentFrequency)
+        
+        // Get the base value for the destination
+        let baseValue = getBaseValue(for: destination)
+        
+        // Apply key tracking using envelope modulation logic (unipolar)
+        let modulated = ModulationRouter.applyEnvelopeModulation(
+            baseValue: baseValue,
+            envelopeValue: trackingValue,
+            amount: params.amount,
+            destination: destination
+        )
+        
+        // Apply the modulated value
+        applyModulatedValue(modulated, to: destination)
+    }
+    
+    // MARK: - Touch Modulation Helpers
+    
+    /// Gets the base value for a modulation destination
+    /// Uses user-controlled values for amplitude/filter, current values for others
+    private func getBaseValue(for destination: ModulationDestination) -> Double {
+        switch destination {
+        case .modulationIndex:
+            return Double(oscLeft.modulationIndex)
+            
+        case .filterCutoff:
+            // Use user-controlled base value from modulation state
+            return modulationState.baseFilterCutoff
+            
+        case .oscillatorAmplitude:
+            // Use user-controlled base value from modulation state
+            return modulationState.baseAmplitude
+            
+        case .oscillatorBaseFrequency:
+            return currentFrequency
+            
+        case .modulatingMultiplier:
+            return Double(oscLeft.modulatingMultiplier)
+            
+        case .stereoSpreadAmount:
+            return detuneMode == .proportional ? frequencyOffsetRatio : frequencyOffsetHz
+            
+        case .voiceLFOFrequency:
+            return voiceModulation.voiceLFO.frequency
+            
+        case .voiceLFOAmount:
+            return voiceModulation.voiceLFO.amount
+            
+        case .delayTime, .delayMix:
+            // These are global-level, shouldn't be reached
+            return 0.0
+        }
+    }
+    
+    /// Applies a modulated value to a destination parameter
+    private func applyModulatedValue(_ value: Double, to destination: ModulationDestination) {
+        // Validate value is not NaN or infinite
+        guard value.isFinite else {
+            print("⚠️ Invalid modulation value: \(value) for destination \(destination)")
+            return
+        }
+        
+        switch destination {
+        case .modulationIndex:
+            oscLeft.modulationIndex = AUValue(value)
+            oscRight.modulationIndex = AUValue(value)
+            
+        case .filterCutoff:
+            filter.cutoffFrequency = AUValue(value)
+            
+        case .oscillatorAmplitude:
+            oscLeft.amplitude = AUValue(value)
+            oscRight.amplitude = AUValue(value)
+            
+        case .oscillatorBaseFrequency:
+            currentFrequency = value
+            updateOscillatorFrequencies()
+            
+        case .modulatingMultiplier:
+            oscLeft.modulatingMultiplier = AUValue(value)
+            oscRight.modulatingMultiplier = AUValue(value)
+            
+        case .stereoSpreadAmount:
+            if detuneMode == .proportional {
+                frequencyOffsetRatio = value
+            } else {
+                frequencyOffsetHz = value
+            }
+            
+        case .voiceLFOFrequency:
+            // Modulate the voice LFO frequency
+            voiceModulation.voiceLFO.frequency = value
+            
+        case .voiceLFOAmount:
+            // Modulate the voice LFO amount
+            voiceModulation.voiceLFO.amount = value
+            
+        case .delayTime, .delayMix:
+            // These are global-level, handled elsewhere
+            break
         }
     }
 }

@@ -133,14 +133,22 @@ struct VoiceParameters: Codable, Equatable {
                 waveform: .square,
                 resetMode: .free,
                 frequencyMode: .hertz,
-                frequency: 6.0,              // 3 Hz wobble
-                destination: .oscillatorAmplitude,  // ← CHANGE THIS to test different destinations
-                amount: 1.0,                 // ← CHANGE THIS (0.0 = off, 1.0 = max)
-                isEnabled: true              // ← SET TO false TO DISABLE
+                frequency: 6.0,
+                destination: .oscillatorAmplitude,
+                amount: 0.0,                         // Disabled by default
+                isEnabled: false
             ),
             keyTracking: .default,
-            touchInitial: .default,
-            touchAftertouch: .default
+            touchInitial: TouchInitialParameters(
+                destination: .oscillatorAmplitude,   // Touch X controls amplitude (like old system)
+                amount: 1.0,                         // Full range (0.0 to 1.0)
+                isEnabled: true                      // ✅ ENABLED FOR TESTING
+            ),
+            touchAftertouch: TouchAftertouchParameters(
+                destination: .filterCutoff,          // Aftertouch controls filter (like old system)
+                amount: 5.0,                        // High sensitivity to match old system (~2.5 octaves/100 points)
+                isEnabled: true                      // ✅ ENABLED FOR TESTING
+            )
         )
     )
 }
