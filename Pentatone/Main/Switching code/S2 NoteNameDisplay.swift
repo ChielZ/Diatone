@@ -1,5 +1,5 @@
 //
-//  NoteNameDisplay.swift
+//  S2 NoteNameDisplay.swift
 //  Pentatone
 //
 //  Created by Chiel Zwinkels on 20/12/2025.

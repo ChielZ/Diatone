@@ -1,5 +1,5 @@
 //
-//  AudioParameters.swift
+//  A1 SoundParameters.swift
 //  Penta-Tone
 //
 //  Created by Chiel Zwinkels on 16/12/2025.
