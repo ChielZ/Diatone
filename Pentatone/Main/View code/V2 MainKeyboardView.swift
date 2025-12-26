@@ -210,7 +210,7 @@ private struct NavigationStrip: View {
     }
 }
 
-/// Reusable key button component
+/// Reusable key button component with direct UIKit touch handling for minimal latency
 private struct KeyButton: View {
     let colorName: String
     let keyIndex: Int  // Which keyboard key this is (0-17)
@@ -218,98 +218,220 @@ private struct KeyButton: View {
     let keyboardState: KeyboardState  // Provides frequencies
     
     @State private var isDimmed = false
-    @State private var hasFiredCurrentTouch = false
-    @State private var initialTouchX: CGFloat? = nil  // Track initial touch position for relative aftertouch
-    
-    // Store allocated voice
-    @State private var allocatedVoice: PolyphonicVoice? = nil
     
     var body: some View {
         GeometryReader { geometry in
-            RoundedRectangle(cornerRadius: radius)
-                .fill(Color(colorName))
-                .opacity(isDimmed ? 0.5 : 1.0)
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { value in
-                            // Calculate touch position, inverting for left side
-                            // Left side: outer edge = loud/bright, center edge = quiet/dark
-                            // Right side: center edge = quiet/dark, outer edge = loud/bright
-                            let touchX = isLeftSide 
-                                ? value.location.x
-                                : geometry.size.width - value.location.x
-                            
-                            if !hasFiredCurrentTouch {
-                                // INITIAL TOUCH - Set amplitude and trigger note
-                                hasFiredCurrentTouch = true
-                                initialTouchX = touchX
-                                
-                                handleTrigger(touchX: touchX, viewWidth: geometry.size.width)
-                                isDimmed = true
-                            } else {
-                                // AFTERTOUCH - Update filter cutoff based on X movement from initial position
-                                if let initialX = initialTouchX {
-                                    handleAftertouch(initialX: initialX, currentX: touchX, viewWidth: geometry.size.width)
-                                }
+            ZStack {
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color(colorName))
+                    .opacity(isDimmed ? 0.5 : 1.0)
+                
+                // UIKit touch handler overlay - transparent, handles all touches
+                KeyTouchHandler(
+                    keyIndex: keyIndex,
+                    isLeftSide: isLeftSide,
+                    keyboardState: keyboardState,
+                    viewWidth: geometry.size.width,
+                    onTouchBegan: {
+                        // UI update (low priority, happens on main thread after note triggers)
+                        isDimmed = true
+                    },
+                    onTouchEnded: {
+                        // UI update (low priority)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                            withAnimation(.easeOut(duration: 0.28)) {
+                                isDimmed = false
                             }
                         }
-                        .onEnded { _ in
-                            handleRelease()
-                            
-                            hasFiredCurrentTouch = false
-                            initialTouchX = nil
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                                withAnimation(.easeOut(duration: 0.28)) {
-                                    isDimmed = false
-                                }
-                            }
-                        }
+                    }
                 )
+            }
+        }
+    }
+}
+
+
+// MARK: - UIKit Touch Handler
+
+/// UIKit-based touch handler for minimal latency note triggering
+/// This bypasses SwiftUI's gesture system to get direct access to hardware touch events
+/// Priority order: 1) Trigger audio (immediate), 2) Update modulation (5ms), 3) Update UI (next frame)
+private struct KeyTouchHandler: UIViewRepresentable {
+    let keyIndex: Int
+    let isLeftSide: Bool
+    let keyboardState: KeyboardState
+    let viewWidth: CGFloat
+    let onTouchBegan: () -> Void
+    let onTouchEnded: () -> Void
+    
+    func makeUIView(context: Context) -> TouchHandlingView {
+        let view = TouchHandlingView()
+        view.backgroundColor = .clear
+        view.isMultipleTouchEnabled = false  // One touch per key
+        view.touchHandler = context.coordinator
+        return view
+    }
+    
+    func updateUIView(_ uiView: TouchHandlingView, context: Context) {
+        // Update coordinator with latest values
+        context.coordinator.keyIndex = keyIndex
+        context.coordinator.isLeftSide = isLeftSide
+        context.coordinator.keyboardState = keyboardState
+        context.coordinator.viewWidth = viewWidth
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(
+            keyIndex: keyIndex,
+            isLeftSide: isLeftSide,
+            keyboardState: keyboardState,
+            viewWidth: viewWidth,
+            onTouchBegan: onTouchBegan,
+            onTouchEnded: onTouchEnded
+        )
+    }
+    
+    // MARK: - Coordinator
+    
+    class Coordinator {
+        var keyIndex: Int
+        var isLeftSide: Bool
+        var keyboardState: KeyboardState
+        var viewWidth: CGFloat
+        let onTouchBegan: () -> Void
+        let onTouchEnded: () -> Void
+        
+        // Touch tracking state
+        private var allocatedVoice: PolyphonicVoice?
+        private var initialTouchX: CGFloat?
+        
+        init(
+            keyIndex: Int,
+            isLeftSide: Bool,
+            keyboardState: KeyboardState,
+            viewWidth: CGFloat,
+            onTouchBegan: @escaping () -> Void,
+            onTouchEnded: @escaping () -> Void
+        ) {
+            self.keyIndex = keyIndex
+            self.isLeftSide = isLeftSide
+            self.keyboardState = keyboardState
+            self.viewWidth = viewWidth
+            self.onTouchBegan = onTouchBegan
+            self.onTouchEnded = onTouchEnded
+        }
+        
+        // MARK: - Touch Handlers (called from TouchHandlingView)
+        
+        func handleTouchBegan(at location: CGPoint) {
+            // PRIORITY 1: TRIGGER AUDIO (happens immediately, on touch thread)
+            
+            // Calculate touch position, inverting for left side
+            let touchX = isLeftSide ? location.x : viewWidth - location.x
+            initialTouchX = touchX
+            
+            // Get frequency from KeyboardState
+            guard let frequency = keyboardState.frequencyForKey(at: keyIndex) else {
+                print("⚠️ Could not get frequency for key \(keyIndex)")
+                return
+            }
+            
+            // Normalize touch position to 0...1
+            let normalized = max(0.0, min(1.0, touchX / viewWidth))
+            
+            // Calculate amplitude and filter cutoff from touch position
+            // These are applied IMMEDIATELY in trigger() for zero-latency response
+            let amplitude = Double(normalized)  // 0.0 - 1.0
+            let filterCutoff = 200.0 + (normalized * 1800.0)  // 200 Hz - 2000 Hz
+            
+            // Allocate voice from pool
+            let voice = voicePool.allocateVoice(frequency: frequency, forKey: keyIndex)
+            allocatedVoice = voice
+            
+            // Set base values in modulation state (will be applied in trigger())
+            voice.modulationState.baseAmplitude = amplitude
+            voice.modulationState.baseFilterCutoff = filterCutoff
+            voice.modulationState.initialTouchX = normalized
+            voice.modulationState.currentTouchX = normalized
+            
+            // Trigger is already called in allocateVoice, but the fix we applied
+            // ensures baseAmplitude and baseFilterCutoff are applied immediately
+            
+            print("🎹 Key \(keyIndex): Touch at \(String(format: "%.2f", normalized)), freq \(String(format: "%.2f", frequency)) Hz")
+            
+            // PRIORITY 3: UPDATE UI (happens on main thread, can wait)
+            DispatchQueue.main.async { [weak self] in
+                self?.onTouchBegan()
+            }
+        }
+        
+        func handleTouchMoved(to location: CGPoint) {
+            // PRIORITY 2: UPDATE MODULATION (control-rate timer will pick this up within 5ms)
+            
+            guard let voice = allocatedVoice, let initialX = initialTouchX else { return }
+            
+            // Calculate current touch position
+            let currentX = isLeftSide ? location.x : viewWidth - location.x
+            let normalizedCurrentX = max(0.0, min(1.0, currentX / viewWidth))
+            
+            // Update modulation state - the control-rate timer will apply this
+            voice.modulationState.currentTouchX = normalizedCurrentX
+            
+            // Optionally update filter cutoff for immediate aftertouch response
+            // This bypasses the control-rate timer for more responsive aftertouch
+            let filterCutoff = 200.0 + (normalizedCurrentX * 1800.0)
+            voice.modulationState.baseFilterCutoff = filterCutoff
+        }
+        
+        func handleTouchEnded() {
+            // PRIORITY 1: RELEASE AUDIO (happens immediately)
+            
+            guard allocatedVoice != nil else { return }
+            
+            // Release voice back to pool
+            voicePool.releaseVoice(forKey: keyIndex)
+            allocatedVoice = nil
+            initialTouchX = nil
+            
+            print("🎹 Key \(keyIndex): Released")
+            
+            // PRIORITY 3: UPDATE UI (happens on main thread, can wait)
+            DispatchQueue.main.async { [weak self] in
+                self?.onTouchEnded()
+            }
         }
     }
     
-    // MARK: - Voice System Handlers
+    // MARK: - Touch Handling UIView
     
-    private func handleTrigger(touchX: CGFloat, viewWidth: CGFloat) {
-        // Get frequency from KeyboardState
-        guard let frequency = keyboardState.frequencyForKey(at: keyIndex) else {
-            print("⚠️ Could not get frequency for key \(keyIndex)")
-            return
+    class TouchHandlingView: UIView {
+        weak var touchHandler: Coordinator?
+        
+        override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+            guard let touch = touches.first else { return }
+            let location = touch.location(in: self)
+            
+            // Call handler IMMEDIATELY on touch thread (no dispatch, no delay)
+            touchHandler?.handleTouchBegan(at: location)
         }
         
-        // Allocate voice from pool
-        let voice = voicePool.allocateVoice(frequency: frequency, forKey: keyIndex)
-        allocatedVoice = voice
+        override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+            guard let touch = touches.first else { return }
+            let location = touch.location(in: self)
+            
+            // Call handler IMMEDIATELY on touch thread
+            touchHandler?.handleTouchMoved(to: location)
+        }
         
-        // Normalize touch position to 0...1
-        let normalized = max(0.0, min(1.0, touchX / viewWidth))
+        override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+            // Call handler IMMEDIATELY on touch thread
+            touchHandler?.handleTouchEnded()
+        }
         
-        // Update modulation state with touch position
-        // The routable modulation system will handle routing to configured destinations
-        voice.modulationState.initialTouchX = normalized
-        voice.modulationState.currentTouchX = normalized
-        
-        print("🎹 Key \(keyIndex): Allocated voice, freq \(String(format: "%.2f", frequency)) Hz, touchX \(String(format: "%.2f", normalized))")
-    }
-    
-    private func handleAftertouch(initialX: CGFloat, currentX: CGFloat, viewWidth: CGFloat) {
-        guard let voice = allocatedVoice else { return }
-        
-        // Update the current touch X position in modulation state
-        // The routable modulation system will handle routing to configured destinations
-        let normalizedCurrentX = max(0.0, min(1.0, currentX / viewWidth))
-        voice.modulationState.currentTouchX = normalizedCurrentX
-    }
-    
-    private func handleRelease() {
-        guard allocatedVoice != nil else { return }
-        
-        // Release voice back to pool
-        voicePool.releaseVoice(forKey: keyIndex)
-        allocatedVoice = nil
-        
-        print("🎹 Key \(keyIndex): Released voice")
+        override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+            // Treat cancellation same as ended
+            touchHandler?.handleTouchEnded()
+        }
     }
 }
 
