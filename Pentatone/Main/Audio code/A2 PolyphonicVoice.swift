@@ -235,9 +235,9 @@ final class PolyphonicVoice {
             return
         }
         
-        // IMMEDIATE FIX: Apply base values directly at trigger time (audio rate)
-        // This bypasses the modulation timer delay for instant response
-        // The modulation system will take over on the next control-rate update
+        // Apply base values that were set by initial touch in MainKeyboardView
+        // These were already applied at zero-latency in handleTouchBegan()
+        // Apply them again here to ensure they're set before envelopes start
         oscLeft.amplitude = AUValue(modulationState.baseAmplitude)
         oscRight.amplitude = AUValue(modulationState.baseAmplitude)
         filter.cutoffFrequency = AUValue(modulationState.baseFilterCutoff)
@@ -448,11 +448,8 @@ final class PolyphonicVoice {
         }
         
         // Phase 5D: Touch modulation
-        // Only apply initial touch once (it doesn't change after first touch)
-        if voiceModulation.touchInitial.isEnabled && !modulationState.hasAppliedInitialTouch {
-            applyTouchInitial()
-            modulationState.hasAppliedInitialTouch = true
-        }
+        // NOTE: Initial touch is now applied at trigger time in MainKeyboardView
+        // Only aftertouch runs here at control rate
         
         // Apply aftertouch on every frame (it changes continuously)
         if voiceModulation.touchAftertouch.isEnabled {
@@ -786,34 +783,8 @@ final class PolyphonicVoice {
     
     // MARK: - Touch Modulation (Phase 5D)
     
-    /// Applies initial touch X position as a modulation source
-    /// The touch X value is normalized (0.0 = inner edge, 1.0 = outer edge)
-    /// This provides unipolar modulation (amount can be positive or negative)
-    private func applyTouchInitial() {
-        let params = voiceModulation.touchInitial
-        let destination = params.destination
-        
-        // Only apply to voice-level destinations
-        guard destination.isVoiceLevel else { return }
-        
-        // Touch X is already stored in modulationState.initialTouchX (0.0 - 1.0)
-        let touchValue = modulationState.initialTouchX
-        
-        // Get the base value for the destination
-        let baseValue = getBaseValue(for: destination)
-        
-        // Apply touch modulation using envelope modulation logic (unipolar)
-        // touchValue acts like an envelope value (0.0 - 1.0)
-        let modulated = ModulationRouter.applyEnvelopeModulation(
-            baseValue: baseValue,
-            envelopeValue: touchValue,
-            amount: params.amount,
-            destination: destination
-        )
-        
-        // Apply the modulated value
-        applyModulatedValue(modulated, to: destination)
-    }
+    // NOTE: Initial touch is now applied at trigger time in MainKeyboardView
+    // This provides zero-latency response for note-on attributes
     
     /// Applies aftertouch X movement as a modulation source
     /// Aftertouch tracks the change in X position while key is held

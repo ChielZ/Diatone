@@ -339,23 +339,27 @@ private struct KeyTouchHandler: UIViewRepresentable {
             // Normalize touch position to 0...1
             let normalized = max(0.0, min(1.0, touchX / viewWidth))
             
-            // Calculate amplitude and filter cutoff from touch position
-            // These are applied IMMEDIATELY in trigger() for zero-latency response
-            let amplitude = Double(normalized)  // 0.0 - 1.0
-            let filterCutoff = 200.0 + (normalized * 1800.0)  // 200 Hz - 2000 Hz
-            
             // Allocate voice from pool
             let voice = voicePool.allocateVoice(frequency: frequency, forKey: keyIndex)
             allocatedVoice = voice
             
-            // Set base values in modulation state (will be applied in trigger())
-            voice.modulationState.baseAmplitude = amplitude
-            voice.modulationState.baseFilterCutoff = filterCutoff
+            // Store touch position in modulation state (for aftertouch, which is relative)
             voice.modulationState.initialTouchX = normalized
             voice.modulationState.currentTouchX = normalized
             
-            // Trigger is already called in allocateVoice, but the fix we applied
-            // ensures baseAmplitude and baseFilterCutoff are applied immediately
+            // APPLY INITIAL TOUCH AS TRIGGER PARAMETER (zero-latency)
+            // This sets the starting value of the parameter based on touch position
+            // Read configuration from voice modulation parameters
+            let touchInitial = voice.voiceModulation.touchInitial
+            
+            if touchInitial.isEnabled {
+                applyInitialTouchParameter(
+                    normalized: normalized,
+                    destination: touchInitial.destination,
+                    amount: touchInitial.amount,
+                    to: voice
+                )
+            }
             
             print("🎹 Key \(keyIndex): Touch at \(String(format: "%.2f", normalized)), freq \(String(format: "%.2f", frequency)) Hz")
             
@@ -368,19 +372,18 @@ private struct KeyTouchHandler: UIViewRepresentable {
         func handleTouchMoved(to location: CGPoint) {
             // PRIORITY 2: UPDATE MODULATION (control-rate timer will pick this up within 5ms)
             
-            guard let voice = allocatedVoice, let initialX = initialTouchX else { return }
+            guard allocatedVoice != nil else { return }
             
             // Calculate current touch position
             let currentX = isLeftSide ? location.x : viewWidth - location.x
             let normalizedCurrentX = max(0.0, min(1.0, currentX / viewWidth))
             
-            // Update modulation state - the control-rate timer will apply this
-            voice.modulationState.currentTouchX = normalizedCurrentX
+            // Update modulation state - the control-rate timer will apply aftertouch
+            // Aftertouch is calculated relative to initialTouchX (already stored)
+            allocatedVoice?.modulationState.currentTouchX = normalizedCurrentX
             
-            // Optionally update filter cutoff for immediate aftertouch response
-            // This bypasses the control-rate timer for more responsive aftertouch
-            let filterCutoff = 200.0 + (normalizedCurrentX * 1800.0)
-            voice.modulationState.baseFilterCutoff = filterCutoff
+            // Note: Aftertouch modulation is now handled entirely at control rate (200 Hz)
+            // This provides smooth, glitch-free parameter changes with 5ms latency
         }
         
         func handleTouchEnded() {
@@ -398,6 +401,111 @@ private struct KeyTouchHandler: UIViewRepresentable {
             // PRIORITY 3: UPDATE UI (happens on main thread, can wait)
             DispatchQueue.main.async { [weak self] in
                 self?.onTouchEnded()
+            }
+        }
+        
+        // MARK: - Initial Touch Parameter Application
+        
+        /// Applies initial touch as a trigger parameter (zero-latency)
+        /// This sets the starting value of a parameter based on touch position
+        /// - Parameters:
+        ///   - normalized: Normalized touch X position (0.0 - 1.0)
+        ///   - destination: The parameter to modulate
+        ///   - amount: Modulation amount
+        ///   - voice: The voice to apply to
+        private func applyInitialTouchParameter(
+            normalized: Double,
+            destination: ModulationDestination,
+            amount: Double,
+            to voice: PolyphonicVoice
+        ) {
+            // Only apply to voice-level destinations
+            guard destination.isVoiceLevel else { return }
+            
+            // Get base value for the destination
+            let baseValue = getBaseValueForTrigger(destination: destination, voice: voice)
+            
+            // Calculate modulated value using envelope modulation logic (unipolar)
+            // Touch position (0.0 - 1.0) acts like an envelope value
+            let modulated = ModulationRouter.applyEnvelopeModulation(
+                baseValue: baseValue,
+                envelopeValue: normalized,
+                amount: amount,
+                destination: destination
+            )
+            
+            // Apply directly to destination for zero-latency response
+            applyValueDirectly(modulated, to: destination, voice: voice)
+        }
+        
+        /// Gets the base value for a destination at trigger time
+        private func getBaseValueForTrigger(destination: ModulationDestination, voice: PolyphonicVoice) -> Double {
+            switch destination {
+            case .oscillatorAmplitude:
+                return 0.1  // Default amplitude
+            case .filterCutoff:
+                return 1200.0  // Default filter cutoff
+            case .modulationIndex:
+                return Double(voice.oscLeft.modulationIndex)
+            case .modulatingMultiplier:
+                return Double(voice.oscLeft.modulatingMultiplier)
+            case .oscillatorBaseFrequency:
+                return voice.currentFrequency
+            case .stereoSpreadAmount:
+                return voice.detuneMode == .proportional ? voice.frequencyOffsetRatio : voice.frequencyOffsetHz
+            case .voiceLFOFrequency:
+                return voice.voiceModulation.voiceLFO.frequency
+            case .voiceLFOAmount:
+                return voice.voiceModulation.voiceLFO.amount
+            case .delayTime, .delayMix:
+                return 0.0  // These shouldn't be targeted by initial touch
+            }
+        }
+        
+        /// Applies a value directly to a destination (zero-latency)
+        private func applyValueDirectly(_ value: Double, to destination: ModulationDestination, voice: PolyphonicVoice) {
+            guard value.isFinite else { return }
+            
+            switch destination {
+            case .oscillatorAmplitude:
+                let clamped = max(0.0, min(1.0, value))
+                voice.modulationState.baseAmplitude = clamped
+                voice.oscLeft.amplitude = AUValue(clamped)
+                voice.oscRight.amplitude = AUValue(clamped)
+                
+            case .filterCutoff:
+                let clamped = max(20.0, min(20000.0, value))
+                voice.modulationState.baseFilterCutoff = clamped
+                voice.filter.cutoffFrequency = AUValue(clamped)
+                
+            case .modulationIndex:
+                let clamped = max(0.0, min(10.0, value))
+                voice.oscLeft.modulationIndex = AUValue(clamped)
+                voice.oscRight.modulationIndex = AUValue(clamped)
+                
+            case .modulatingMultiplier:
+                let clamped = max(0.1, min(20.0, value))
+                voice.oscLeft.modulatingMultiplier = AUValue(clamped)
+                voice.oscRight.modulatingMultiplier = AUValue(clamped)
+                
+            case .oscillatorBaseFrequency:
+                voice.setFrequency(value)
+                
+            case .stereoSpreadAmount:
+                if voice.detuneMode == .proportional {
+                    voice.frequencyOffsetRatio = value
+                } else {
+                    voice.frequencyOffsetHz = value
+                }
+                
+            case .voiceLFOFrequency:
+                voice.voiceModulation.voiceLFO.frequency = max(0.01, min(10.0, value))
+                
+            case .voiceLFOAmount:
+                voice.voiceModulation.voiceLFO.amount = max(0.0, min(1.0, value))
+                
+            case .delayTime, .delayMix:
+                break  // These are global, not voice-level
             }
         }
     }

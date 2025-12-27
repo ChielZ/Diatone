@@ -446,9 +446,6 @@ struct ModulationState {
     var lastSmoothedFilterCutoff: Double? = nil  // Last smoothed filter value (for aftertouch smoothing)
     var filterSmoothingFactor: Double = 0.85     // 0.0 = no smoothing, 1.0 = maximum smoothing (0.85 = smooth 60Hz updates)
     
-    // Track if initial touch has been applied (to avoid redundant updates)
-    var hasAppliedInitialTouch: Bool = false
-    
     /// Reset state when voice is triggered
     /// - Parameters:
     ///   - frequency: The note frequency being triggered
@@ -473,9 +470,6 @@ struct ModulationState {
         
         // Reset smoothing state for new note
         lastSmoothedFilterCutoff = nil
-        
-        // Reset initial touch flag
-        hasAppliedInitialTouch = false
     }
     
     /// Update state when gate closes (note released)
