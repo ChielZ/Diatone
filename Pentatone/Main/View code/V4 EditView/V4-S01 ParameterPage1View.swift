@@ -32,14 +32,16 @@ struct OscillatorView: View {
     var body: some View {
         Group {
             // Row 3 - Waveform (enum cycling)
-            // Note: Waveform changes require app restart due to AudioKit limitations
             ParameterRow(
                 label: "WAVEFORM",
                 value: Binding(
                     get: { paramManager.voiceTemplate.oscillator.waveform },
                     set: { newValue in
                         paramManager.updateOscillatorWaveform(newValue)
-                        // Note: Waveform change saved to template but won't affect current voices
+                        // Recreate all voices with new waveform
+                        voicePool.recreateVoices(with: paramManager.voiceTemplate) {
+                            print("🎹 Voices recreated with waveform: \(newValue.displayName)")
+                        }
                     }
                 ),
                 displayText: { $0.displayName }
@@ -55,7 +57,7 @@ struct OscillatorView: View {
                         applyToAllVoices()
                     }
                 ),
-                range: 1...16
+                range: 1...8
             )
             
             // Row 5 - Modulator Multiplier Coarse (integer 1-16)
@@ -90,9 +92,9 @@ struct OscillatorView: View {
                         applyToAllVoices()
                     }
                 ),
-                range: 0...10,
-                step: 0.1,
-                displayFormatter: { String(format: "%.1f", $0) }
+                range: 0...2,
+                step: 0.01,
+                displayFormatter: { String(format: "%.2f", $0) }
             )
             
             // Row 8 - Stereo Offset Mode (enum cycling)
@@ -134,12 +136,12 @@ struct OscillatorView: View {
                     }
                 ),
                 range: paramManager.voiceTemplate.oscillator.detuneMode == .proportional ? 1.0000...1.0100 : 0...4,
-                step: paramManager.voiceTemplate.oscillator.detuneMode == .proportional ? 0.0001 : 0.1,
+                step: paramManager.voiceTemplate.oscillator.detuneMode == .proportional ? 0.00001 : 0.01,
                 displayFormatter: { value in
                     if paramManager.voiceTemplate.oscillator.detuneMode == .proportional {
-                        return String(format: "%.4f", value)
+                        return String(format: "%.5f", value)
                     } else {
-                        return String(format: "%.1f Hz", value)
+                        return String(format: "%.2f Hz", value)
                     }
                 }
             )

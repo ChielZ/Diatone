@@ -208,6 +208,62 @@ final class VoicePool {
         print("🎵 All voices stopped")
     }
     
+    // MARK: - Voice Recreation (for waveform changes)
+    
+    /// Recreates all voices with new parameters (e.g., when waveform changes)
+    /// This properly cleans up old voices and creates new ones
+    /// Warning: Kills any currently playing notes
+    func recreateVoices(with parameters: VoiceParameters, completion: @escaping () -> Void) {
+        print("🎵 Starting voice recreation...")
+        
+        // Stop all playing notes and clear key mappings
+        stopAll()
+        
+        // Properly clean up each voice (stops oscillators)
+        for voice in voices {
+            voice.cleanup()
+        }
+        
+        // Disconnect all voices from mixer
+        for voice in voices {
+            voiceMixer.removeInput(voice.envelope)
+        }
+        
+        // Schedule the actual recreation on a background queue to avoid blocking UI
+        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.05) {
+            // Clear the voices array (this will deallocate the old voices)
+            self.voices.removeAll()
+            
+            // Create new voices with updated parameters
+            var newVoices: [PolyphonicVoice] = []
+            for _ in 0..<self.voiceCount {
+                let voice = PolyphonicVoice(parameters: parameters)
+                newVoices.append(voice)
+            }
+            
+            // Return to main thread for AudioKit operations
+            DispatchQueue.main.async {
+                // Assign new voices
+                self.voices = newVoices
+                
+                // Reconnect all voices to mixer
+                for voice in self.voices {
+                    self.voiceMixer.addInput(voice.envelope)
+                }
+                
+                // Initialize the new voices
+                if self.isInitialized {
+                    for voice in self.voices {
+                        voice.initialize()
+                    }
+                }
+                
+                print("🎵 Voice recreation complete - \(self.voiceCount) voices ready")
+                completion()
+            }
+        }
+    }
+    
     // MARK: - Polyphony Adjustment
     
     /// Changes the polyphony (number of voices)

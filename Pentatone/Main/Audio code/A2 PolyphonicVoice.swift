@@ -194,6 +194,17 @@ final class PolyphonicVoice {
         updateOscillatorFrequencies()
     }
     
+    /// Cleanup method to safely stop and disconnect this voice
+    /// Should be called before destroying the voice
+    func cleanup() {
+        if isInitialized {
+            oscLeft.stop()
+            oscRight.stop()
+            isInitialized = false
+        }
+        isAvailable = true
+    }
+    
     // MARK: - Frequency Control
     
     /// Sets the base frequency for this voice
