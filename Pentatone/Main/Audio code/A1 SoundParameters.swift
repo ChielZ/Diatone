@@ -437,14 +437,10 @@ final class AudioParameterManager: ObservableObject {
     }
     
     func updateFineTuneCents(_ cents: Double) {
-        print("🎛️ updateFineTuneCents called with: \(cents)")
-        print("🎛️ Before - fineTune: \(master.globalPitch.fineTune), cents: \(master.globalPitch.fineTuneCents)")
-        var pitch = master.globalPitch
+         var pitch = master.globalPitch
         pitch.setFineTuneCents(cents)
-        print("🎛️ After mutation - fineTune: \(pitch.fineTune), cents: \(pitch.fineTuneCents)")
         master.globalPitch = pitch
-        print("🎛️ After assignment - fineTune: \(master.globalPitch.fineTune), cents: \(master.globalPitch.fineTuneCents)")
-    }
+     }
     
     // MARK: - Voice Template Updates
     

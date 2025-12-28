@@ -168,11 +168,9 @@ struct VoiceView: View {
                         )
                         .onTapGesture {
                             let current = fineTuneCentsDisplay
-                            print("🔧 Tune < tapped - current: \(current), fineTune raw: \(paramManager.master.globalPitch.fineTune)")
                             if current > -50 {
                                 paramManager.updateFineTuneCents(Double(current - 1))
-                                print("🔧 After update - cents: \(paramManager.master.globalPitch.fineTuneCents), fineTune: \(paramManager.master.globalPitch.fineTune)")
-                            }
+                                }
                         }
                     Spacer()
                     Text("TUNE \(fineTuneCentsDisplay > 0 ? "+" : "")\(fineTuneCentsDisplay)")
@@ -189,11 +187,9 @@ struct VoiceView: View {
                         )
                         .onTapGesture {
                             let current = fineTuneCentsDisplay
-                            print("🔧 Tune > tapped - current: \(current), fineTune raw: \(paramManager.master.globalPitch.fineTune)")
-                            if current < 50 {
+                             if current < 50 {
                                 paramManager.updateFineTuneCents(Double(current + 1))
-                                print("🔧 After update - cents: \(paramManager.master.globalPitch.fineTuneCents), fineTune: \(paramManager.master.globalPitch.fineTune)")
-                            }
+                             }
                         }
                 }
             }
