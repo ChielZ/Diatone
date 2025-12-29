@@ -12,7 +12,8 @@ import SoundpipeAudioKit
 import DunneAudioKit
 
 /// actual polyphony
-var currentPolyphony = 5
+let nominalPolyphony = 5
+var currentPolyphony = nominalPolyphony
 
 /// Manages allocation and lifecycle of polyphonic voices
 /// Uses round-robin allocation with availability checking and voice stealing
