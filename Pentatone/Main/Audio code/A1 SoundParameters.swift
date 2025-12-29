@@ -14,6 +14,30 @@ import SoundpipeAudioKit
 
 // MARK: - Parameter Models
 
+/// Voice mode determining polyphony behavior
+enum VoiceMode: String, Codable, Equatable, CaseIterable {
+    case monophonic
+    case polyphonic
+    
+    /// User-friendly display name
+    var displayName: String {
+        switch self {
+        case .monophonic: return "Monophonic"
+        case .polyphonic: return "Polyphonic"
+        }
+    }
+    
+    /// Number of voices for this mode
+    /// - Parameter currentPolyphony: The polyphony setting (used for polyphonic mode)
+    /// - Returns: 1 for monophonic, currentPolyphony for polyphonic
+    func voiceCount(currentPolyphony: Int) -> Int {
+        switch self {
+        case .monophonic: return 1
+        case .polyphonic: return currentPolyphony
+        }
+    }
+}
+
 /// Waveform types available for the FM oscillator
 enum OscillatorWaveform: String, Codable, Equatable, CaseIterable {
     case sine
@@ -282,6 +306,7 @@ struct MasterParameters: Codable, Equatable {
     var globalPitch: GlobalPitchParameters // Global pitch modifiers (transpose, octave, fine tune)
     var globalLFO: GlobalLFOParameters     // Phase 5C: Global modulation
     var tempo: Double                      // BPM for tempo-synced modulation
+    var voiceMode: VoiceMode               // Monophonic or polyphonic
     
     static let `default` = MasterParameters(
         delay: .default,
@@ -297,7 +322,8 @@ struct MasterParameters: Codable, Equatable {
             amount: 0.0,                       // ← CHANGE THIS (0.0 = off, 1.0 = max)
             isEnabled: false                    // ← SET TO false TO DISABLE
         ),
-        tempo: 120.0
+        tempo: 120.0,
+        voiceMode: .monophonic
     )
 }
 
@@ -405,6 +431,14 @@ final class AudioParameterManager: ObservableObject {
     
     func updateTempo(_ tempo: Double) {
         master.tempo = tempo
+    }
+    
+    // MARK: - Voice Mode Updates
+    
+    /// Update voice mode (monophonic/polyphonic)
+    /// This requires recreating the voice pool with the new voice count
+    func updateVoiceMode(_ mode: VoiceMode) {
+        master.voiceMode = mode
     }
     
     // MARK: - Global Pitch Updates

@@ -61,8 +61,9 @@ enum EngineManager {
         let masterParams = MasterParameters.default
         let voiceParams = VoiceParameters.default
         
-        // Create voice pool (5 polyphonic voices)
-        voicePool = VoicePool(voiceCount: 5)
+        // Create voice pool with voice count based on voice mode
+        let voiceCount = masterParams.voiceMode.voiceCount(currentPolyphony: currentPolyphony)
+        voicePool = VoicePool(voiceCount: voiceCount)
         
         // Set initial voice mixer volume (pre-FX)
         voicePool.voiceMixer.volume = AUValue(masterParams.output.preVolume)
