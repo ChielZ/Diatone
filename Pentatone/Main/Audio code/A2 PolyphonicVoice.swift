@@ -793,7 +793,8 @@ final class PolyphonicVoice {
             return modulationState.baseAmplitude
             
         case .oscillatorBaseFrequency:
-            return currentFrequency
+            // Use user-controlled base value from modulation state
+            return modulationState.baseFrequency
             
         case .modulatingMultiplier:
             return Double(oscLeft.modulatingMultiplier)

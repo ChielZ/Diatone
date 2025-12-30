@@ -442,6 +442,7 @@ struct ModulationState {
     var baseAmplitude: Double = 0.5        // User's desired amplitude (0.0 - 1.0)
     var baseFilterCutoff: Double = 1200.0  // User's desired filter cutoff (Hz)
     var baseModulationIndex: Double = 1.0  // User's desired modulation index (0.0 - 10.0)
+    var baseFrequency: Double = 440.0      // User's desired base frequency (Hz)
     
     // Smoothing state for filter modulation
     var lastSmoothedFilterCutoff: Double? = nil  // Last smoothed filter value (for aftertouch smoothing)
@@ -468,6 +469,7 @@ struct ModulationState {
         initialTouchX = touchX
         currentTouchX = touchX
         currentFrequency = frequency
+        baseFrequency = frequency  // Store the base frequency for modulation
         
         // Reset smoothing state for new note
         lastSmoothedFilterCutoff = nil

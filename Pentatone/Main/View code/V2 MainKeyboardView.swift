@@ -234,7 +234,7 @@ private struct KeyButton: View {
             ZStack {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color(colorName))
-                    .opacity(isDimmed ? 0.5 : 1.0)
+                    .opacity(isDimmed ? 0.25 : 1.0)
                 
                 // UIKit touch handler overlay - transparent, handles all touches
                 KeyTouchHandler(

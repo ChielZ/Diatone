@@ -162,7 +162,7 @@ struct VoiceParameters: Codable, Equatable {
                 release: 0.3,
                 destination: .filterCutoff,
                 amount: 0.0,
-                isEnabled: false
+                isEnabled: true
             ),
             voiceLFO: LFOParameters(
                 waveform: .square,
