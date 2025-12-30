@@ -691,6 +691,41 @@ final class AudioParameterManager: ObservableObject {
         voiceTemplate.modulation.voiceLFO.isEnabled = enabled
     }
     
+    /// Update global LFO waveform
+    func updateGlobalLFOWaveform(_ waveform: LFOWaveform) {
+        master.globalLFO.waveform = waveform
+    }
+    
+    /// Update global LFO reset mode
+    func updateGlobalLFOResetMode(_ mode: LFOResetMode) {
+        master.globalLFO.resetMode = mode
+    }
+    
+    /// Update global LFO frequency mode
+    func updateGlobalLFOFrequencyMode(_ mode: LFOFrequencyMode) {
+        master.globalLFO.frequencyMode = mode
+    }
+    
+    /// Update global LFO frequency
+    func updateGlobalLFOFrequency(_ value: Double) {
+        master.globalLFO.frequency = value
+    }
+    
+    /// Update global LFO destination
+    func updateGlobalLFODestination(_ destination: ModulationDestination) {
+        master.globalLFO.destination = destination
+    }
+    
+    /// Update global LFO amount
+    func updateGlobalLFOAmount(_ value: Double) {
+        master.globalLFO.amount = value
+    }
+    
+    /// Update global LFO enabled state
+    func updateGlobalLFOEnabled(_ enabled: Bool) {
+        master.globalLFO.isEnabled = enabled
+    }
+    
     // MARK: - Preset Management
     
     /// Load a complete parameter set (preset)
