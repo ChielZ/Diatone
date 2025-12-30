@@ -389,15 +389,16 @@ final class PolyphonicVoice {
     
     /// Updates oscillator parameters
     func updateOscillatorParameters(_ parameters: OscillatorParameters) {
-        oscLeft.carrierMultiplier = AUValue(parameters.carrierMultiplier)
-        oscLeft.modulatingMultiplier = AUValue(parameters.modulatingMultiplier)
-        oscLeft.modulationIndex = AUValue(parameters.modulationIndex)
-        oscLeft.amplitude = AUValue(parameters.amplitude)
+        // Use zero-duration ramps to avoid AudioKit parameter ramping artifacts
+        oscLeft.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0)
+        oscLeft.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0)
+        oscLeft.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0)
+        oscLeft.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0)
         
-        oscRight.carrierMultiplier = AUValue(parameters.carrierMultiplier)
-        oscRight.modulatingMultiplier = AUValue(parameters.modulatingMultiplier)
-        oscRight.modulationIndex = AUValue(parameters.modulationIndex)
-        oscRight.amplitude = AUValue(parameters.amplitude)
+        oscRight.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0)
+        oscRight.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0)
+        oscRight.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0)
+        oscRight.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0)
         
         // Note: Waveform cannot be changed dynamically in AudioKit's FMOscillator
         // Waveform changes require voice recreation (handled by VoicePool.recreateVoices)
@@ -406,9 +407,10 @@ final class PolyphonicVoice {
    
     /// Updates filter parameters
     func updateFilterParameters(_ parameters: FilterParameters) {
-        filter.cutoffFrequency = AUValue(parameters.clampedCutoff)
-        filter.resonance = AUValue(parameters.clampedResonance)
-        filter.saturation = AUValue(parameters.clampedSaturation)
+        // Use zero-duration ramps to avoid AudioKit parameter ramping artifacts
+        filter.$cutoffFrequency.ramp(to: AUValue(parameters.clampedCutoff), duration: 0)
+        filter.$resonance.ramp(to: AUValue(parameters.clampedResonance), duration: 0)
+        filter.$saturation.ramp(to: AUValue(parameters.clampedSaturation), duration: 0)
         
         // Update the base filter cutoff in modulation state
         // This ensures the modulation system uses the new value as the base
@@ -417,10 +419,11 @@ final class PolyphonicVoice {
     
     /// Updates envelope parameters
     func updateEnvelopeParameters(_ parameters: EnvelopeParameters) {
-        envelope.attackDuration = AUValue(parameters.attackDuration)
-        envelope.decayDuration = AUValue(parameters.decayDuration)
-        envelope.sustainLevel = AUValue(parameters.sustainLevel)
-        envelope.releaseDuration = AUValue(parameters.releaseDuration)
+        // Use zero-duration ramps to avoid AudioKit parameter ramping artifacts
+        envelope.$attackDuration.ramp(to: AUValue(parameters.attackDuration), duration: 0)
+        envelope.$decayDuration.ramp(to: AUValue(parameters.decayDuration), duration: 0)
+        envelope.$sustainLevel.ramp(to: AUValue(parameters.sustainLevel), duration: 0)
+        envelope.$releaseDuration.ramp(to: AUValue(parameters.releaseDuration), duration: 0)
     }
     
     /// Updates modulation parameters (Phase 5)
@@ -510,8 +513,9 @@ final class PolyphonicVoice {
             )
             
             // Apply to both oscillators (stereo voice)
-            oscLeft.modulationIndex = AUValue(modulatedIndex)
-            oscRight.modulationIndex = AUValue(modulatedIndex)
+            // Use zero-duration ramps to avoid AudioKit parameter ramping artifacts
+            oscLeft.$modulationIndex.ramp(to: AUValue(modulatedIndex), duration: 0)
+            oscRight.$modulationIndex.ramp(to: AUValue(modulatedIndex), duration: 0)
         }
         
         // Apply auxiliary envelope to its routed destination

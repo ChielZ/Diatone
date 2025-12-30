@@ -541,7 +541,8 @@ final class VoicePool {
                 lfoValue: value,
                 destination: destination
             )
-            delay.time = AUValue(modulated)
+            // Use zero-duration ramp to avoid AudioKit parameter ramping artifacts
+            delay.$time.ramp(to: AUValue(modulated), duration: 0)
             
         case .delayMix:
             // Modulate delay mix
@@ -552,7 +553,8 @@ final class VoicePool {
                 lfoValue: value,
                 destination: destination
             )
-            delay.dryWetMix = AUValue(1.0 - modulated)  // Convert back
+            // Use zero-duration ramp to avoid AudioKit parameter ramping artifacts
+            delay.$dryWetMix.ramp(to: AUValue(1.0 - modulated), duration: 0)
             
         case .oscillatorAmplitude, .oscillatorBaseFrequency, .modulationIndex,
              .modulatingMultiplier, .filterCutoff, .stereoSpreadAmount,
