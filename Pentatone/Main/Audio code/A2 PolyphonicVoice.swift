@@ -169,6 +169,11 @@ final class PolyphonicVoice {
             sustainLevel: AUValue(parameters.envelope.sustainLevel),
             releaseDuration: AUValue(parameters.envelope.releaseDuration)
         )
+        
+        // Initialize base values in modulation state
+        modulationState.baseAmplitude = parameters.oscillator.amplitude
+        modulationState.baseFilterCutoff = parameters.filter.clampedCutoff
+        modulationState.baseModulationIndex = parameters.oscillator.modulationIndex
     }
     
     // MARK: - Initialization
@@ -400,6 +405,10 @@ final class PolyphonicVoice {
         oscRight.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0)
         oscRight.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0)
         
+        // Update the base modulation index in modulation state
+        // This ensures the modulation system uses the new value as the base
+        modulationState.baseModulationIndex = parameters.modulationIndex
+        
         // Note: Waveform cannot be changed dynamically in AudioKit's FMOscillator
         // Waveform changes require voice recreation (handled by VoicePool.recreateVoices)
     }
@@ -503,7 +512,8 @@ final class PolyphonicVoice {
         
         // Apply modulator envelope to modulationIndex (hardwired)
         if voiceModulation.modulatorEnvelope.isEnabled {
-            let baseModIndex = 0.0  // Always start from 0 for modulator envelope
+            // Use the base modulation index from modulation state
+            let baseModIndex = modulationState.baseModulationIndex
             
             let modulatedIndex = ModulationRouter.applyEnvelopeModulation(
                 baseValue: baseModIndex,
@@ -516,6 +526,10 @@ final class PolyphonicVoice {
             // Use zero-duration ramps to avoid AudioKit parameter ramping artifacts
             oscLeft.$modulationIndex.ramp(to: AUValue(modulatedIndex), duration: 0)
             oscRight.$modulationIndex.ramp(to: AUValue(modulatedIndex), duration: 0)
+        } else {
+            // Modulator envelope disabled - apply base value
+            oscLeft.$modulationIndex.ramp(to: AUValue(modulationState.baseModulationIndex), duration: 0)
+            oscRight.$modulationIndex.ramp(to: AUValue(modulationState.baseModulationIndex), duration: 0)
         }
         
         // Apply auxiliary envelope to its routed destination
@@ -762,7 +776,8 @@ final class PolyphonicVoice {
     private func getBaseValue(for destination: ModulationDestination) -> Double {
         switch destination {
         case .modulationIndex:
-            return Double(oscLeft.modulationIndex)
+            // Use user-controlled base value from modulation state
+            return modulationState.baseModulationIndex
             
         case .filterCutoff:
             // Use user-controlled base value from modulation state

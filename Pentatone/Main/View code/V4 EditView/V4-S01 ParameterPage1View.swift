@@ -91,7 +91,7 @@ struct OscillatorView: View {
                         applyToAllVoices()
                     }
                 ),
-                range: 0...2,
+                range: 0...5,
                 step: 0.01,
                 displayFormatter: { String(format: "%.2f", $0) }
             )
