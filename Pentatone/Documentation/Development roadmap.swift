@@ -387,4 +387,76 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  5) Reverb mix minimum
  6) Reverb mix maximum
   
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Aux envelope destinations:
+ √ Oscillator baseFrequency
+ X modulatingMultiplier
+ √ Filter frequency [default]
+ ? Voice LFO frequency
+ ? Voice LFO mod amount
+ 
+ Voice LFO destinations:
+ √ Oscillator baseFrequency [default]
+ ? modulationIndex
+ X modulatingMultiplier
+ √ Filter frequency
+ X stereo spread offset amount
+ 
+ Global LFO destinations:
+ √ Oscillator amplitude [default]
+ - Oscillator baseFrequency
+ - modulationIndex
+ - modulatingMultiplier
+ - Filter frequency
+ - delay time
+ - delay amount
+
+ Initial touch destinations:
+ √ Oscillator amplitude
+ - modulationIndex
+ - modulatingMultiplier
+ - Filter frequency
+ - Voice LFO frequency
+ - Voice LFO mod amount
+
+ Aftertouch destinations:
+ - Oscillator amplitude
+ - modulationIndex
+ - modulatingMultiplier
+ √ Filter frequency
+ - Voice LFO frequency
+ - Voice LFO mod amount
+ 
+ 
+ 
+ 
+ 
+ Aux envelope destinations:
+  √ Oscillator baseFrequency
+  √ Filter frequency [default]
+  
+  Voice LFO destinations:
+  √ Oscillator baseFrequency [default]
+  √ Filter frequency
+  
+  Global LFO destinations:
+  √ Oscillator amplitude [default]
+
+  Initial touch destinations:
+  √ Oscillator amplitude
+ 
+  Aftertouch destinations:
+  √ Filter frequency
+ 
+ 
+ 
+ 
  */

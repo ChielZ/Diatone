@@ -171,7 +171,7 @@ struct VoiceParameters: Codable, Equatable {
                 frequency: 6.0,
                 destination: .oscillatorAmplitude,
                 amount: 0.0,                         // Disabled by default
-                isEnabled: false
+                isEnabled: true
             ),
             keyTracking: .default,
             
