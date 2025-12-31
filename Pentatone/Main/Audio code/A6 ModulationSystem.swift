@@ -8,61 +8,31 @@
 import Foundation
 import AudioKit
 
-// MARK: - Modulation Destinations
+// MARK: - Modulation Destinations (Legacy - Deprecated)
 
-/// Defines where modulation can be routed
+/// Legacy enum - kept for reference during refactoring
+/// New system uses fixed destinations per source with individual amounts
+@available(*, deprecated, message: "Use fixed destinations in parameter structs instead")
 enum ModulationDestination: String, Codable, CaseIterable {
     // Oscillator destinations
-    case oscillatorAmplitude         // Amplitude of both oscillators
-    case oscillatorBaseFrequency     // Base frequency (pitch modulation)
-    case modulationIndex             // FM modulation depth (timbral)
-    case modulatingMultiplier        // FM modulator frequency ratio
+    case oscillatorAmplitude
+    case oscillatorBaseFrequency
+    case modulationIndex
+    case modulatingMultiplier
     
     // Filter destinations
-    case filterCutoff                // Low-pass filter cutoff frequency
+    case filterCutoff
     
     // Stereo/Voice destinations
-    case stereoSpreadAmount          // Detune/spread between left and right oscillators
+    case stereoSpreadAmount
     
-    // Voice LFO destinations (for envelope/tracking to modulate LFO itself)
-    case voiceLFOFrequency           // Rate of the per-voice LFO
-    case voiceLFOAmount              // Depth of the per-voice LFO
+    // Voice LFO destinations
+    case voiceLFOFrequency
+    case voiceLFOAmount
     
-    // Global/FX destinations (only global sources can target these)
-    case delayTime                   // Delay time in seconds
-    case delayMix                    // Delay wet/dry mix
-    
-    /// Returns true if this destination can be modulated by per-voice sources
-    var isVoiceLevel: Bool {
-        switch self {
-        case .oscillatorAmplitude, .oscillatorBaseFrequency, .modulationIndex, .modulatingMultiplier,
-             .filterCutoff, .stereoSpreadAmount, .voiceLFOFrequency, .voiceLFOAmount:
-            return true
-        case .delayTime, .delayMix:
-            return false
-        }
-    }
-    
-    /// Returns true if this destination can be modulated by global sources
-    var isGlobalLevel: Bool {
-        return true  // Global sources can target anything
-    }
-    
-    /// User-friendly display name
-    var displayName: String {
-        switch self {
-        case .oscillatorAmplitude: return "Oscillator Amplitude"
-        case .oscillatorBaseFrequency: return "Oscillator Frequency"
-        case .modulationIndex: return "Modulation Index"
-        case .modulatingMultiplier: return "Modulator Multiplier"
-        case .filterCutoff: return "Filter Cutoff"
-        case .stereoSpreadAmount: return "Stereo Spread"
-        case .voiceLFOFrequency: return "Voice LFO Rate"
-        case .voiceLFOAmount: return "Voice LFO Depth"
-        case .delayTime: return "Delay Time"
-        case .delayMix: return "Delay Mix"
-        }
-    }
+    // Global/FX destinations
+    case delayTime
+    case delayMix
 }
 
 // MARK: - LFO Waveforms
@@ -158,136 +128,143 @@ enum LFOFrequencyMode: String, Codable, CaseIterable {
     }
 }
 
-// MARK: - LFO Parameters
+// MARK: - Voice LFO Parameters (Fixed Destinations)
 
-/// Represents a low-frequency oscillator for modulation
-/// This is a data structure for Phase 5 implementation
-struct LFOParameters: Codable, Equatable {
+/// Voice LFO with fixed destinations and individual amounts
+/// Each voice has its own LFO instance with independent phase
+struct VoiceLFOParameters: Codable, Equatable {
+    // Configuration
     var waveform: LFOWaveform
     var resetMode: LFOResetMode
     var frequencyMode: LFOFrequencyMode
-    var frequency: Double               // Hz (0.01 - 10 Hz) or tempo multiplier depending on mode
-    var destination: ModulationDestination
-    var amount: Double                  // Bipolar modulation amount (0.0 - 1.0, always positive)
+    var frequency: Double                      // Hz (0.01 - 20 Hz) or tempo multiplier
+    
+    // Fixed destinations with individual amounts (can be positive or negative)
+    var amountToOscillatorPitch: Double        // ±semitones (Page 7, item 4)
+    var amountToFilterFrequency: Double        // ±octaves (Page 7, item 5)
+    var amountToModulatorLevel: Double         // ±modulation index (Page 7, item 6)
+    
+    // Delay/ramp applied to all LFO outputs (Page 7, item 7)
+    var delayTime: Double                      // 0 to 5 seconds
+    
     var isEnabled: Bool
     
-    static let `default` = LFOParameters(
+    static let `default` = VoiceLFOParameters(
         waveform: .sine,
         resetMode: .free,
         frequencyMode: .hertz,
-        frequency: 2.0,
-        destination: .oscillatorBaseFrequency,
-        amount: 0.0,
-        isEnabled: false
+        frequency: 5.0,
+        amountToOscillatorPitch: 0.0,          // No vibrato by default
+        amountToFilterFrequency: 0.0,          // No filter modulation by default
+        amountToModulatorLevel: 0.0,           // No timbre modulation by default
+        delayTime: 0.0,                        // Instant effect by default
+        isEnabled: true
     )
     
-    /// Calculate the current LFO value based on phase (0.0 - 1.0)
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToOscillatorPitch != 0.0
+            || amountToFilterFrequency != 0.0
+            || amountToModulatorLevel != 0.0
+    }
+    
+    /// Calculate the raw LFO waveform value at a given phase
     /// - Parameter phase: Current phase of the LFO (0.0 = start, 1.0 = end of cycle)
-    /// - Returns: LFO value in range -1.0 to +1.0 (bipolar, scaled by amount)
-    func currentValue(phase: Double) -> Double {
+    /// - Returns: Raw LFO value in range -1.0 to +1.0 (unscaled)
+    func rawValue(at phase: Double) -> Double {
         guard isEnabled else { return 0.0 }
-        
-        // Get raw waveform value (-1.0 to +1.0) from the waveform enum
-        let rawValue = waveform.value(at: phase)
-        
-        // Scale by amount (bipolar modulation)
-        return rawValue * amount
+        return waveform.value(at: phase)
     }
 }
 
-// MARK: - Modulation Envelope
+// MARK: - Modulation Envelopes (Fixed Destinations)
 
-/// Represents an ADSR envelope generator for modulation (not amplitude)
-/// This is separate from the amplitude envelope and can modulate parameters over time
-struct ModulationEnvelopeParameters: Codable, Equatable {
-    var attack: Double                    // Attack time in seconds
-    var decay: Double                     // Decay time in seconds
-    var sustain: Double                   // Sustain level (0.0 - 1.0)
-    var release: Double                   // Release time in seconds
-    var destination: ModulationDestination
-    var amount: Double                    // Unipolar modulation amount (-1.0 to +1.0)
+/// Modulator Envelope - affects FM modulation index only
+/// This envelope shapes the timbre over the course of the note
+struct ModulatorEnvelopeParameters: Codable, Equatable {
+    // ADSR timing
+    var attack: Double                         // Attack time in seconds
+    var decay: Double                          // Decay time in seconds
+    var sustain: Double                        // Sustain level (0.0 - 1.0)
+    var release: Double                        // Release time in seconds
+    
+    // Fixed destination: Modulation Index only (Page 5, item 5)
+    var amountToModulationIndex: Double        // Can be positive or negative
+    
     var isEnabled: Bool
     
-    static let `default` = ModulationEnvelopeParameters(
+    static let `default` = ModulatorEnvelopeParameters(
+        attack: 0.01,
+        decay: 0.2,
+        sustain: 0.3,
+        release: 0.1,
+        amountToModulationIndex: 0.0,          // No modulation by default
+        isEnabled: true
+    )
+    
+    /// Check if envelope has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToModulationIndex != 0.0
+    }
+}
+
+/// Auxiliary Envelope - affects pitch, filter, and vibrato amount
+/// This envelope provides additional timbral shaping beyond the mod envelope
+struct AuxiliaryEnvelopeParameters: Codable, Equatable {
+    // ADSR timing
+    var attack: Double                         // Attack time in seconds
+    var decay: Double                          // Decay time in seconds
+    var sustain: Double                        // Sustain level (0.0 - 1.0)
+    var release: Double                        // Release time in seconds
+    
+    // Fixed destinations with individual amounts (Page 6, items 5-7)
+    var amountToOscillatorPitch: Double        // ±semitones (can be positive or negative)
+    var amountToFilterFrequency: Double        // ±octaves (can be positive or negative)
+    var amountToVibrato: Double                // Meta-modulation: scales voice LFO pitch amount
+    
+    var isEnabled: Bool
+    
+    static let `default` = AuxiliaryEnvelopeParameters(
         attack: 0.1,
         decay: 0.2,
         sustain: 0.5,
         release: 0.3,
-        destination: .filterCutoff,
-        amount: 0.0,
-        isEnabled: false
+        amountToOscillatorPitch: 0.0,          // No pitch sweep by default
+        amountToFilterFrequency: 0.0,          // No filter sweep by default
+        amountToVibrato: 0.0,                  // No vibrato modulation by default
+        isEnabled: true
     )
     
-    /// Calculate the current envelope value based on time and gate state
-    /// Returns a value from 0.0 to 1.0 representing the envelope stage
-    func currentValue(timeInEnvelope: Double, isGateOpen: Bool) -> Double {
-        guard isEnabled else { return 0.0 }
-        
-        if isGateOpen {
-            // Gate is open - process attack, decay, sustain stages
-            if timeInEnvelope < attack {
-                // Attack stage: linear rise from 0 to 1
-                return timeInEnvelope / attack
-            } else if timeInEnvelope < (attack + decay) {
-                // Decay stage: linear fall from 1 to sustain level
-                let decayTime = timeInEnvelope - attack
-                let decayProgress = decayTime / decay
-                return 1.0 - (decayProgress * (1.0 - sustain))
-            } else {
-                // Sustain stage: hold at sustain level
-                return sustain
-            }
-        } else {
-            // Gate is closed - process release stage
-            // timeInEnvelope is time since gate closed
-            // NOTE: We should release from the captured sustain level, not the configured one
-            // The captured level is passed via the ModulationState.modulatorSustainLevel
-            // This is handled in PolyphonicVoice.release() when closeGate is called
-            
-            // For now, return the sustain level as placeholder
-            // The actual release calculation will use the captured level
-            return sustain
-        }
-    }
-    
-    /// Calculate release value from a captured level
-    /// - Parameters:
-    ///   - timeInRelease: Time since gate closed
-    ///   - capturedLevel: The envelope level when gate closed
-    /// - Returns: Current envelope value during release
-    func releaseValue(timeInRelease: Double, fromLevel capturedLevel: Double) -> Double {
-        guard isEnabled else { return 0.0 }
-        
-        if timeInRelease < release {
-            // Release stage: linear fall from captured level to 0
-            let releaseProgress = timeInRelease / release
-            return capturedLevel * (1.0 - releaseProgress)
-        } else {
-            // Release complete
-            return 0.0
-        }
-    }
-    
-    /// Returns true if the envelope has completed (reached 0 in release)
-    func isComplete(timeInEnvelope: Double, isGateOpen: Bool) -> Bool {
-        return !isGateOpen && timeInEnvelope >= release
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToOscillatorPitch != 0.0
+            || amountToFilterFrequency != 0.0
+            || amountToVibrato != 0.0
     }
 }
 
-// MARK: - Key Tracking
+// MARK: - Key Tracking (Fixed Destinations)
 
 /// Key tracking provides modulation based on the pitch of the triggered note
 /// Higher notes produce higher modulation values
 struct KeyTrackingParameters: Codable, Equatable {
-    var destination: ModulationDestination
-    var amount: Double                    // Unipolar modulation amount (-1.0 to +1.0)
+    // Fixed destinations with individual amounts (Page 5, items 6-7)
+    var amountToFilterFrequency: Double        // Scales filter modulation (unipolar 0-1)
+    var amountToVoiceLFOFrequency: Double      // Scales voice LFO frequency (unipolar 0-1)
+    
     var isEnabled: Bool
     
     static let `default` = KeyTrackingParameters(
-        destination: .filterCutoff,
-        amount: 0.0,
-        isEnabled: false
+        amountToFilterFrequency: 0.0,          // No key tracking by default
+        amountToVoiceLFOFrequency: 0.0,        // No LFO frequency tracking by default
+        isEnabled: true
     )
+    
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToFilterFrequency != 0.0
+            || amountToVoiceLFOFrequency != 0.0
+    }
     
     /// Calculate key tracking value based on frequency
     /// Returns a value from 0.0 (low note) to 1.0 (high note)
@@ -303,73 +280,81 @@ struct KeyTrackingParameters: Codable, Equatable {
     }
 }
 
-// MARK: - Touch Modulation
+// MARK: - Touch Modulation (Fixed Destinations)
 
 /// Touch modulation from initial touch X position
-/// The X coordinate where the key was first touched
+/// The X coordinate where the key was first touched (applied at note-on)
 struct TouchInitialParameters: Codable, Equatable {
-    var destination: ModulationDestination
-    var amount: Double                    // Unipolar modulation amount (-1.0 to +1.0)
+    // Fixed destinations with individual amounts (Page 9, items 1-4)
+    var amountToOscillatorAmplitude: Double    // Scales base amplitude (velocity-like)
+    var amountToModEnvelope: Double            // Scales mod envelope amount (meta-modulation)
+    var amountToAuxEnvPitch: Double            // Scales aux envelope pitch amount (meta-modulation)
+    var amountToAuxEnvCutoff: Double           // Scales aux envelope filter amount (meta-modulation)
+    
     var isEnabled: Bool
     
     static let `default` = TouchInitialParameters(
-        destination: .filterCutoff,
-        amount: 0.0,
-        isEnabled: false
+        amountToOscillatorAmplitude: 0.0,      // No velocity sensitivity by default
+        amountToModEnvelope: 0.0,              // No envelope scaling by default
+        amountToAuxEnvPitch: 0.0,              // No pitch envelope scaling by default
+        amountToAuxEnvCutoff: 0.0,             // No filter envelope scaling by default
+        isEnabled: true
     )
+    
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToOscillatorAmplitude != 0.0
+            || amountToModEnvelope != 0.0
+            || amountToAuxEnvPitch != 0.0
+            || amountToAuxEnvCutoff != 0.0
+    }
 }
 
 /// Aftertouch modulation from change in X position while holding
-/// Tracks movement of the finger while the key is held
+/// Tracks movement of the finger while the key is held (continuous modulation)
 struct TouchAftertouchParameters: Codable, Equatable {
-    var destination: ModulationDestination
-    var amount: Double                    // Bipolar modulation amount (0.0 - 1.0, always positive)
+    // Fixed destinations with individual amounts (Page 9, items 5-7)
+    var amountToFilterFrequency: Double        // ±octaves (bipolar modulation)
+    var amountToModulatorLevel: Double         // ±modulation index (bipolar modulation)
+    var amountToVibrato: Double                // Meta-modulation: adds to voice LFO pitch amount
+    
     var isEnabled: Bool
-    // TODO: Consider adding mode (relative/absolute) in future
     
     static let `default` = TouchAftertouchParameters(
-        destination: .oscillatorAmplitude,
-        amount: 0.0,
-        isEnabled: false
+        amountToFilterFrequency: 0.0,          // No aftertouch filter control by default
+        amountToModulatorLevel: 0.0,           // No aftertouch timbre control by default
+        amountToVibrato: 0.0,                  // No aftertouch vibrato control by default
+        isEnabled: true
     )
+    
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToFilterFrequency != 0.0
+            || amountToModulatorLevel != 0.0
+            || amountToVibrato != 0.0
+    }
 }
 
 // MARK: - Complete Modulation System Parameters
 
 /// Container for all modulation sources and routings for a single voice
-/// This will be integrated into VoiceParameters in Phase 5B+
+/// All destinations are now fixed per source with individual amount controls
 struct VoiceModulationParameters: Codable, Equatable {
     // Envelopes
-    var modulatorEnvelope: ModulationEnvelopeParameters    // Hardwired to modulationIndex (5B)
-    var auxiliaryEnvelope: ModulationEnvelopeParameters    // Routable (5B)
+    var modulatorEnvelope: ModulatorEnvelopeParameters   // Fixed: modulation index only
+    var auxiliaryEnvelope: AuxiliaryEnvelopeParameters   // Fixed: pitch, filter, vibrato
     
     // LFO
-    var voiceLFO: LFOParameters                            // Per-voice LFO (5C)
+    var voiceLFO: VoiceLFOParameters                     // Fixed: pitch, filter, modulator level
     
     // Touch/Key tracking
-    var keyTracking: KeyTrackingParameters                 // Frequency-based modulation (5D)
-    var touchInitial: TouchInitialParameters               // Initial touch X position (5D)
-    var touchAftertouch: TouchAftertouchParameters         // Aftertouch X movement (5D)
+    var keyTracking: KeyTrackingParameters               // Fixed: filter freq, LFO freq
+    var touchInitial: TouchInitialParameters             // Fixed: amplitude, env amounts (meta-mod)
+    var touchAftertouch: TouchAftertouchParameters       // Fixed: filter, modulator, vibrato
     
     static let `default` = VoiceModulationParameters(
-        modulatorEnvelope: ModulationEnvelopeParameters(
-            attack: 0.01,
-            decay: 0.2,
-            sustain: 0.3,
-            release: 0.1,
-            destination: .modulationIndex,  // Hardwired
-            amount: 0.0,
-            isEnabled: false
-        ),
-        auxiliaryEnvelope: ModulationEnvelopeParameters(
-            attack: 0.1,
-            decay: 0.2,
-            sustain: 0.5,
-            release: 0.3,
-            destination: .filterCutoff,     // Default, but routable
-            amount: 0.0,
-            isEnabled: false
-        ),
+        modulatorEnvelope: .default,
+        auxiliaryEnvelope: .default,
         voiceLFO: .default,
         keyTracking: .default,
         touchInitial: .default,
@@ -377,15 +362,23 @@ struct VoiceModulationParameters: Codable, Equatable {
     )
 }
 
-/// Global LFO that affects all voices (or global parameters)
-/// Lives in VoicePool or AudioEngine, not in individual voices
+// MARK: - Global LFO Parameters (Fixed Destinations)
+
+/// Global LFO that affects all voices synchronously
+/// Lives in VoicePool, not in individual voices
 struct GlobalLFOParameters: Codable, Equatable {
+    // Configuration
     var waveform: LFOWaveform
     var resetMode: LFOResetMode             // Free or Sync (no trigger for global)
     var frequencyMode: LFOFrequencyMode
-    var frequency: Double                   // Hz (0.01 - 10 Hz) or tempo multiplier
-    var destination: ModulationDestination
-    var amount: Double                      // Bipolar modulation amount (0.0 - 1.0)
+    var frequency: Double                   // Hz (0.01 - 20 Hz) or tempo multiplier
+    
+    // Fixed destinations with individual amounts (Page 8, items 4-7)
+    var amountToOscillatorAmplitude: Double // ±amplitude (tremolo effect)
+    var amountToModulatorMultiplier: Double // ±modulator ratio (fine tuning of FM ratio)
+    var amountToFilterFrequency: Double     // ±octaves
+    var amountToDelayTime: Double           // ±seconds
+    
     var isEnabled: Bool
     
     static let `default` = GlobalLFOParameters(
@@ -393,22 +386,27 @@ struct GlobalLFOParameters: Codable, Equatable {
         resetMode: .free,
         frequencyMode: .hertz,
         frequency: 1.0,
-        destination: .oscillatorAmplitude,
-        amount: 0.0,
-        isEnabled: false
+        amountToOscillatorAmplitude: 0.0,   // No tremolo by default
+        amountToModulatorMultiplier: 0.0,   // No FM ratio modulation by default
+        amountToFilterFrequency: 0.0,       // No global filter modulation by default
+        amountToDelayTime: 0.0,             // No delay time modulation by default
+        isEnabled: true
     )
     
-    /// Calculate the current LFO value based on phase (0.0 - 1.0)
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToOscillatorAmplitude != 0.0
+            || amountToModulatorMultiplier != 0.0
+            || amountToFilterFrequency != 0.0
+            || amountToDelayTime != 0.0
+    }
+    
+    /// Calculate the raw LFO waveform value at a given phase
     /// - Parameter phase: Current phase of the LFO (0.0 = start, 1.0 = end of cycle)
-    /// - Returns: LFO value in range -1.0 to +1.0 (bipolar, scaled by amount)
-    func currentValue(phase: Double) -> Double {
+    /// - Returns: Raw LFO value in range -1.0 to +1.0 (unscaled)
+    func rawValue(at phase: Double) -> Double {
         guard isEnabled else { return 0.0 }
-        
-        // Get raw waveform value (-1.0 to +1.0) from the waveform enum
-        let rawValue = waveform.value(at: phase)
-        
-        // Scale by amount (bipolar modulation)
-        return rawValue * amount
+        return waveform.value(at: phase)
     }
 }
 
@@ -429,6 +427,10 @@ struct ModulationState {
     
     // LFO phase tracking
     var voiceLFOPhase: Double = 0.0        // 0.0 - 1.0 (one full cycle)
+    
+    // Voice LFO delay/ramp state
+    var voiceLFODelayTimer: Double = 0.0   // Time since voice triggered
+    var voiceLFORampFactor: Double = 0.0   // 0.0 to 1.0 (scales all voice LFO outputs)
     
     // Touch state
     var initialTouchX: Double = 0.0        // Normalized 0.0 - 1.0
@@ -466,6 +468,10 @@ struct ModulationState {
             voiceLFOPhase = 0.0
         }
         
+        // Reset voice LFO delay/ramp
+        voiceLFODelayTimer = 0.0
+        voiceLFORampFactor = 0.0
+        
         initialTouchX = touchX
         currentTouchX = touchX
         currentFrequency = frequency
@@ -485,6 +491,26 @@ struct ModulationState {
         modulatorEnvelopeTime = 0.0
         auxiliaryEnvelopeTime = 0.0
     }
+    
+    /// Update voice LFO delay ramp factor
+    /// - Parameters:
+    ///   - deltaTime: Time since last update
+    ///   - delayTime: Total delay time (0 = instant, >0 = gradual ramp)
+    mutating func updateVoiceLFODelayRamp(deltaTime: Double, delayTime: Double) {
+        voiceLFODelayTimer += deltaTime
+        
+        if delayTime > 0.0 {
+            // Linear ramp from 0 to 1 over delayTime
+            if voiceLFODelayTimer < delayTime {
+                voiceLFORampFactor = voiceLFODelayTimer / delayTime
+            } else {
+                voiceLFORampFactor = 1.0  // Full effect after delay
+            }
+        } else {
+            // No delay: instant full effect
+            voiceLFORampFactor = 1.0
+        }
+    }
 }
 
 // MARK: - Global Modulation State (Runtime)
@@ -495,178 +521,253 @@ struct GlobalModulationState {
     var currentTempo: Double = 120.0       // BPM for tempo sync
 }
 
-// MARK: - Modulation Router
+// MARK: - Modulation Router (New Fixed-Destination System)
 
-/// Helper for calculating and applying modulation to destinations
-/// This will be used in Phase 5B+ to route modulation values to parameters
+/// Helper for calculating and applying modulation with fixed destinations
+/// Implements the exact routing specified in the development roadmap
 struct ModulationRouter {
     
-    /// Apply modulation amount to a base value
+    // MARK: - Envelope Value Calculation
+    
+    /// Calculate ADSR envelope value at a given time
     /// - Parameters:
-    ///   - baseValue: The unmodulated parameter value
-    ///   - envelopeValue: The envelope value (0.0 - 1.0)
-    ///   - amount: The modulation amount (-1.0 to +1.0 for unipolar)
-    ///   - destination: The destination being modulated
-    /// - Returns: The modulated value
-    static func applyEnvelopeModulation(
-        baseValue: Double,
-        envelopeValue: Double,
-        amount: Double,
-        destination: ModulationDestination
+    ///   - time: Time in envelope (seconds)
+    ///   - isGateOpen: Whether gate is open (attack/decay/sustain) or closed (release)
+    ///   - attack: Attack time in seconds
+    ///   - decay: Decay time in seconds
+    ///   - sustain: Sustain level (0.0 - 1.0)
+    ///   - release: Release time in seconds
+    ///   - capturedLevel: Level when gate closed (for release stage)
+    /// - Returns: Envelope value (0.0 - 1.0)
+    static func calculateEnvelopeValue(
+        time: Double,
+        isGateOpen: Bool,
+        attack: Double,
+        decay: Double,
+        sustain: Double,
+        release: Double,
+        capturedLevel: Double = 0.0
     ) -> Double {
-        // Calculate the modulation offset
-        let modOffset = envelopeValue * amount
-        
-        // Apply destination-specific scaling
-        switch destination {
-        case .modulationIndex:
-            // FM modulation index: clamp to 0-10 range (typical FM range)
-            return max(0.0, min(10.0, baseValue + modOffset))
-            
-        case .filterCutoff:
-            // Filter cutoff: exponential scaling (octaves)
-            // amount = 1.0 means +1 octave at envelope peak
-            let octaves = modOffset  // amount controls octave range
-            let multiplier = pow(2.0, octaves)
-            return max(20.0, min(22050.0, baseValue * multiplier))
-            
-        case .oscillatorAmplitude:
-            // Amplitude: linear scaling, clamp to 0-1
-            return max(0.0, min(1.0, baseValue + modOffset))
-            
-        case .oscillatorBaseFrequency:
-            // Frequency: exponential scaling (semitones)
-            // amount = 1.0 means +12 semitones (1 octave) at envelope peak
-            let semitones = modOffset * 12.0  // amount controls semitone range
-            let multiplier = pow(2.0, semitones / 12.0)
-            return baseValue * multiplier
-            
-        case .modulatingMultiplier:
-            // FM modulator ratio: linear scaling
-            return max(0.1, min(20.0, baseValue + modOffset))
-            
-        case .stereoSpreadAmount:
-            // Stereo spread: depends on detune mode
-            // For now, treat as linear offset
-            return max(0.0, baseValue + modOffset)
-            
-        case .voiceLFOFrequency, .voiceLFOAmount:
-            // LFO parameters: linear scaling
-            return max(0.0, baseValue + modOffset)
-            
-        case .delayTime, .delayMix:
-            // These shouldn't be modulated by voice envelopes
-            return baseValue
+        if isGateOpen {
+            // Attack stage
+            if time < attack {
+                return attack > 0 ? time / attack : 1.0
+            }
+            // Decay stage
+            else if time < (attack + decay) {
+                let decayTime = time - attack
+                let decayProgress = decay > 0 ? decayTime / decay : 1.0
+                return 1.0 - (decayProgress * (1.0 - sustain))
+            }
+            // Sustain stage
+            else {
+                return sustain
+            }
+        } else {
+            // Release stage
+            if time < release {
+                let releaseProgress = release > 0 ? time / release : 1.0
+                return capturedLevel * (1.0 - releaseProgress)
+            } else {
+                return 0.0
+            }
         }
     }
     
-    /// Calculate the scaling factor for a destination
-    /// Used to determine the effective range of modulation
-    static func getModulationRange(for destination: ModulationDestination) -> Double {
-        switch destination {
-        case .modulationIndex:
-            return 10.0  // 0-10 is typical FM range
-        case .filterCutoff:
-            return 2.0   // ±2 octaves
-        case .oscillatorAmplitude:
-            return 1.0   // 0-1
-        case .oscillatorBaseFrequency:
-            return 12.0  // ±1 octave in semitones
-        case .modulatingMultiplier:
-            return 20.0  // Wide range for FM ratios
-        case .stereoSpreadAmount:
-            return 2.0   // Reasonable spread range
-        case .voiceLFOFrequency:
-            return 10.0  // LFO rate range
-        case .voiceLFOAmount:
-            return 1.0   // LFO depth 0-1
-        case .delayTime:
-            return 2.0   // ±2 seconds
-        case .delayMix:
-            return 1.0   // 0-1
-        }
+    // MARK: - 1) Oscillator Pitch [LOGARITHMIC]
+    
+    /// Calculate oscillator pitch modulation
+    /// Sources: Aux envelope (bipolar), Voice LFO (bipolar, with delay ramp)
+    /// Formula: finalFreq = baseFreq × 2^((auxEnvSemitones + lfoSemitones) / 12)
+    static func calculateOscillatorPitch(
+        baseFrequency: Double,
+        auxEnvValue: Double,
+        auxEnvAmount: Double,
+        voiceLFOValue: Double,
+        voiceLFOAmount: Double,
+        voiceLFORampFactor: Double
+    ) -> Double {
+        // Aux envelope: can be ± semitones
+        let auxEnvSemitones = auxEnvValue * auxEnvAmount
+        
+        // Voice LFO: can be ± semitones, scaled by delay ramp
+        let lfoSemitones = (voiceLFOValue * voiceLFORampFactor) * voiceLFOAmount
+        
+        // Add in semitone space
+        let totalSemitones = auxEnvSemitones + lfoSemitones
+        
+        // Convert to frequency
+        let finalFreq = baseFrequency * pow(2.0, totalSemitones / 12.0)
+        
+        return max(20.0, min(20000.0, finalFreq))
     }
     
-    // MARK: - LFO Modulation (Phase 5C)
+    // MARK: - 2) Oscillator Amplitude [LINEAR]
     
-    /// Apply LFO modulation to a base value
-    /// LFOs provide bipolar modulation (oscillate around center value)
-    /// - Parameters:
-    ///   - baseValue: The unmodulated parameter value
-    ///   - lfoValue: The LFO value (-1.0 to +1.0, already scaled by amount)
-    ///   - destination: The destination being modulated
-    /// - Returns: The modulated value
-    static func applyLFOModulation(
-        baseValue: Double,
-        lfoValue: Double,
-        destination: ModulationDestination
+    /// Calculate oscillator amplitude modulation
+    /// Sources: Initial touch (unipolar, at note-on), Global LFO (bipolar)
+    /// Formula: finalAmp = (baseAmp × initialTouchValue) + globalLFOOffset
+    static func calculateOscillatorAmplitude(
+        baseAmplitude: Double,
+        initialTouchValue: Double,
+        initialTouchAmount: Double,
+        globalLFOValue: Double,
+        globalLFOAmount: Double
     ) -> Double {
-        // LFO provides bipolar modulation around the base value
-        // lfoValue is already in range -1.0 to +1.0 (from LFOParameters.currentValue)
+        // Initial touch scales the base amplitude
+        let touchScaledBase = baseAmplitude * (initialTouchValue * initialTouchAmount)
         
-        switch destination {
-        case .modulationIndex:
-            // FM modulation index: scale by typical range
-            // lfoValue = ±1.0 means ±5.0 modIndex swing
-            let swing = lfoValue * 5.0
-            return max(0.0, min(10.0, baseValue + swing))
-            
-        case .filterCutoff:
-            // Filter cutoff: exponential scaling (semitones for musical intervals)
-            // lfoValue = ±1.0 means ±12 semitones (±1 octave)
-            let semitones = lfoValue * 12.0
-            let multiplier = pow(2.0, semitones / 12.0)
-            return max(20.0, min(22050.0, baseValue * multiplier))
-            
-        case .oscillatorAmplitude:
-            // Amplitude: linear scaling
-            // lfoValue = ±1.0 means ±0.5 amplitude swing
-            let swing = lfoValue * 0.5
-            return max(0.0, min(1.0, baseValue + swing))
-            
-        case .oscillatorBaseFrequency:
-            // Frequency: exponential scaling (semitones)
-            // lfoValue = ±1.0 means ±2 semitones (vibrato)
-            let semitones = lfoValue * 2.0
-            let multiplier = pow(2.0, semitones / 12.0)
-            return baseValue * multiplier
-            
-        case .modulatingMultiplier:
-            // FM modulator ratio: linear scaling
-            // lfoValue = ±1.0 means ±2.0 ratio swing
-            let swing = lfoValue * 2.0
-            return max(0.1, min(20.0, baseValue + swing))
-            
-        case .stereoSpreadAmount:
-            // Stereo spread: linear scaling
-            // lfoValue = ±1.0 means ±0.5 spread swing
-            let swing = lfoValue * 0.5
-            return max(0.0, baseValue + swing)
-            
-        case .voiceLFOFrequency:
-            // LFO frequency meta-modulation: linear scaling
-            // lfoValue = ±1.0 means ±2 Hz swing
-            let swing = lfoValue * 2.0
-            return max(0.01, min(10.0, baseValue + swing))
-            
-        case .voiceLFOAmount:
-            // LFO amount meta-modulation: linear scaling
-            // lfoValue = ±1.0 means ±0.5 amount swing
-            let swing = lfoValue * 0.5
-            return max(0.0, min(1.0, baseValue + swing))
-            
-        case .delayTime:
-            // Delay time: linear scaling
-            // lfoValue = ±1.0 means ±0.5 second swing
-            let swing = lfoValue * 0.5
-            return max(0.0, min(2.0, baseValue + swing))
-            
-        case .delayMix:
-            // Delay mix: linear scaling
-            // lfoValue = ±1.0 means ±0.3 mix swing
-            let swing = lfoValue * 0.3
-            return max(0.0, min(1.0, baseValue + swing))
-        }
+        // Global LFO adds offset (tremolo)
+        let lfoOffset = globalLFOValue * globalLFOAmount
+        
+        let finalAmp = touchScaledBase + lfoOffset
+        
+        return max(0.0, min(1.0, finalAmp))
+    }
+    
+    // MARK: - 3) Modulation Index [LINEAR]
+    
+    /// Calculate modulation index
+    /// Sources: Mod envelope (bipolar), Voice LFO (bipolar, with delay ramp), Aftertouch (bipolar)
+    /// Formula: finalModIndex = baseModIndex + modEnvOffset + aftertouchOffset + lfoOffset
+    static func calculateModulationIndex(
+        baseModIndex: Double,
+        modEnvValue: Double,
+        modEnvAmount: Double,
+        voiceLFOValue: Double,
+        voiceLFOAmount: Double,
+        voiceLFORampFactor: Double,
+        aftertouchDelta: Double,
+        aftertouchAmount: Double
+    ) -> Double {
+        // All sources simply add
+        let modEnvOffset = modEnvValue * modEnvAmount
+        let aftertouchOffset = aftertouchDelta * aftertouchAmount
+        let lfoOffset = (voiceLFOValue * voiceLFORampFactor) * voiceLFOAmount
+        
+        let finalModIndex = baseModIndex + modEnvOffset + aftertouchOffset + lfoOffset
+        
+        return max(0.0, min(10.0, finalModIndex))
+    }
+    
+    // MARK: - 4) Modulator Multiplier [LINEAR]
+    
+    /// Calculate modulator multiplier (FM ratio)
+    /// Sources: Global LFO (bipolar)
+    /// Formula: finalMultiplier = baseMultiplier + lfoOffset
+    static func calculateModulatorMultiplier(
+        baseMultiplier: Double,
+        globalLFOValue: Double,
+        globalLFOAmount: Double
+    ) -> Double {
+        let lfoOffset = globalLFOValue * globalLFOAmount
+        let finalMultiplier = baseMultiplier + lfoOffset
+        
+        return max(0.1, min(20.0, finalMultiplier))
+    }
+    
+    // MARK: - 5) Filter Frequency [LOGARITHMIC]
+    
+    /// Calculate filter cutoff frequency
+    /// Sources: Key track, Aux env, Voice LFO, Global LFO, Aftertouch
+    /// Complex formula with scaling and multiple bipolar sources
+    static func calculateFilterFrequency(
+        baseCutoff: Double,
+        keyTrackValue: Double,
+        keyTrackAmount: Double,
+        auxEnvValue: Double,
+        auxEnvAmount: Double,
+        aftertouchDelta: Double,
+        aftertouchAmount: Double,
+        voiceLFOValue: Double,
+        voiceLFOAmount: Double,
+        voiceLFORampFactor: Double,
+        globalLFOValue: Double,
+        globalLFOAmount: Double
+    ) -> Double {
+        // Step 1: Additive offsets in octave space (envelope + aftertouch)
+        let auxEnvOctaves = auxEnvValue * auxEnvAmount
+        let aftertouchOctaves = aftertouchDelta * aftertouchAmount
+        
+        // Step 2: Scale by key tracking
+        let keyTrackFactor = 1.0 + (keyTrackValue * keyTrackAmount)
+        let scaledOctaves = (auxEnvOctaves + aftertouchOctaves) * keyTrackFactor
+        
+        // Step 3: Add bipolar LFO offsets
+        let voiceLFOOctaves = (voiceLFOValue * voiceLFORampFactor) * voiceLFOAmount
+        let globalLFOOctaves = globalLFOValue * globalLFOAmount
+        
+        let totalOctaves = scaledOctaves + voiceLFOOctaves + globalLFOOctaves
+        
+        // Step 4: Apply to base frequency
+        let finalCutoff = baseCutoff * pow(2.0, totalOctaves)
+        
+        return max(20.0, min(22050.0, finalCutoff))
+    }
+    
+    // MARK: - 6) Delay Time [LINEAR]
+    
+    /// Calculate delay time
+    /// Sources: Global LFO (bipolar)
+    /// Formula: finalDelayTime = baseDelayTime + lfoOffset
+    static func calculateDelayTime(
+        baseDelayTime: Double,
+        globalLFOValue: Double,
+        globalLFOAmount: Double
+    ) -> Double {
+        let lfoOffset = globalLFOValue * globalLFOAmount
+        let finalDelayTime = baseDelayTime + lfoOffset
+        
+        return max(0.0, min(2.0, finalDelayTime))
+    }
+    
+    // MARK: - Meta-Modulation: 7) Voice LFO Pitch Amount [LINEAR]
+    
+    /// Calculate voice LFO to oscillator pitch amount (vibrato amount)
+    /// Sources: Aux envelope (bipolar), Aftertouch (bipolar)
+    /// Formula: finalAmount = (baseAmount × auxEnvFactor) + aftertouchOffset
+    static func calculateVoiceLFOPitchAmount(
+        baseAmount: Double,
+        auxEnvValue: Double,
+        auxEnvAmount: Double,
+        aftertouchDelta: Double,
+        aftertouchAmount: Double
+    ) -> Double {
+        let auxEnvFactor = 1.0 + (auxEnvValue * auxEnvAmount)
+        let aftertouchOffset = aftertouchDelta * aftertouchAmount
+        let finalAmount = (baseAmount * auxEnvFactor) + aftertouchOffset
+        
+        return max(-10.0, min(10.0, finalAmount))
+    }
+    
+    // MARK: - Meta-Modulation: 8) Voice LFO Frequency [LINEAR]
+    
+    /// Calculate voice LFO frequency
+    /// Sources: Key tracking (unipolar)
+    /// Formula: finalFreq = baseFreq × (1 + keyTrackValue)
+    static func calculateVoiceLFOFrequency(
+        baseFrequency: Double,
+        keyTrackValue: Double,
+        keyTrackAmount: Double
+    ) -> Double {
+        let keyTrackFactor = 1.0 + (keyTrackValue * keyTrackAmount)
+        let finalFreq = baseFrequency * keyTrackFactor
+        
+        return max(0.01, min(20.0, finalFreq))
+    }
+    
+    // MARK: - Meta-Modulation: 9-11) Initial Touch Scaling [LINEAR]
+    
+    /// Calculate scaled envelope amount based on initial touch
+    /// Sources: Initial touch (unipolar, at note-on)
+    /// Formula: finalAmount = baseAmount × (1.0 + touchFactor)
+    static func calculateTouchScaledAmount(
+        baseAmount: Double,
+        initialTouchValue: Double,
+        initialTouchAmount: Double
+    ) -> Double {
+        let touchFactor = initialTouchValue * initialTouchAmount
+        return baseAmount * (1.0 + touchFactor)
     }
 }
 
