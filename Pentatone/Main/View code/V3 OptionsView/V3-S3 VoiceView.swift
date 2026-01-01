@@ -39,9 +39,9 @@ struct VoiceView: View {
                         .contentShape(Rectangle())
                         .offset(y: -(geometry.size.height/2 + 11))
                         .padding(0)
-                        .onTapGesture {
-                            onSwitchToEdit?()
-                        }
+                        //.onTapGesture {
+                        //    onSwitchToEdit?()
+                        //}
                 }
             }
             
@@ -169,14 +169,6 @@ struct VoiceView: View {
             }
             ZStack { // Row 8
                 RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    
-                }
-            }
-            
-            ZStack { // Row 9
-                RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
                 GeometryReader { geometry in
                     Text("•MANUAL•")
@@ -186,6 +178,23 @@ struct VoiceView: View {
                         .contentShape(Rectangle())
                         //.offset(y: -(geometry.size.height/2 + 11))
                         .padding(0)
+                }
+            }
+            
+            ZStack { // Row 9
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                GeometryReader { geometry in
+                    Text("•EDITOR•")
+                        .foregroundColor(Color("BackgroundColour"))
+                        .adaptiveFont("Futura", size: 30)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .contentShape(Rectangle())
+                        //.offset(y: -(geometry.size.height/2 + 11))
+                        .padding(0)
+                        .onTapGesture {
+                            onSwitchToEdit?()
+                        }
                 }
             }
             

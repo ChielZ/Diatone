@@ -18,7 +18,7 @@ MAIN
  √ implement modulators in parameter structure
  √ implement fine tune and octave adjustments
  - create preset management
- - create developer view for sound editing/storing presets
+ √ create developer view for sound editing/storing presets
  - add macro control
  >> sanity check code structure
  - add drone note toggles to central note buttons?
@@ -44,12 +44,10 @@ UI
 CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  - distinguish between iPad landscape and iPad portrait for font sizes? (apparently tricky, couldn't get to work on first try - also, looking quite good already anyway)
  - accidentals don't resize properly in key display on iPhone (but they do in scale note display)
- - Voice LFO to basefrequency seems overly smoothed, remove ramping?
- - Global LFO not working on filter?
  - Improve fullscreen / swipe gesture handling?
- - Check AudioKit console warnings on startup
- - Check multiple console messages of scale frequency updates
- - Check AudioKit warning message streams when modulation is enabled (already fixed for aftertouch)
+ √ Check AudioKit console warnings on startup
+ √ Check multiple console messages of scale frequency updates
+ √ Check AudioKit warning message streams when modulation is enabled (already fixed for aftertouch)
  
  
  CONCEPT FOR IMPROVED SOUND ENGINE:
@@ -59,7 +57,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  √ The frequency of each voice will be updated each time it is triggered, dependant on the key that triggers it.
  √ Each voice will get a second oscillator and a more sophisticated internal structure
  √ In addition to the editable parameters, we will create dedicated modulators (LFOs, modulation envelopes), that will be able to update these parameters in realtime (at control rate, not at audio rate)
- - We will create a 'developer view' allowing the creation of different presets (values for all audio and modulator parameters)
+ √ We will create a 'developer view' allowing the creation of different presets (values for all audio and modulator parameters)
  - The final app will contain 15 different presets that should be browsable
  - We will also be creating a macro structure: while the final app will not allow the user to individually sculpt each parameter, there will be 4 macro sliders that map to one or more parameters, this will vary per preset.
  
@@ -83,8 +81,8 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  3 - ELECTRIC
  3.1  Slide (Pedal steel-esque sound)
  3.2  Rotary (Rock Organ-esque sound)
- 3.3  Voodoo (Lead guitar-esque sound)
- 3.4  Lev (Theremin-esque sound)
+ 3.3  Tube (Lead guitar-esque sound)
+ 3.4  Antenna (Theremin-esque sound)
  3.5
  
  4 - SYNTH

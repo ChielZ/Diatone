@@ -37,7 +37,7 @@ struct SoundView: View {
                     .fill(Color("HighlightColour"))
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .padding(4)
+                    .padding(0)
                 HStack{
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("HighlightColour"))
@@ -55,7 +55,7 @@ struct SoundView: View {
                     .fill(Color("HighlightColour"))
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .padding(4)
+                    .padding(0)
                 HStack{
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("HighlightColour"))
@@ -73,7 +73,7 @@ struct SoundView: View {
                     .fill(Color("HighlightColour"))
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .padding(4)
+                    .padding(0)
                 HStack{
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("HighlightColour"))
@@ -117,15 +117,18 @@ struct SoundView: View {
             ZStack { // Row 8
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
+
                 HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("1")
-                                .foregroundColor(Color("HighlightColour"))
-                                .adaptiveFont("Futura", size: 30)
-                        )
+                   
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color("SupportColour"))
+                            .aspectRatio(1.0, contentMode: .fit)
+                            .overlay(
+                                Text("1")
+                                    .foregroundColor(Color("HighlightColour"))
+                                    .adaptiveFont("Futura", size: 30)
+                            )
+                    
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
