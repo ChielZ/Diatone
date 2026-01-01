@@ -96,6 +96,7 @@ struct MainKeyboardView: View {
             ZStack {
                 Color("BackgroundColour").ignoresSafeArea()
                 
+                // Keys layer (behind)
                 HStack(spacing: 0) {
                     // Left column - Keys
                     VStack {
@@ -111,50 +112,8 @@ struct MainKeyboardView: View {
                     }
                     .padding(5)
                     
-                    // Center column - Navigation strip or Options/Edit
-                    ZStack {
-                        if showingOptions {
-                            // Switch between OptionsView and EditView based on currentMainView
-                            switch currentMainView {
-                            case .options:
-                                OptionsView(
-                                    showingOptions: $showingOptions,
-                                    currentSubView: $currentOptionsSubView,
-                                    currentScale: currentScale,
-                                    currentKey: currentKey,
-                                    onCycleIntonation: onCycleIntonation,
-                                    onCycleCelestial: onCycleCelestial,
-                                    onCycleTerrestrial: onCycleTerrestrial,
-                                    onCycleRotation: onCycleRotation,
-                                    onCycleKey: onCycleKey,
-                                    onSwitchToEdit: {
-                                        currentMainView = .edit
-                                    }
-                                )
-                                .transition(.opacity)
-                                
-                            case .edit:
-                                EditView(
-                                    showingOptions: $showingOptions,
-                                    onSwitchToOptions: {
-                                        currentMainView = .options
-                                    }
-                                )
-                                .transition(.opacity)
-                            }
-                        } else {
-                            NavigationStrip(
-                                showingOptions: $showingOptions,
-                                onPrevScale: onPrevScale,
-                                onNextScale: onNextScale,
-                                stripWidth: centerConfig.width
-                            )
-                            .transition(.opacity)
-                        }
-                    }
-                    .frame(width: centerConfig.width)
-                    .animation(.easeInOut(duration: 0.3), value: showingOptions)
-                    .animation(.easeInOut(duration: 0.2), value: currentMainView)
+                    Spacer()
+                        .frame(width: centerConfig.width)
                     
                     // Right column - Keys
                     VStack {
@@ -170,6 +129,52 @@ struct MainKeyboardView: View {
                     }
                     .padding(5)
                 }
+                .animation(.easeInOut(duration: 0.75), value: showingOptions)
+                
+                // Center strip layer (on top)
+                ZStack {
+                    if showingOptions {
+                        // Switch between OptionsView and EditView based on currentMainView
+                        switch currentMainView {
+                        case .options:
+                            OptionsView(
+                                showingOptions: $showingOptions,
+                                currentSubView: $currentOptionsSubView,
+                                currentScale: currentScale,
+                                currentKey: currentKey,
+                                onCycleIntonation: onCycleIntonation,
+                                onCycleCelestial: onCycleCelestial,
+                                onCycleTerrestrial: onCycleTerrestrial,
+                                onCycleRotation: onCycleRotation,
+                                onCycleKey: onCycleKey,
+                                onSwitchToEdit: {
+                                    currentMainView = .edit
+                                }
+                            )
+                            .transition(.opacity)
+                            
+                        case .edit:
+                            EditView(
+                                showingOptions: $showingOptions,
+                                onSwitchToOptions: {
+                                    currentMainView = .options
+                                }
+                            )
+                            .transition(.opacity)
+                        }
+                    } else {
+                        NavigationStrip(
+                            showingOptions: $showingOptions,
+                            onPrevScale: onPrevScale,
+                            onNextScale: onNextScale,
+                            stripWidth: centerConfig.width
+                        )
+                        .transition(.scale)
+                    }
+                }
+                .frame(width: centerConfig.width)
+                .animation(.easeInOut(duration: 0.75), value: showingOptions)
+                .animation(.easeInOut(duration: 0.0), value: currentMainView)
             }
             .statusBar(hidden: true)
         }
