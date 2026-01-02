@@ -4,7 +4,7 @@
 //
 //  Created by Chiel Zwinkels on 02/01/2026.
 //  Simple macro controls for the main UI
-
+/*
 import SwiftUI
 
 /// Simple macro controls for the main UI
@@ -128,3 +128,4 @@ struct MacroControlRow: View {
         .padding(25)
     }
 }
+*/

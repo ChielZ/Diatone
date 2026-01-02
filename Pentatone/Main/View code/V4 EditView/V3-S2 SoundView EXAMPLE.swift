@@ -5,7 +5,7 @@
 //  This is an EXAMPLE showing how to integrate MacroControlsView
 //  Replace the content of your actual V3-S2 SoundView with this pattern
 //
-
+/*
 import SwiftUI
 
 // EXAMPLE: How your SoundView might look with macro controls integrated
@@ -146,3 +146,4 @@ class PresetManager {
  5. When the user adjusts parameters in the advanced editor, you can optionally
     call captureBaseValues() again to make macros work relative to the new values
  */
+*/
