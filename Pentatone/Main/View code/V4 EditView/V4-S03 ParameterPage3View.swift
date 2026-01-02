@@ -21,45 +21,6 @@ import AudioKit
 import AudioKitEX
 import SoundpipeAudioKit
 
-// MARK: - Delay Time Enum
-
-/// Musical note divisions for tempo-synced delay
-enum DelayTime: Double, CaseIterable, Equatable {
-    case thirtySecond = 0.03125    // 1/32 note
-    case twentyFourth = 0.04166666 // 1/24 note (triplet sixteenth)
-    case sixteenth = 0.0625        // 1/16 note
-    case dottedSixteenth = 0.09375 // 3/32 note
-    case eighth = 0.125            // 1/8 note
-    case dottedEighth = 0.1875     // 3/16 note
-    case quarter = 0.25            // 1/4 note
-    
-    var displayName: String {
-        switch self {
-        case .thirtySecond: return "1/32"
-        case .twentyFourth: return "1/24"
-        case .sixteenth: return "1/16"
-        case .dottedSixteenth: return "3/32"
-        case .eighth: return "1/8"
-        case .dottedEighth: return "3/16"
-        case .quarter: return "1/4"
-        }
-    }
-    
-    /// Convert to delay time in seconds based on tempo
-    /// Formula: displayValue × (240/tempo)
-    func timeInSeconds(tempo: Double) -> Double {
-        return self.rawValue * (240.0 / tempo)
-    }
-    
-    /// Find the closest DelayTime for a given time in seconds and tempo
-    static func from(seconds: Double, tempo: Double) -> DelayTime {
-        let normalizedValue = seconds / (240.0 / tempo)
-        
-        // Find closest match
-        return allCases.min(by: { abs($0.rawValue - normalizedValue) < abs($1.rawValue - normalizedValue) }) ?? .quarter
-    }
-}
-
 // MARK: - Ping Pong Mode
 
 /// On/Off toggle for delay ping pong
@@ -87,22 +48,19 @@ struct EffectsView: View {
     // Connect to the global parameter manager
     @ObservedObject private var paramManager = AudioParameterManager.shared
     
-    // Local state for delay time (derived from seconds and tempo)
-    @State private var delayTime: DelayTime = .quarter
-    
     var body: some View {
         Group {
             // Row 3 - Delay Time (tempo-synced divisions)
             ParameterRow(
                 label: "DELAY TIME",
-                value: $delayTime,
+                value: Binding(
+                    get: { paramManager.master.delay.timeValue },
+                    set: { newValue in
+                        paramManager.updateDelayTimeValue(newValue)
+                    }
+                ),
                 displayText: { $0.displayName }
             )
-            .onChange(of: delayTime) { newValue in
-                let timeInSeconds = newValue.timeInSeconds(tempo: paramManager.master.tempo)
-                paramManager.updateDelayTime(timeInSeconds)
-                applyDelayToEngine()
-            }
             
             // Row 4 - Delay Feedback (0-1)
             SliderRow(
@@ -212,13 +170,6 @@ struct EffectsView: View {
                 range: 0...1,
                 step: 0.01,
                 displayFormatter: { String(format: "%.2f", $0) }
-            )
-        }
-        .onAppear {
-            // Initialize local state from current parameters
-            delayTime = DelayTime.from(
-                seconds: paramManager.master.delay.time,
-                tempo: paramManager.master.tempo
             )
         }
     }

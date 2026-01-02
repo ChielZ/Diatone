@@ -84,7 +84,7 @@ enum EngineManager {
         // Delay processes the voice pool output - initialized with parameters
         fxDelay = StereoDelay(
                                 voicePool.voiceMixer,
-                                time: AUValue(masterParams.delay.time),
+                                time: AUValue(masterParams.delay.timeInSeconds(tempo: masterParams.tempo)),
                                 feedback: AUValue(masterParams.delay.feedback),
                                 dryWetMix: AUValue(1-masterParams.delay.dryWetMix),
                                 pingPong: masterParams.delay.pingPong,
