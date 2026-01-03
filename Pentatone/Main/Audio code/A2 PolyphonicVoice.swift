@@ -532,19 +532,32 @@ final class PolyphonicVoice {
         
         let lfo = voiceModulation.voiceLFO
         
+        // Apply key tracking modulation to base frequency
+        var effectiveFrequency = lfo.frequency
+        if voiceModulation.keyTracking.amountToVoiceLFOFrequency != 0.0 {
+            let keyTrackValue = voiceModulation.keyTracking.trackingValue(
+                forFrequency: modulationState.currentFrequency
+            )
+            effectiveFrequency = ModulationRouter.calculateVoiceLFOFrequency(
+                baseFrequency: lfo.frequency,
+                keyTrackValue: keyTrackValue,
+                keyTrackAmount: voiceModulation.keyTracking.amountToVoiceLFOFrequency
+            )
+        }
+        
         // Calculate phase increment based on frequency mode
         let phaseIncrement: Double
         
         switch lfo.frequencyMode {
         case .hertz:
             // Direct Hz: phase increment = frequency * deltaTime
-            phaseIncrement = lfo.frequency * deltaTime
+            phaseIncrement = effectiveFrequency * deltaTime
             
         case .tempoSync:
-            // Tempo sync: lfo.frequency is a tempo multiplier
+            // Tempo sync: effectiveFrequency is a tempo multiplier
             // e.g., 1.0 = quarter note, 2.0 = eighth note, 0.5 = half note
             let beatsPerSecond = tempo / 60.0
-            let cyclesPerSecond = beatsPerSecond * lfo.frequency
+            let cyclesPerSecond = beatsPerSecond * effectiveFrequency
             phaseIncrement = cyclesPerSecond * deltaTime
         }
         
@@ -767,15 +780,8 @@ final class PolyphonicVoice {
         }
         
         // Destination 2: Voice LFO frequency
-        if params.amountToVoiceLFOFrequency != 0.0 {
-            let finalFreq = ModulationRouter.calculateVoiceLFOFrequency(
-                baseFrequency: voiceModulation.voiceLFO.frequency,
-                keyTrackValue: trackingValue,
-                keyTrackAmount: params.amountToVoiceLFOFrequency
-            )
-            // Update the voice LFO frequency for next cycle
-            voiceModulation.voiceLFO.frequency = finalFreq
-        }
+        // NOTE: This modulation is applied in updateVoiceLFOPhase() to avoid feedback loops
+        // Key tracking modulation is read during phase calculation, not written back to parameters
     }
     
     /// Applies touch aftertouch (3 fixed destinations: filter, modulator level, vibrato)
