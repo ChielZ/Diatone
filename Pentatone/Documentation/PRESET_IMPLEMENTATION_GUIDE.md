@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers the implementation plan for the Pentatone preset system, designed to be portable across multiple apps in the series (Pentatone, ChromaTone, etc.).
+This guide covers the implementation plan for the Arithmophone preset system, designed to be portable across multiple apps in the series (Pentatone, Diatone, etc.).
 
 ---
 
@@ -18,14 +18,14 @@ This guide covers the implementation plan for the Pentatone preset system, desig
 
 ✅ `AudioParameterSet` structure (already implemented)  
 ✅ JSON file format  
-✅ File type registration (`.pentatonepreset`)  
+✅ File type registration (`.arithmophonepreset`)  
 ✅ Basic load/save logic  
 ✅ Preset sharing via export/import  
 
 ### **What's App-Specific**
 
 🎹 Pentatone: 5×5 grid layout (F1.1 - F5.5, U1.1 - U5.5)  
-🎹 ChromaTone: Different layout (7×7, 0-99, etc.)  
+🎹 ToneHive: Different layout (7×7, 0-99, etc.)  
 🎹 Each app has its own preset organization system  
 
 ---

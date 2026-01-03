@@ -19,14 +19,19 @@ MAIN
  √ implement fine tune and octave adjustments
  - create preset management
  √ create developer view for sound editing/storing presets
- - add macro control
+ √ add macro control
  >> sanity check code structure
  - add drone note toggles to central note buttons?
- (- port engine to tonehive)
+ - make engine portable for other Arithmophone apps
+    -> Make initial touch flexible so it can accept X position, Y position or touchArea as inputs
+    -> Make aftertouch flexible so it can accept X move, Y move or touchArea as inputs
+    -> Make polyphony flexible so it can be a (potentially user-adjustable) per app parameter (presets will store only mono or poly mode, no voice count)
  - add in app documentation
  >> ready for launch of version 1 (free app only)
+ [below: as general engine features or per app?]
  - implement MIDI output
- - implement Preset management/sound editing features made public as upgrade
+ - implement MIDI input (will be tricky for JI/microtonal contexts)
+ ? implement Preset management/sound editing features made public as upgrade
  - implement AUv3 compatibility
  - implement IAP structure
  >> ready for launch of version 2 (free app with IAP)
@@ -59,7 +64,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  √ In addition to the editable parameters, we will create dedicated modulators (LFOs, modulation envelopes), that will be able to update these parameters in realtime (at control rate, not at audio rate)
  √ We will create a 'developer view' allowing the creation of different presets (values for all audio and modulator parameters)
  - The final app will contain 15 different presets that should be browsable
- - We will also be creating a macro structure: while the final app will not allow the user to individually sculpt each parameter, there will be 4 macro sliders that map to one or more parameters, this will vary per preset.
+ √ We will also be creating a macro structure: while the final app will not allow the user to individually sculpt each parameter, there will be 4 macro sliders that map to one or more parameters, this will vary per preset.
  
  
  IDEAS FOR PRESETS
