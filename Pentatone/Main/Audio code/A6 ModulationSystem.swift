@@ -720,11 +720,14 @@ struct ModulationRouter {
         return max(0.0, min(2.0, finalDelayTime))
     }
     
-    // MARK: - Meta-Modulation: 7) Voice LFO Pitch Amount [LINEAR]
+    // MARK: - Meta-Modulation: 7) Voice LFO Pitch Amount [HYBRID: MULT + ADD]
     
     /// Calculate voice LFO to oscillator pitch amount (vibrato amount)
-    /// Sources: Aux envelope (bipolar), Aftertouch (bipolar)
-    /// Formula: finalAmount = (baseAmount × auxEnvFactor) + aftertouchOffset
+    /// Sources: Aux envelope (multiplicative scaling), Aftertouch (hybrid mult+add for amplitude control)
+    /// Formula: finalAmount = (baseAmount × auxEnvFactor × aftertouchMultFactor) + aftertouchAdditive
+    /// Note: Aftertouch modulates AMPLITUDE/DEPTH bidirectionally:
+    ///   - Toward center: increases depth (multiplicative scaling + additive boost)
+    ///   - Toward edge: decreases depth (multiplicative scaling only, toward 0)
     static func calculateVoiceLFOPitchAmount(
         baseAmount: Double,
         auxEnvValue: Double,
@@ -732,9 +735,31 @@ struct ModulationRouter {
         aftertouchDelta: Double,
         aftertouchAmount: Double
     ) -> Double {
+        // Aux envelope: multiplicative scaling (envelope value 0-1 scales the vibrato depth)
         let auxEnvFactor = 1.0 + (auxEnvValue * auxEnvAmount)
-        let aftertouchOffset = aftertouchDelta * aftertouchAmount
-        let finalAmount = (baseAmount * auxEnvFactor) + aftertouchOffset
+        
+        // Aftertouch: split into multiplicative (for existing vibrato) and additive (for zero base)
+        
+        // Multiplicative factor: scales existing vibrato depth
+        // delta = +1.0 (toward center) → factor = 2.0 (double)
+        // delta = 0.0 (no movement) → factor = 1.0 (unchanged)
+        // delta = -1.0 (toward edge) → factor = 0.0 (silence)
+        let aftertouchMultFactor = max(0.0, 1.0 + (aftertouchDelta * aftertouchAmount))
+        
+        // Additive component: allows creating vibrato from zero when moving toward center
+        // Only applies when moving toward center (positive delta)
+        // Uses absolute value of amount as the reference depth
+        let aftertouchAdditive: Double
+        if aftertouchDelta > 0.0 && abs(baseAmount) < 0.01 {
+            // When base amount is essentially zero, treat positive delta as direct additive vibrato
+            aftertouchAdditive = aftertouchDelta * aftertouchAmount
+        } else {
+            // When base amount exists, rely on multiplicative scaling
+            aftertouchAdditive = 0.0
+        }
+        
+        // Combine both components
+        let finalAmount = (baseAmount * auxEnvFactor * aftertouchMultFactor) + aftertouchAdditive
         
         return max(-10.0, min(10.0, finalAmount))
     }

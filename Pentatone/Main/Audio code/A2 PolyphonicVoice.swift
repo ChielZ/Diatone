@@ -643,16 +643,19 @@ final class PolyphonicVoice {
         auxiliaryEnvValue: Double,
         voiceLFORawValue: Double
     ) {
-        // Check if any source is active
+        // Check if any source is active (including meta-modulation sources)
         let hasAuxEnv = voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch != 0.0
         let hasVoiceLFO = voiceModulation.voiceLFO.amountToOscillatorPitch != 0.0
+        let hasVibratoMetaMod = voiceModulation.auxiliaryEnvelope.amountToVibrato != 0.0
+            || voiceModulation.touchAftertouch.amountToVibrato != 0.0
         
-        guard hasAuxEnv || hasVoiceLFO else { return }
+        guard hasAuxEnv || hasVoiceLFO || hasVibratoMetaMod else { return }
         
         // Calculate effective voice LFO amount (with meta-modulation)
+        // Allow aftertouch/aux env to add vibrato even if base amount is 0
         var effectiveVoiceLFOAmount = voiceModulation.voiceLFO.amountToOscillatorPitch
         
-        if effectiveVoiceLFOAmount != 0.0 {
+        if hasVibratoMetaMod {
             // Meta-modulation: aux envelope and aftertouch can modulate the vibrato amount
             let aftertouchDelta = modulationState.currentTouchX - modulationState.initialTouchX
             effectiveVoiceLFOAmount = ModulationRouter.calculateVoiceLFOPitchAmount(
