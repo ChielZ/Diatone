@@ -516,11 +516,27 @@ final class PolyphonicVoice {
         let aftertouchDelta = modulationState.currentTouchX - modulationState.initialTouchX
         
         // Apply all modulations to their destinations
-        applyModulatorEnvelope(envValue: modulatorEnvValue)
+        // Note: Some destinations (pitch, filter, mod index) receive input from multiple sources
+        // and must be calculated in a combined fashion to avoid one source overwriting another
+        applyCombinedModulationIndex(
+            modulatorEnvValue: modulatorEnvValue,
+            voiceLFORawValue: voiceLFORawValue,
+            aftertouchDelta: aftertouchDelta
+        )
+        applyCombinedPitch(
+            auxiliaryEnvValue: auxiliaryEnvValue,
+            voiceLFORawValue: voiceLFORawValue
+        )
+        applyCombinedFilterFrequency(
+            auxiliaryEnvValue: auxiliaryEnvValue,
+            voiceLFORawValue: voiceLFORawValue,
+            globalLFORawValue: globalLFO.rawValue,
+            globalLFOParameters: globalLFO.parameters,
+            keyTrackValue: keyTrackValue,
+            aftertouchDelta: aftertouchDelta
+        )
         applyAuxiliaryEnvelope(envValue: auxiliaryEnvValue)
-        applyVoiceLFO(rawValue: voiceLFORawValue)
         applyGlobalLFO(rawValue: globalLFO.rawValue, parameters: globalLFO.parameters)
-        applyKeyTracking(trackingValue: keyTrackValue)
         applyTouchAftertouch(aftertouchDelta: aftertouchDelta)
     }
     
@@ -587,140 +603,168 @@ final class PolyphonicVoice {
         }
     }
     
-    // MARK: - Individual Modulation Application Methods
+    // MARK: - Combined Modulation Application Methods
+    // These methods handle destinations that receive input from multiple sources
+    // and must combine them properly to avoid one source overwriting another
     
-    /// Applies modulator envelope (fixed destination: modulation index)
-    private func applyModulatorEnvelope(envValue: Double) {
-        // Early exit if no modulation
-        guard voiceModulation.modulatorEnvelope.hasActiveDestinations else { return }
+    /// Applies combined modulation index from all sources
+    /// Sources: Modulator envelope, Voice LFO, Aftertouch
+    private func applyCombinedModulationIndex(
+        modulatorEnvValue: Double,
+        voiceLFORawValue: Double,
+        aftertouchDelta: Double
+    ) {
+        // Check if any source is active
+        let hasModEnv = voiceModulation.modulatorEnvelope.hasActiveDestinations
+        let hasVoiceLFO = voiceModulation.voiceLFO.amountToModulatorLevel != 0.0
+        let hasAftertouch = voiceModulation.touchAftertouch.amountToModulatorLevel != 0.0
         
+        guard hasModEnv || hasVoiceLFO || hasAftertouch else { return }
+        
+        // Use the ModulationRouter to properly combine all sources
         let finalModIndex = ModulationRouter.calculateModulationIndex(
             baseModIndex: modulationState.baseModulationIndex,
-            modEnvValue: envValue,
+            modEnvValue: modulatorEnvValue,
             modEnvAmount: voiceModulation.modulatorEnvelope.amountToModulationIndex,
-            voiceLFOValue: 0.0,  // Applied separately
-            voiceLFOAmount: 0.0,
-            voiceLFORampFactor: 0.0,
-            aftertouchDelta: 0.0,  // Applied separately
-            aftertouchAmount: 0.0
+            voiceLFOValue: voiceLFORawValue,
+            voiceLFOAmount: voiceModulation.voiceLFO.amountToModulatorLevel,
+            voiceLFORampFactor: modulationState.voiceLFORampFactor,
+            aftertouchDelta: aftertouchDelta,
+            aftertouchAmount: voiceModulation.touchAftertouch.amountToModulatorLevel
         )
         
         oscLeft.$modulationIndex.ramp(to: AUValue(finalModIndex), duration: 0)
         oscRight.$modulationIndex.ramp(to: AUValue(finalModIndex), duration: 0)
     }
     
-    /// Applies auxiliary envelope (3 fixed destinations: pitch, filter, vibrato)
-    private func applyAuxiliaryEnvelope(envValue: Double) {
-        // Early exit if no modulation
-        guard voiceModulation.auxiliaryEnvelope.hasActiveDestinations else { return }
+    /// Applies combined pitch modulation from all sources
+    /// Sources: Auxiliary envelope, Voice LFO (with meta-modulation from aux env and aftertouch)
+    private func applyCombinedPitch(
+        auxiliaryEnvValue: Double,
+        voiceLFORawValue: Double
+    ) {
+        // Check if any source is active
+        let hasAuxEnv = voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch != 0.0
+        let hasVoiceLFO = voiceModulation.voiceLFO.amountToOscillatorPitch != 0.0
         
-        let params = voiceModulation.auxiliaryEnvelope
+        guard hasAuxEnv || hasVoiceLFO else { return }
         
-        // Destination 1: Oscillator pitch
-        if params.amountToOscillatorPitch != 0.0 {
-            let finalFreq = ModulationRouter.calculateOscillatorPitch(
-                baseFrequency: modulationState.baseFrequency,
-                auxEnvValue: envValue,
-                auxEnvAmount: params.amountToOscillatorPitch,
-                voiceLFOValue: 0.0,  // Applied separately
-                voiceLFOAmount: 0.0,
-                voiceLFORampFactor: 0.0
+        // Calculate effective voice LFO amount (with meta-modulation)
+        var effectiveVoiceLFOAmount = voiceModulation.voiceLFO.amountToOscillatorPitch
+        
+        if effectiveVoiceLFOAmount != 0.0 {
+            // Meta-modulation: aux envelope and aftertouch can modulate the vibrato amount
+            let aftertouchDelta = modulationState.currentTouchX - modulationState.initialTouchX
+            effectiveVoiceLFOAmount = ModulationRouter.calculateVoiceLFOPitchAmount(
+                baseAmount: effectiveVoiceLFOAmount,
+                auxEnvValue: auxiliaryEnvValue,
+                auxEnvAmount: voiceModulation.auxiliaryEnvelope.amountToVibrato,
+                aftertouchDelta: aftertouchDelta,
+                aftertouchAmount: voiceModulation.touchAftertouch.amountToVibrato
             )
-            currentFrequency = finalFreq
-            updateOscillatorFrequencies()
         }
         
-        // Destination 2: Filter frequency
-        if params.amountToFilterFrequency != 0.0 {
-            // Note: Full filter calculation happens in a combined method
-            // This is a simplified version for aux env only
-            let auxEnvOctaves = envValue * params.amountToFilterFrequency
-            let finalCutoff = modulationState.baseFilterCutoff * pow(2.0, auxEnvOctaves)
-            let clamped = max(20.0, min(22050.0, finalCutoff))
-            filter.$cutoffFrequency.ramp(to: AUValue(clamped), duration: 0)
+        // Combine aux envelope and voice LFO for pitch
+        let finalFreq = ModulationRouter.calculateOscillatorPitch(
+            baseFrequency: modulationState.baseFrequency,
+            auxEnvValue: auxiliaryEnvValue,
+            auxEnvAmount: voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch,
+            voiceLFOValue: voiceLFORawValue,
+            voiceLFOAmount: effectiveVoiceLFOAmount,
+            voiceLFORampFactor: modulationState.voiceLFORampFactor
+        )
+        
+        currentFrequency = finalFreq
+        updateOscillatorFrequencies()
+    }
+    
+    /// Applies combined filter frequency modulation from all sources
+    /// Sources: Key tracking, Auxiliary envelope, Voice LFO, Global LFO, Aftertouch
+    private func applyCombinedFilterFrequency(
+        auxiliaryEnvValue: Double,
+        voiceLFORawValue: Double,
+        globalLFORawValue: Double,
+        globalLFOParameters: GlobalLFOParameters,
+        keyTrackValue: Double,
+        aftertouchDelta: Double
+    ) {
+        // Check if any source is active
+        let hasKeyTrack = voiceModulation.keyTracking.amountToFilterFrequency != 0.0
+        let hasAuxEnv = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency != 0.0
+        let hasVoiceLFO = voiceModulation.voiceLFO.amountToFilterFrequency != 0.0
+        let hasGlobalLFO = globalLFOParameters.amountToFilterFrequency != 0.0
+        let hasAftertouch = voiceModulation.touchAftertouch.amountToFilterFrequency != 0.0
+        
+        guard hasKeyTrack || hasAuxEnv || hasVoiceLFO || hasGlobalLFO || hasAftertouch else { return }
+        
+        // Use the ModulationRouter to properly combine all sources
+        let finalCutoff = ModulationRouter.calculateFilterFrequency(
+            baseCutoff: modulationState.baseFilterCutoff,
+            keyTrackValue: keyTrackValue,
+            keyTrackAmount: voiceModulation.keyTracking.amountToFilterFrequency,
+            auxEnvValue: auxiliaryEnvValue,
+            auxEnvAmount: voiceModulation.auxiliaryEnvelope.amountToFilterFrequency,
+            aftertouchDelta: aftertouchDelta,
+            aftertouchAmount: voiceModulation.touchAftertouch.amountToFilterFrequency,
+            voiceLFOValue: voiceLFORawValue,
+            voiceLFOAmount: voiceModulation.voiceLFO.amountToFilterFrequency,
+            voiceLFORampFactor: modulationState.voiceLFORampFactor,
+            globalLFOValue: globalLFORawValue,
+            globalLFOAmount: globalLFOParameters.amountToFilterFrequency
+        )
+        
+        // Apply smoothing for aftertouch if active
+        let smoothedCutoff: Double
+        if hasAftertouch && modulationState.lastSmoothedFilterCutoff != nil {
+            let currentValue = modulationState.lastSmoothedFilterCutoff ?? finalCutoff
+            let smoothingFactor = modulationState.filterSmoothingFactor
+            let interpolationAmount = 1.0 - smoothingFactor
+            smoothedCutoff = currentValue + (finalCutoff - currentValue) * interpolationAmount
+            modulationState.lastSmoothedFilterCutoff = smoothedCutoff
+        } else {
+            smoothedCutoff = finalCutoff
+            if hasAftertouch {
+                modulationState.lastSmoothedFilterCutoff = finalCutoff
+            }
         }
         
-        // Destination 3: Vibrato (meta-modulation of voice LFO pitch amount)
-        // This is handled by modifying the voice LFO amount in real-time
-        // Will be applied when voice LFO is calculated
+        filter.$cutoffFrequency.ramp(to: AUValue(smoothedCutoff), duration: 0)
+    }
+    
+    // MARK: - Individual Modulation Application Methods
+    // These handle destinations that only receive input from a single source
+    
+    /// Applies modulator envelope (fixed destination: modulation index)
+    /// NOTE: This is now handled by applyCombinedModulationIndex()
+    @available(*, deprecated, message: "Use applyCombinedModulationIndex() instead")
+    private func applyModulatorEnvelope(envValue: Double) {
+        // Modulation index is now handled by applyCombinedModulationIndex()
+        // This method is kept for backwards compatibility but does nothing
+        return
+    }
+    
+    /// Applies auxiliary envelope (3 fixed destinations: pitch, filter, vibrato)
+    /// NOTE: Pitch and filter are now handled by combined methods
+    private func applyAuxiliaryEnvelope(envValue: Double) {
+        // Pitch is now handled by applyCombinedPitch()
+        // Filter is now handled by applyCombinedFilterFrequency()
+        // Vibrato meta-modulation is handled in applyCombinedPitch()
+        // This method is kept for backwards compatibility but does nothing
+        return
     }
     
     /// Applies voice LFO (3 fixed destinations + delay ramp: pitch, filter, modulator level)
+    /// NOTE: All destinations are now handled by combined methods
     private func applyVoiceLFO(rawValue: Double) {
-        // Early exit if no modulation
-        guard voiceModulation.voiceLFO.hasActiveDestinations else { return }
-        
-        let params = voiceModulation.voiceLFO
-        let rampFactor = modulationState.voiceLFORampFactor
-        
-        // Destination 1: Oscillator pitch (vibrato)
-        if params.amountToOscillatorPitch != 0.0 {
-            // Calculate effective amount (may be modulated by aux env or aftertouch)
-            var effectiveAmount = params.amountToOscillatorPitch
-            
-            // Meta-modulation from aux envelope
-            if voiceModulation.auxiliaryEnvelope.amountToVibrato != 0.0 {
-                let auxEnvValue = ModulationRouter.calculateEnvelopeValue(
-                    time: modulationState.auxiliaryEnvelopeTime,
-                    isGateOpen: modulationState.isGateOpen,
-                    attack: voiceModulation.auxiliaryEnvelope.attack,
-                    decay: voiceModulation.auxiliaryEnvelope.decay,
-                    sustain: voiceModulation.auxiliaryEnvelope.sustain,
-                    release: voiceModulation.auxiliaryEnvelope.release,
-                    capturedLevel: modulationState.auxiliarySustainLevel
-                )
-                effectiveAmount = ModulationRouter.calculateVoiceLFOPitchAmount(
-                    baseAmount: effectiveAmount,
-                    auxEnvValue: auxEnvValue,
-                    auxEnvAmount: voiceModulation.auxiliaryEnvelope.amountToVibrato,
-                    aftertouchDelta: 0.0,  // Applied separately below
-                    aftertouchAmount: 0.0
-                )
-            }
-            
-            // Meta-modulation from aftertouch
-            if voiceModulation.touchAftertouch.amountToVibrato != 0.0 {
-                let aftertouchDelta = modulationState.currentTouchX - modulationState.initialTouchX
-                effectiveAmount = ModulationRouter.calculateVoiceLFOPitchAmount(
-                    baseAmount: effectiveAmount,
-                    auxEnvValue: 0.0,
-                    auxEnvAmount: 0.0,
-                    aftertouchDelta: aftertouchDelta,
-                    aftertouchAmount: voiceModulation.touchAftertouch.amountToVibrato
-                )
-            }
-            
-            let finalFreq = ModulationRouter.calculateOscillatorPitch(
-                baseFrequency: modulationState.baseFrequency,
-                auxEnvValue: 0.0,  // Applied separately
-                auxEnvAmount: 0.0,
-                voiceLFOValue: rawValue,
-                voiceLFOAmount: effectiveAmount,
-                voiceLFORampFactor: rampFactor
-            )
-            currentFrequency = finalFreq
-            updateOscillatorFrequencies()
-        }
-        
-        // Destination 2: Filter frequency
-        if params.amountToFilterFrequency != 0.0 {
-            let lfoOctaves = (rawValue * rampFactor) * params.amountToFilterFrequency
-            let finalCutoff = modulationState.baseFilterCutoff * pow(2.0, lfoOctaves)
-            let clamped = max(20.0, min(22050.0, finalCutoff))
-            filter.$cutoffFrequency.ramp(to: AUValue(clamped), duration: 0)
-        }
-        
-        // Destination 3: Modulation index
-        if params.amountToModulatorLevel != 0.0 {
-            let lfoOffset = (rawValue * rampFactor) * params.amountToModulatorLevel
-            let finalModIndex = modulationState.baseModulationIndex + lfoOffset
-            let clamped = max(0.0, min(10.0, finalModIndex))
-            oscLeft.$modulationIndex.ramp(to: AUValue(clamped), duration: 0)
-            oscRight.$modulationIndex.ramp(to: AUValue(clamped), duration: 0)
-        }
+        // Pitch is now handled by applyCombinedPitch()
+        // Filter is now handled by applyCombinedFilterFrequency()
+        // Modulation index is now handled by applyCombinedModulationIndex()
+        // This method is kept for backwards compatibility but does nothing
+        return
     }
     
     /// Applies global LFO (4 fixed destinations: amplitude, modulator multiplier, filter, delay time)
+    /// NOTE: Filter is now handled by applyCombinedFilterFrequency()
     private func applyGlobalLFO(rawValue: Double, parameters: GlobalLFOParameters) {
         // Early exit if no modulation
         guard parameters.hasActiveDestinations else { return }
@@ -751,33 +795,17 @@ final class PolyphonicVoice {
         }
         
         // Destination 3: Filter frequency
-        if parameters.amountToFilterFrequency != 0.0 {
-            let globalLFOOctaves = rawValue * parameters.amountToFilterFrequency
-            let finalCutoff = modulationState.baseFilterCutoff * pow(2.0, globalLFOOctaves)
-            let clamped = max(20.0, min(22050.0, finalCutoff))
-            filter.$cutoffFrequency.ramp(to: AUValue(clamped), duration: 0)
-        }
+        // Now handled by applyCombinedFilterFrequency()
         
         // Destination 4: Delay time (handled by VoicePool, not voice-level)
         // This is included here for completeness but won't execute at voice level
     }
     
     /// Applies key tracking (2 fixed destinations: filter frequency, voice LFO frequency)
+    /// NOTE: Filter is now handled by applyCombinedFilterFrequency()
     private func applyKeyTracking(trackingValue: Double) {
-        // Early exit if no modulation
-        guard voiceModulation.keyTracking.hasActiveDestinations else { return }
-        
-        let params = voiceModulation.keyTracking
-        
         // Destination 1: Filter frequency
-        // trackingValue is now in octaves from reference (A4)
-        // When amount = 1.0, filter tracks note pitch 1:1 (1 octave up = 1 octave filter up)
-        if params.amountToFilterFrequency != 0.0 {
-            let octaveOffset = trackingValue * params.amountToFilterFrequency
-            let finalCutoff = modulationState.baseFilterCutoff * pow(2.0, octaveOffset)
-            let clamped = max(20.0, min(22050.0, finalCutoff))
-            filter.$cutoffFrequency.ramp(to: AUValue(clamped), duration: 0)
-        }
+        // Now handled by applyCombinedFilterFrequency()
         
         // Destination 2: Voice LFO frequency
         // NOTE: This modulation is applied in updateVoiceLFOPhase() to avoid feedback loops
@@ -785,38 +813,15 @@ final class PolyphonicVoice {
     }
     
     /// Applies touch aftertouch (3 fixed destinations: filter, modulator level, vibrato)
+    /// NOTE: Filter and modulation index are now handled by combined methods
     private func applyTouchAftertouch(aftertouchDelta: Double) {
-        // Early exit if no modulation
-        guard voiceModulation.touchAftertouch.hasActiveDestinations else { return }
-        
-        let params = voiceModulation.touchAftertouch
-        
         // Destination 1: Filter frequency
-        if params.amountToFilterFrequency != 0.0 {
-            let aftertouchOctaves = aftertouchDelta * params.amountToFilterFrequency
-            let targetCutoff = modulationState.baseFilterCutoff * pow(2.0, aftertouchOctaves)
-            
-            // Apply smoothing
-            let currentValue = modulationState.lastSmoothedFilterCutoff ?? targetCutoff
-            let smoothingFactor = modulationState.filterSmoothingFactor
-            let interpolationAmount = 1.0 - smoothingFactor
-            let finalCutoff = currentValue + (targetCutoff - currentValue) * interpolationAmount
-            modulationState.lastSmoothedFilterCutoff = finalCutoff
-            
-            let clamped = max(20.0, min(22050.0, finalCutoff))
-            filter.$cutoffFrequency.ramp(to: AUValue(clamped), duration: 0)
-        }
+        // Now handled by applyCombinedFilterFrequency()
         
         // Destination 2: Modulation index
-        if params.amountToModulatorLevel != 0.0 {
-            let aftertouchOffset = aftertouchDelta * params.amountToModulatorLevel
-            let finalModIndex = modulationState.baseModulationIndex + aftertouchOffset
-            let clamped = max(0.0, min(10.0, finalModIndex))
-            oscLeft.$modulationIndex.ramp(to: AUValue(clamped), duration: 0)
-            oscRight.$modulationIndex.ramp(to: AUValue(clamped), duration: 0)
-        }
+        // Now handled by applyCombinedModulationIndex()
         
-        // Destination 3: Vibrato (meta-modulation - handled in voice LFO application)
-        // This modulates the voice LFO pitch amount and is applied in applyVoiceLFO()
+        // Destination 3: Vibrato (meta-modulation)
+        // Handled in applyCombinedPitch()
     }
 }
