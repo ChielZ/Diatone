@@ -86,7 +86,7 @@ struct GlobLFOView: View {
                         paramManager.updateGlobalLFOAmountToAmplitude(newValue)
                     }
                 ),
-                range: -1...1,
+                range: 0...1,
                 step: 0.01,
                 displayFormatter: { value in
                     return value > 0 ? String(format: "+%.2f", value) : String(format: "%.2f", value)
@@ -102,7 +102,7 @@ struct GlobLFOView: View {
                         paramManager.updateGlobalLFOAmountToModulatorMultiplier(newValue)
                     }
                 ),
-                range: -2...2,
+                range: 0...2,
                 step: 0.01,
                 displayFormatter: { value in
                     return value > 0 ? String(format: "+%.2f", value) : String(format: "%.2f", value)
@@ -118,7 +118,7 @@ struct GlobLFOView: View {
                         paramManager.updateGlobalLFOAmountToFilter(newValue)
                     }
                 ),
-                range: -2...2,
+                range: 0...2,
                 step: 0.01,
                 displayFormatter: { value in
                     return value > 0 ? String(format: "+%.2f oct", value) : String(format: "%.2f oct", value)
@@ -134,7 +134,7 @@ struct GlobLFOView: View {
                         paramManager.updateGlobalLFOAmountToDelayTime(newValue)
                     }
                 ),
-                range: -0.05...0.05,
+                range: 0...0.05,
                 step: 0.001,
                 displayFormatter: { value in
                     return value > 0 ? String(format: "+%.3f s", value) : String(format: "%.3f s", value)

@@ -190,7 +190,7 @@ struct DelayParameters: Codable, Equatable {
     static let `default` = DelayParameters(
         timeValue: .quarter,  // 1/4 note
         feedback: 0.5,
-        dryWetMix: 0.5,
+        dryWetMix: 0.0,
         toneCutoff: 10_000    // Wide open by default
     )
     
@@ -209,7 +209,7 @@ struct ReverbParameters: Codable, Equatable {
     static let `default` = ReverbParameters(
         feedback: 0.5,
         cutoffFrequency: 10_000,
-        balance: 0.5
+        balance: 0.0
     )
 }
 

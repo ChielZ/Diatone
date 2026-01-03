@@ -105,7 +105,7 @@ struct VoiceLFOView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: -5...5,
+                range: 0...5,
                 step: 0.01,
                 displayFormatter: { value in
                     return value > 0 ? String(format: "+%.2f st", value) : String(format: "%.2f st", value)
@@ -122,7 +122,7 @@ struct VoiceLFOView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: -2...2,
+                range: 0...2,
                 step: 0.01,
                 displayFormatter: { value in
                     return value > 0 ? String(format: "+%.2f oct", value) : String(format: "%.2f oct", value)
@@ -139,7 +139,7 @@ struct VoiceLFOView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: -5...5,
+                range: 0...5,
                 step: 0.01,
                 displayFormatter: { value in
                     return value > 0 ? String(format: "+%.2f", value) : String(format: "%.2f", value)
