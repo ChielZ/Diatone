@@ -267,16 +267,15 @@ struct KeyTrackingParameters: Codable, Equatable {
     }
     
     /// Calculate key tracking value based on frequency
-    /// Returns a value from 0.0 (low note) to 1.0 (high note)
-    /// Reference: 440 Hz (A4) maps to 0.5
+    /// Returns the number of octaves from the reference frequency
+    /// Reference: 440 Hz (A4) = 0.0 octaves
+    /// Positive values = higher notes, negative values = lower notes
     func trackingValue(forFrequency frequency: Double) -> Double {
-        // Logarithmic mapping: each octave adds a fixed amount
-        // Reference point: 440 Hz = 0.5
-        // Range: ~55 Hz (A1) = 0.0 to ~3520 Hz (A7) = 1.0
+        // Direct octave calculation from reference frequency
+        // This allows proper 1:1 octave tracking when amount = 1.0
         let referenceFreq = 440.0  // A4
         let octavesFromReference = log2(frequency / referenceFreq)
-        let normalizedValue = 0.5 + (octavesFromReference / 6.0)  // 6 octaves = full range
-        return max(0.0, min(1.0, normalizedValue))
+        return octavesFromReference  // No normalization - return raw octave offset
     }
 }
 
@@ -740,18 +739,19 @@ struct ModulationRouter {
         return max(-10.0, min(10.0, finalAmount))
     }
     
-    // MARK: - Meta-Modulation: 8) Voice LFO Frequency [LINEAR]
+    // MARK: - Meta-Modulation: 8) Voice LFO Frequency [LOGARITHMIC]
     
     /// Calculate voice LFO frequency
-    /// Sources: Key tracking (unipolar)
-    /// Formula: finalFreq = baseFreq × (1 + keyTrackValue)
+    /// Sources: Key tracking (octave-based)
+    /// Formula: finalFreq = baseFreq × 2^(keyTrackValue × amount)
+    /// When amount = 1.0: 1 octave up in note = 2x LFO frequency
     static func calculateVoiceLFOFrequency(
         baseFrequency: Double,
         keyTrackValue: Double,
         keyTrackAmount: Double
     ) -> Double {
-        let keyTrackFactor = 1.0 + (keyTrackValue * keyTrackAmount)
-        let finalFreq = baseFrequency * keyTrackFactor
+        let octaveOffset = keyTrackValue * keyTrackAmount
+        let finalFreq = baseFrequency * pow(2.0, octaveOffset)
         
         return max(0.01, min(20.0, finalFreq))
     }

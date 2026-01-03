@@ -89,8 +89,8 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  4.1  Transistor (Analog polysynth-esque sound)
  4.2  Chip (Square Lead-esque sound)
  4.3  ... (Analog bass-esque sound)
- 4.4
- 4.5
+ 4.4  ... (synth brass)
+ 4.5 .... (synth strings)
  
  5 - AMBIENT
  5.1  Ocean (deep, swirly sound)

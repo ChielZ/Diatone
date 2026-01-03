@@ -756,13 +756,12 @@ final class PolyphonicVoice {
         
         let params = voiceModulation.keyTracking
         
-        // Destination 1: Filter frequency (scales envelope/aftertouch modulation)
+        // Destination 1: Filter frequency
+        // trackingValue is now in octaves from reference (A4)
+        // When amount = 1.0, filter tracks note pitch 1:1 (1 octave up = 1 octave filter up)
         if params.amountToFilterFrequency != 0.0 {
-            // This is part of the complex filter frequency calculation
-            // The full calculation is done in a combined method
-            // For now, apply a simple scaling
-            let keyTrackFactor = 1.0 + (trackingValue * params.amountToFilterFrequency)
-            let finalCutoff = modulationState.baseFilterCutoff * keyTrackFactor
+            let octaveOffset = trackingValue * params.amountToFilterFrequency
+            let finalCutoff = modulationState.baseFilterCutoff * pow(2.0, octaveOffset)
             let clamped = max(20.0, min(22050.0, finalCutoff))
             filter.$cutoffFrequency.ramp(to: AUValue(clamped), duration: 0)
         }
