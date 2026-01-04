@@ -66,7 +66,7 @@ final class PolyphonicVoice {
     var isAvailable: Bool = true
     
     /// The current base frequency (center frequency between left and right oscillators)
-    private(set) var currentFrequency: Double = 400.0
+    private(set) var currentFrequency: Double = 440.0
     
     /// Timestamp when this voice was last triggered (for voice stealing)
     private(set) var triggerTime: Date = Date()
@@ -408,15 +408,15 @@ final class PolyphonicVoice {
     /// Updates oscillator parameters
     func updateOscillatorParameters(_ parameters: OscillatorParameters) {
         // Use zero-duration ramps to avoid AudioKit parameter ramping artifacts
-        oscLeft.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0.005)
-        oscLeft.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.005)
-        oscLeft.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.005)
-        oscLeft.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0.005)
+        oscLeft.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0.000)
+        oscLeft.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.000)
+        oscLeft.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.000)
+        oscLeft.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0.000)
         
-        oscRight.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0.005)
-        oscRight.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.005)
-        oscRight.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.005)
-        oscRight.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0.005)
+        oscRight.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0.000)
+        oscRight.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.000)
+        oscRight.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.000)
+        oscRight.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0.000)
         
         // Store base modulator multiplier for global LFO modulation
         modulationState.baseModulatorMultiplier = parameters.modulatingMultiplier
