@@ -376,18 +376,10 @@ private struct KeyTouchHandler: UIViewRepresentable {
             let voice = voicePool.allocateVoice(frequency: frequency, forKey: keyIndex, globalPitch: globalPitch)
             allocatedVoice = voice
             
-            // Store touch position in modulation state (for aftertouch and initial touch)
+            // Store touch position in modulation state (for initial touch and aftertouch)
+            // The modulation system will use this to apply initial touch modulation
             voice.modulationState.initialTouchX = normalized
             voice.modulationState.currentTouchX = normalized
-            
-            // APPLY INITIAL TOUCH AS NOTE-ON PARAMETER (zero-latency)
-            // Initial touch has 4 fixed destinations, all meta-modulations
-            // Read configuration from voice modulation parameters
-            let touchInitial = voice.voiceModulation.touchInitial
-            
-            if touchInitial.isEnabled && touchInitial.hasActiveDestinations {
-                applyInitialTouchParameters(normalized: normalized, to: voice)
-            }
             
             print("🎹 Key \(keyIndex): Touch at \(String(format: "%.2f", normalized)), freq \(String(format: "%.2f", frequency)) Hz")
             
@@ -430,41 +422,6 @@ private struct KeyTouchHandler: UIViewRepresentable {
             DispatchQueue.main.async { [weak self] in
                 self?.onTouchEnded()
             }
-        }
-        
-        // MARK: - Initial Touch Parameter Application (Fixed Destinations)
-        
-        /// Applies initial touch as note-on meta-modulation (zero-latency)
-        /// Initial touch has 4 fixed destinations (Page 9, items 1-4):
-        /// 1. Oscillator amplitude (scales base amplitude)
-        /// 2. Mod envelope amount (scales modulation envelope amount)
-        /// 3. Aux envelope pitch amount (scales aux envelope pitch modulation)
-        /// 4. Aux envelope cutoff amount (scales aux envelope filter modulation)
-        ///
-        /// - Parameters:
-        ///   - normalized: Normalized touch X position (0.0 - 1.0)
-        ///   - voice: The voice to apply to
-        private func applyInitialTouchParameters(normalized: Double, to voice: PolyphonicVoice) {
-            let touchInitial = voice.voiceModulation.touchInitial
-            
-            // Destination 1: Oscillator Amplitude (direct parameter control)
-            if touchInitial.amountToOscillatorAmplitude != 0.0 {
-                let baseAmplitude = 0.5  // Default base amplitude
-                let touchScaled = baseAmplitude * (normalized * touchInitial.amountToOscillatorAmplitude)
-                let clamped = max(0.0, min(1.0, touchScaled))
-                
-                voice.modulationState.baseAmplitude = clamped
-                voice.oscLeft.$amplitude.ramp(to: AUValue(clamped), duration: 0)
-                voice.oscRight.$amplitude.ramp(to: AUValue(clamped), duration: 0)
-            }
-            
-            // Destinations 2-4: Meta-modulations (scale envelope amounts)
-            // These don't apply parameters directly - they're stored in modulation state
-            // and will be used by the control-rate modulation system
-            // The scaling happens in PolyphonicVoice when envelopes are calculated
-            
-            // Note: Meta-modulations are now handled internally by PolyphonicVoice.applyModulation()
-            // The initial touch value is stored in modulationState.initialTouchX and used there
         }
     }
     

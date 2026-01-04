@@ -346,11 +346,31 @@ final class PolyphonicVoice {
             return
         }
         
-        // Apply base values that were set by initial touch in MainKeyboardView
-        // These were already applied at zero-latency in handleTouchBegan()
-        // Apply them again here with zero-duration ramps to ensure no ramping artifacts
-        oscLeft.$amplitude.ramp(to: AUValue(modulationState.baseAmplitude), duration: 0)
-        oscRight.$amplitude.ramp(to: AUValue(modulationState.baseAmplitude), duration: 0)
+        // Apply base values (unmodulated) at note trigger
+        // EXCEPT amplitude - that gets immediate initial touch modulation to avoid attack transients
+        
+        // Calculate initial-touch-modulated amplitude immediately (zero-latency)
+        // This prevents percussive artifacts on soft notes
+        let immediateAmplitude: Double
+        if voiceModulation.touchInitial.amountToOscillatorAmplitude != 0.0 {
+            // Use ModulationRouter formula but without global LFO (that comes later at control rate)
+            immediateAmplitude = ModulationRouter.calculateOscillatorAmplitude(
+                baseAmplitude: modulationState.baseAmplitude,
+                initialTouchValue: modulationState.initialTouchX,
+                initialTouchAmount: voiceModulation.touchInitial.amountToOscillatorAmplitude,
+                globalLFOValue: 0.0,  // No LFO yet (will be applied at control rate)
+                globalLFOAmount: 0.0
+            )
+        } else {
+            // No initial touch modulation - use base amplitude
+            immediateAmplitude = modulationState.baseAmplitude
+        }
+        
+        // Apply calculated amplitude immediately (zero-latency, no ramp)
+        oscLeft.$amplitude.ramp(to: AUValue(immediateAmplitude), duration: 0)
+        oscRight.$amplitude.ramp(to: AUValue(immediateAmplitude), duration: 0)
+        
+        // Apply unmodulated filter cutoff (modulation will be applied at control rate)
         filter.$cutoffFrequency.ramp(to: AUValue(modulationState.baseFilterCutoff), duration: 0)
         
         envelope.reset()
@@ -770,14 +790,21 @@ final class PolyphonicVoice {
     
  
     
-    /// Applies global LFO (4 fixed destinations: amplitude, modulator multiplier, filter, delay time)
-    /// NOTE: Filter is now handled by applyCombinedFilterFrequency()
+    /// Applies global LFO tremolo and updates amplitude with ongoing modulation
+    /// NOTE: Initial touch is applied immediately at note-on in trigger() to avoid attack transients
+    /// This method adds global LFO on top of the initial-touch-modulated amplitude at control rate
+    /// Filter modulation is handled by applyCombinedFilterFrequency()
     private func applyGlobalLFO(rawValue: Double, parameters: GlobalLFOParameters) {
-        // Early exit if no modulation
-        guard parameters.hasActiveDestinations else { return }
+        // Check if any destination is active (global LFO or initial touch to amplitude)
+        let hasGlobalLFO = parameters.hasActiveDestinations
+        let hasInitialTouchToAmp = voiceModulation.touchInitial.amountToOscillatorAmplitude != 0.0
         
-        // Destination 1: Oscillator amplitude (tremolo)
-        if parameters.amountToOscillatorAmplitude != 0.0 {
+        guard hasGlobalLFO || hasInitialTouchToAmp else { return }
+        
+        // Destination 1: Oscillator amplitude (initial touch + tremolo)
+        // Both initial touch and global LFO are recalculated here to combine properly
+        // Note: This runs at control rate, so global LFO has ~5ms latency (acceptable for slow tremolo)
+        if hasInitialTouchToAmp || parameters.amountToOscillatorAmplitude != 0.0 {
             let finalAmp = ModulationRouter.calculateOscillatorAmplitude(
                 baseAmplitude: modulationState.baseAmplitude,
                 initialTouchValue: modulationState.initialTouchX,
