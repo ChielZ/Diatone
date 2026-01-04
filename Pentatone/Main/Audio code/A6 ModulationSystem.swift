@@ -667,11 +667,12 @@ struct ModulationRouter {
         return max(20.0, min(20000.0, finalFreq))
     }
     
-    // MARK: - 2) Oscillator Amplitude [LINEAR]
+    // MARK: - 2) Oscillator Amplitude [MULTIPLICATIVE]
     
     /// Calculate oscillator amplitude modulation
-    /// Sources: Initial touch (unipolar, at note-on), Global LFO (bipolar)
-    /// Formula: finalAmp = (baseAmp × initialTouchValue) + globalLFOOffset
+    /// Sources: Initial touch (unipolar, at note-on), Global LFO (bipolar, multiplicative)
+    /// Formula: finalAmp = baseAmp × (1.0 + (lfoValue × amount))
+    /// This ensures tremolo depth is proportional to base amplitude
     static func calculateOscillatorAmplitude(
         baseAmplitude: Double,
         initialTouchValue: Double,
@@ -679,13 +680,14 @@ struct ModulationRouter {
         globalLFOValue: Double,
         globalLFOAmount: Double
     ) -> Double {
-        // Initial touch scales the base amplitude
-        let touchScaledBase = baseAmplitude * (initialTouchValue * initialTouchAmount)
+        // Initial touch scales the base amplitude (multiplicative)
+        let touchScaledBase = baseAmplitude * (1.0 + (initialTouchValue - 0.5) * 2.0 * initialTouchAmount)
         
-        // Global LFO adds offset (tremolo)
-        let lfoOffset = globalLFOValue * globalLFOAmount
+        // Global LFO modulates amplitude multiplicatively (tremolo)
+        // lfoValue ranges from -1 to +1, so this creates proportional modulation
+        let lfoFactor = 1.0 + (globalLFOValue * globalLFOAmount)
         
-        let finalAmp = touchScaledBase + lfoOffset
+        let finalAmp = touchScaledBase * lfoFactor
         
         return max(0.0, min(1.0, finalAmp))
     }

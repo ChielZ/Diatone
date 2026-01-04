@@ -791,8 +791,8 @@ final class PolyphonicVoice {
         if parameters.amountToOscillatorAmplitude != 0.0 {
             let finalAmp = ModulationRouter.calculateOscillatorAmplitude(
                 baseAmplitude: modulationState.baseAmplitude,
-                initialTouchValue: 1.0,  // Already applied at trigger
-                initialTouchAmount: 0.0,
+                initialTouchValue: 1.0,  // No initial touch modulation here
+                initialTouchAmount: 1.0,  // Set to 1.0 so base amplitude is preserved
                 globalLFOValue: rawValue,
                 globalLFOAmount: parameters.amountToOscillatorAmplitude
             )
