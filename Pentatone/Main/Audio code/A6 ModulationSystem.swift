@@ -710,8 +710,8 @@ struct ModulationRouter {
     // MARK: - 5) Filter Frequency [LOGARITHMIC]
     
     /// Calculate filter cutoff frequency
-    /// Sources: Key track, Aux env, Voice LFO, Global LFO, Aftertouch
-    /// Complex formula with scaling and multiple bipolar sources
+    /// Sources: Key track (note-on offset), Aux env, Voice LFO, Global LFO, Aftertouch
+    /// Key tracking provides a per-note octave offset applied at note-on
     static func calculateFilterFrequency(
         baseCutoff: Double,
         keyTrackValue: Double,
@@ -726,21 +726,23 @@ struct ModulationRouter {
         globalLFOValue: Double,
         globalLFOAmount: Double
     ) -> Double {
-        // Step 1: Additive offsets in octave space (envelope + aftertouch)
+        // Step 1: Key tracking - direct octave offset based on note frequency
+        // At amount = 1.0, filter tracks keyboard 1:1 (one octave up = double filter freq)
+        // At amount = 0.0, no tracking (all notes same filter freq)
+        let keyTrackOctaves = keyTrackValue * keyTrackAmount
+        
+        // Step 2: Envelope and aftertouch offsets in octave space
         let auxEnvOctaves = auxEnvValue * auxEnvAmount
         let aftertouchOctaves = aftertouchDelta * aftertouchAmount
         
-        // Step 2: Scale by key tracking
-        let keyTrackFactor = 1.0 + (keyTrackValue * keyTrackAmount)
-        let scaledOctaves = (auxEnvOctaves + aftertouchOctaves) * keyTrackFactor
-        
-        // Step 3: Add bipolar LFO offsets
+        // Step 3: LFO offsets in octave space
         let voiceLFOOctaves = (voiceLFOValue * voiceLFORampFactor) * voiceLFOAmount
         let globalLFOOctaves = globalLFOValue * globalLFOAmount
         
-        let totalOctaves = scaledOctaves + voiceLFOOctaves + globalLFOOctaves
+        // Step 4: Sum all octave offsets
+        let totalOctaves = keyTrackOctaves + auxEnvOctaves + aftertouchOctaves + voiceLFOOctaves + globalLFOOctaves
         
-        // Step 4: Apply to base frequency
+        // Step 5: Apply to base cutoff frequency
         let finalCutoff = baseCutoff * pow(2.0, totalOctaves)
         
         return max(20.0, min(22050.0, finalCutoff))

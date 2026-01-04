@@ -714,15 +714,14 @@ final class PolyphonicVoice {
         aftertouchDelta: Double
     ) {
         // Check if any source is active
-        // Note: Key tracking only scales other sources, so it's not checked independently in the guard
-        // However, we still pass it through to the calculation where it multiplies aux env and aftertouch
+        // Key tracking is now a direct additive source (note-on offset), not just a multiplier
+        let hasKeyTrack = voiceModulation.keyTracking.amountToFilterFrequency != 0.0
         let hasAuxEnv = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency != 0.0
         let hasVoiceLFO = voiceModulation.voiceLFO.amountToFilterFrequency != 0.0
         let hasGlobalLFO = globalLFOParameters.amountToFilterFrequency != 0.0
         let hasAftertouch = voiceModulation.touchAftertouch.amountToFilterFrequency != 0.0
         
-        // Early exit only if no additive sources are active (key tracking alone does nothing)
-        guard hasAuxEnv || hasVoiceLFO || hasGlobalLFO || hasAftertouch else { return }
+        guard hasKeyTrack || hasAuxEnv || hasVoiceLFO || hasGlobalLFO || hasAftertouch else { return }
         
         // Apply initial touch meta-modulation to aux envelope filter amount
         var effectiveAuxEnvFilterAmount = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency

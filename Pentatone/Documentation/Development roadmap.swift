@@ -325,18 +325,16 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
       clampedMultiplier = max(0.1, min(20.0, finalMultiplier))
 
  5)  Filter frequency (KorgLowPassFilter cutoffFrequency) [LOGARITHMIC]
-    Sources: Key track (unipolar), Aux env (bipolar), Voice LFO (bipolar, with delay ramp),
+    Sources: Key track (unipolar, note-on offset), Aux env (bipolar), Voice LFO (bipolar, with delay ramp),
              Global LFO (bipolar), Aftertouch (bipolar)
     APPLICATION:
+      keyTrackOctaves = keyTrackValue × keyTrackAmount  // Direct offset based on note
       auxEnvOctaves = auxEnvValue × auxEnvAmount  // Can be ±
       aftertouchOctaves = aftertouchDelta × aftertouchAmount  // Can be ±
-      keyTrackFactor = 1.0 + (keyTrackValue × keyTrackAmount)
-      scaledOctaves = (auxEnvOctaves + aftertouchOctaves) × keyTrackFactor
-      
       voiceLFOOctaves = (lfoValue × lfoRampFactor) × lfoAmount  // Can be ±
       globalLFOOctaves = globalLFOValue × globalLFOAmount  // Can be ±
       
-      totalOctaves = scaledOctaves + voiceLFOOctaves + globalLFOOctaves
+      totalOctaves = keyTrackOctaves + auxEnvOctaves + aftertouchOctaves + voiceLFOOctaves + globalLFOOctaves
       finalCutoff = baseCutoff × 2^totalOctaves
       clampedCutoff = max(20.0, min(22050.0, finalCutoff))
 
