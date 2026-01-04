@@ -87,8 +87,8 @@ struct ContourView: View {
                 displayFormatter: { String(format: "%.3f s", $0) }
             )
             
-            // Row 7 - Filter Cutoff (20-20000 Hz, logarithmic)
-            LogarithmicSliderRow(
+            // Row 7 - Filter Cutoff (20-20000 Hz, logarithmic drag, linear 1 Hz button steps)
+            LogarithmicSliderRowWithLinearButtons(
                 label: "FILTER CUTOFF",
                 value: Binding(
                     get: { paramManager.voiceTemplate.filter.cutoffFrequency },
@@ -98,6 +98,7 @@ struct ContourView: View {
                     }
                 ),
                 range: 20...20000,
+                buttonStep: 1.0,  // Fixed 1 Hz steps for buttons
                 displayFormatter: { value in
                     if value < 1000 {
                         return String(format: "%.0f Hz", value)

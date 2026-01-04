@@ -377,6 +377,151 @@ struct LogarithmicSliderRow: View {
     }
 }
 
+// MARK: - Logarithmic Slider with Linear Button Steps
+
+/// A row for adjusting logarithmic/exponential parameters with fixed linear button steps
+/// Drag: logarithmic behavior (equal distances = equal ratios)
+/// Buttons: fixed linear steps (e.g., always ±1 Hz for filter cutoff)
+/// This is ideal for filter cutoff where precise tuning is needed at specific frequencies
+struct LogarithmicSliderRowWithLinearButtons: View {
+    let label: String
+    @Binding var value: Double
+    let range: ClosedRange<Double>
+    let buttonStep: Double  // Fixed step for increment/decrement buttons (e.g., 1.0 Hz)
+    let displayFormatter: (Double) -> String
+    
+    @State private var isDragging: Bool = false
+    @State private var dragStartValue: Double = 0
+    @State private var dragStartLocation: CGFloat = 0
+    
+    init(
+        label: String,
+        value: Binding<Double>,
+        range: ClosedRange<Double>,
+        buttonStep: Double,
+        displayFormatter: @escaping (Double) -> String
+    ) {
+        self.label = label
+        self._value = value
+        self.range = range
+        self.buttonStep = buttonStep
+        self.displayFormatter = displayFormatter
+    }
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: radius)
+                .fill(Color("BackgroundColour"))
+            
+            HStack {
+                // Left button (<) - Decrease value by fixed step
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text("<")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("Futura", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        decrementValue()
+                    }
+                
+                // Center - Draggable area with label and value
+                VStack(spacing: 2) {
+                    Text(label)
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("Futura", size: 18)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                    
+                    Text(displayFormatter(value))
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("Futura", size: 24)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { gesture in
+                            if !isDragging {
+                                isDragging = true
+                                dragStartValue = value
+                                dragStartLocation = gesture.startLocation.x
+                            }
+                            
+                            // Calculate delta from drag start
+                            let delta = gesture.location.x - dragStartLocation
+                            
+                            // Convert to logarithmic scale
+                            // We work in log space where equal distances = equal ratios
+                            let logMin = log(range.lowerBound)
+                            let logMax = log(range.upperBound)
+                            let logRange = logMax - logMin
+                            
+                            // Current value in log space
+                            let logStartValue = log(dragStartValue)
+                            
+                            // Sensitivity: pixels to traverse full logarithmic range
+                            let sensitivity: CGFloat = 200.0
+                            let logChange = Double(delta) * logRange / Double(sensitivity)
+                            
+                            // New value in log space
+                            let newLogValue = logStartValue + logChange
+                            
+                            // Convert back to linear space
+                            let newValue = exp(newLogValue)
+                            
+                            // Clamp to range
+                            value = min(max(newValue, range.lowerBound), range.upperBound)
+                        }
+                        .onEnded { _ in
+                            isDragging = false
+                        }
+                )
+                .background(
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(isDragging ? Color("HighlightColour").opacity(0.1) : Color.clear)
+                )
+                
+                // Right button (>) - Increase value by fixed step
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text(">")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("Futura", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        incrementValue()
+                    }
+            }
+            .padding(.horizontal, 0)
+        }
+    }
+    
+    private func incrementValue() {
+        // Fixed linear step (e.g., +1 Hz)
+        let newValue = value + buttonStep
+        value = min(newValue, range.upperBound)
+    }
+    
+    private func decrementValue() {
+        // Fixed linear step (e.g., -1 Hz)
+        let newValue = value - buttonStep
+        value = max(newValue, range.lowerBound)
+    }
+}
+
 // MARK: - Integer Slider Row (convenience wrapper)
 
 /// Convenience wrapper for integer-valued sliders
@@ -435,11 +580,12 @@ private struct ParameterComponentsPreview: View {
                     displayFormatter: { String(format: "%.2f", $0) }
                 )
                 
-                // Example: Logarithmic slider (for frequency)
-                LogarithmicSliderRow(
+                // Example: Logarithmic slider with linear button steps (for filter)
+                LogarithmicSliderRowWithLinearButtons(
                     label: "FILTER CUTOFF",
                     value: $cutoffFrequency,
                     range: 20...20000,
+                    buttonStep: 1.0,  // Always ±1 Hz per button press
                     displayFormatter: { value in
                         if value < 1000 {
                             return String(format: "%.0f Hz", value)
