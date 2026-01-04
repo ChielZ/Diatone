@@ -475,10 +475,9 @@ final class VoicePool {
         guard globalLFO.isEnabled else { return 0.0 }
         
         // Phase increment calculation
-        // Note: globalLFO.frequency is always in Hz (pre-calculated based on mode)
-        // In free mode: direct Hz value from user
-        // In sync mode: calculated Hz from syncValue and tempo
-        let phaseIncrement = globalLFO.frequency * deltaTime
+        // Get actual frequency based on mode (sync mode uses tempo, free/trigger mode uses Hz)
+        let actualFrequency = globalLFO.actualFrequency(tempo: currentTempo)
+        let phaseIncrement = actualFrequency * deltaTime
         
         // Update phase (global LFO is always free-running or sync, never trigger)
         globalModulationState.globalLFOPhase += phaseIncrement

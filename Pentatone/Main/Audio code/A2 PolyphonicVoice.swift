@@ -550,9 +550,7 @@ final class PolyphonicVoice {
             keyTrackValue: keyTrackValue,
             aftertouchDelta: aftertouchDelta
         )
-        //applyAuxiliaryEnvelope(envValue: auxiliaryEnvValue)
-        //applyGlobalLFO(rawValue: globalLFO.rawValue, parameters: globalLFO.parameters)
-        //applyTouchAftertouch(aftertouchDelta: aftertouchDelta)
+        applyGlobalLFO(rawValue: globalLFO.rawValue, parameters: globalLFO.parameters)
     }
     
     // MARK: - Voice LFO Phase Update (Phase 5C)
@@ -625,11 +623,21 @@ final class PolyphonicVoice {
         
         guard hasModEnv || hasVoiceLFO || hasAftertouch else { return }
         
+        // Apply initial touch meta-modulation to mod envelope amount
+        var effectiveModEnvAmount = voiceModulation.modulatorEnvelope.amountToModulationIndex
+        if voiceModulation.touchInitial.amountToModEnvelope != 0.0 {
+            effectiveModEnvAmount = ModulationRouter.calculateTouchScaledAmount(
+                baseAmount: effectiveModEnvAmount,
+                initialTouchValue: modulationState.initialTouchX,
+                initialTouchAmount: voiceModulation.touchInitial.amountToModEnvelope
+            )
+        }
+        
         // Use the ModulationRouter to properly combine all sources
         let finalModIndex = ModulationRouter.calculateModulationIndex(
             baseModIndex: modulationState.baseModulationIndex,
             modEnvValue: modulatorEnvValue,
-            modEnvAmount: voiceModulation.modulatorEnvelope.amountToModulationIndex,
+            modEnvAmount: effectiveModEnvAmount,
             voiceLFOValue: voiceLFORawValue,
             voiceLFOAmount: voiceModulation.voiceLFO.amountToModulatorLevel,
             voiceLFORampFactor: modulationState.voiceLFORampFactor,
@@ -655,6 +663,16 @@ final class PolyphonicVoice {
         
         guard hasAuxEnv || hasVoiceLFO || hasVibratoMetaMod else { return }
         
+        // Apply initial touch meta-modulation to aux envelope pitch amount
+        var effectiveAuxEnvPitchAmount = voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch
+        if voiceModulation.touchInitial.amountToAuxEnvPitch != 0.0 {
+            effectiveAuxEnvPitchAmount = ModulationRouter.calculateTouchScaledAmount(
+                baseAmount: effectiveAuxEnvPitchAmount,
+                initialTouchValue: modulationState.initialTouchX,
+                initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvPitch
+            )
+        }
+        
         // Calculate effective voice LFO amount (with meta-modulation)
         // Allow aftertouch/aux env to add vibrato even if base amount is 0
         var effectiveVoiceLFOAmount = voiceModulation.voiceLFO.amountToOscillatorPitch
@@ -675,7 +693,7 @@ final class PolyphonicVoice {
         let finalFreq = ModulationRouter.calculateOscillatorPitch(
             baseFrequency: modulationState.baseFrequency,
             auxEnvValue: auxiliaryEnvValue,
-            auxEnvAmount: voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch,
+            auxEnvAmount: effectiveAuxEnvPitchAmount,
             voiceLFOValue: voiceLFORawValue,
             voiceLFOAmount: effectiveVoiceLFOAmount,
             voiceLFORampFactor: modulationState.voiceLFORampFactor
@@ -696,13 +714,25 @@ final class PolyphonicVoice {
         aftertouchDelta: Double
     ) {
         // Check if any source is active
-        let hasKeyTrack = voiceModulation.keyTracking.amountToFilterFrequency != 0.0
+        // Note: Key tracking only scales other sources, so it's not checked independently in the guard
+        // However, we still pass it through to the calculation where it multiplies aux env and aftertouch
         let hasAuxEnv = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency != 0.0
         let hasVoiceLFO = voiceModulation.voiceLFO.amountToFilterFrequency != 0.0
         let hasGlobalLFO = globalLFOParameters.amountToFilterFrequency != 0.0
         let hasAftertouch = voiceModulation.touchAftertouch.amountToFilterFrequency != 0.0
         
-        guard hasKeyTrack || hasAuxEnv || hasVoiceLFO || hasGlobalLFO || hasAftertouch else { return }
+        // Early exit only if no additive sources are active (key tracking alone does nothing)
+        guard hasAuxEnv || hasVoiceLFO || hasGlobalLFO || hasAftertouch else { return }
+        
+        // Apply initial touch meta-modulation to aux envelope filter amount
+        var effectiveAuxEnvFilterAmount = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency
+        if voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0 {
+            effectiveAuxEnvFilterAmount = ModulationRouter.calculateTouchScaledAmount(
+                baseAmount: effectiveAuxEnvFilterAmount,
+                initialTouchValue: modulationState.initialTouchX,
+                initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvCutoff
+            )
+        }
         
         // Use the ModulationRouter to properly combine all sources
         let finalCutoff = ModulationRouter.calculateFilterFrequency(
@@ -710,7 +740,7 @@ final class PolyphonicVoice {
             keyTrackValue: keyTrackValue,
             keyTrackAmount: voiceModulation.keyTracking.amountToFilterFrequency,
             auxEnvValue: auxiliaryEnvValue,
-            auxEnvAmount: voiceModulation.auxiliaryEnvelope.amountToFilterFrequency,
+            auxEnvAmount: effectiveAuxEnvFilterAmount,
             aftertouchDelta: aftertouchDelta,
             aftertouchAmount: voiceModulation.touchAftertouch.amountToFilterFrequency,
             voiceLFOValue: voiceLFORawValue,
@@ -751,8 +781,8 @@ final class PolyphonicVoice {
         if parameters.amountToOscillatorAmplitude != 0.0 {
             let finalAmp = ModulationRouter.calculateOscillatorAmplitude(
                 baseAmplitude: modulationState.baseAmplitude,
-                initialTouchValue: 1.0,  // No initial touch modulation here
-                initialTouchAmount: 1.0,  // Set to 1.0 so base amplitude is preserved
+                initialTouchValue: modulationState.initialTouchX,
+                initialTouchAmount: voiceModulation.touchInitial.amountToOscillatorAmplitude,
                 globalLFOValue: rawValue,
                 globalLFOAmount: parameters.amountToOscillatorAmplitude
             )
