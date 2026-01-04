@@ -278,65 +278,8 @@ final class VoicePool {
         completion()
     }
     
-    /// Recreates all voices with new parameters (e.g., when waveform changes)
-    /// This properly cleans up old voices and creates new ones
-    /// Note: Voice count remains fixed at nominalPolyphony
-    /// Warning: Kills any currently playing notes
-    /// DEPRECATED: Use recreateOscillators() instead for waveform changes
-    func recreateVoices(with parameters: VoiceParameters, completion: @escaping () -> Void) {
-        print("🎵 Starting voice recreation...")
-        
-        // Stop all playing notes and clear key mappings
-        stopAll()
-        
-        // Reset voice index
-        currentVoiceIndex = 0
-        
-        // Store references to old voices (keep them alive during transition)
-        let oldVoices = voices
-        
-        print("🎵 Creating \(nominalPolyphony) new voices...")
-        
-        // Create new voices immediately (on main thread - AudioKit prefers this)
-        var newVoices: [PolyphonicVoice] = []
-        for i in 0..<nominalPolyphony {
-            let voice = PolyphonicVoice(parameters: parameters)
-            newVoices.append(voice)
-            print("🎵   Voice \(i): created")
-        }
-        
-        print("🎵 Swapping audio connections...")
-        
-        // Connect new voices to mixer FIRST (before disconnecting old ones)
-        for (index, voice) in newVoices.enumerated() {
-            voiceMixer.addInput(voice.envelope)
-            print("🎵   Voice \(index): connected to mixer")
-        }
-        
-        // Initialize new voices if pool was already initialized
-        if isInitialized {
-            print("🎵 Initializing new voices...")
-            for (index, voice) in newVoices.enumerated() {
-                voice.initialize()
-                print("🎵   Voice \(index): initialized & started")
-            }
-        }
-        
-        // Now that new voices are live, swap the array
-        voices = newVoices
-        
-        // Disconnect and cleanup old voices AFTER new ones are running
-        print("🎵 Cleaning up old voices...")
-        for (index, oldVoice) in oldVoices.enumerated() {
-            voiceMixer.removeInput(oldVoice.envelope)
-            oldVoice.cleanup()
-            print("🎵   Old voice \(index): disconnected & cleaned")
-        }
-        
-        print("🎵 ✅ Voice recreation complete - \(voices.count) voices ready")
-        completion()
-    }
     
+      
     // MARK: - Polyphony Adjustment
     
     /// Switches between monophonic and polyphonic modes

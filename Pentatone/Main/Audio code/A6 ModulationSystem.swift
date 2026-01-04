@@ -8,32 +8,7 @@
 import Foundation
 import AudioKit
 
-// MARK: - Modulation Destinations (Legacy - Deprecated)
 
-/// Legacy enum - kept for reference during refactoring
-/// New system uses fixed destinations per source with individual amounts
-@available(*, deprecated, message: "Use fixed destinations in parameter structs instead")
-enum ModulationDestination: String, Codable, CaseIterable {
-    // Oscillator destinations
-    case oscillatorAmplitude
-    case oscillatorBaseFrequency
-    case modulationIndex
-    case modulatingMultiplier
-    
-    // Filter destinations
-    case filterCutoff
-    
-    // Stereo/Voice destinations
-    case stereoSpreadAmount
-    
-    // Voice LFO destinations
-    case voiceLFOFrequency
-    case voiceLFOAmount
-    
-    // Global/FX destinations
-    case delayTime
-    case delayMix
-}
 
 // MARK: - LFO Waveforms
 

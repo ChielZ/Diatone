@@ -550,9 +550,9 @@ final class PolyphonicVoice {
             keyTrackValue: keyTrackValue,
             aftertouchDelta: aftertouchDelta
         )
-        applyAuxiliaryEnvelope(envValue: auxiliaryEnvValue)
-        applyGlobalLFO(rawValue: globalLFO.rawValue, parameters: globalLFO.parameters)
-        applyTouchAftertouch(aftertouchDelta: aftertouchDelta)
+        //applyAuxiliaryEnvelope(envValue: auxiliaryEnvValue)
+        //applyGlobalLFO(rawValue: globalLFO.rawValue, parameters: globalLFO.parameters)
+        //applyTouchAftertouch(aftertouchDelta: aftertouchDelta)
     }
     
     // MARK: - Voice LFO Phase Update (Phase 5C)
@@ -739,37 +739,7 @@ final class PolyphonicVoice {
         filter.$cutoffFrequency.ramp(to: AUValue(smoothedCutoff), duration: 0.005)
     }
     
-    // MARK: - Individual Modulation Application Methods
-    // These handle destinations that only receive input from a single source
-    
-    /// Applies modulator envelope (fixed destination: modulation index)
-    /// NOTE: This is now handled by applyCombinedModulationIndex()
-    @available(*, deprecated, message: "Use applyCombinedModulationIndex() instead")
-    private func applyModulatorEnvelope(envValue: Double) {
-        // Modulation index is now handled by applyCombinedModulationIndex()
-        // This method is kept for backwards compatibility but does nothing
-        return
-    }
-    
-    /// Applies auxiliary envelope (3 fixed destinations: pitch, filter, vibrato)
-    /// NOTE: Pitch and filter are now handled by combined methods
-    private func applyAuxiliaryEnvelope(envValue: Double) {
-        // Pitch is now handled by applyCombinedPitch()
-        // Filter is now handled by applyCombinedFilterFrequency()
-        // Vibrato meta-modulation is handled in applyCombinedPitch()
-        // This method is kept for backwards compatibility but does nothing
-        return
-    }
-    
-    /// Applies voice LFO (3 fixed destinations + delay ramp: pitch, filter, modulator level)
-    /// NOTE: All destinations are now handled by combined methods
-    private func applyVoiceLFO(rawValue: Double) {
-        // Pitch is now handled by applyCombinedPitch()
-        // Filter is now handled by applyCombinedFilterFrequency()
-        // Modulation index is now handled by applyCombinedModulationIndex()
-        // This method is kept for backwards compatibility but does nothing
-        return
-    }
+ 
     
     /// Applies global LFO (4 fixed destinations: amplitude, modulator multiplier, filter, delay time)
     /// NOTE: Filter is now handled by applyCombinedFilterFrequency()
@@ -806,29 +776,5 @@ final class PolyphonicVoice {
         
         // Destination 4: Delay time (handled by VoicePool, not voice-level)
         // This is included here for completeness but won't execute at voice level
-    }
-    
-    /// Applies key tracking (2 fixed destinations: filter frequency, voice LFO frequency)
-    /// NOTE: Filter is now handled by applyCombinedFilterFrequency()
-    private func applyKeyTracking(trackingValue: Double) {
-        // Destination 1: Filter frequency
-        // Now handled by applyCombinedFilterFrequency()
-        
-        // Destination 2: Voice LFO frequency
-        // NOTE: This modulation is applied in updateVoiceLFOPhase() to avoid feedback loops
-        // Key tracking modulation is read during phase calculation, not written back to parameters
-    }
-    
-    /// Applies touch aftertouch (3 fixed destinations: filter, modulator level, vibrato)
-    /// NOTE: Filter and modulation index are now handled by combined methods
-    private func applyTouchAftertouch(aftertouchDelta: Double) {
-        // Destination 1: Filter frequency
-        // Now handled by applyCombinedFilterFrequency()
-        
-        // Destination 2: Modulation index
-        // Now handled by applyCombinedModulationIndex()
-        
-        // Destination 3: Vibrato (meta-modulation)
-        // Handled in applyCombinedPitch()
     }
 }
