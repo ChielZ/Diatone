@@ -735,7 +735,8 @@ final class PolyphonicVoice {
             }
         }
         
-        filter.$cutoffFrequency.ramp(to: AUValue(smoothedCutoff), duration: 0)
+        // Use 5ms ramp for smooth modulation (works with 200 Hz control rate)
+        filter.$cutoffFrequency.ramp(to: AUValue(smoothedCutoff), duration: 0.005)
     }
     
     // MARK: - Individual Modulation Application Methods
