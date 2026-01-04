@@ -340,11 +340,17 @@ final class PolyphonicVoice {
     // MARK: - Triggering
     
     /// Triggers this voice (starts envelope attack)
-    func trigger() {
+    /// - Parameter initialTouchX: Initial touch x-position (0.0 = left, 1.0 = right) for velocity-like response
+    func trigger(initialTouchX: Double = 0.5) {
         guard isInitialized else {
             assertionFailure("Voice must be initialized before triggering")
             return
         }
+        
+        // CRITICAL: Set initial touch value BEFORE any calculations that depend on it
+        // This ensures amplitude modulation uses the correct touch value from the start
+        modulationState.initialTouchX = initialTouchX
+        modulationState.currentTouchX = initialTouchX
         
         // Apply base values (unmodulated) at note trigger
         // EXCEPT amplitude - that gets immediate initial touch modulation to avoid attack transients
@@ -356,7 +362,7 @@ final class PolyphonicVoice {
             // Use ModulationRouter formula but without global LFO (that comes later at control rate)
             immediateAmplitude = ModulationRouter.calculateOscillatorAmplitude(
                 baseAmplitude: modulationState.baseAmplitude,
-                initialTouchValue: modulationState.initialTouchX,
+                initialTouchValue: initialTouchX,  // Use passed-in value directly
                 initialTouchAmount: voiceModulation.touchInitial.amountToOscillatorAmplitude,
                 globalLFOValue: 0.0,  // No LFO yet (will be applied at control rate)
                 globalLFOAmount: 0.0
@@ -378,10 +384,10 @@ final class PolyphonicVoice {
         isAvailable = false
         triggerTime = Date()
         
-        // Phase 5: Initialize modulation state
+        // Phase 5: Initialize modulation state with the actual initial touch value
         // Note: voiceLFOPhase is only reset if LFO reset mode is .trigger or .sync
         let shouldResetLFO = voiceModulation.voiceLFO.resetMode != .free
-        modulationState.reset(frequency: currentFrequency, touchX: 0.5, resetLFOPhase: shouldResetLFO)
+        modulationState.reset(frequency: currentFrequency, touchX: initialTouchX, resetLFOPhase: shouldResetLFO)
     }
     
     /// Releases this voice (starts envelope release)

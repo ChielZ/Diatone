@@ -178,9 +178,10 @@ final class VoicePool {
     ///   - frequency: The base frequency to play (from keyboard/scale)
     ///   - keyIndex: The key index (0-17) triggering this note
     ///   - globalPitch: Global pitch modifiers (transpose, octave, fine tune)
+    ///   - initialTouchX: Initial touch x-position (0.0 = left, 1.0 = right) for velocity-like response
     /// - Returns: The allocated voice (for reference if needed)
     @discardableResult
-    func allocateVoice(frequency: Double, forKey keyIndex: Int, globalPitch: GlobalPitchParameters = .default) -> PolyphonicVoice {
+    func allocateVoice(frequency: Double, forKey keyIndex: Int, globalPitch: GlobalPitchParameters = .default, initialTouchX: Double = 0.5) -> PolyphonicVoice {
         guard isInitialized else {
             assertionFailure("VoicePool must be initialized before allocating voices")
             return voices[0]
@@ -192,9 +193,9 @@ final class VoicePool {
         // Apply global pitch modifiers to the base frequency
         let finalFrequency = frequency * globalPitch.combinedFactor
         
-        // Set frequency and trigger
+        // Set frequency and trigger with initial touch value
         voice.setFrequency(finalFrequency)
-        voice.trigger()
+        voice.trigger(initialTouchX: initialTouchX)
         
         // Map this key to the voice for precise release tracking
         keyToVoiceMap[keyIndex] = voice
@@ -204,7 +205,7 @@ final class VoicePool {
             monoVoiceOwner = keyIndex
         }
         
-        print("🎵 Key \(keyIndex): Allocated voice, base frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor))")
+        print("🎵 Key \(keyIndex): Allocated voice, base frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
         
         // Move to next voice for round-robin
         incrementVoiceIndex()

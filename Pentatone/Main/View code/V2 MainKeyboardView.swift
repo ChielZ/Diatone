@@ -372,13 +372,17 @@ private struct KeyTouchHandler: UIViewRepresentable {
             // Get global pitch parameters from parameter manager
             let globalPitch = AudioParameterManager.shared.master.globalPitch
             
-            // Allocate voice from pool (with global pitch modifiers)
-            let voice = voicePool.allocateVoice(frequency: frequency, forKey: keyIndex, globalPitch: globalPitch)
+            // Allocate voice from pool with initial touch value (for immediate velocity-like response)
+            // This ensures amplitude is set correctly BEFORE the voice is triggered
+            let voice = voicePool.allocateVoice(
+                frequency: frequency,
+                forKey: keyIndex,
+                globalPitch: globalPitch,
+                initialTouchX: normalized
+            )
             allocatedVoice = voice
             
-            // Store touch position in modulation state (for initial touch and aftertouch)
-            // The modulation system will use this to apply initial touch modulation
-            voice.modulationState.initialTouchX = normalized
+            // currentTouchX is already set by allocateVoice->trigger, but we set it again for clarity
             voice.modulationState.currentTouchX = normalized
             
             print("🎹 Key \(keyIndex): Touch at \(String(format: "%.2f", normalized)), freq \(String(format: "%.2f", frequency)) Hz")
