@@ -799,12 +799,7 @@ final class AudioParameterManager: ObservableObject {
         voiceTemplate.modulation.voiceLFO.resetMode = mode
     }
     
-    /// Update voice LFO frequency mode
-    func updateVoiceLFOFrequencyMode(_ mode: LFOFrequencyMode) {
-        voiceTemplate.modulation.voiceLFO.frequencyMode = mode
-    }
-    
-    /// Update voice LFO frequency
+    /// Update voice LFO frequency (always in Hz, no tempo sync)
     func updateVoiceLFOFrequency(_ value: Double) {
         voiceTemplate.modulation.voiceLFO.frequency = value
     }

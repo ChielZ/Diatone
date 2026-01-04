@@ -181,12 +181,12 @@ enum LFOSyncValue: Double, Codable, Equatable, CaseIterable {
 
 /// Voice LFO with fixed destinations and individual amounts
 /// Each voice has its own LFO instance with independent phase
+/// Note: Voice LFO frequency is always in Hz (no tempo sync)
 struct VoiceLFOParameters: Codable, Equatable {
     // Configuration
     var waveform: LFOWaveform
     var resetMode: LFOResetMode
-    var frequencyMode: LFOFrequencyMode
-    var frequency: Double                      // Hz (0.01 - 20 Hz) or tempo multiplier
+    var frequency: Double                      // Hz (0.01 - 20 Hz) - always in Hz, no tempo sync
     
     // Fixed destinations with individual amounts (can be positive or negative)
     var amountToOscillatorPitch: Double        // ±semitones (Page 7, item 4)
@@ -201,7 +201,6 @@ struct VoiceLFOParameters: Codable, Equatable {
     static let `default` = VoiceLFOParameters(
         waveform: .sine,
         resetMode: .free,
-        frequencyMode: .hertz,
         frequency: 5.0,
         amountToOscillatorPitch: 0.0,          // No vibrato by default
         amountToFilterFrequency: 0.0,          // No filter modulation by default

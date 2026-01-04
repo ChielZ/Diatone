@@ -557,7 +557,8 @@ final class PolyphonicVoice {
     
     // MARK: - Voice LFO Phase Update (Phase 5C)
     
-    /// Updates the voice LFO phase based on time and tempo
+    /// Updates the voice LFO phase based on time
+    /// Note: Voice LFO frequency is always in Hz (no tempo sync)
     private func updateVoiceLFOPhase(deltaTime: Double, tempo: Double) {
         guard voiceModulation.voiceLFO.isEnabled else { return }
         
@@ -576,21 +577,9 @@ final class PolyphonicVoice {
             )
         }
         
-        // Calculate phase increment based on frequency mode
-        let phaseIncrement: Double
-        
-        switch lfo.frequencyMode {
-        case .hertz:
-            // Direct Hz: phase increment = frequency * deltaTime
-            phaseIncrement = effectiveFrequency * deltaTime
-            
-        case .tempoSync:
-            // Tempo sync: effectiveFrequency is a tempo multiplier
-            // e.g., 1.0 = quarter note, 2.0 = eighth note, 0.5 = half note
-            let beatsPerSecond = tempo / 60.0
-            let cyclesPerSecond = beatsPerSecond * effectiveFrequency
-            phaseIncrement = cyclesPerSecond * deltaTime
-        }
+        // Voice LFO is always in Hz (no tempo sync)
+        // Phase increment = frequency * deltaTime
+        let phaseIncrement = effectiveFrequency * deltaTime
         
         // Update phase based on reset mode
         switch lfo.resetMode {
@@ -609,8 +598,8 @@ final class PolyphonicVoice {
             }
             
         case .sync:
-            // Tempo sync: same as trigger but could be reset by external clock
-            // For now, just increment (external sync will be added later if needed)
+            // Tempo sync reset mode: phase aligns to global timing
+            // (Currently same as trigger - external sync could be added later)
             modulationState.voiceLFOPhase += phaseIncrement
             if modulationState.voiceLFOPhase >= 1.0 {
                 modulationState.voiceLFOPhase -= floor(modulationState.voiceLFOPhase)
