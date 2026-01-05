@@ -269,7 +269,10 @@ struct AuxiliaryEnvelopeParameters: Codable, Equatable {
 // MARK: - Key Tracking (Fixed Destinations)
 
 /// Key tracking provides modulation based on the pitch of the triggered note
-/// Higher notes produce higher modulation values
+/// **NOTE-ON PROPERTY**: The key tracking value is calculated ONCE at note trigger
+/// and remains constant for the lifetime of the note. This ensures consistent
+/// filter behavior regardless of any pitch modulation (aux envelope, voice LFO).
+/// Higher notes produce higher modulation values (positive octave offset from 440Hz reference).
 struct KeyTrackingParameters: Codable, Equatable {
     // Fixed destinations with individual amounts (Page 5, items 6-7)
     var amountToFilterFrequency: Double        // Scales filter modulation (unipolar 0-1)
@@ -289,7 +292,7 @@ struct KeyTrackingParameters: Codable, Equatable {
             || amountToVoiceLFOFrequency != 0.0
     }
     
-    /// Calculate key tracking value based on frequency
+    /// Calculate key tracking value based on frequency (called once at note-on)
     /// Returns the number of octaves from the reference frequency
     /// Reference: 440 Hz (A4) = 0.0 octaves
     /// Positive values = higher notes, negative values = lower notes
@@ -474,9 +477,12 @@ struct ModulationState {
     var initialTouchX: Double = 0.0        // Normalized 0.0 - 1.0
     var currentTouchX: Double = 0.0        // Normalized 0.0 - 1.0
     
-    // Key tracking
+    // Key tracking (NOTE-ON property - calculated once at trigger)
+    var keyTrackingValue: Double = 0.0     // Octave offset from reference (440Hz), set at note-on
+    
+    // Frequency tracking
     // NOTE: currentFrequency includes pitch modulation (aux env, voice LFO)
-    // Use baseFrequency for key tracking calculations to ensure consistency!
+    // Use baseFrequency for note-on calculations to ensure consistency!
     var currentFrequency: Double = 440.0   // Current modulated frequency (Hz)
     
     // User-controlled base values (before modulation)
@@ -496,7 +502,8 @@ struct ModulationState {
     ///   - frequency: The note frequency being triggered
     ///   - touchX: The initial touch X position (0.0 - 1.0)
     ///   - resetLFOPhase: Whether to reset voice LFO phase (depends on LFO reset mode)
-    mutating func reset(frequency: Double, touchX: Double, resetLFOPhase: Bool = true) {
+    ///   - keyTrackingParams: Key tracking parameters for calculating note-on offset
+    mutating func reset(frequency: Double, touchX: Double, resetLFOPhase: Bool = true, keyTrackingParams: KeyTrackingParameters? = nil) {
         modulatorEnvelopeTime = 0.0
         auxiliaryEnvelopeTime = 0.0
         isGateOpen = true
@@ -517,6 +524,14 @@ struct ModulationState {
         currentTouchX = touchX
         currentFrequency = frequency
         baseFrequency = frequency  // Store the base frequency for modulation
+        
+        // Calculate key tracking value ONCE at note-on (true note-on property)
+        // This remains constant for the lifetime of the note
+        if let keyTracking = keyTrackingParams {
+            keyTrackingValue = keyTracking.trackingValue(forFrequency: frequency)
+        } else {
+            keyTrackingValue = 0.0
+        }
         
         // Reset smoothing state for new note
         lastSmoothedFilterCutoff = nil

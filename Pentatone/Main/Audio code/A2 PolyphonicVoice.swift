@@ -394,8 +394,14 @@ final class PolyphonicVoice {
         
         // Phase 5: Initialize modulation state with the actual initial touch value
         // Note: voiceLFOPhase is only reset if LFO reset mode is .trigger or .sync
+        // IMPORTANT: Pass key tracking parameters so the key tracking value is calculated ONCE at note-on
         let shouldResetLFO = voiceModulation.voiceLFO.resetMode != .free
-        modulationState.reset(frequency: currentFrequency, touchX: initialTouchX, resetLFOPhase: shouldResetLFO)
+        modulationState.reset(
+            frequency: currentFrequency, 
+            touchX: initialTouchX, 
+            resetLFOPhase: shouldResetLFO,
+            keyTrackingParams: voiceModulation.keyTracking
+        )
     }
     
     /// Releases this voice (starts envelope release)
@@ -556,13 +562,9 @@ final class PolyphonicVoice {
         // Get raw voice LFO value
         let voiceLFORawValue = voiceModulation.voiceLFO.rawValue(at: modulationState.voiceLFOPhase)
         
-        // Get key tracking value
-        // CRITICAL: Use baseFrequency (unmodulated note frequency), not currentFrequency
-        // currentFrequency includes pitch modulation (aux env, voice LFO) and would cause
-        // voice-to-voice inconsistencies in filter behavior
-        let keyTrackValue = voiceModulation.keyTracking.trackingValue(
-            forFrequency: modulationState.baseFrequency
-        )
+        // Get key tracking value (NOTE-ON property - calculated once at trigger, never recalculated)
+        // This ensures consistent filter behavior regardless of pitch modulation
+        let keyTrackValue = modulationState.keyTrackingValue
         
         // Get aftertouch delta (bipolar: -1 to +1)
         let aftertouchDelta = modulationState.currentTouchX - modulationState.initialTouchX
