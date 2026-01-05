@@ -266,8 +266,7 @@ final class AudioParameterManager: ObservableObject {
     /// Update filter cutoff frequency
     func updateFilterCutoff(_ value: Double) {
         voiceTemplate.filter.cutoffFrequency = value
-        // VoicePool now handles this correctly - updates only active voices
-        // and ensures next triggered voice gets the latest value
+        // VoicePool updates all voices immediately to ensure consistent state
         voicePool?.updateAllVoiceFilters(voiceTemplate.filter)
     }
     

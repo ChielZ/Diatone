@@ -336,9 +336,10 @@ final class VoicePool {
         // Update template so next triggered voice gets fresh values
         currentTemplate.filter = parameters
         
-        // Update only currently playing voices
-        // Silent voices will get the correct base when they're next triggered
-        for voice in voices where !voice.isAvailable {
+        // Update ALL voices immediately, not just active ones
+        // This ensures resonance and saturation are always current,
+        // since these parameters are not modulated and must be instantly applied
+        for voice in voices {
             voice.updateFilterParameters(parameters)
         }
     }
