@@ -41,6 +41,10 @@ final class VoicePool {
     /// Flag to track if the voice pool has been initialized
     private var isInitialized: Bool = false
     
+    /// Current voice template - used to provide fresh base values at trigger time
+    /// Updated whenever parameters change in the UI
+    private var currentTemplate: VoiceParameters = .default
+    
     // MARK: - FX Node References
     
     /// Reference to delay node for global LFO modulation
@@ -194,8 +198,9 @@ final class VoicePool {
         let finalFrequency = frequency * globalPitch.combinedFactor
         
         // Set frequency and trigger with initial touch value
+        // Pass the current template filter cutoff to ensure freshest value
         voice.setFrequency(finalFrequency)
-        voice.trigger(initialTouchX: initialTouchX)
+        voice.trigger(initialTouchX: initialTouchX, templateFilterCutoff: currentTemplate.filter.clampedCutoff)
         
         // Map this key to the voice for precise release tracking
         keyToVoiceMap[keyIndex] = voice
@@ -308,8 +313,19 @@ final class VoicePool {
     
     // MARK: - Parameter Updates
     
+    /// Updates the current template for fresh base values at trigger time
+    /// Call this whenever voice parameters are changed in the UI
+    /// - Parameter template: The new voice parameter template
+    func updateTemplate(_ template: VoiceParameters) {
+        currentTemplate = template
+    }
+    
     /// Updates oscillator parameters for all voices
     func updateAllVoiceOscillators(_ parameters: OscillatorParameters) {
+        // Update template
+        currentTemplate.oscillator = parameters
+        
+        // Update active voices
         for voice in voices {
             voice.updateOscillatorParameters(parameters)
         }
@@ -317,13 +333,22 @@ final class VoicePool {
     
     /// Updates filter parameters for all voices
     func updateAllVoiceFilters(_ parameters: FilterParameters) {
-        for voice in voices {
+        // Update template so next triggered voice gets fresh values
+        currentTemplate.filter = parameters
+        
+        // Update only currently playing voices
+        // Silent voices will get the correct base when they're next triggered
+        for voice in voices where !voice.isAvailable {
             voice.updateFilterParameters(parameters)
         }
     }
     
     /// Updates envelope parameters for all voices
     func updateAllVoiceEnvelopes(_ parameters: EnvelopeParameters) {
+        // Update template
+        currentTemplate.envelope = parameters
+        
+        // Update all voices (envelope affects ongoing playback)
         for voice in voices {
             voice.updateEnvelopeParameters(parameters)
         }
@@ -408,6 +433,10 @@ final class VoicePool {
     
     /// Updates modulation parameters for all voices
     func updateAllVoiceModulation(_ parameters: VoiceModulationParameters) {
+        // Update template
+        currentTemplate.modulation = parameters
+        
+        // Update all voices
         for voice in voices {
             voice.updateModulationParameters(parameters)
         }

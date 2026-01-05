@@ -340,11 +340,19 @@ final class PolyphonicVoice {
     // MARK: - Triggering
     
     /// Triggers this voice (starts envelope attack)
-    /// - Parameter initialTouchX: Initial touch x-position (0.0 = left, 1.0 = right) for velocity-like response
-    func trigger(initialTouchX: Double = 0.5) {
+    /// - Parameters:
+    ///   - initialTouchX: Initial touch x-position (0.0 = left, 1.0 = right) for velocity-like response
+    ///   - templateFilterCutoff: Optional override for base filter cutoff (from current template)
+    func trigger(initialTouchX: Double = 0.5, templateFilterCutoff: Double? = nil) {
         guard isInitialized else {
             assertionFailure("Voice must be initialized before triggering")
             return
+        }
+        
+        // CRITICAL: Update base filter cutoff from template if provided
+        // This ensures we always use the latest UI setting, not a stale value
+        if let cutoff = templateFilterCutoff {
+            modulationState.baseFilterCutoff = cutoff
         }
         
         // CRITICAL: Set initial touch value BEFORE any calculations that depend on it

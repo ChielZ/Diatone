@@ -266,16 +266,21 @@ final class AudioParameterManager: ObservableObject {
     /// Update filter cutoff frequency
     func updateFilterCutoff(_ value: Double) {
         voiceTemplate.filter.cutoffFrequency = value
+        // VoicePool now handles this correctly - updates only active voices
+        // and ensures next triggered voice gets the latest value
+        voicePool?.updateAllVoiceFilters(voiceTemplate.filter)
     }
     
     /// Update filter resonance
     func updateFilterResonance(_ value: Double) {
         voiceTemplate.filter.resonance = value
+        voicePool?.updateAllVoiceFilters(voiceTemplate.filter)
     }
     
     /// Update filter saturation
     func updateFilterSaturation(_ value: Double) {
         voiceTemplate.filter.saturation = value
+        voicePool?.updateAllVoiceFilters(voiceTemplate.filter)
     }
     
     // MARK: - Individual Modulation Parameter Updates
@@ -679,9 +684,11 @@ final class AudioParameterManager: ObservableObject {
         let clampedSaturation = min(max(newSaturation, 0.0), 10.0)
         updateFilterSaturation(clampedSaturation)
         
-        // Apply to all voices
+        // Apply oscillator changes to all voices
         applyOscillatorToAllVoices()
-        applyFilterToAllVoices()
+        
+        // Filter changes are already applied by updateFilterCutoff/Saturation calls above
+        // No need for separate applyFilterToAllVoices() call
     }
     
     /// Apply ambience macro to delay and reverb parameters
@@ -715,15 +722,6 @@ final class AudioParameterManager: ObservableObject {
         let params = voiceTemplate.oscillator
         voicePool?.updateAllVoiceOscillators(params)
     }
-    
-    /// Apply filter parameters to all voices
-    private func applyFilterToAllVoices() {
-        let params = voiceTemplate.filter
-        for voice in voicePool?.voices ?? [] {
-            voice.updateFilterParameters(params)
-        }
-    }
-
     
     // MARK: - Preset Management
     

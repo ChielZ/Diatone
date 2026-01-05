@@ -94,7 +94,7 @@ struct ContourView: View {
                     get: { paramManager.voiceTemplate.filter.cutoffFrequency },
                     set: { newValue in
                         paramManager.updateFilterCutoff(newValue)
-                        applyFilterToAllVoices()
+                        // No need to call applyFilterToAllVoices - it's handled internally now
                     }
                 ),
                 range: 20...20000,
@@ -115,7 +115,7 @@ struct ContourView: View {
                     get: { paramManager.voiceTemplate.filter.resonance },
                     set: { newValue in
                         paramManager.updateFilterResonance(newValue)
-                        applyFilterToAllVoices()
+                        // No need to call applyFilterToAllVoices - it's handled internally now
                     }
                 ),
                 range: 0.01...2,
@@ -130,7 +130,7 @@ struct ContourView: View {
                     get: { paramManager.voiceTemplate.filter.saturation },
                     set: { newValue in
                         paramManager.updateFilterSaturation(newValue)
-                        applyFilterToAllVoices()
+                        // No need to call applyFilterToAllVoices - it's handled internally now
                     }
                 ),
                 range: 0...10,
@@ -149,16 +149,6 @@ struct ContourView: View {
         // Apply to all voices in the pool
         for voice in voicePool.voices {
             voice.updateEnvelopeParameters(params)
-        }
-    }
-    
-    /// Applies current filter parameters to all active voices
-    private func applyFilterToAllVoices() {
-        let params = paramManager.voiceTemplate.filter
-        
-        // Apply to all voices in the pool
-        for voice in voicePool.voices {
-            voice.updateFilterParameters(params)
         }
     }
 }
