@@ -432,3 +432,4 @@ struct ScalesCatalog {
  the appropriate transposition factor based on the scale's intonation type.
  
  */
+

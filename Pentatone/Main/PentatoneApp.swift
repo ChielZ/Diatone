@@ -34,18 +34,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct Penta_ToneApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var isReady = false
-    @State private var currentScaleIndex: Int = {
-        // Default to centerMeridian_JI
-        let target = ScalesCatalog.centerMeridian_JI
-        if let idx = ScalesCatalog.all.firstIndex(where: { $0 == target }) {
-            return idx
-        }
-        return 0
-    }()
-    @State private var rotation: Int = 0 // Range: -2 to +2
-    @State private var musicalKey: MusicalKey = .D // Default to D (center key)
     
-    // MARK: - Voice System
+    // MARK: - Navigation & State Management
+    
+    /// Manages scale selection, rotation, and key transposition
+    @StateObject private var navigationManager = ScaleNavigationManager(
+        initialScale: ScalesCatalog.centerMeridian_JI,
+        initialKey: .D
+    )
     
     /// Keyboard state manages frequency calculations
     /// Created once and updated as scale/key changes
@@ -66,15 +62,15 @@ struct Penta_ToneApp: App {
         ZStack {
             if isReady {
                 MainKeyboardView(
-                    onPrevScale: { decrementScale() },
-                    onNextScale: { incrementScale() },
-                    currentScale: currentScale,
-                    currentKey: musicalKey,
-                    onCycleIntonation: { cycleIntonation(forward: $0) },
-                    onCycleCelestial: { cycleCelestial(forward: $0) },
-                    onCycleTerrestrial: { cycleTerrestrial(forward: $0) },
-                    onCycleRotation: { cycleRotation(forward: $0) },
-                    onCycleKey: { cycleKey(forward: $0) },
+                    onPrevScale: { navigationManager.decrementScale() },
+                    onNextScale: { navigationManager.incrementScale() },
+                    currentScale: navigationManager.currentScale,
+                    currentKey: navigationManager.musicalKey,
+                    onCycleIntonation: { navigationManager.cycleIntonation(forward: $0) },
+                    onCycleCelestial: { navigationManager.cycleCelestial(forward: $0) },
+                    onCycleTerrestrial: { navigationManager.cycleTerrestrial(forward: $0) },
+                    onCycleRotation: { navigationManager.cycleRotation(forward: $0) },
+                    onCycleKey: { navigationManager.cycleKey(forward: $0) },
                     keyboardState: keyboardState
                 )
                 .transition(.opacity)
@@ -85,15 +81,7 @@ struct Penta_ToneApp: App {
         }
         .animation(.easeInOut(duration: 1.0), value: isReady)
         .modifier(SystemGestureModifier())
-        .task {await initializeAudio()}
-    }
-    
-    // MARK: - Computed Properties
-    
-    private var currentScale: Scale {
-        var scale = ScalesCatalog.all[currentScaleIndex]
-        scale.rotation = rotation
-        return scale
+        .task { await initializeAudio() }
     }
     
     // MARK: - Audio Initialization
@@ -103,7 +91,21 @@ struct Penta_ToneApp: App {
             try EngineManager.startEngine()
             try await Task.sleep(nanoseconds: 100_000_000) // 100ms
             
-            applyCurrentScale()
+            // Set up callback to update keyboard state when navigation changes
+            navigationManager.onScaleChanged = { [self] scale in
+                self.keyboardState.updateScaleAndKey(scale: scale, key: navigationManager.musicalKey)
+            }
+            
+            navigationManager.onKeyChanged = { [self] key in
+                self.keyboardState.updateScaleAndKey(scale: navigationManager.currentScale, key: key)
+            }
+            
+            // Apply initial scale and key
+            keyboardState.updateScaleAndKey(
+                scale: navigationManager.currentScale,
+                key: navigationManager.musicalKey
+            )
+            
             try await Task.sleep(nanoseconds: 50_000_000) // 50ms
             
             await MainActor.run {
@@ -112,138 +114,6 @@ struct Penta_ToneApp: App {
         } catch {
             print("Failed to initialize audio: \(error)")
         }
-    }
-    
-    // MARK: - Scale Management
-    
-    private func applyCurrentScale() {
-        // Update KeyboardState with current scale and key
-        // This automatically recalculates frequencies for the voice pool
-        keyboardState.updateScaleAndKey(scale: currentScale, key: musicalKey)
-    }
-    
-    private func incrementScale() {
-        guard currentScaleIndex < ScalesCatalog.all.count - 1 else { return }
-        currentScaleIndex += 1
-        applyCurrentScale()
-    }
-    
-    private func decrementScale() {
-        guard currentScaleIndex > 0 else { return }
-        currentScaleIndex -= 1
-        applyCurrentScale()
-    }
-    
-    // MARK: - Property-Based Scale Navigation
-    
-    /// Cycle through scales with different intonation but same celestial/terrestrial
-    /// This one wraps around: JI <-> ET
-    private func cycleIntonation(forward: Bool) {
-        let current = currentScale
-        let targetIntonation: Intonation = (current.intonation == .ji) ? .et : .ji
-        
-        if let newScale = ScalesCatalog.find(
-            intonation: targetIntonation,
-            celestial: current.celestial,
-            terrestrial: current.terrestrial
-        ),
-           let newIndex = ScalesCatalog.all.firstIndex(where: { $0 == newScale }) {
-            currentScaleIndex = newIndex
-            applyCurrentScale()
-        }
-    }
-    
-    /// Cycle through scales with different celestial but same intonation/terrestrial
-    /// Does NOT wrap around: Moon -> Center -> Sun (stops at ends)
-    private func cycleCelestial(forward: Bool) {
-        let current = currentScale
-        let allCases = Celestial.allCases
-        guard let currentIdx = allCases.firstIndex(of: current.celestial) else { return }
-        
-        // Calculate next index, but don't wrap
-        let nextIdx: Int
-        if forward {
-            nextIdx = currentIdx + 1
-            guard nextIdx < allCases.count else { return } // Stop at end
-        } else {
-            nextIdx = currentIdx - 1
-            guard nextIdx >= 0 else { return } // Stop at beginning
-        }
-        
-        let targetCelestial = allCases[nextIdx]
-        
-        if let newScale = ScalesCatalog.find(
-            intonation: current.intonation,
-            celestial: targetCelestial,
-            terrestrial: current.terrestrial
-        ),
-           let newIndex = ScalesCatalog.all.firstIndex(where: { $0 == newScale }) {
-            currentScaleIndex = newIndex
-            applyCurrentScale()
-        }
-    }
-    
-    /// Cycle through scales with different terrestrial but same intonation/celestial
-    /// Does NOT wrap around: Occident -> Meridian -> Orient (stops at ends)
-    private func cycleTerrestrial(forward: Bool) {
-        let current = currentScale
-        let allCases = Terrestrial.allCases
-        guard let currentIdx = allCases.firstIndex(of: current.terrestrial) else { return }
-        
-        // Calculate next index, but don't wrap
-        let nextIdx: Int
-        if forward {
-            nextIdx = currentIdx + 1
-            guard nextIdx < allCases.count else { return } // Stop at end
-        } else {
-            nextIdx = currentIdx - 1
-            guard nextIdx >= 0 else { return } // Stop at beginning
-        }
-        
-        let targetTerrestrial = allCases[nextIdx]
-        
-        if let newScale = ScalesCatalog.find(
-            intonation: current.intonation,
-            celestial: current.celestial,
-            terrestrial: targetTerrestrial
-        ),
-           let newIndex = ScalesCatalog.all.firstIndex(where: { $0 == newScale }) {
-            currentScaleIndex = newIndex
-            applyCurrentScale()
-        }
-    }
-    
-    /// Cycle rotation: -2, -1, 0, +1, +2
-    /// Does NOT wrap around (stops at ends)
-    private func cycleRotation(forward: Bool) {
-        let newRotation = forward ? rotation + 1 : rotation - 1
-        
-        // Clamp to range [-2, 2]
-        guard newRotation >= -2 && newRotation <= 2 else { return }
-        
-        rotation = newRotation
-        applyCurrentScale()
-    }
-    
-    /// Cycle through musical keys
-    /// Order: Ab -> Eb -> Bb -> F -> C -> G -> D -> A -> E -> B -> F# -> C# -> G#
-    /// Does NOT wrap around (stops at ends)
-    private func cycleKey(forward: Bool) {
-        let allCases = MusicalKey.allCases
-        guard let currentIdx = allCases.firstIndex(of: musicalKey) else { return }
-        
-        // Calculate next index, but don't wrap
-        let nextIdx: Int
-        if forward {
-            nextIdx = currentIdx + 1
-            guard nextIdx < allCases.count else { return } // Stop at end
-        } else {
-            nextIdx = currentIdx - 1
-            guard nextIdx >= 0 else { return } // Stop at beginning
-        }
-        
-        musicalKey = allCases[nextIdx]
-        applyCurrentScale()
     }
 }
 

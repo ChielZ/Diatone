@@ -279,10 +279,10 @@ final class PolyphonicVoice {
         // Reinitialize if the voice was previously initialized
         if wasInitialized {
             // Set ramp duration to 0 for instant parameter changes
-            oscLeft.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0)
-            oscRight.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0)
-            oscLeft.$amplitude.ramp(to: currentAmplitude, duration: 0)
-            oscRight.$amplitude.ramp(to: currentAmplitude, duration: 0)
+            oscLeft.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0.05)
+            oscRight.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0.05)
+            oscLeft.$amplitude.ramp(to: currentAmplitude, duration: 0.05)
+            oscRight.$amplitude.ramp(to: currentAmplitude, duration: 0.05)
             
             // Start new oscillators
             oscLeft.start()
@@ -434,15 +434,15 @@ final class PolyphonicVoice {
     /// Updates oscillator parameters
     func updateOscillatorParameters(_ parameters: OscillatorParameters) {
         // Use zero-duration ramps to avoid AudioKit parameter ramping artifacts
-        oscLeft.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0.000)
-        oscLeft.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.000)
-        oscLeft.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.000)
-        oscLeft.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0.000)
+        oscLeft.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0.005)
+        oscLeft.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.005)
+        oscLeft.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.005)
+        oscLeft.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0.005)
         
-        oscRight.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0.000)
-        oscRight.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.000)
-        oscRight.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.000)
-        oscRight.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0.000)
+        oscRight.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0.005)
+        oscRight.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.005)
+        oscRight.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.005)
+        oscRight.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0.005)
         
         // Store base modulator multiplier for global LFO modulation
         modulationState.baseModulatorMultiplier = parameters.modulatingMultiplier
