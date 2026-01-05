@@ -20,7 +20,7 @@ enum EditSubView: CaseIterable {
         case .oscillators: return "OSCILLATORS"
         case .contour: return "CONTOUR"
         case .effects: return "EFFECTS"
-        case .global: return "GLOBAL"
+        case .global: return "MASTER"
         case .modenv: return "MOD / TRACK"
         case .auxenv: return "AUX ENV"
         case .voicelfo: return "VOICE LFO"

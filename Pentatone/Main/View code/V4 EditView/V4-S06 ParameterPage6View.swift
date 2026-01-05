@@ -119,7 +119,7 @@ struct AuxEnvView: View {
             
             // Row 7 - Auxiliary Envelope to Vibrato (meta-modulation of voice LFO pitch amount)
             SliderRow(
-                label: "AUX ENV TO LFO",
+                label: "AUX ENV TO VIBRATO",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.auxiliaryEnvelope.amountToVibrato },
                     set: { newValue in

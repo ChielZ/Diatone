@@ -475,7 +475,9 @@ struct ModulationState {
     var currentTouchX: Double = 0.0        // Normalized 0.0 - 1.0
     
     // Key tracking
-    var currentFrequency: Double = 440.0   // Current note frequency
+    // NOTE: currentFrequency includes pitch modulation (aux env, voice LFO)
+    // Use baseFrequency for key tracking calculations to ensure consistency!
+    var currentFrequency: Double = 440.0   // Current modulated frequency (Hz)
     
     // User-controlled base values (before modulation)
     // These are set by touch gestures and used as the base for modulation
@@ -483,7 +485,7 @@ struct ModulationState {
     var baseFilterCutoff: Double = 1200.0  // User's desired filter cutoff (Hz)
     var baseModulationIndex: Double = 1.0  // User's desired modulation index (0.0 - 10.0)
     var baseModulatorMultiplier: Double = 1.0  // User's desired FM ratio (0.1 - 20.0)
-    var baseFrequency: Double = 440.0      // User's desired base frequency (Hz)
+    var baseFrequency: Double = 440.0      // User's desired base frequency (Hz, unmodulated)
     
     // Smoothing state for filter modulation
     var lastSmoothedFilterCutoff: Double? = nil  // Last smoothed filter value (for aftertouch smoothing)

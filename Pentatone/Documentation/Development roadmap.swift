@@ -53,7 +53,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  √ Check AudioKit console warnings on startup
  √ Check multiple console messages of scale frequency updates
  √ Check AudioKit warning message streams when modulation is enabled (already fixed for aftertouch)
- 
+ - hack delay for longer max time? (could maybe be initiated with higher value for max delay time, allowing sync values above 1/4 even at slowest tempo)
  
  CONCEPT FOR IMPROVED SOUND ENGINE:
  

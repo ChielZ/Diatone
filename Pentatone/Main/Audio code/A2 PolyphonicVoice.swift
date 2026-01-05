@@ -557,8 +557,11 @@ final class PolyphonicVoice {
         let voiceLFORawValue = voiceModulation.voiceLFO.rawValue(at: modulationState.voiceLFOPhase)
         
         // Get key tracking value
+        // CRITICAL: Use baseFrequency (unmodulated note frequency), not currentFrequency
+        // currentFrequency includes pitch modulation (aux env, voice LFO) and would cause
+        // voice-to-voice inconsistencies in filter behavior
         let keyTrackValue = voiceModulation.keyTracking.trackingValue(
-            forFrequency: modulationState.currentFrequency
+            forFrequency: modulationState.baseFrequency
         )
         
         // Get aftertouch delta (bipolar: -1 to +1)
