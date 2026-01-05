@@ -247,7 +247,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  1) Global LFO waveform
  2) Global LFO mode (free/sync)
  3) Global LFO frequency
- 4) Global LFO to oscillator amplitude amount
+ 4) Global LFO to voice mixer volume amount (tremolo, applied at mixer level)
  5) Global LFO to modulator multiplier (fine) amount
  6) Global LFO to filter frequency amount
  7) Global LFO to delay time amount
@@ -301,12 +301,20 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
       finalFreq = baseFreq × 2^(totalSemitones / 12)
 
  2)  Oscillator amplitude (FMOscillator amplitude) [LINEAR]
-    Sources: Initial touch (unipolar, at note-on), Global LFO (bipolar)
+    Sources: Initial touch (unipolar, at note-on)
+    Note: Global LFO tremolo is now applied at voice mixer level, not per-voice oscillator amplitude
     APPLICATION:
-      touchScaledBase = baseAmp × (initialTouchValue × touchAmount)
-      lfoOffset = globalLFOValue × globalLFOAmount  // Can be ±
-      finalAmp = touchScaledBase + lfoOffset
+      touchFactor = 1.0 + ((initialTouchValue - 0.5) × 2.0 × touchAmount)
+      finalAmp = baseAmp × touchFactor
       clampedAmp = max(0.0, min(1.0, finalAmp))
+
+ 2B) Voice mixer volume (Mixer volume) [MULTIPLICATIVE]
+    Sources: Global LFO (bipolar)
+    Note: This creates tremolo effect applied globally to all voices at once
+    APPLICATION:
+      lfoFactor = 1.0 + (globalLFOValue × globalLFOAmount)
+      finalVolume = baseVolume × lfoFactor
+      clampedVolume = max(0.0, min(1.0, finalVolume))
 
  3)  Modulation index (FMOscillator modulationIndex) [LINEAR]
     Sources: Mod envelope (bipolar), Voice LFO (bipolar, with delay ramp), Aftertouch (bipolar)

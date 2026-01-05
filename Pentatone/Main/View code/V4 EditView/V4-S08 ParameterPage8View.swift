@@ -10,7 +10,7 @@
  √ 1) Global LFO waveform
  √ 2) Global LFO mode (free/sync)
  √ 3) Global LFO frequency
- √ 4) Global LFO to oscillator amplitude amount
+ √ 4) Global LFO to voice mixer volume amount (tremolo, applied at mixer level)
  √ 5) Global LFO to modulator multiplier (fine) amount
  √ 6) Global LFO to filter frequency amount
  √ 7) Global LFO to delay time amount
@@ -84,13 +84,13 @@ struct GlobLFOView: View {
                 )
             }
             
-            // Row 4 - Global LFO to Oscillator Amplitude (tremolo)
+            // Row 4 - Global LFO to Voice Mixer Volume (tremolo)
             SliderRow(
                 label: "LFO TO AMP",
                 value: Binding(
-                    get: { paramManager.master.globalLFO.amountToOscillatorAmplitude },
+                    get: { paramManager.master.globalLFO.amountToVoiceMixerVolume },
                     set: { newValue in
-                        paramManager.updateGlobalLFOAmountToAmplitude(newValue)
+                        paramManager.updateGlobalLFOAmountToMixerVolume(newValue)
                     }
                 ),
                 range: 0...1,

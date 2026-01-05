@@ -375,13 +375,11 @@ final class PolyphonicVoice {
         // This prevents percussive artifacts on soft notes
         let immediateAmplitude: Double
         if voiceModulation.touchInitial.amountToOscillatorAmplitude != 0.0 {
-            // Use ModulationRouter formula but without global LFO (that comes later at control rate)
+            // Use ModulationRouter formula (initial touch only, no global LFO)
             immediateAmplitude = ModulationRouter.calculateOscillatorAmplitude(
                 baseAmplitude: modulationState.baseAmplitude,
                 initialTouchValue: initialTouchX,  // Use passed-in value directly
-                initialTouchAmount: voiceModulation.touchInitial.amountToOscillatorAmplitude,
-                globalLFOValue: 0.0,  // No LFO yet (will be applied at control rate)
-                globalLFOAmount: 0.0
+                initialTouchAmount: voiceModulation.touchInitial.amountToOscillatorAmplitude
             )
         } else {
             // No initial touch modulation - use base amplitude
@@ -826,33 +824,14 @@ final class PolyphonicVoice {
     
  
     
-    /// Applies global LFO tremolo and updates amplitude with ongoing modulation
-    /// NOTE: Initial touch is applied immediately at note-on in trigger() to avoid attack transients
-    /// This method adds global LFO on top of the initial-touch-modulated amplitude at control rate
+    /// Applies global LFO modulation to voice-level destinations
+    /// NOTE: Tremolo (mixer volume) is now handled at VoicePool level, not here
+    /// NOTE: Initial touch amplitude modulation is applied immediately at note-on in trigger()
     /// Filter modulation is handled by applyCombinedFilterFrequency()
     private func applyGlobalLFO(rawValue: Double, parameters: GlobalLFOParameters) {
-        // Check if any destination is active (global LFO or initial touch to amplitude)
-        let hasGlobalLFO = parameters.hasActiveDestinations
-        let hasInitialTouchToAmp = voiceModulation.touchInitial.amountToOscillatorAmplitude != 0.0
+        guard parameters.hasActiveDestinations else { return }
         
-        guard hasGlobalLFO || hasInitialTouchToAmp else { return }
-        
-        // Destination 1: Oscillator amplitude (initial touch + tremolo)
-        // Both initial touch and global LFO are recalculated here to combine properly
-        // Note: This runs at control rate, so global LFO has ~5ms latency (acceptable for slow tremolo)
-        if hasInitialTouchToAmp || parameters.amountToOscillatorAmplitude != 0.0 {
-            let finalAmp = ModulationRouter.calculateOscillatorAmplitude(
-                baseAmplitude: modulationState.baseAmplitude,
-                initialTouchValue: modulationState.initialTouchX,
-                initialTouchAmount: voiceModulation.touchInitial.amountToOscillatorAmplitude,
-                globalLFOValue: rawValue,
-                globalLFOAmount: parameters.amountToOscillatorAmplitude
-            )
-            oscLeft.$amplitude.ramp(to: AUValue(finalAmp), duration: 0.005)
-            oscRight.$amplitude.ramp(to: AUValue(finalAmp), duration: 0.005)
-        }
-        
-        // Destination 2: Modulator multiplier (FM ratio modulation)
+        // Destination 1: Modulator multiplier (FM ratio modulation)
         if parameters.amountToModulatorMultiplier != 0.0 {
             let finalMultiplier = ModulationRouter.calculateModulatorMultiplier(
                 baseMultiplier: modulationState.baseModulatorMultiplier,  // Use stored base value
@@ -863,10 +842,7 @@ final class PolyphonicVoice {
             oscRight.$modulatingMultiplier.ramp(to: AUValue(finalMultiplier), duration: 0.005)
         }
         
-        // Destination 3: Filter frequency
-        // Now handled by applyCombinedFilterFrequency()
-        
-        // Destination 4: Delay time (handled by VoicePool, not voice-level)
-        // This is included here for completeness but won't execute at voice level
+        // Note: Filter frequency modulation is handled in applyCombinedFilterFrequency()
+        // Note: Delay time and mixer volume (tremolo) modulation are handled at VoicePool level
     }
 }

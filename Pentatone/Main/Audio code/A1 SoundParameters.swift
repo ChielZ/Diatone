@@ -137,8 +137,8 @@ struct EnvelopeParameters: Codable, Equatable {
     var releaseDuration: Double
     
     static let `default` = EnvelopeParameters(
-        attackDuration: 0.001,
-        decayDuration: 0.1,
+        attackDuration: 0.005,
+        decayDuration: 0.5,
         sustainLevel: 1.0,
         releaseDuration: 0.1
     )

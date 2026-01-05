@@ -63,6 +63,10 @@ final class VoicePool {
     /// Base delay time (from tempo-synced value, before LFO modulation)
     private var baseDelayTime: Double = 0.5  // Default: 1/4 note at 120 BPM
     
+    /// Base voice mixer volume (preVolume, before global LFO tremolo modulation)
+    /// This should be kept in sync with master.output.preVolume
+    private var basePreVolume: Double = 0.5  // Default matches OutputParameters.default
+    
     // MARK: - Initialization
     
     /// Creates a voice pool with the specified polyphony
@@ -428,6 +432,24 @@ final class VoicePool {
         delay?.$time.ramp(to: AUValue(baseDelayTime), duration: 0.05)
     }
     
+    /// Resets the voice mixer volume to its base (unmodulated) value
+    /// Called when global LFO modulation amount is set to zero
+    func resetMixerVolumeToBase() {
+        voiceMixer.volume = AUValue(basePreVolume)
+    }
+    
+    /// Updates the base mixer volume (preVolume, before global LFO tremolo modulation)
+    /// Should be called whenever preVolume changes in the UI
+    /// - Parameter preVolume: The base pre-volume (0.0 - 1.0)
+    func updateBasePreVolume(_ preVolume: Double) {
+        basePreVolume = preVolume
+        // If no global LFO modulation is active, apply directly to mixer
+        if globalLFO.amountToVoiceMixerVolume == 0.0 {
+            voiceMixer.volume = AUValue(preVolume)
+        }
+        print("🎵 VoicePool: Base preVolume updated to \(preVolume)")
+    }
+    
     /// Resets modulator multiplier to base for all voices
     /// Called when global LFO modulation amount is set to zero
     func resetModulatorMultiplierToBase() {
@@ -542,12 +564,25 @@ final class VoicePool {
         return globalLFO.rawValue(at: globalModulationState.globalLFOPhase)
     }
     
-    /// Applies global LFO modulation to global-level parameters (delay time)
+    /// Applies global LFO modulation to global-level parameters (delay time, mixer volume)
     /// - Parameter rawValue: Raw global LFO value (-1.0 to +1.0, unscaled)
     private func applyGlobalLFOToGlobalParameters(rawValue: Double) {
         guard globalLFO.isEnabled, globalLFO.hasActiveDestinations else { return }
         
-        // Global LFO Destination: Delay Time
+        // Global LFO Destination 1: Voice Mixer Volume (tremolo)
+        // Apply global tremolo effect to voice mixer (affects all voices at once)
+        // Uses basePreVolume (which should match master.output.preVolume) as the baseline
+        if globalLFO.amountToVoiceMixerVolume != 0.0 {
+            let finalVolume = ModulationRouter.calculateVoiceMixerVolume(
+                baseVolume: basePreVolume,
+                globalLFOValue: rawValue,
+                globalLFOAmount: globalLFO.amountToVoiceMixerVolume
+            )
+            // Direct assignment (Mixer.volume doesn't support ramping)
+            voiceMixer.volume = AUValue(finalVolume)
+        }
+        
+        // Global LFO Destination 2: Delay Time
         // Apply LFO offset to the base tempo-synced delay time (vibrato effect)
         if globalLFO.amountToDelayTime != 0.0, let delay = self.delay {
             let finalDelayTime = ModulationRouter.calculateDelayTime(
@@ -559,7 +594,7 @@ final class VoicePool {
             delay.$time.ramp(to: AUValue(finalDelayTime), duration: 0.005)
         }
         
-        // Note: Other global LFO destinations (amplitude, modulator multiplier, filter)
+        // Note: Other global LFO destinations (modulator multiplier, filter)
         // are voice-level and handled by PolyphonicVoice.applyGlobalLFO()
     }
     

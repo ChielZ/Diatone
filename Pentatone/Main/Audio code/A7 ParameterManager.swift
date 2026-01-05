@@ -103,7 +103,10 @@ final class AudioParameterManager: ObservableObject {
     
     func updatePreVolume(_ preVolume: Double) {
         master.output.preVolume = preVolume
-        voicePool?.voiceMixer.volume = AUValue(preVolume)
+        // Update voice pool's base preVolume for global LFO tremolo
+        voicePool?.updateBasePreVolume(preVolume)
+        // Note: If global LFO tremolo is active, it will modulate from this new base
+        // If not active, updateBasePreVolume will apply it directly to the mixer
     }
     
     func updateTempo(_ tempo: Double) {
@@ -473,10 +476,16 @@ final class AudioParameterManager: ObservableObject {
         voicePool?.updateGlobalLFO(master.globalLFO)
     }
     
-    /// Update global LFO amount to oscillator amplitude
-    func updateGlobalLFOAmountToAmplitude(_ value: Double) {
-        master.globalLFO.amountToOscillatorAmplitude = value
+    /// Update global LFO amount to voice mixer volume (tremolo)
+    func updateGlobalLFOAmountToMixerVolume(_ value: Double) {
+        let wasZero = master.globalLFO.amountToVoiceMixerVolume == 0.0
+        master.globalLFO.amountToVoiceMixerVolume = value
         voicePool?.updateGlobalLFO(master.globalLFO)
+        
+        // If amount is now zero, reset mixer volume to base
+        if value == 0.0 && !wasZero {
+            voicePool?.resetMixerVolumeToBase()
+        }
     }
     
     /// Update global LFO amount to modulator multiplier
@@ -516,10 +525,10 @@ final class AudioParameterManager: ObservableObject {
     }
     
     /// Update global LFO amount (deprecated - use specific amount methods)
-    @available(*, deprecated, message: "Use updateGlobalLFOAmountToAmplitude, AmountToModulatorMultiplier, AmountToFilter, or AmountToDelayTime")
+    @available(*, deprecated, message: "Use updateGlobalLFOAmountToMixerVolume, AmountToModulatorMultiplier, AmountToFilter, or AmountToDelayTime")
     func updateGlobalLFOAmount(_ value: Double) {
-        // Default to amplitude for backward compatibility
-        master.globalLFO.amountToOscillatorAmplitude = value
+        // Default to mixer volume for backward compatibility
+        master.globalLFO.amountToVoiceMixerVolume = value
     }
     */
     
@@ -618,8 +627,11 @@ final class AudioParameterManager: ObservableObject {
         
         // Apply directly to preVolume and update master parameter
         master.output.preVolume = clampedPosition
-        voicePool?.voiceMixer.volume = AUValue(clampedPosition)
+        // Update voice pool's base preVolume for global LFO tremolo
+        voicePool?.updateBasePreVolume(clampedPosition)
+        // Note: If global LFO tremolo is active, it will modulate from this new base
     }
+    
     
     /// Update tone macro position and apply to parameters
     /// Position is relative (-1.0 to +1.0, where 0 is neutral)

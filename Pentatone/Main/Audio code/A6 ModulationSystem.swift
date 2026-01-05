@@ -400,7 +400,7 @@ struct GlobalLFOParameters: Codable, Equatable {
     var syncValue: LFOSyncValue             // Musical division when in sync mode
     
     // Fixed destinations with individual amounts (Page 8, items 4-7)
-    var amountToOscillatorAmplitude: Double // ±amplitude (tremolo effect)
+    var amountToVoiceMixerVolume: Double    // ±volume (tremolo effect, applied to voice mixer)
     var amountToModulatorMultiplier: Double // ±modulator ratio (fine tuning of FM ratio)
     var amountToFilterFrequency: Double     // ±octaves
     var amountToDelayTime: Double           // ±seconds
@@ -413,7 +413,7 @@ struct GlobalLFOParameters: Codable, Equatable {
         frequencyMode: .hertz,
         frequency: 1.0,
         syncValue: .whole,                  // Default to 1 bar
-        amountToOscillatorAmplitude: 0.0,   // No tremolo by default
+        amountToVoiceMixerVolume: 0.0,      // No tremolo by default
         amountToModulatorMultiplier: 0.0,   // No FM ratio modulation by default
         amountToFilterFrequency: 0.0,       // No global filter modulation by default
         amountToDelayTime: 0.0,             // No delay time modulation by default
@@ -422,7 +422,7 @@ struct GlobalLFOParameters: Codable, Equatable {
     
     /// Check if any destination has a non-zero amount
     var hasActiveDestinations: Bool {
-        return amountToOscillatorAmplitude != 0.0
+        return amountToVoiceMixerVolume != 0.0
             || amountToModulatorMultiplier != 0.0
             || amountToFilterFrequency != 0.0
             || amountToDelayTime != 0.0
@@ -661,26 +661,38 @@ struct ModulationRouter {
     // MARK: - 2) Oscillator Amplitude [MULTIPLICATIVE]
     
     /// Calculate oscillator amplitude modulation
-    /// Sources: Initial touch (unipolar, at note-on), Global LFO (bipolar, multiplicative)
-    /// Formula: finalAmp = baseAmp × (1.0 + (lfoValue × amount))
-    /// This ensures tremolo depth is proportional to base amplitude
+    /// Sources: Initial touch (unipolar, at note-on)
+    /// Note: Global LFO tremolo is now applied at voice mixer level, not per-voice oscillator amplitude
+    /// Formula: finalAmp = baseAmp × (1.0 + (touchValue × amount))
     static func calculateOscillatorAmplitude(
         baseAmplitude: Double,
         initialTouchValue: Double,
-        initialTouchAmount: Double,
-        globalLFOValue: Double,
-        globalLFOAmount: Double
+        initialTouchAmount: Double
     ) -> Double {
         // Initial touch scales the base amplitude (multiplicative)
         let touchScaledBase = baseAmplitude * (1.0 + (initialTouchValue - 0.5) * 2.0 * initialTouchAmount)
         
-        // Global LFO modulates amplitude multiplicatively (tremolo)
+        return max(0.0, min(1.0, touchScaledBase))
+    }
+    
+    // MARK: - 2B) Voice Mixer Volume [MULTIPLICATIVE]
+    
+    /// Calculate voice mixer volume (tremolo from global LFO)
+    /// Sources: Global LFO (bipolar, multiplicative)
+    /// Formula: finalVolume = baseVolume × (1.0 + (lfoValue × amount))
+    /// This applies tremolo globally to all voices at once, cleaner than per-voice modulation
+    static func calculateVoiceMixerVolume(
+        baseVolume: Double,
+        globalLFOValue: Double,
+        globalLFOAmount: Double
+    ) -> Double {
+        // Global LFO modulates volume multiplicatively (tremolo)
         // lfoValue ranges from -1 to +1, so this creates proportional modulation
         let lfoFactor = 1.0 + (globalLFOValue * globalLFOAmount)
         
-        let finalAmp = touchScaledBase * lfoFactor
+        let finalVolume = baseVolume * lfoFactor
         
-        return max(0.0, min(1.0, finalAmp))
+        return max(0.0, min(1.0, finalVolume))
     }
     
     // MARK: - 3) Modulation Index [LINEAR]
