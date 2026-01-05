@@ -204,6 +204,8 @@ final class VoicePool {
         voice.trigger(
             initialTouchX: initialTouchX, 
             templateFilterCutoff: currentTemplate.filter.clampedCutoff,
+            
+            // This should be redundant but is kept in place as a safety measure against potential race conditions and possible per-voice inconsistencies
             templateFilterStatic: currentTemplate.filterStatic
         )
         
