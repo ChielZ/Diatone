@@ -69,8 +69,8 @@ struct MainKeyboardView: View {
     
     // Animation timing configurations
     private let unfoldCenterDuration: Double = 0.75      // Center strip unfolds
-    private let unfoldKeysDuration: Double = 0.5       // Keys unfold (lags behind)
-    private let foldCenterDuration: Double = 0.5        // Center strip folds
+    private let unfoldKeysDuration: Double = 0.75       // Keys unfold (lags behind)
+    private let foldCenterDuration: Double = 0.75        // Center strip folds
     private let foldKeysDuration: Double = 0.75         // Keys fold (lags behind)
     
     // MARK: - Key Color Calculation
@@ -102,7 +102,66 @@ struct MainKeyboardView: View {
             ZStack {
                 Color("BackgroundColour").ignoresSafeArea()
                 
-                // Keys layer (behind)
+                // Center strip layer
+                ZStack {
+                    if showingOptions {
+                        // Switch between OptionsView and EditView based on currentMainView
+                        switch currentMainView {
+                        case .options:
+                            OptionsView(
+                                showingOptions: $showingOptions,
+                                currentSubView: $currentOptionsSubView,
+                                currentScale: currentScale,
+                                currentKey: currentKey,
+                                onCycleIntonation: onCycleIntonation,
+                                onCycleCelestial: onCycleCelestial,
+                                onCycleTerrestrial: onCycleTerrestrial,
+                                onCycleRotation: onCycleRotation,
+                                onCycleKey: onCycleKey,
+                                onSwitchToEdit: {
+                                    currentMainView = .edit
+                                }
+                            )
+                            .transition(
+                                .scale
+                                .combined(with: .opacity)
+                                )
+                            
+                        case .edit:
+                            EditView(
+                                showingOptions: $showingOptions,
+                                onSwitchToOptions: {
+                                    currentMainView = .options
+                                }
+                            )
+                            .transition(
+                                .scale
+                                .combined(with: .opacity)
+                                )
+                        }
+                    } else {
+                        NavigationStrip(
+                            showingOptions: $showingOptions,
+                            onPrevScale: onPrevScale,
+                            onNextScale: onNextScale,
+                            stripWidth: centerConfig.width
+                        )
+                        .transition(
+                            .scale//(scale: 0.8)
+                            .combined(with: .opacity)
+                        )
+                    }
+                }
+                .frame(width: centerConfig.width)
+                .animation(
+                    .easeInOut(duration: showingOptions ? unfoldCenterDuration : foldCenterDuration),
+                    value: showingOptions
+                )
+                .animation(.easeInOut(duration: 0.0), value: currentMainView)
+            }
+            .statusBar(hidden: true)
+                
+                // Keys layer
                 HStack(spacing: 0) {
                     // Left column - Keys
                     VStack {
@@ -140,58 +199,11 @@ struct MainKeyboardView: View {
                     value: showingOptions
                 )
                 
-                // Center strip layer (on top)
-                ZStack {
-                    if showingOptions {
-                        // Switch between OptionsView and EditView based on currentMainView
-                        switch currentMainView {
-                        case .options:
-                            OptionsView(
-                                showingOptions: $showingOptions,
-                                currentSubView: $currentOptionsSubView,
-                                currentScale: currentScale,
-                                currentKey: currentKey,
-                                onCycleIntonation: onCycleIntonation,
-                                onCycleCelestial: onCycleCelestial,
-                                onCycleTerrestrial: onCycleTerrestrial,
-                                onCycleRotation: onCycleRotation,
-                                onCycleKey: onCycleKey,
-                                onSwitchToEdit: {
-                                    currentMainView = .edit
-                                }
-                            )
-                            .transition(.opacity)
-                            
-                        case .edit:
-                            EditView(
-                                showingOptions: $showingOptions,
-                                onSwitchToOptions: {
-                                    currentMainView = .options
-                                }
-                            )
-                            .transition(.opacity)
-                        }
-                    } else {
-                        NavigationStrip(
-                            showingOptions: $showingOptions,
-                            onPrevScale: onPrevScale,
-                            onNextScale: onNextScale,
-                            stripWidth: centerConfig.width
-                        )
-                        .transition(
-                            .scale//(scale: 0.8)
-                            //.combined(with: .identity)
-                        )
-                    }
-                }
-                .frame(width: centerConfig.width)
-                .animation(
-                    .easeInOut(duration: showingOptions ? unfoldCenterDuration : foldCenterDuration),
-                    value: showingOptions
-                )
-                .animation(.easeInOut(duration: 0.0), value: currentMainView)
-            }
-            .statusBar(hidden: true)
+
+                
+                
+                
+                
         }
     }
 }
