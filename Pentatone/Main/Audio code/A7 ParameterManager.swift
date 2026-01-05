@@ -194,6 +194,10 @@ final class AudioParameterManager: ObservableObject {
         voiceTemplate.filter = parameters
     }
     
+    func updateTemplateFilterStatic(_ parameters: FilterStaticParameters) {
+        voiceTemplate.filterStatic = parameters
+    }
+    
     func updateTemplateOscillator(_ parameters: OscillatorParameters) {
         voiceTemplate.oscillator = parameters
     }
@@ -263,23 +267,23 @@ final class AudioParameterManager: ObservableObject {
     
     // MARK: - Individual Filter Parameter Updates
     
-    /// Update filter cutoff frequency
+    /// Update filter cutoff frequency (MODULATABLE parameter)
     func updateFilterCutoff(_ value: Double) {
         voiceTemplate.filter.cutoffFrequency = value
         // VoicePool updates all voices immediately to ensure consistent state
         voicePool?.updateAllVoiceFilters(voiceTemplate.filter)
     }
     
-    /// Update filter resonance
+    /// Update filter resonance (NON-MODULATABLE, NOTE-ON parameter)
     func updateFilterResonance(_ value: Double) {
-        voiceTemplate.filter.resonance = value
-        voicePool?.updateAllVoiceFilters(voiceTemplate.filter)
+        voiceTemplate.filterStatic.resonance = value
+        voicePool?.updateAllVoiceFilterStatic(voiceTemplate.filterStatic)
     }
     
-    /// Update filter saturation
+    /// Update filter saturation (NON-MODULATABLE, NOTE-ON parameter)
     func updateFilterSaturation(_ value: Double) {
-        voiceTemplate.filter.saturation = value
-        voicePool?.updateAllVoiceFilters(voiceTemplate.filter)
+        voiceTemplate.filterStatic.saturation = value
+        voicePool?.updateAllVoiceFilterStatic(voiceTemplate.filterStatic)
     }
     
     // MARK: - Individual Modulation Parameter Updates
@@ -650,7 +654,7 @@ final class AudioParameterManager: ObservableObject {
     func syncMacroBaseValues() {
         macroState.baseModulationIndex = voiceTemplate.oscillator.modulationIndex
         macroState.baseFilterCutoff = voiceTemplate.filter.cutoffFrequency
-        macroState.baseFilterSaturation = voiceTemplate.filter.saturation
+        macroState.baseFilterSaturation = voiceTemplate.filterStatic.saturation
         macroState.baseDelayFeedback = master.delay.feedback
         macroState.baseDelayMix = master.delay.dryWetMix
         macroState.baseReverbFeedback = master.reverb.feedback

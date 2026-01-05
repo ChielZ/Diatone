@@ -157,8 +157,8 @@ final class PolyphonicVoice {
         self.filter = KorgLowPassFilter(
             stereoMixer,
             cutoffFrequency: AUValue(parameters.filter.clampedCutoff),
-            resonance: AUValue(parameters.filter.clampedResonance),
-            saturation: AUValue(parameters.filter.clampedSaturation)
+            resonance: AUValue(parameters.filterStatic.clampedResonance),
+            saturation: AUValue(parameters.filterStatic.clampedSaturation)
         )
         
         // Create envelope shaping the stereo signal
@@ -343,7 +343,8 @@ final class PolyphonicVoice {
     /// - Parameters:
     ///   - initialTouchX: Initial touch x-position (0.0 = left, 1.0 = right) for velocity-like response
     ///   - templateFilterCutoff: Optional override for base filter cutoff (from current template)
-    func trigger(initialTouchX: Double = 0.5, templateFilterCutoff: Double? = nil) {
+    ///   - templateFilterStatic: Optional override for static filter parameters (resonance, saturation)
+    func trigger(initialTouchX: Double = 0.5, templateFilterCutoff: Double? = nil, templateFilterStatic: FilterStaticParameters? = nil) {
         guard isInitialized else {
             assertionFailure("Voice must be initialized before triggering")
             return
@@ -353,6 +354,13 @@ final class PolyphonicVoice {
         // This ensures we always use the latest UI setting, not a stale value
         if let cutoff = templateFilterCutoff {
             modulationState.baseFilterCutoff = cutoff
+        }
+        
+        // CRITICAL: Apply static filter parameters (resonance, saturation) at note-on
+        // These are NOTE-ON properties - set once and never modulated
+        if let filterStatic = templateFilterStatic {
+            filter.$resonance.ramp(to: AUValue(filterStatic.clampedResonance), duration: 0)
+            filter.$saturation.ramp(to: AUValue(filterStatic.clampedSaturation), duration: 0)
         }
         
         // CRITICAL: Set initial touch value BEFORE any calculations that depend on it
@@ -489,13 +497,22 @@ final class PolyphonicVoice {
     }
     func updateFilterParameters(_ parameters: FilterParameters) {
         // Use zero-duration ramps to avoid AudioKit parameter ramping artifacts
+        // ONLY updates modulatable parameters (cutoff frequency)
         filter.$cutoffFrequency.ramp(to: AUValue(parameters.clampedCutoff), duration: 0)
-        filter.$resonance.ramp(to: AUValue(parameters.clampedResonance), duration: 0)
-        filter.$saturation.ramp(to: AUValue(parameters.clampedSaturation), duration: 0)
         
         // Update the base filter cutoff in modulation state
         // This ensures the modulation system uses the new value as the base
         modulationState.baseFilterCutoff = parameters.clampedCutoff
+    }
+    
+    /// Updates static (non-modulatable) filter parameters
+    /// These are applied immediately and never modulated
+    /// Should be called on main thread only, never during modulation
+    func updateFilterStaticParameters(_ parameters: FilterStaticParameters) {
+        // Use zero-duration ramps for immediate application
+        // These parameters are NEVER touched by the modulation system
+        filter.$resonance.ramp(to: AUValue(parameters.clampedResonance), duration: 0)
+        filter.$saturation.ramp(to: AUValue(parameters.clampedSaturation), duration: 0)
     }
     
     /// Updates envelope parameters

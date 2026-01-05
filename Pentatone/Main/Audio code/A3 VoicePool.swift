@@ -199,8 +199,13 @@ final class VoicePool {
         
         // Set frequency and trigger with initial touch value
         // Pass the current template filter cutoff to ensure freshest value
+        // Also pass static filter parameters (resonance, saturation) as note-on properties
         voice.setFrequency(finalFrequency)
-        voice.trigger(initialTouchX: initialTouchX, templateFilterCutoff: currentTemplate.filter.clampedCutoff)
+        voice.trigger(
+            initialTouchX: initialTouchX, 
+            templateFilterCutoff: currentTemplate.filter.clampedCutoff,
+            templateFilterStatic: currentTemplate.filterStatic
+        )
         
         // Map this key to the voice for precise release tracking
         keyToVoiceMap[keyIndex] = voice
@@ -331,16 +336,29 @@ final class VoicePool {
         }
     }
     
-    /// Updates filter parameters for all voices
+    /// Updates filter parameters for all voices (MODULATABLE only - cutoff frequency)
     func updateAllVoiceFilters(_ parameters: FilterParameters) {
         // Update template so next triggered voice gets fresh values
         currentTemplate.filter = parameters
         
-        // Update ALL voices immediately, not just active ones
-        // This ensures resonance and saturation are always current,
-        // since these parameters are not modulated and must be instantly applied
+        // Update ALL voices immediately
+        // Cutoff is modulatable, but we need to update the base value
         for voice in voices {
             voice.updateFilterParameters(parameters)
+        }
+    }
+    
+    /// Updates static filter parameters for all voices (NON-MODULATABLE - resonance, saturation)
+    /// These parameters are applied at note-on and should be consistent across all voices
+    /// MAIN THREAD ONLY - never called during modulation
+    func updateAllVoiceFilterStatic(_ parameters: FilterStaticParameters) {
+        // Update template so next triggered voice gets fresh values
+        currentTemplate.filterStatic = parameters
+        
+        // Update ALL voices immediately
+        // These are non-modulatable and must be instantly applied to all voices
+        for voice in voices {
+            voice.updateFilterStaticParameters(parameters)
         }
     }
     

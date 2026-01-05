@@ -112,7 +112,7 @@ struct ContourView: View {
             SliderRow(
                 label: "FILTER RESONANCE",
                 value: Binding(
-                    get: { paramManager.voiceTemplate.filter.resonance },
+                    get: { paramManager.voiceTemplate.filterStatic.resonance },
                     set: { newValue in
                         paramManager.updateFilterResonance(newValue)
                         // No need to call applyFilterToAllVoices - it's handled internally now
@@ -127,7 +127,7 @@ struct ContourView: View {
             SliderRow(
                 label: "FILTER SATURATION",
                 value: Binding(
-                    get: { paramManager.voiceTemplate.filter.saturation },
+                    get: { paramManager.voiceTemplate.filterStatic.saturation },
                     set: { newValue in
                         paramManager.updateFilterSaturation(newValue)
                         // No need to call applyFilterToAllVoices - it's handled internally now

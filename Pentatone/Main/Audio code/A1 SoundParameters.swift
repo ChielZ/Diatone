@@ -91,22 +91,32 @@ struct OscillatorParameters: Codable, Equatable {
     }
 }
 
-/// Parameters for the low-pass filter
+/// Parameters for the low-pass filter (MODULATABLE parameters only)
+/// Cutoff frequency can be modulated by envelopes, LFOs, key tracking, and aftertouch
 struct FilterParameters: Codable, Equatable {
     var cutoffFrequency: Double
-    var resonance: Double
-    var saturation: Double
     
     static let `default` = FilterParameters(
-        cutoffFrequency: 1200,
-        resonance: 0.5,
-        saturation: 2.0
+        cutoffFrequency: 1200
     )
     
     /// Clamps cutoff to valid range (0 Hz - 22.05 kHz)
     var clampedCutoff: Double {
         min(max(cutoffFrequency, 0), 22_050)
     }
+}
+
+/// Non-modulatable filter parameters (STATIC parameters)
+/// These are set once at note-on and never modulated during playback
+/// Resonance and saturation control the filter's character but are not performance parameters
+struct FilterStaticParameters: Codable, Equatable {
+    var resonance: Double
+    var saturation: Double
+    
+    static let `default` = FilterStaticParameters(
+        resonance: 0.5,
+        saturation: 2.0
+    )
     
     /// Clamps resonance to valid range (0 - 2)
     var clampedResonance: Double {
@@ -137,13 +147,15 @@ struct EnvelopeParameters: Codable, Equatable {
 /// Combined parameters for a single voice
 struct VoiceParameters: Codable, Equatable {
     var oscillator: OscillatorParameters
-    var filter: FilterParameters
+    var filter: FilterParameters                   // Modulatable (cutoff only)
+    var filterStatic: FilterStaticParameters       // Non-modulatable (resonance, saturation)
     var envelope: EnvelopeParameters
-    var modulation: VoiceModulationParameters  // Phase 5: Modulation system
+    var modulation: VoiceModulationParameters      // Phase 5: Modulation system
     
     static let `default` = VoiceParameters(
         oscillator: .default,
         filter: .default,
+        filterStatic: .default,
         envelope: .default,
         modulation: .default  // Uses VoiceModulationParameters.default
     )
@@ -332,7 +344,7 @@ struct MacroControlState: Codable, Equatable {
         // Capture base values from parameters
         self.baseModulationIndex = voiceParams.oscillator.modulationIndex
         self.baseFilterCutoff = voiceParams.filter.cutoffFrequency
-        self.baseFilterSaturation = voiceParams.filter.saturation
+        self.baseFilterSaturation = voiceParams.filterStatic.saturation
         self.baseDelayFeedback = masterParams.delay.feedback
         self.baseDelayMix = masterParams.delay.dryWetMix
         self.baseReverbFeedback = masterParams.reverb.feedback
