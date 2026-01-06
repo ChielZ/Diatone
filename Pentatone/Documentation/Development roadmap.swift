@@ -59,7 +59,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  - hack delay for longer max time? (could maybe be initiated with higher value for max delay time, allowing sync values above 1/4 even at slowest tempo)
  
  TODO 7 jan
-  - interactie tussen initial touch, envelopes en voice lfo
+  √ interactie tussen initial touch, envelopes en voice lfo
   - parameter ranges editor pagina's
   - parameter response (log vs linear vs log slider + lin buttons)
   - parameter/pagina namen editor

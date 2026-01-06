@@ -27,8 +27,8 @@ struct ContourView: View {
     
     var body: some View {
         Group {
-            // Row 3 - Amp Envelope Attack (0-5 seconds)
-            SliderRow(
+            // Row 3 - Amp Envelope Attack (0-5 seconds, displayed in ms)
+            LogarithmicSliderRowWithLinearButtons(
                 label: "AMP ENV ATTACK",
                 value: Binding(
                     get: { paramManager.voiceTemplate.envelope.attackDuration },
@@ -37,13 +37,13 @@ struct ContourView: View {
                         applyEnvelopeToAllVoices()
                     }
                 ),
-                range: 0...5,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f s", $0) }
+                range: 0.001...5,  // 1ms to 5000ms
+                buttonStep: 0.001,  // Fixed 1 ms steps for buttons
+                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
             )
             
-            // Row 4 - Amp Envelope Decay (0-5 seconds)
-            SliderRow(
+            // Row 4 - Amp Envelope Decay (0-5 seconds, displayed in ms)
+            LogarithmicSliderRowWithLinearButtons(
                 label: "AMP ENV DECAY",
                 value: Binding(
                     get: { paramManager.voiceTemplate.envelope.decayDuration },
@@ -52,9 +52,9 @@ struct ContourView: View {
                         applyEnvelopeToAllVoices()
                     }
                 ),
-                range: 0...5,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f s", $0) }
+                range: 0.001...5,  // 1ms to 5000ms
+                buttonStep: 0.001,  // Fixed 1 ms steps for buttons
+                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
             )
             
             // Row 5 - Amp Envelope Sustain (0-1)
@@ -72,8 +72,8 @@ struct ContourView: View {
                 displayFormatter: { String(format: "%.3f", $0) }
             )
             
-            // Row 6 - Amp Envelope Release (0-5 seconds)
-            SliderRow(
+            // Row 6 - Amp Envelope Release (0-5 seconds, displayed in ms)
+            LogarithmicSliderRowWithLinearButtons(
                 label: "AMP ENV RELEASE",
                 value: Binding(
                     get: { paramManager.voiceTemplate.envelope.releaseDuration },
@@ -82,9 +82,9 @@ struct ContourView: View {
                         applyEnvelopeToAllVoices()
                     }
                 ),
-                range: 0...5,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f s", $0) }
+                range: 0.001...5,  // 1ms to 5000ms
+                buttonStep: 0.001,  // Fixed 1 ms steps for buttons
+                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
             )
             
             // Row 7 - Filter Cutoff (20-20000 Hz, logarithmic drag, linear 1 Hz button steps)
@@ -100,11 +100,11 @@ struct ContourView: View {
                 range: 20...20000,
                 buttonStep: 1.0,  // Fixed 1 Hz steps for buttons
                 displayFormatter: { value in
-                    if value < 1000 {
+                    //if value < 1000 {
                         return String(format: "%.0f Hz", value)
-                    } else {
-                        return String(format: "%.1f kHz", value / 1000)
-                    }
+                    //} else {
+                      //  return String(format: "%.1f kHz", value / 1000)
+                    //}
                 }
             )
             

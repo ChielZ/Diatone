@@ -108,11 +108,11 @@ struct EffectsView: View {
                     let logValue = logMin + value * (logMax - logMin)
                     let cutoff = exp(logValue)
                     
-                    if cutoff < 1000 {
+                   // if cutoff < 1000 {
                         return String(format: "%.0f Hz", cutoff)
-                    } else {
-                        return String(format: "%.1f kHz", cutoff / 1000)
-                    }
+                    //} else {
+                    //    return String(format: "%.1f kHz", cutoff / 1000)
+                    //}
                 }
             )
             // Row 6 - Delay Mix (0-1)
@@ -175,11 +175,11 @@ struct EffectsView: View {
                     let logValue = logMin + value * (logMax - logMin)
                     let cutoff = exp(logValue)
                     
-                    if cutoff < 1000 {
+                    //if cutoff < 1000 {
                         return String(format: "%.0f Hz", cutoff)
-                    } else {
-                        return String(format: "%.1f kHz", cutoff / 1000)
-                    }
+                    //} else {
+                    //    return String(format: "%.1f kHz", cutoff / 1000)
+                    //}
                 }
             )
             

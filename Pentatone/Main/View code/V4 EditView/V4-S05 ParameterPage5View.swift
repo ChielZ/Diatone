@@ -24,8 +24,8 @@ struct ModEnvView: View {
     
     var body: some View {
         Group {
-            // Row 1 - Modulator Envelope Attack (0-5 seconds)
-            SliderRow(
+            // Row 1 - Modulator Envelope Attack (0-5 seconds, displayed in ms)
+            LogarithmicSliderRowWithLinearButtons(
                 label: "MOD ENV ATTACK",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.modulatorEnvelope.attack },
@@ -34,13 +34,13 @@ struct ModEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...5,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f s", $0) }
+                range: 0.001...5,  // 1ms to 5000ms
+                buttonStep: 0.001,  // Fixed 1 ms steps for buttons
+                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
             )
             
-            // Row 2 - Modulator Envelope Decay (0-5 seconds)
-            SliderRow(
+            // Row 2 - Modulator Envelope Decay (0-5 seconds, displayed in ms)
+            LogarithmicSliderRowWithLinearButtons(
                 label: "MOD ENV DECAY",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.modulatorEnvelope.decay },
@@ -49,9 +49,9 @@ struct ModEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...5,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f s", $0) }
+                range: 0.001...5,  // 1ms to 5000ms
+                buttonStep: 0.001,  // Fixed 1 ms steps for buttons
+                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
             )
             
             // Row 3 - Modulator Envelope Sustain (0-1)
@@ -69,8 +69,8 @@ struct ModEnvView: View {
                 displayFormatter: { String(format: "%.3f", $0) }
             )
             
-            // Row 4 - Modulator Envelope Release (0-5 seconds)
-            SliderRow(
+            // Row 4 - Modulator Envelope Release (0-5 seconds, displayed in ms)
+            LogarithmicSliderRowWithLinearButtons(
                 label: "MOD ENV RELEASE",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.modulatorEnvelope.release },
@@ -79,9 +79,9 @@ struct ModEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...5,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f s", $0) }
+                range: 0.001...5,  // 1ms to 5000ms
+                buttonStep: 0.001,  // Fixed 1 ms steps for buttons
+                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
             )
             
             // Row 5 - Modulator Envelope Amount to Modulation Index (-5.0 to +5.0)

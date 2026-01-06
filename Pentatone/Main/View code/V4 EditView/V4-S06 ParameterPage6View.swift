@@ -23,8 +23,8 @@ struct AuxEnvView: View {
     
     var body: some View {
         Group {
-            // Row 1 - Auxiliary Envelope Attack (0-5 seconds)
-            SliderRow(
+            // Row 1 - Auxiliary Envelope Attack (0-5 seconds, displayed in ms)
+            LogarithmicSliderRowWithLinearButtons(
                 label: "AUX ENV ATTACK",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.auxiliaryEnvelope.attack },
@@ -33,13 +33,13 @@ struct AuxEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...5,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f s", $0) }
+                range: 0.001...5,  // 1ms to 5000ms
+                buttonStep: 0.001,  // Fixed 1 ms steps for buttons
+                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
             )
             
-            // Row 2 - Auxiliary Envelope Decay (0-5 seconds)
-            SliderRow(
+            // Row 2 - Auxiliary Envelope Decay (0-5 seconds, displayed in ms)
+            LogarithmicSliderRowWithLinearButtons(
                 label: "AUX ENV DECAY",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.auxiliaryEnvelope.decay },
@@ -48,9 +48,9 @@ struct AuxEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...5,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f s", $0) }
+                range: 0.001...5,  // 1ms to 5000ms
+                buttonStep: 0.001,  // Fixed 1 ms steps for buttons
+                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
             )
             
             // Row 3 - Auxiliary Envelope Sustain (0-1)
@@ -68,8 +68,8 @@ struct AuxEnvView: View {
                 displayFormatter: { String(format: "%.3f", $0) }
             )
             
-            // Row 4 - Auxiliary Envelope Release (0-5 seconds)
-            SliderRow(
+            // Row 4 - Auxiliary Envelope Release (0-5 seconds, displayed in ms)
+            LogarithmicSliderRowWithLinearButtons(
                 label: "AUX ENV RELEASE",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.auxiliaryEnvelope.release },
@@ -78,9 +78,9 @@ struct AuxEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...5,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f s", $0) }
+                range: 0.001...5,  // 1ms to 5000ms
+                buttonStep: 0.001,  // Fixed 1 ms steps for buttons
+                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
             )
             
             // Row 5 - Auxiliary Envelope to Oscillator Pitch (pitch sweep)
