@@ -708,8 +708,9 @@ final class PolyphonicVoice {
         let hasVoiceLFO = voiceModulation.voiceLFO.amountToOscillatorPitch != 0.0
         let hasVibratoMetaMod = voiceModulation.auxiliaryEnvelope.amountToVibrato != 0.0
             || voiceModulation.touchAftertouch.amountToVibrato != 0.0
+        let hasInitialTouchToPitch = voiceModulation.touchInitial.amountToAuxEnvPitch != 0.0
         
-        guard hasAuxEnv || hasVoiceLFO || hasVibratoMetaMod else { return }
+        guard hasAuxEnv || hasVoiceLFO || hasVibratoMetaMod || hasInitialTouchToPitch else { return }
         
         // Apply initial touch meta-modulation to aux envelope pitch amount
         var effectiveAuxEnvPitchAmount = voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch
@@ -768,8 +769,9 @@ final class PolyphonicVoice {
         let hasVoiceLFO = voiceModulation.voiceLFO.amountToFilterFrequency != 0.0
         let hasGlobalLFO = globalLFOParameters.amountToFilterFrequency != 0.0
         let hasAftertouch = voiceModulation.touchAftertouch.amountToFilterFrequency != 0.0
+        let hasInitialTouchToFilter = voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0
         
-        guard hasKeyTrack || hasAuxEnv || hasVoiceLFO || hasGlobalLFO || hasAftertouch else { return }
+        guard hasKeyTrack || hasAuxEnv || hasVoiceLFO || hasGlobalLFO || hasAftertouch || hasInitialTouchToFilter else { return }
         
         // Apply initial touch meta-modulation to aux envelope filter amount
         var effectiveAuxEnvFilterAmount = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency
