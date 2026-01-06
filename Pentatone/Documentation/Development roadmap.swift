@@ -26,6 +26,8 @@ MAIN
     -> Make initial touch flexible so it can accept X position, Y position or touchArea as inputs
     -> Make aftertouch flexible so it can accept X move, Y move or touchArea as inputs
     -> Make polyphony flexible so it can be a (potentially user-adjustable) per app parameter (presets will store only mono or poly mode, no voice count)
+    -> check comments & deprecated code
+ 
  - add in app documentation
  >> ready for launch of version 1 (free app only)
  [below: as general engine features or per app?]
@@ -54,6 +56,19 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  √ Check multiple console messages of scale frequency updates
  √ Check AudioKit warning message streams when modulation is enabled (already fixed for aftertouch)
  - hack delay for longer max time? (could maybe be initiated with higher value for max delay time, allowing sync values above 1/4 even at slowest tempo)
+ 
+ TODO 7 jan
+  - interactie tussen initial touch, envelopes en voice lfo
+  - parameter ranges editor pagina's
+  - parameter response (log vs linear vs log slider + lin buttons)
+  - parameter/pagina namen editor
+  - check +0.00 of -0.00 ipv gewoon 0.00
+
+ 
+ 
+ 
+ 
+ 
  
  CONCEPT FOR IMPROVED SOUND ENGINE:
  
@@ -401,4 +416,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
       rampedLFOValue = rawLFOValue × rampFactor
       (Then apply amounts to rampedLFOValue for each destination)
 
+ 
+ 
+ 
  */

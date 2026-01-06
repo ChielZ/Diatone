@@ -865,7 +865,7 @@ struct ModulationRouter {
         initialTouchAmount: Double
     ) -> Double {
         let touchFactor = initialTouchValue * initialTouchAmount
-        return baseAmount * (1.0 + touchFactor)
+        return baseAmount + touchFactor
     }
 }
 

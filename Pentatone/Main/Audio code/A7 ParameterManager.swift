@@ -409,21 +409,7 @@ final class AudioParameterManager: ObservableObject {
             voicePool?.resetModulationIndexToBase()
         }
     }
-    /*
-    /// Update voice LFO destination (deprecated - destinations are now fixed)
-    @available(*, deprecated, message: "Voice LFO destinations are now fixed")
-    func updateVoiceLFODestination(_ destination: ModulationDestination) {
-        // No-op: destinations are now fixed
-    }
-    
-    /// Update voice LFO amount (deprecated - use specific amount methods)
-    @available(*, deprecated, message: "Use updateVoiceLFOAmountToPitch, AmountToFilter, or AmountToModulatorLevel")
-    func updateVoiceLFOAmount(_ value: Double) {
-        // Default to pitch for backward compatibility
-        voiceTemplate.modulation.voiceLFO.amountToOscillatorPitch = value
-    }
-    */
-    
+     
     /// Update voice LFO enabled state
     func updateVoiceLFOEnabled(_ enabled: Bool) {
         voiceTemplate.modulation.voiceLFO.isEnabled = enabled
