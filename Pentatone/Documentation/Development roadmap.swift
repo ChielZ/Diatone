@@ -6,7 +6,8 @@
 //
 
 /*
-
+IMPORTANT NOTE FOR CLAUDE: This is a sketchpad type file. Some of the information in here may be outdated or contradictory, please ignore the contents of this file when analyzing issues, but focus on the actual code instead!
+ 
 MAIN
  √ Fix iOS 15 compatibility
  √ Add oscillator waveform to parameters

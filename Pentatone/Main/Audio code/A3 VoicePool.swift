@@ -567,7 +567,7 @@ final class VoicePool {
     /// Applies global LFO modulation to global-level parameters (delay time, mixer volume)
     /// - Parameter rawValue: Raw global LFO value (-1.0 to +1.0, unscaled)
     private func applyGlobalLFOToGlobalParameters(rawValue: Double) {
-        guard globalLFO.isEnabled, globalLFO.hasActiveDestinations else { return }
+        guard globalLFO.isEnabled else { return }
         
         // Global LFO Destination 1: Voice Mixer Volume (tremolo)
         // Apply global tremolo effect to voice mixer (affects all voices at once)

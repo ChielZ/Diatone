@@ -670,12 +670,6 @@ final class PolyphonicVoice {
         voiceLFORawValue: Double,
         aftertouchDelta: Double
     ) {
-        // Check if any source is active
-        let hasModEnv = voiceModulation.modulatorEnvelope.hasActiveDestinations
-        let hasVoiceLFO = voiceModulation.voiceLFO.amountToModulatorLevel != 0.0
-        let hasAftertouch = voiceModulation.touchAftertouch.amountToModulatorLevel != 0.0
-        
-        guard hasModEnv || hasVoiceLFO || hasAftertouch else { return }
         
         // Apply initial touch meta-modulation to mod envelope amount
         var effectiveModEnvAmount = voiceModulation.modulatorEnvelope.amountToModulationIndex
@@ -829,7 +823,6 @@ final class PolyphonicVoice {
     /// NOTE: Initial touch amplitude modulation is applied immediately at note-on in trigger()
     /// Filter modulation is handled by applyCombinedFilterFrequency()
     private func applyGlobalLFO(rawValue: Double, parameters: GlobalLFOParameters) {
-        guard parameters.hasActiveDestinations else { return }
         
         // Destination 1: Modulator multiplier (FM ratio modulation)
         if parameters.amountToModulatorMultiplier != 0.0 {
