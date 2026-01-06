@@ -37,9 +37,15 @@ struct ContourView: View {
                         applyEnvelopeToAllVoices()
                     }
                 ),
-                range: 0.001...5,  // 1ms to 5000ms
+                range: 0.001...5,  // 1ms to 5000ms (zero accessible via button)
                 buttonStep: 0.001,  // Fixed 1 ms steps for buttons
-                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
+                displayFormatter: { value in
+                    if value == 0.0 {
+                        return "0 ms"
+                    } else {
+                        return String(format: "%.0f ms", value * 1000)
+                    }
+                }
             )
             
             // Row 4 - Amp Envelope Decay (0-5 seconds, displayed in ms)
@@ -52,9 +58,15 @@ struct ContourView: View {
                         applyEnvelopeToAllVoices()
                     }
                 ),
-                range: 0.001...5,  // 1ms to 5000ms
+                range: 0.001...5,  // 1ms to 5000ms (zero accessible via button)
                 buttonStep: 0.001,  // Fixed 1 ms steps for buttons
-                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
+                displayFormatter: { value in
+                    if value == 0.0 {
+                        return "0 ms"
+                    } else {
+                        return String(format: "%.0f ms", value * 1000)
+                    }
+                }
             )
             
             // Row 5 - Amp Envelope Sustain (0-1)
@@ -82,9 +94,15 @@ struct ContourView: View {
                         applyEnvelopeToAllVoices()
                     }
                 ),
-                range: 0.001...5,  // 1ms to 5000ms
+                range: 0.001...5,  // 1ms to 5000ms (zero accessible via button)
                 buttonStep: 0.001,  // Fixed 1 ms steps for buttons
-                displayFormatter: { String(format: "%.0f ms", $0 * 1000) }
+                displayFormatter: { value in
+                    if value == 0.0 {
+                        return "0 ms"
+                    } else {
+                        return String(format: "%.0f ms", value * 1000)
+                    }
+                }
             )
             
             // Row 7 - Filter Cutoff (20-20000 Hz, logarithmic drag, linear 1 Hz button steps)

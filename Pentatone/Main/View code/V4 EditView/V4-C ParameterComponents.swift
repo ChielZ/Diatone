@@ -455,6 +455,9 @@ struct LogarithmicSliderRowWithLinearButtons: View {
                                 dragStartLocation = gesture.startLocation.x
                             }
                             
+                            // Special case: if starting from zero, treat it as if starting from range minimum
+                            let effectiveStartValue = dragStartValue == 0.0 ? range.lowerBound : dragStartValue
+                            
                             // Calculate delta from drag start
                             let delta = gesture.location.x - dragStartLocation
                             
@@ -465,7 +468,7 @@ struct LogarithmicSliderRowWithLinearButtons: View {
                             let logRange = logMax - logMin
                             
                             // Current value in log space
-                            let logStartValue = log(dragStartValue)
+                            let logStartValue = log(effectiveStartValue)
                             
                             // Sensitivity: pixels to traverse full logarithmic range
                             let sensitivity: CGFloat = 200.0
@@ -477,7 +480,7 @@ struct LogarithmicSliderRowWithLinearButtons: View {
                             // Convert back to linear space
                             let newValue = exp(newLogValue)
                             
-                            // Clamp to range
+                            // Clamp to range (minimum is range.lowerBound, zero can only be set via button)
                             value = min(max(newValue, range.lowerBound), range.upperBound)
                         }
                         .onEnded { _ in
@@ -510,15 +513,25 @@ struct LogarithmicSliderRowWithLinearButtons: View {
     }
     
     private func incrementValue() {
-        // Fixed linear step (e.g., +1 Hz)
-        let newValue = value + buttonStep
-        value = min(newValue, range.upperBound)
+        // Special case: if at zero, jump to the range minimum
+        if value == 0.0 {
+            value = range.lowerBound
+        } else {
+            // Fixed linear step (e.g., +1 Hz)
+            let newValue = value + buttonStep
+            value = min(newValue, range.upperBound)
+        }
     }
     
     private func decrementValue() {
-        // Fixed linear step (e.g., -1 Hz)
-        let newValue = value - buttonStep
-        value = max(newValue, range.lowerBound)
+        // Special case: if at or near the minimum (within one step), snap to zero
+        if value <= range.lowerBound || value <= buttonStep {
+            value = 0.0
+        } else {
+            // Fixed linear step (e.g., -1 Hz)
+            let newValue = value - buttonStep
+            value = max(newValue, range.lowerBound)
+        }
     }
 }
 
