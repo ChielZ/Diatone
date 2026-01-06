@@ -120,25 +120,29 @@ struct OscillatorView: View {
                 value: Binding(
                     get: {
                         if paramManager.voiceTemplate.oscillator.detuneMode == .proportional {
-                            return paramManager.voiceTemplate.oscillator.stereoOffsetProportional
+                            // Convert ratio to cents for display (0-20 cents range)
+                            let ratio = paramManager.voiceTemplate.oscillator.stereoOffsetProportional
+                            return ratioToCents(ratio)
                         } else {
                             return paramManager.voiceTemplate.oscillator.stereoOffsetConstant
                         }
                     },
                     set: { newValue in
                         if paramManager.voiceTemplate.oscillator.detuneMode == .proportional {
-                            paramManager.updateStereoOffsetProportional(newValue)
+                            // Convert cents back to ratio for storage
+                            let ratio = centsToRatio(newValue)
+                            paramManager.updateStereoOffsetProportional(ratio)
                         } else {
                             paramManager.updateStereoOffsetConstant(newValue)
                         }
                         applyToAllVoices()
                     }
                 ),
-                range: paramManager.voiceTemplate.oscillator.detuneMode == .proportional ? 1.0000...1.0100 : 0...4,
-                step: paramManager.voiceTemplate.oscillator.detuneMode == .proportional ? 0.00001 : 0.01,
+                range: paramManager.voiceTemplate.oscillator.detuneMode == .proportional ? 0...20 : 0...4,
+                step: paramManager.voiceTemplate.oscillator.detuneMode == .proportional ? 0.01 : 0.01,
                 displayFormatter: { value in
                     if paramManager.voiceTemplate.oscillator.detuneMode == .proportional {
-                        return String(format: "%.5f", value)
+                        return String(format: "%.2f ct", value)
                     } else {
                         return String(format: "%.2f Hz", value)
                     }
@@ -154,6 +158,20 @@ struct OscillatorView: View {
     }
     
     // MARK: - Helper Functions
+    
+    /// Converts a frequency ratio to cents
+    /// Formula: cents = 1200 * log2(ratio)
+    private func ratioToCents(_ ratio: Double) -> Double {
+        // Ensure ratio is at least 1.0 to avoid negative cents
+        let clampedRatio = max(ratio, 1.0)
+        return 1200.0 * log2(clampedRatio)
+    }
+    
+    /// Converts cents to a frequency ratio
+    /// Formula: ratio = 2^(cents/1200)
+    private func centsToRatio(_ cents: Double) -> Double {
+        return pow(2.0, cents / 1200.0)
+    }
     
     /// Updates the combined modulatingMultiplier from coarse + fine components
     private func updateModulatingMultiplier(coarse: Int, fine: Double) {
