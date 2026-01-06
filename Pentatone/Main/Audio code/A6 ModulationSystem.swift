@@ -184,6 +184,13 @@ struct VoiceLFOParameters: Codable, Equatable {
         isEnabled: true
     )
     
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToOscillatorPitch != 0.0
+            || amountToFilterFrequency != 0.0
+            || amountToModulatorLevel != 0.0
+    }
+    
     /// Calculate the raw LFO waveform value at a given phase
     /// - Parameter phase: Current phase of the LFO (0.0 = start, 1.0 = end of cycle)
     /// - Returns: Raw LFO value in range -1.0 to +1.0 (unscaled)
@@ -217,6 +224,11 @@ struct ModulatorEnvelopeParameters: Codable, Equatable {
         amountToModulationIndex: 0.0,          // No modulation by default
         isEnabled: true
     )
+    
+    /// Check if envelope has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToModulationIndex != 0.0
+    }
 }
 
 /// Auxiliary Envelope - affects pitch, filter, and vibrato amount
@@ -245,6 +257,13 @@ struct AuxiliaryEnvelopeParameters: Codable, Equatable {
         amountToVibrato: 0.0,                  // No vibrato modulation by default
         isEnabled: true
     )
+    
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToOscillatorPitch != 0.0
+            || amountToFilterFrequency != 0.0
+            || amountToVibrato != 0.0
+    }
 }
 
 // MARK: - Key Tracking (Fixed Destinations)
@@ -266,6 +285,12 @@ struct KeyTrackingParameters: Codable, Equatable {
         amountToVoiceLFOFrequency: 0.0,        // No LFO frequency tracking by default
         isEnabled: true
     )
+    
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToFilterFrequency != 0.0
+            || amountToVoiceLFOFrequency != 0.0
+    }
     
     /// Calculate key tracking value based on frequency (called once at note-on)
     /// Returns the number of octaves from the reference frequency
@@ -300,6 +325,14 @@ struct TouchInitialParameters: Codable, Equatable {
         amountToAuxEnvCutoff: 0.0,             // No filter envelope scaling by default
         isEnabled: true
     )
+    
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToOscillatorAmplitude != 0.0
+            || amountToModEnvelope != 0.0
+            || amountToAuxEnvPitch != 0.0
+            || amountToAuxEnvCutoff != 0.0
+    }
 }
 
 /// Aftertouch modulation from change in X position while holding
@@ -318,6 +351,13 @@ struct TouchAftertouchParameters: Codable, Equatable {
         amountToVibrato: 0.0,                  // No aftertouch vibrato control by default
         isEnabled: true
     )
+    
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToFilterFrequency != 0.0
+            || amountToModulatorLevel != 0.0
+            || amountToVibrato != 0.0
+    }
 }
 
 // MARK: - Complete Modulation System Parameters
@@ -379,6 +419,14 @@ struct GlobalLFOParameters: Codable, Equatable {
         amountToDelayTime: 0.0,             // No delay time modulation by default
         isEnabled: true
     )
+    
+    /// Check if any destination has a non-zero amount
+    var hasActiveDestinations: Bool {
+        return amountToVoiceMixerVolume != 0.0
+            || amountToModulatorMultiplier != 0.0
+            || amountToFilterFrequency != 0.0
+            || amountToDelayTime != 0.0
+    }
     
     /// Get the actual frequency in Hz based on mode and tempo
     /// - Parameter tempo: Current tempo in BPM
@@ -748,11 +796,11 @@ struct ModulationRouter {
     // MARK: - Meta-Modulation: 7) Voice LFO Pitch Amount [HYBRID: MULT + ADD]
     
     /// Calculate voice LFO to oscillator pitch amount (vibrato amount)
-    /// Sources: Aux envelope (multiplicative scaling), Aftertouch (hybrid mult+add for amplitude control)
-    /// Formula: finalAmount = (baseAmount × auxEnvFactor × aftertouchMultFactor) + aftertouchAdditive
-    /// Note: Aftertouch modulates AMPLITUDE/DEPTH bidirectionally:
-    ///   - Toward center: increases depth (multiplicative scaling + additive boost)
-    ///   - Toward edge: decreases depth (multiplicative scaling only, toward 0)
+    /// Sources: Aux envelope (hybrid mult+add), Aftertouch (hybrid mult+add for amplitude control)
+    /// Formula: finalAmount = (baseAmount × auxEnvFactor × aftertouchMultFactor) + auxEnvAdditive + aftertouchAdditive
+    /// Note: Both sources modulate AMPLITUDE/DEPTH bidirectionally:
+    ///   - High value: increases depth (multiplicative scaling + additive boost)
+    ///   - Low value: decreases depth (multiplicative scaling only, toward 0)
     static func calculateVoiceLFOPitchAmount(
         baseAmount: Double,
         auxEnvValue: Double,
@@ -760,8 +808,23 @@ struct ModulationRouter {
         aftertouchDelta: Double,
         aftertouchAmount: Double
     ) -> Double {
-        // Aux envelope: multiplicative scaling (envelope value 0-1 scales the vibrato depth)
+        // Aux envelope: split into multiplicative (for existing vibrato) and additive (for zero base)
+        
+        // Multiplicative factor: scales existing vibrato depth
+        // value = 1.0 (peak) → factor = 2.0 (double)
+        // value = 0.0 (zero) → factor = 1.0 (unchanged)
         let auxEnvFactor = 1.0 + (auxEnvValue * auxEnvAmount)
+        
+        // Additive component: allows creating vibrato from zero when envelope is high
+        // Only applies when envelope is high (positive value) and base amount is near zero
+        let auxEnvAdditive: Double
+        if auxEnvValue > 0.0 && abs(baseAmount) < 0.01 {
+            // When base amount is essentially zero, treat positive envelope as direct additive vibrato
+            auxEnvAdditive = auxEnvValue * auxEnvAmount
+        } else {
+            // When base amount exists, rely on multiplicative scaling
+            auxEnvAdditive = 0.0
+        }
         
         // Aftertouch: split into multiplicative (for existing vibrato) and additive (for zero base)
         
@@ -783,8 +846,8 @@ struct ModulationRouter {
             aftertouchAdditive = 0.0
         }
         
-        // Combine both components
-        let finalAmount = (baseAmount * auxEnvFactor * aftertouchMultFactor) + aftertouchAdditive
+        // Combine all components
+        let finalAmount = (baseAmount * auxEnvFactor * aftertouchMultFactor) + auxEnvAdditive + aftertouchAdditive
         
         return max(-10.0, min(10.0, finalAmount))
     }
