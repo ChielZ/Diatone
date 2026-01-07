@@ -21,12 +21,12 @@
                          .overlay(
                              Text("<")
                                  .foregroundColor(Color("BackgroundColour"))
-                                 .adaptiveFont("Futura", size: 30)
+                                 .adaptiveFont("MontserratAlternates-Medium", size: 30)
                          )
                      Spacer()
                      Text("BANK 1")
                          .foregroundColor(Color("HighlightColour"))
-                         .adaptiveFont("Futura", size: 30)
+                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                      Spacer()
                      RoundedRectangle(cornerRadius: radius)
                          .fill(Color("SupportColour"))
@@ -34,7 +34,7 @@
                          .overlay(
                              Text(">")
                                  .foregroundColor(Color("BackgroundColour"))
-                                 .adaptiveFont("Futura", size: 30)
+                                 .adaptiveFont("MontserratAlternates-Medium", size: 30)
                          )
                  }
              }
@@ -48,12 +48,12 @@
                          .overlay(
                              Text("<")
                                  .foregroundColor(Color("BackgroundColour"))
-                                 .adaptiveFont("Futura", size: 30)
+                                 .adaptiveFont("MontserratAlternates-Medium", size: 30)
                          )
                      Spacer()
                      Text("1.1 KEYS")
                          .foregroundColor(Color("HighlightColour"))
-                         .adaptiveFont("Futura", size: 30)
+                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                      Spacer()
                      RoundedRectangle(cornerRadius: radius)
                          .fill(Color("SupportColour"))
@@ -61,7 +61,7 @@
                          .overlay(
                              Text(">")
                                  .foregroundColor(Color("BackgroundColour"))
-                                 .adaptiveFont("Futura", size: 30)
+                                 .adaptiveFont("MontserratAlternates-Medium", size: 30)
                          )
                  }
              }
@@ -71,7 +71,7 @@
                  GeometryReader { geometry in
                      Text("•SAVE PRESET•")
                          .foregroundColor(Color("BackgroundColour"))
-                         .adaptiveFont("Futura", size: 30)
+                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                          .frame(width: geometry.size.width, height: geometry.size.height)
                          .contentShape(Rectangle())
                          //.offset(y: -(geometry.size.height/2 + 11))
@@ -84,7 +84,7 @@
                  GeometryReader { geometry in
                      Text("•IMPORT PRESET•")
                          .foregroundColor(Color("BackgroundColour"))
-                         .adaptiveFont("Futura", size: 30)
+                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                          .frame(width: geometry.size.width, height: geometry.size.height)
                          .contentShape(Rectangle())
                          //.offset(y: -(geometry.size.height/2 + 11))
@@ -97,7 +97,7 @@
                  GeometryReader { geometry in
                      Text("•EXPORT PRESET•")
                          .foregroundColor(Color("BackgroundColour"))
-                         .adaptiveFont("Futura", size: 30)
+                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                          .frame(width: geometry.size.width, height: geometry.size.height)
                          .contentShape(Rectangle())
                          //.offset(y: -(geometry.size.height/2 + 11))

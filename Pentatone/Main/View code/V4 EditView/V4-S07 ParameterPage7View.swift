@@ -181,7 +181,7 @@ private struct VoiceLFOModeRow: View {
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
-                            .adaptiveFont("Futura", size: 30)
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                     )
@@ -196,13 +196,13 @@ private struct VoiceLFOModeRow: View {
                 VStack(spacing: 2) {
                     Text(label)
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 18)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 18)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                     
                     Text(displayText(value))
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 24)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 24)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                 }
@@ -216,7 +216,7 @@ private struct VoiceLFOModeRow: View {
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
-                            .adaptiveFont("Futura", size: 30)
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                     )

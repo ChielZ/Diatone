@@ -62,7 +62,7 @@ struct ScaleView: View {
                         .overlay(
                             Text("<")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -71,7 +71,7 @@ struct ScaleView: View {
                     Spacer()
                     Text(currentScale.intonation.rawValue)
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 30)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
@@ -79,7 +79,7 @@ struct ScaleView: View {
                         .overlay(
                             Text(">")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -97,7 +97,7 @@ struct ScaleView: View {
                         .overlay(
                             Text("<")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -112,7 +112,7 @@ struct ScaleView: View {
                         .overlay(
                             Text(">")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -130,7 +130,7 @@ struct ScaleView: View {
                         .overlay(
                             Text("<")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -139,7 +139,7 @@ struct ScaleView: View {
                     Spacer()
                     Text(currentScale.celestial.rawValue)
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 30)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
@@ -147,7 +147,7 @@ struct ScaleView: View {
                         .overlay(
                             Text(">")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -165,7 +165,7 @@ struct ScaleView: View {
                         .overlay(
                             Text("<")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -174,7 +174,7 @@ struct ScaleView: View {
                     Spacer()
                     Text(currentScale.terrestrial.rawValue)
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 30)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
@@ -182,7 +182,7 @@ struct ScaleView: View {
                         .overlay(
                             Text(">")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -200,7 +200,7 @@ struct ScaleView: View {
                         .overlay(
                             Text("<")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -209,7 +209,7 @@ struct ScaleView: View {
                     Spacer()
                     Text(currentScale.rotation == 0 ? "0" : "\(currentScale.rotation > 0 ? "+" : "−") \(abs(currentScale.rotation))")
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 30)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
@@ -217,7 +217,7 @@ struct ScaleView: View {
                         .overlay(
                             Text(">")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -231,7 +231,7 @@ struct ScaleView: View {
 
 // MARK: - Musical Key Text Component
 
-/// A view that displays a musical key with the note letter in Futura
+/// A view that displays a musical key with the note letter in MontserratAlternates-Medium
 /// and the accidental (♯ or ♭) in Arial Unicode MS for better typography.
 struct MusicalKeyText: View {
     let key: MusicalKey
@@ -239,10 +239,10 @@ struct MusicalKeyText: View {
     
     var body: some View {
         HStack(spacing: -2) {
-            // Note letter in Futura
+            // Note letter in MontserratAlternates-Medium
             Text(key.noteLetter)
                 .foregroundColor(Color("HighlightColour"))
-                .adaptiveFont("Futura", size: size)
+                .adaptiveFont("MontserratAlternates-Medium", size: size)
             
             // Accidental in Arial Unicode MS (if present)
             if let accidental = key.accidental {

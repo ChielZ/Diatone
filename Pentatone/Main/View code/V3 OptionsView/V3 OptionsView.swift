@@ -86,9 +86,9 @@ struct OptionsView: View {
                 ZStack{ // Row 1
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("HighlightColour"))
-                    Text("•FOLD•")
+                    Text("･FOLD･")
                         .foregroundColor(Color("BackgroundColour"))
-                        .adaptiveFont("Futura", size: 30)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                         .padding(.horizontal, 10)
@@ -109,7 +109,7 @@ struct OptionsView: View {
                             .overlay(
                                 Text("<")
                                     .foregroundColor(Color("BackgroundColour"))
-                                    .adaptiveFont("Futura", size: 30)
+                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
                                     .minimumScaleFactor(0.5)
                                     .lineLimit(1)
                             )
@@ -120,7 +120,7 @@ struct OptionsView: View {
                         Spacer()
                         Text(currentSubView.displayName)
                             .foregroundColor(Color("HighlightColour"))
-                            .adaptiveFont("Futura", size: 30)
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                             .padding(.horizontal, 10)
@@ -131,7 +131,7 @@ struct OptionsView: View {
                             .overlay(
                                 Text(">")
                                     .foregroundColor(Color("BackgroundColour"))
-                                    .adaptiveFont("Futura", size: 30)
+                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
                                     .minimumScaleFactor(0.5)
                                     .lineLimit(1)
                             )

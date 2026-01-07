@@ -3,7 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>UIAppFonts</key>
-	<array/>
+	<array>
+		<string>LobsterTwo-BoldItalic.ttf</string>
+		<string>MontserratAlternates-Medium.ttf</string>
+		<string>LobsterTwo-Italic.ttf</string>
+	</array>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 </dict>

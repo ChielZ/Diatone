@@ -222,7 +222,7 @@ private struct NavigationStrip: View {
                     .fill(Color("HighlightColour"))
                 
                 Text("Pentatone")
-                    .font(.custom("SignPainter", size: 42))
+                    .font(.custom("LobsterTwo-Italic", size: 36))
                     .foregroundColor(Color("BackgroundColour"))
                     .minimumScaleFactor(0.3)
                     .lineLimit(1)
@@ -232,13 +232,13 @@ private struct NavigationStrip: View {
                    
                 
                 VStack {
-                    Text("•UNFOLD•")
-                        .font(.custom("Futura Medium", size: 18))
+                    Text("･UNFOLD･")
+                        .font(.custom("MontserratAlternates-Medium", size: 24))
                         .foregroundColor(Color("BackgroundColour"))
                         .minimumScaleFactor(0.3)
                         .lineLimit(1)
                         .fixedSize()
-                        .frame(width: stripWidth * 0.7, height: 135, alignment: .center)
+                        .frame(width: stripWidth * 0.7, height: 150, alignment: .center)
                         .rotationEffect(Angle(degrees: 90))
                         .contentShape(Rectangle())
                         .onTapGesture {

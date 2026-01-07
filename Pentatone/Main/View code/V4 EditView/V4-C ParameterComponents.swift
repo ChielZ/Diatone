@@ -36,7 +36,7 @@ struct ParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.Index ==
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
-                            .adaptiveFont("Futura", size: 30)
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                     )
@@ -51,13 +51,13 @@ struct ParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.Index ==
                 VStack(spacing: 2) {
                     Text(label)
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 18)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 18)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                     
                     Text(displayText(value))
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 24)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 24)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                 }
@@ -71,7 +71,7 @@ struct ParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.Index ==
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
-                            .adaptiveFont("Futura", size: 30)
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                     )
@@ -142,7 +142,7 @@ struct SliderRow: View {
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
-                            .adaptiveFont("Futura", size: 30)
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                     )
@@ -155,13 +155,13 @@ struct SliderRow: View {
                 VStack(spacing: 2) {
                     Text(label)
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 18)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 18)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                     
                     Text(displayFormatter(value))
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 24)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 24)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                 }
@@ -209,7 +209,7 @@ struct SliderRow: View {
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
-                            .adaptiveFont("Futura", size: 30)
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                     )
@@ -274,7 +274,7 @@ struct LogarithmicSliderRow: View {
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
-                            .adaptiveFont("Futura", size: 30)
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                     )
@@ -287,13 +287,13 @@ struct LogarithmicSliderRow: View {
                 VStack(spacing: 2) {
                     Text(label)
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 18)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 18)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                     
                     Text(displayFormatter(value))
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 24)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 24)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                 }
@@ -349,7 +349,7 @@ struct LogarithmicSliderRow: View {
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
-                            .adaptiveFont("Futura", size: 30)
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                     )
@@ -421,7 +421,7 @@ struct LogarithmicSliderRowWithLinearButtons: View {
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
-                            .adaptiveFont("Futura", size: 30)
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                     )
@@ -434,13 +434,13 @@ struct LogarithmicSliderRowWithLinearButtons: View {
                 VStack(spacing: 2) {
                     Text(label)
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 18)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 18)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                     
                     Text(displayFormatter(value))
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 24)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 24)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                 }
@@ -499,7 +499,7 @@ struct LogarithmicSliderRowWithLinearButtons: View {
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
-                            .adaptiveFont("Futura", size: 30)
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                     )

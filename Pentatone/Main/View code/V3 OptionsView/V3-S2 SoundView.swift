@@ -25,7 +25,7 @@ struct SoundView: View {
                 GeometryReader { geometry in
                     Text("Pentatone")
                         .foregroundColor(Color("KeyColour1"))
-                        .adaptiveFont("Signpainter", size: 55)
+                        .adaptiveFont("LobsterTwo-Italic", size: 55)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .contentShape(Rectangle())
                         .offset(y: -(geometry.size.height/2 + 11))
@@ -50,7 +50,7 @@ struct SoundView: View {
                             .overlay(
                                 Text("1")
                                     .foregroundColor(Color("BackgroundColour"))
-                                    .adaptiveFont("Futura", size: 30)
+                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             )
                     
                     Spacer()
@@ -60,7 +60,7 @@ struct SoundView: View {
                         .overlay(
                             Text("2")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
@@ -69,7 +69,7 @@ struct SoundView: View {
                         .overlay(
                             Text("3")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
@@ -78,7 +78,7 @@ struct SoundView: View {
                         .overlay(
                             Text("4")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
@@ -87,7 +87,7 @@ struct SoundView: View {
                         .overlay(
                             Text("5")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                     
                 }
@@ -102,12 +102,12 @@ struct SoundView: View {
                         .overlay(
                             Text("<")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                     Spacer()
                     Text("1.1 KEYS")
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 30)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
@@ -115,7 +115,7 @@ struct SoundView: View {
                         .overlay(
                             Text(">")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                 }
             }
@@ -149,7 +149,7 @@ struct SoundView: View {
                 
                 Text("VOLUME")
                     .foregroundColor(Color("BackgroundColour"))
-                    .adaptiveFont("Futura", size: 30)
+                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     .allowsHitTesting(false)
             }
             
@@ -187,7 +187,7 @@ struct SoundView: View {
                 
                 Text("TONE")
                     .foregroundColor(Color("BackgroundColour"))
-                    .adaptiveFont("Futura", size: 30)
+                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     .allowsHitTesting(false)
             }
             
@@ -225,7 +225,7 @@ struct SoundView: View {
                 
                 Text("AMBIENCE")
                     .foregroundColor(Color("BackgroundColour"))
-                    .adaptiveFont("Futura", size: 30)
+                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     .allowsHitTesting(false)
             }
             

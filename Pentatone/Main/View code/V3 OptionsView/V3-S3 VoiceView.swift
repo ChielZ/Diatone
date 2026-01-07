@@ -34,7 +34,7 @@ struct VoiceView: View {
                 GeometryReader { geometry in
                     Text("Pentatone")
                         .foregroundColor(Color("KeyColour1"))
-                        .adaptiveFont("Signpainter", size: 55)
+                        .adaptiveFont("LobsterTwo-Italic", size: 55)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .contentShape(Rectangle())
                         .offset(y: -(geometry.size.height/2 + 11))
@@ -58,7 +58,7 @@ struct VoiceView: View {
                         .overlay(
                             Text("<")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .onTapGesture {
                             // Switch to monophonic
@@ -69,7 +69,7 @@ struct VoiceView: View {
                     Spacer()
                     Text(paramManager.master.voiceMode == .monophonic ? "MONO" : "POLY")
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 30)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
@@ -77,7 +77,7 @@ struct VoiceView: View {
                         .overlay(
                             Text(">")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .onTapGesture {
                             // Switch to polyphonic
@@ -97,7 +97,7 @@ struct VoiceView: View {
                         .overlay(
                             Text("<")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .onTapGesture {
                             let current = paramManager.master.globalPitch.octaveOffset
@@ -108,7 +108,7 @@ struct VoiceView: View {
                     Spacer()
                     Text("OCTAVE \(paramManager.master.globalPitch.octaveOffset > 0 ? "+" : "")\(paramManager.master.globalPitch.octaveOffset)")
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 30)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
@@ -116,7 +116,7 @@ struct VoiceView: View {
                         .overlay(
                             Text(">")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .onTapGesture {
                             let current = paramManager.master.globalPitch.octaveOffset
@@ -136,7 +136,7 @@ struct VoiceView: View {
                         .overlay(
                             Text("<")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .onTapGesture {
                             let current = fineTuneCentsDisplay
@@ -147,7 +147,7 @@ struct VoiceView: View {
                     Spacer()
                     Text("TUNE \(fineTuneCentsDisplay > 0 ? "+" : "")\(fineTuneCentsDisplay)")
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("Futura", size: 30)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     Spacer()
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
@@ -155,7 +155,7 @@ struct VoiceView: View {
                         .overlay(
                             Text(">")
                                 .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("Futura", size: 30)
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
                         .onTapGesture {
                             let current = fineTuneCentsDisplay
@@ -173,9 +173,9 @@ struct VoiceView: View {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
                 GeometryReader { geometry in
-                    Text("•EDITOR•")
+                    Text("･EDITOR･")
                         .foregroundColor(Color("BackgroundColour"))
-                        .adaptiveFont("Futura", size: 30)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .contentShape(Rectangle())
                         //.offset(y: -(geometry.size.height/2 + 11))
@@ -189,9 +189,9 @@ struct VoiceView: View {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("HighlightColour"))
                 GeometryReader { geometry in
-                    Text("•MANUAL•")
+                    Text("･MANUAL･")
                         .foregroundColor(Color("BackgroundColour"))
-                        .adaptiveFont("Futura", size: 30)
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .contentShape(Rectangle())
                         //.offset(y: -(geometry.size.height/2 + 11))
