@@ -69,7 +69,7 @@ struct NoteNameText: View {
             // Note letter in Futura
             Text(noteName.letter)
                 .foregroundColor(color)
-                .font(.custom("Futura", size: adaptiveSize))
+                .font(.custom("MontserratAlternates-Medium", size: adaptiveSize))
             
             // Accidental in Arial Unicode MS (if present)
             if let accidental = noteName.accidental {
