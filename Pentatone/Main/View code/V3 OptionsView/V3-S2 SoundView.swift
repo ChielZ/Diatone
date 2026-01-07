@@ -36,9 +36,35 @@ struct SoundView: View {
                 
             }
             
+            ZStack { // Row 5
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("BackgroundColour"))
+                HStack {
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(Color("SupportColour"))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay(
+                            Text("<")
+                                .foregroundColor(Color("BackgroundColour"))
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        )
+                    Spacer()
+                    Text("1.1 KEYS")
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                    Spacer()
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(Color("SupportColour"))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay(
+                            Text(">")
+                                .foregroundColor(Color("BackgroundColour"))
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        )
+                }
+            }
             
-            
-            ZStack { // Row 8
+            ZStack { // Row 6
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
 
@@ -92,34 +118,8 @@ struct SoundView: View {
                     
                 }
             }
-            ZStack { // Row 7
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("<")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                    Spacer()
-                    Text("1.1 KEYS")
-                        .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text(">")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                }
-            }
-            ZStack { // Row 4 - VOLUME
+            
+            ZStack { // Row 7 - VOLUME
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("HighlightColour"))
                 RoundedRectangle(cornerRadius: radius)
@@ -153,7 +153,7 @@ struct SoundView: View {
                     .allowsHitTesting(false)
             }
             
-            ZStack { // Row 5 - TONE
+            ZStack { // Row 8 - TONE
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("HighlightColour"))
                 RoundedRectangle(cornerRadius: radius)
@@ -191,7 +191,7 @@ struct SoundView: View {
                     .allowsHitTesting(false)
             }
             
-            ZStack { // Row 6 - AMBIENCE
+            ZStack { // Row 9 - AMBIENCE
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("HighlightColour"))
                 RoundedRectangle(cornerRadius: radius)
