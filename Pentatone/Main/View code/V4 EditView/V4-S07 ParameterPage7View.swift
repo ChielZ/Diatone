@@ -101,7 +101,9 @@ struct VoiceLFOView: View {
                 range: 0...5,
                 step: 0.01,
                 displayFormatter: { value in
-                    return value > 0 ? String(format: "+%.2f st", value) : String(format: "%.2f st", value)
+                    // Convert semitones to cents (1 semitone = 100 cents)
+                    let cents = value * 100
+                    return cents > 0 ? String(format: "+%.0f ct", cents) : String(format: "%.0f ct", cents)
                 }
             )
             

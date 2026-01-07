@@ -114,7 +114,9 @@ struct AuxEnvView: View {
                 range: -12...12,
                 step: 0.1,
                 displayFormatter: { value in
-                    return value > 0 ? String(format: "+%.1f st", value) : String(format: "%.1f st", value)
+                    // Convert semitones to cents (1 semitone = 100 cents)
+                    let cents = value * 100
+                    return cents > 0 ? String(format: "+%.0f ct", cents) : String(format: "%.0f ct", cents)
                 }
             )
             

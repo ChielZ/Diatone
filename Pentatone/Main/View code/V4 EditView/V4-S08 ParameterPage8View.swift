@@ -144,7 +144,9 @@ struct GlobLFOView: View {
                 range: 0...0.05,
                 step: 0.001,
                 displayFormatter: { value in
-                    return value > 0 ? String(format: "+%.3f s", value) : String(format: "%.3f s", value)
+                    // Convert seconds to milliseconds (1 s = 1000 ms)
+                    let ms = value * 1000
+                    return ms > 0 ? String(format: "%.0f ms", ms) : String(format: "%.0f ms", ms)
                 }
             )
         }
