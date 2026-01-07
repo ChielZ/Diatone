@@ -41,8 +41,8 @@ enum DiatonicLetter: Int, CaseIterable {
 
 
 
-/// A view that displays a note name with the letter in Futura
-/// and the accidental (♯ or ♭) in Arial Unicode MS for better typography.
+/// A view that displays a note name
+/// and the accidental (♯ or ♭) 
 struct NoteNameText: View {
     let noteName: NoteName
     let size: CGFloat
@@ -66,12 +66,12 @@ struct NoteNameText: View {
     
     var body: some View {
         HStack(spacing: -2) {
-            // Note letter in Futura
+            // Note letter
             Text(noteName.letter)
                 .foregroundColor(color)
                 .font(.custom("MontserratAlternates-Medium", size: adaptiveSize))
             
-            // Accidental in Arial Unicode MS (if present)
+            // Accidental in smaller type
             if let accidental = noteName.accidental {
                 // For double sharps/flats, use tighter kerning
                 if accidental.count > 1 {
