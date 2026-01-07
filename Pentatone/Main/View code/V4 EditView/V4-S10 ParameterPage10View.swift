@@ -6,6 +6,7 @@
 // SUBVIEW 10 - PRESET MANAGEMENT
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct PresetView: View {
     // Connect to managers

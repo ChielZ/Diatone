@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 // MARK: - Preset Manager
 
@@ -32,6 +33,24 @@ final class PresetManager: ObservableObject {
     
     /// Loading state
     @Published private(set) var isLoading: Bool = false
+    
+    // MARK: - Slot Management Properties
+    
+    /// User preset layout (U1.1 - U5.5)
+    /// This is saved to disk and persists across app launches
+    @Published var userLayout: PentatoneUserLayout = .default
+    
+    /// Factory preset layout (F1.1 - F5.5)
+    /// This is hardcoded and read-only
+    var factoryLayout: [PentatonePresetSlot] {
+        return PentatoneFactoryLayout.factorySlots
+    }
+    
+    /// User layout file location
+    private var userLayoutURL: URL {
+        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return documentsURL.appendingPathComponent("UserPresets/UserLayout.json")
+    }
     
     // MARK: - Private Properties
     
@@ -283,8 +302,23 @@ final class PresetManager: ObservableObject {
     func loadPreset(_ preset: AudioParameterSet) {
         let paramManager = AudioParameterManager.shared
         
-        // Apply all parameters to the engine
-        paramManager.loadPreset(preset)
+        // Apply voice template
+        paramManager.voiceTemplate = preset.voiceTemplate
+        
+        // Apply master parameters
+        paramManager.master = preset.master
+        
+        // Apply macro state
+        paramManager.macroState = preset.macroState
+        
+        // Apply all parameters to audio engine nodes
+        paramManager.applyVoiceParameters(preset.voiceTemplate)
+        paramManager.applyMasterParameters(preset.master)
+        
+        // Apply macro positions (this will trigger parameter updates)
+        paramManager.updateVolumeMacro(preset.macroState.volumePosition)
+        paramManager.updateToneMacro(preset.macroState.tonePosition)
+        paramManager.updateAmbienceMacro(preset.macroState.ambiencePosition)
         
         // Set as current preset
         currentPreset = preset
@@ -393,6 +427,152 @@ final class PresetManager: ObservableObject {
     var availableUserSlots: Int {
         return max(0, 75 - userPresetCount)
     }
+    
+    // MARK: - Slot Management
+    
+    /// Load user layout from disk
+    /// Call this after loadAllPresets() during app initialization
+    func loadUserLayout() {
+        // Check if layout file exists
+        guard fileManager.fileExists(atPath: userLayoutURL.path) else {
+            print("ℹ️ PresetManager: No saved user layout found, using default")
+            userLayout = .default
+            return
+        }
+        
+        do {
+            let data = try Data(contentsOf: userLayoutURL)
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            userLayout = try decoder.decode(PentatoneUserLayout.self, from: data)
+            
+            print("✅ PresetManager: Loaded user layout (\(userLayout.assignedCount) slots assigned)")
+        } catch {
+            print("⚠️ PresetManager: Failed to load user layout, using default: \(error)")
+            userLayout = .default
+        }
+    }
+    
+    /// Save user layout to disk
+    func saveUserLayout() throws {
+        // Ensure directory exists
+        let directoryURL = userLayoutURL.deletingLastPathComponent()
+        if !fileManager.fileExists(atPath: directoryURL.path) {
+            try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+        }
+        
+        // Encode and save
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(userLayout)
+        try data.write(to: userLayoutURL)
+        
+        print("✅ PresetManager: Saved user layout (\(userLayout.assignedCount) slots assigned)")
+    }
+    
+    /// Get preset for a specific slot
+    /// - Parameters:
+    ///   - bank: Bank number (1-5)
+    ///   - position: Position within bank (1-5)
+    ///   - type: Factory or user slot
+    /// - Returns: The preset assigned to this slot, or nil if empty/not found
+    func preset(forBank bank: Int, position: Int, type: PentatonePresetSlot.SlotType) -> AudioParameterSet? {
+        // Get the slot
+        let slot: PentatonePresetSlot?
+        if type == .factory {
+            slot = PentatoneFactoryLayout.slot(bank: bank, position: position)
+        } else {
+            slot = userLayout.slot(bank: bank, position: position)
+        }
+        
+        // Get preset ID from slot
+        guard let presetID = slot?.presetID else {
+            return nil
+        }
+        
+        // Lookup preset by ID
+        return preset(withID: presetID)
+    }
+    
+    /// Get slot by bank and position
+    func slot(forBank bank: Int, position: Int, type: PentatonePresetSlot.SlotType) -> PentatonePresetSlot? {
+        if type == .factory {
+            return PentatoneFactoryLayout.slot(bank: bank, position: position)
+        } else {
+            return userLayout.slot(bank: bank, position: position)
+        }
+    }
+    
+    /// Check if a slot is empty (no preset assigned)
+    func isSlotEmpty(bank: Int, position: Int, type: PentatonePresetSlot.SlotType) -> Bool {
+        return preset(forBank: bank, position: position, type: type) == nil
+    }
+    
+    /// Assign a preset to a user slot
+    /// - Parameters:
+    ///   - preset: The preset to assign (must be a user preset)
+    ///   - bank: Bank number (1-5)
+    ///   - position: Position within bank (1-5)
+    /// - Throws: File system errors or validation errors
+    func assignPresetToSlot(preset: AudioParameterSet, bank: Int, position: Int) throws {
+        // Validate it's a user preset (not factory)
+        guard userPresets.contains(where: { $0.id == preset.id }) else {
+            throw PresetError.cannotAssignFactoryPresetToUserSlot
+        }
+        
+        // Validate bank and position
+        guard (1...5).contains(bank) && (1...5).contains(position) else {
+            throw PresetError.invalidSlotPosition
+        }
+        
+        // Assign to layout
+        userLayout.assignPreset(preset.id, toBank: bank, position: position)
+        
+        // Save layout
+        try saveUserLayout()
+        
+        print("✅ PresetManager: Assigned '\(preset.name)' to U\(bank).\(position)")
+    }
+    
+    /// Clear a user slot (remove preset assignment)
+    /// - Parameters:
+    ///   - bank: Bank number (1-5)
+    ///   - position: Position within bank (1-5)
+    /// - Throws: File system errors
+    func clearSlot(bank: Int, position: Int) throws {
+        userLayout.clearSlot(bank: bank, position: position)
+        try saveUserLayout()
+        
+        print("✅ PresetManager: Cleared slot U\(bank).\(position)")
+    }
+    
+    /// Get all slots for a specific bank and type
+    func slots(forBank bank: Int, type: PentatonePresetSlot.SlotType) -> [PentatonePresetSlot] {
+        let allSlots = type == .factory ? factoryLayout : userLayout.userSlots
+        return allSlots.filter { $0.bank == bank }.sorted { $0.position < $1.position }
+    }
+    
+    /// Get all presets for a specific bank (non-nil only)
+    func presets(forBank bank: Int, type: PentatonePresetSlot.SlotType) -> [AudioParameterSet] {
+        return slots(forBank: bank, type: type)
+            .compactMap { slot in
+                guard let presetID = slot.presetID else { return nil }
+                return preset(withID: presetID)
+            }
+    }
+    
+    /// Initialize layouts - call this after loadAllPresets()
+    func initializeLayouts() {
+        loadUserLayout()
+        
+        // TODO: When factory presets are created, populate factoryLayout here
+        // For now, factory slots remain empty
+        
+        print("✅ PresetManager: Layouts initialized")
+        print("   - Factory slots: \(factoryLayout.count) total")
+        print("   - User slots: \(userLayout.assignedCount) assigned, \(userLayout.emptyCount) empty")
+    }
 }
 
 // MARK: - Preset Errors
@@ -402,6 +582,8 @@ enum PresetError: LocalizedError {
     case userPresetLimitReached
     case presetNotFound
     case invalidPresetFile
+    case cannotAssignFactoryPresetToUserSlot
+    case invalidSlotPosition
     
     var errorDescription: String? {
         switch self {
@@ -413,39 +595,11 @@ enum PresetError: LocalizedError {
             return "Preset not found"
         case .invalidPresetFile:
             return "Invalid preset file format"
+        case .cannotAssignFactoryPresetToUserSlot:
+            return "Factory presets cannot be assigned to user slots"
+        case .invalidSlotPosition:
+            return "Invalid slot position (must be bank 1-5, position 1-5)"
         }
     }
 }
 
-// MARK: - AudioParameterManager Extension
-
-extension AudioParameterManager {
-    
-    /// Load a complete preset into the audio engine
-    /// This applies all parameters from the preset
-    func loadPreset(_ preset: AudioParameterSet) {
-        // Apply voice template
-        self.voiceTemplate = preset.voiceTemplate
-        
-        // Apply master parameters
-        self.master = preset.master
-        
-        // Apply macro state
-        self.macroState = preset.macroState
-        
-        // Apply all parameters to audio engine nodes
-        applyVoiceParameters(preset.voiceTemplate)
-        applyMasterParameters(preset.master)
-        applyMacroState(preset.macroState)
-        
-        print("✅ AudioParameterManager: Loaded preset '\(preset.name)'")
-    }
-    
-    /// Apply macro state to audio engine
-    private func applyMacroState(_ state: MacroControlState) {
-        // Update macro positions (this will trigger parameter updates)
-        updateVolumeMacro(state.volumePosition)
-        updateToneMacro(state.tonePosition)
-        updateAmbienceMacro(state.ambiencePosition)
-    }
-}

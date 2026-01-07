@@ -26,13 +26,13 @@ final class AudioParameterManager: ObservableObject {
     // MARK: - Current Parameters
     
     /// Current master parameters (delay, reverb)
-    @Published private(set) var master: MasterParameters = .default
+    @Published var master: MasterParameters = .default
     
     /// Current voice template - used as base for all voices
-    @Published private(set) var voiceTemplate: VoiceParameters = .default
+    @Published var voiceTemplate: VoiceParameters = .default
     
     /// Current macro control state
-    @Published private(set) var macroState: MacroControlState = .default
+    @Published var macroState: MacroControlState = .default
     
     // MARK: - Initialization
     
@@ -726,15 +726,6 @@ final class AudioParameterManager: ObservableObject {
     
     // MARK: - Preset Management
     
-    /// Load a complete parameter set (preset)
-    func loadPreset(_ preset: AudioParameterSet) {
-        voiceTemplate = preset.voiceTemplate
-        master = preset.master
-        macroState = preset.macroState
-        
-        applyAllParameters()
-    }
-    
     /// Create a preset from current parameters
     func createPreset(named name: String) -> AudioParameterSet {
         AudioParameterSet(
@@ -790,8 +781,9 @@ final class AudioParameterManager: ObservableObject {
         // Apply to voice pool
         applyOscillatorToAllVoices()
         
-        // Apply filter parameters to all voices
-        voicePool?.updateAllVoiceFilters(voiceParams.filter, staticParams: voiceParams.filterStatic)
+        // Apply filter parameters to all voices (separate calls for modulatable and static)
+        voicePool?.updateAllVoiceFilters(voiceParams.filter)
+        voicePool?.updateAllVoiceFilterStatic(voiceParams.filterStatic)
         
         // Apply envelope parameters to all voices
         voicePool?.updateAllVoiceEnvelopes(voiceParams.envelope)
@@ -813,16 +805,13 @@ final class AudioParameterManager: ObservableObject {
         updateOutputVolume(masterParams.output.volume)
         updatePreVolume(masterParams.output.preVolume)
         
-        // Apply global pitch
-        voicePool?.updateGlobalPitch(masterParams.globalPitch)
-        
         // Apply global LFO
         voicePool?.updateGlobalLFO(masterParams.globalLFO)
         
         // Apply tempo (this will update tempo-synced effects)
         updateTempo(masterParams.tempo)
         
-        // Note: Voice mode changes require special handling
-        // It's handled separately in updateVoiceMode() if needed
+        // Note: Voice mode and global pitch are handled by the voice pool internally
+        // Voice mode changes require special handling via updateVoiceMode() if needed
     }
 }
