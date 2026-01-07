@@ -53,9 +53,9 @@ struct Penta_ToneApp: App {
     var body: some Scene {
         WindowGroup {
             contentView
-        }
-        .onOpenURL { url in
-            handleIncomingPreset(url)
+                .onOpenURL { url in
+                    handleIncomingPreset(url)
+                }
         }
         //.applyWindowResizability()
     }
