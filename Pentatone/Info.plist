@@ -4,7 +4,6 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>LobsterTwo-BoldItalic.ttf</string>
 		<string>MontserratAlternates-Medium.ttf</string>
 		<string>LobsterTwo-Italic.ttf</string>
 	</array>

@@ -85,7 +85,7 @@ struct NoteNameText: View {
                     // Single sharp or flat
                     Text(accidental)
                         .foregroundColor(color)
-                        .font(.custom("Arial Unicode MS", size: adaptiveSize * 0.7))
+                        .font(.custom("MontserratAlternates-Medium", size: adaptiveSize * 0.7))
                         .baselineOffset(adaptiveSize * 0.15)
                 }
             }

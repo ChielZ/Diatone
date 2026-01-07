@@ -231,24 +231,24 @@ struct ScaleView: View {
 
 // MARK: - Musical Key Text Component
 
-/// A view that displays a musical key with the note letter in MontserratAlternates-Medium
-/// and the accidental (♯ or ♭) in Arial Unicode MS for better typography.
+/// A view that displays a musical key with the note letter
+/// and the accidental (♯ or ♭)
 struct MusicalKeyText: View {
     let key: MusicalKey
     let size: CGFloat
     
     var body: some View {
         HStack(spacing: -2) {
-            // Note letter in MontserratAlternates-Medium
+            // Note letter
             Text(key.noteLetter)
                 .foregroundColor(Color("HighlightColour"))
                 .adaptiveFont("MontserratAlternates-Medium", size: size)
             
-            // Accidental in Arial Unicode MS (if present)
+            // Accidental
             if let accidental = key.accidental {
                 Text(accidental)
                     .foregroundColor(Color("HighlightColour"))
-                    .font(.custom("Arial Unicode MS", size: size * 0.7)) // Slightly smaller for better visual balance, orig. 0.7
+                    .font(.custom("MontserratAlternates-Medium", size: size * 0.7)) // Slightly smaller for better visual balance, orig. 0.7
                     .baselineOffset(size * 0.15) // Fine-tune vertical alignment, orig. 0.05
             }
         }
