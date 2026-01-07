@@ -78,7 +78,7 @@ struct NoteNameText: View {
                     // Double sharp or double flat
                     Text(accidental)
                         .foregroundColor(color)
-                        .font(.custom("Arial Unicode MS", size: adaptiveSize * 0.7))
+                        .font(.custom("MontserratAlternates-Medium", size: adaptiveSize * 0.7))
                         .baselineOffset(adaptiveSize * 0.15)
                         .kerning(-adaptiveSize * 0.18) // Tight kerning for double accidentals
                 } else {
