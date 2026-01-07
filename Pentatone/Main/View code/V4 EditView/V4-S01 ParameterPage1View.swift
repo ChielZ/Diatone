@@ -120,18 +120,16 @@ struct OscillatorView: View {
                 value: Binding(
                     get: {
                         if paramManager.voiceTemplate.oscillator.detuneMode == .proportional {
-                            // Convert ratio to cents for display (0-20 cents range)
-                            let ratio = paramManager.voiceTemplate.oscillator.stereoOffsetProportional
-                            return ratioToCents(ratio)
+                            // Display cents directly (no conversion needed)
+                            return paramManager.voiceTemplate.oscillator.stereoOffsetProportional
                         } else {
                             return paramManager.voiceTemplate.oscillator.stereoOffsetConstant
                         }
                     },
                     set: { newValue in
                         if paramManager.voiceTemplate.oscillator.detuneMode == .proportional {
-                            // Convert cents back to ratio for storage
-                            let ratio = centsToRatio(newValue)
-                            paramManager.updateStereoOffsetProportional(ratio)
+                            // Store cents directly (no conversion needed)
+                            paramManager.updateStereoOffsetProportional(newValue)
                         } else {
                             paramManager.updateStereoOffsetConstant(newValue)
                         }
@@ -158,20 +156,6 @@ struct OscillatorView: View {
     }
     
     // MARK: - Helper Functions
-    
-    /// Converts a frequency ratio to cents
-    /// Formula: cents = 1200 * log2(ratio)
-    private func ratioToCents(_ ratio: Double) -> Double {
-        // Ensure ratio is at least 1.0 to avoid negative cents
-        let clampedRatio = max(ratio, 1.0)
-        return 1200.0 * log2(clampedRatio)
-    }
-    
-    /// Converts cents to a frequency ratio
-    /// Formula: ratio = 2^(cents/1200)
-    private func centsToRatio(_ cents: Double) -> Double {
-        return pow(2.0, cents / 1200.0)
-    }
     
     /// Updates the combined modulatingMultiplier from coarse + fine components
     private func updateModulatingMultiplier(coarse: Int, fine: Double) {

@@ -386,10 +386,10 @@ final class VoicePool {
         }
     }
     
-    /// Updates frequency offset ratio for all voices (proportional mode)
-    func updateFrequencyOffsetRatio(_ ratio: Double) {
+    /// Updates frequency offset in cents for all voices (proportional mode)
+    func updateFrequencyOffsetCents(_ cents: Double) {
         for voice in voices {
-            voice.frequencyOffsetRatio = ratio
+            voice.frequencyOffsetCents = cents
         }
     }
     

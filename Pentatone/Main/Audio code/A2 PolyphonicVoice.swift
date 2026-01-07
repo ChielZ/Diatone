@@ -85,11 +85,11 @@ final class PolyphonicVoice {
         }
     }
     
-    /// Frequency offset for PROPORTIONAL mode (multiplier)
-    /// 1.0 = no offset (both oscillators at same frequency)
-    /// 1.01 = ±17 cents (34 cents total spread)
-    /// Left oscillator multiplies by this value, right divides by it
-    var frequencyOffsetRatio: Double {
+    /// Frequency offset for PROPORTIONAL mode (cents)
+    /// 0 = no offset (both oscillators at same frequency)
+    /// 10 = ±10 cents (20 cents total spread)
+    /// Left oscillator gets +cents, right gets -cents
+    var frequencyOffsetCents: Double {
         didSet {
             if isInitialized && detuneMode == .proportional {
                 updateOscillatorFrequencies()
@@ -123,7 +123,7 @@ final class PolyphonicVoice {
     init(parameters: VoiceParameters = .default) {
         // Initialize stereo detune parameters from template
         self.detuneMode = parameters.oscillator.detuneMode
-        self.frequencyOffsetRatio = parameters.oscillator.stereoOffsetProportional
+        self.frequencyOffsetCents = parameters.oscillator.stereoOffsetProportional
         self.frequencyOffsetHz = parameters.oscillator.stereoOffsetConstant
         
         // Create left oscillator
@@ -321,9 +321,11 @@ final class PolyphonicVoice {
         switch detuneMode {
         case .proportional:
             // Constant cents: higher notes beat faster (natural)
+            // Convert cents to frequency ratio: ratio = 2^(cents/1200)
+            let ratio = pow(2.0, frequencyOffsetCents / 1200.0)
             // Formula: left = freq × ratio, right = freq ÷ ratio
-            leftFreq = currentFrequency * frequencyOffsetRatio
-            rightFreq = currentFrequency / frequencyOffsetRatio
+            leftFreq = currentFrequency * ratio
+            rightFreq = currentFrequency / ratio
             
         case .constant:
             // Constant Hz: all notes beat at same rate (uniform)
@@ -473,7 +475,7 @@ final class PolyphonicVoice {
         
         // Update stereo spread parameters
         detuneMode = parameters.detuneMode
-        frequencyOffsetRatio = parameters.stereoOffsetProportional
+        frequencyOffsetCents = parameters.stereoOffsetProportional
         frequencyOffsetHz = parameters.stereoOffsetConstant
         
         // Note: Waveform cannot be changed dynamically in AudioKit's FMOscillator

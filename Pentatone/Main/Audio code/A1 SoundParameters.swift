@@ -61,7 +61,7 @@ struct OscillatorParameters: Codable, Equatable {
     var amplitude: Double
     var waveform: OscillatorWaveform
     var detuneMode: DetuneMode                // How stereo spread is calculated
-    var stereoOffsetProportional: Double      // For proportional mode (ratio, e.g., 1.003)
+    var stereoOffsetProportional: Double      // For proportional mode (cents, e.g., 5.0)
     var stereoOffsetConstant: Double          // For constant mode (Hz, e.g., 2.0)
     
     static let `default` = OscillatorParameters(
@@ -71,7 +71,7 @@ struct OscillatorParameters: Codable, Equatable {
         amplitude: 0.5,
         waveform: .triangle,
         detuneMode: .proportional,
-        stereoOffsetProportional: 1.003,
+        stereoOffsetProportional: 5.0,        // 5 cents (clean default)
         stereoOffsetConstant: 2.0
     )
     
