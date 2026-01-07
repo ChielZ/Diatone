@@ -112,7 +112,7 @@ struct AuxEnvView: View {
                     }
                 ),
                 range: -12...12,
-                step: 0.1,
+                step: 0.01,
                 displayFormatter: { value in
                     // Convert semitones to cents (1 semitone = 100 cents)
                     let cents = value * 100
