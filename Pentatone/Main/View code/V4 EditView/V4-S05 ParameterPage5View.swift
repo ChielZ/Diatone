@@ -116,7 +116,13 @@ struct ModEnvView: View {
                 range: -5...5,
                 step: 0.01,
                 displayFormatter: { value in
-                    return value > 0 ? String(format: "+%.2f", value) : String(format: "%.2f", value)
+                    if abs(value) < 0.005 {  // Use epsilon for floating-point comparison
+                        return "0.00"
+                    } else if value > 0 {
+                        return String(format: "+%.2f", value)
+                    } else {
+                        return String(format: "%.2f", value)
+                    }
                 }
             )
             

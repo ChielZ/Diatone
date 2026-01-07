@@ -116,7 +116,13 @@ struct AuxEnvView: View {
                 displayFormatter: { value in
                     // Convert semitones to cents (1 semitone = 100 cents)
                     let cents = value * 100
-                    return cents > 0 ? String(format: "+%.0f ct", cents) : String(format: "%.0f ct", cents)
+                    if abs(cents) < 0.5 {  // Use epsilon for floating-point comparison
+                        return "0 ct"
+                    } else if cents > 0 {
+                        return String(format: "+%.0f ct", cents)
+                    } else {
+                        return String(format: "%.0f ct", cents)
+                    }
                 }
             )
             
@@ -133,7 +139,13 @@ struct AuxEnvView: View {
                 range: -3...3,
                 step: 0.1,
                 displayFormatter: { value in
-                    return value > 0 ? String(format: "+%.1f oct", value) : String(format: "%.1f oct", value)
+                    if abs(value) < 0.05 {  // Use epsilon for floating-point comparison
+                        return "0.0 oct"
+                    } else if value > 0 {
+                        return String(format: "+%.1f oct", value)
+                    } else {
+                        return String(format: "%.1f oct", value)
+                    }
                 }
             )
             
@@ -150,7 +162,13 @@ struct AuxEnvView: View {
                 range: -2...2,
                 step: 0.01,
                 displayFormatter: { value in
-                    return value > 0 ? String(format: "+%.2f", value) : String(format: "%.2f", value)
+                    if abs(value) < 0.005 {  // Use epsilon for floating-point comparison
+                        return "0.00"
+                    } else if value > 0 {
+                        return String(format: "+%.2f", value)
+                    } else {
+                        return String(format: "%.2f", value)
+                    }
                 }
             )
         }
