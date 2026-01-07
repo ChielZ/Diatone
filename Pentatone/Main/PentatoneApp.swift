@@ -54,6 +54,9 @@ struct Penta_ToneApp: App {
         WindowGroup {
             contentView
         }
+        .onOpenURL { url in
+            handleIncomingPreset(url)
+        }
         //.applyWindowResizability()
     }
     
@@ -88,8 +91,15 @@ struct Penta_ToneApp: App {
     
     private func initializeAudio() async {
         do {
+            // Start audio engine
             try EngineManager.startEngine()
             try await Task.sleep(nanoseconds: 100_000_000) // 100ms
+            
+            // Initialize preset system
+            await MainActor.run {
+                PresetManager.shared.loadAllPresets()
+                PresetManager.shared.initializeLayouts()
+            }
             
             // Set up callback to update keyboard state when navigation changes
             navigationManager.onScaleChanged = { [self] scale in
@@ -113,6 +123,22 @@ struct Penta_ToneApp: App {
             }
         } catch {
             print("Failed to initialize audio: \(error)")
+        }
+    }
+    
+    // MARK: - Preset File Handling
+    
+    /// Handle preset files opened from external sources (Files app, AirDrop, Mail, etc.)
+    private func handleIncomingPreset(_ url: URL) {
+        Task { @MainActor in
+            do {
+                let preset = try PresetManager.shared.importPreset(from: url)
+                print("✅ Imported preset from external source: '\(preset.name)'")
+                // Note: Preset is automatically added to user presets
+                // Consider showing an alert or auto-loading the preset here if desired
+            } catch {
+                print("⚠️ Failed to import preset from external source: \(error)")
+            }
         }
     }
 }

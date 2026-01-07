@@ -779,4 +779,50 @@ final class AudioParameterManager: ObservableObject {
         reverb.cutoffFrequency = AUValue(master.reverb.cutoffFrequency)
         reverb.balance = AUValue(master.reverb.balance)
     }
+    
+    // MARK: - Preset Application Methods (called by PresetManager)
+    
+    /// Apply voice parameters from a preset to all voices
+    func applyVoiceParameters(_ voiceParams: VoiceParameters) {
+        // Update voice template
+        voiceTemplate = voiceParams
+        
+        // Apply to voice pool
+        applyOscillatorToAllVoices()
+        
+        // Apply filter parameters to all voices
+        voicePool?.updateAllVoiceFilters(voiceParams.filter, staticParams: voiceParams.filterStatic)
+        
+        // Apply envelope parameters to all voices
+        voicePool?.updateAllVoiceEnvelopes(voiceParams.envelope)
+        
+        // Apply modulation parameters to all voices
+        voicePool?.updateAllVoiceModulation(voiceParams.modulation)
+    }
+    
+    /// Apply master parameters from a preset
+    func applyMasterParameters(_ masterParams: MasterParameters) {
+        // Update master parameters
+        master = masterParams
+        
+        // Apply to audio engine
+        applyDelayParameters()
+        applyReverbParameters()
+        
+        // Apply output levels
+        updateOutputVolume(masterParams.output.volume)
+        updatePreVolume(masterParams.output.preVolume)
+        
+        // Apply global pitch
+        voicePool?.updateGlobalPitch(masterParams.globalPitch)
+        
+        // Apply global LFO
+        voicePool?.updateGlobalLFO(masterParams.globalLFO)
+        
+        // Apply tempo (this will update tempo-synced effects)
+        updateTempo(masterParams.tempo)
+        
+        // Note: Voice mode changes require special handling
+        // It's handled separately in updateVoiceMode() if needed
+    }
 }

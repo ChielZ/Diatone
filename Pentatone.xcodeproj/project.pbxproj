@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		7F09F89E2F0EE2CA007BE7D3 /* P2 PentatonePresetStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F09F89D2F0EE2CA007BE7D3 /* P2 PentatonePresetStructures.swift */; };
+		7F09F8A02F0EE442007BE7D3 /* P3 Info-plist-Configuration.md in Resources */ = {isa = PBXBuildFile; fileRef = 7F09F89F2F0EE442007BE7D3 /* P3 Info-plist-Configuration.md */; };
+		7F09F8A22F0EE47B007BE7D3 /* P4 Factory-Presets-Setup.md in Resources */ = {isa = PBXBuildFile; fileRef = 7F09F8A12F0EE47B007BE7D3 /* P4 Factory-Presets-Setup.md */; };
+		7F09F8A42F0EE4AE007BE7D3 /* P5 Implementation-Summary.md in Resources */ = {isa = PBXBuildFile; fileRef = 7F09F8A32F0EE4AE007BE7D3 /* P5 Implementation-Summary.md */; };
 		7F94C6D22EDE355800CEE22F /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7F94C6D12EDE355800CEE22F /* AudioKit */; };
 		7F94C6DB2EDE3A4D00CEE22F /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7F94C6DA2EDE3A4D00CEE22F /* SoundpipeAudioKit */; };
 		7FF3103B2EF0955D004F4A98 /* DunneAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7FF3103A2EF0955D004F4A98 /* DunneAudioKit */; };
@@ -15,6 +18,9 @@
 
 /* Begin PBXFileReference section */
 		7F09F89D2F0EE2CA007BE7D3 /* P2 PentatonePresetStructures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "P2 PentatonePresetStructures.swift"; sourceTree = "<group>"; };
+		7F09F89F2F0EE442007BE7D3 /* P3 Info-plist-Configuration.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "P3 Info-plist-Configuration.md"; sourceTree = "<group>"; };
+		7F09F8A12F0EE47B007BE7D3 /* P4 Factory-Presets-Setup.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "P4 Factory-Presets-Setup.md"; sourceTree = "<group>"; };
+		7F09F8A32F0EE4AE007BE7D3 /* P5 Implementation-Summary.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "P5 Implementation-Summary.md"; sourceTree = "<group>"; };
 		7F3D45E12EDCF9AC00538543 /* Pentatone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pentatone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -59,6 +65,9 @@
 				7F3D45E32EDCF9AC00538543 /* Pentatone */,
 				7F3D45E22EDCF9AC00538543 /* Products */,
 				7F09F89D2F0EE2CA007BE7D3 /* P2 PentatonePresetStructures.swift */,
+				7F09F89F2F0EE442007BE7D3 /* P3 Info-plist-Configuration.md */,
+				7F09F8A12F0EE47B007BE7D3 /* P4 Factory-Presets-Setup.md */,
+				7F09F8A32F0EE4AE007BE7D3 /* P5 Implementation-Summary.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -142,6 +151,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F09F8A02F0EE442007BE7D3 /* P3 Info-plist-Configuration.md in Resources */,
+				7F09F8A42F0EE4AE007BE7D3 /* P5 Implementation-Summary.md in Resources */,
+				7F09F8A22F0EE47B007BE7D3 /* P4 Factory-Presets-Setup.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
