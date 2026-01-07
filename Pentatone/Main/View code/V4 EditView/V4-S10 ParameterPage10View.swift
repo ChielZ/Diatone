@@ -125,7 +125,7 @@ struct PresetView: View {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(currentSlotPreset != nil ? Color("HighlightColour") : Color("SupportColour"))
                 GeometryReader { geometry in
-                    Text(currentSlotPreset != nil ? "•LOAD PRESET•" : "•SAVE PRESET•")
+                    Text(currentSlotPreset != nil ? "･LOAD PRESET･" : "･SAVE PRESET･")
                         .foregroundColor(Color("BackgroundColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         .frame(width: geometry.size.width, height: geometry.size.height)
@@ -143,7 +143,7 @@ struct PresetView: View {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
                 GeometryReader { geometry in
-                    Text("•IMPORT PRESET•")
+                    Text("･IMPORT PRESET･")
                         .foregroundColor(Color("BackgroundColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         .frame(width: geometry.size.width, height: geometry.size.height)
@@ -159,9 +159,9 @@ struct PresetView: View {
             // Row 7 - Export Preset
             ZStack {
                 RoundedRectangle(cornerRadius: radius)
-                    .fill(currentSlotPreset != nil ? Color("SupportColour") : Color("KeyColour1").opacity(0.3))
+                    .fill(currentSlotPreset != nil ? Color("SupportColour") : Color("BackgroundColour").opacity(1.0))
                 GeometryReader { geometry in
-                    Text("•EXPORT PRESET•")
+                    Text("･EXPORT PRESET･")
                         .foregroundColor(Color("BackgroundColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         .frame(width: geometry.size.width, height: geometry.size.height)
@@ -180,7 +180,7 @@ struct PresetView: View {
                     .fill(canDeleteCurrentSlot ? Color("SupportColour") : Color("BackgroundColour"))
                 if canDeleteCurrentSlot {
                     GeometryReader { geometry in
-                        Text("•DELETE PRESET•")
+                        Text("･DELETE PRESET･")
                             .foregroundColor(Color("BackgroundColour"))
                             .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .frame(width: geometry.size.width, height: geometry.size.height)
@@ -196,8 +196,10 @@ struct PresetView: View {
             
             // Row 9 - Info Display
             ZStack {
+                
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
+                /*
                 VStack(spacing: 4) {
                     if let preset = currentSlotPreset {
                         Text(preset.name)
@@ -211,6 +213,7 @@ struct PresetView: View {
                             .adaptiveFont("MontserratAlternates-Medium", size: 22)
                     }
                 }
+                */
             }
         }
         // Save Dialog Sheet
