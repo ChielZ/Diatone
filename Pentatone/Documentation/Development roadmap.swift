@@ -18,11 +18,11 @@ MAIN
  √ implement modulation generators
  √ implement modulators in parameter structure
  √ implement fine tune and octave adjustments
- - create preset management
  √ create developer view for sound editing/storing presets
  √ add macro control
- >> sanity check code structure
- - add drone note toggles to central note buttons?
+ √ sanity check code structure
+ - create preset management
+ ? add drone note toggles to central note buttons?
  - make engine portable for other Arithmophone apps
     -> Make initial touch flexible so it can accept X position, Y position or touchArea as inputs
     -> Make aftertouch flexible so it can accept X move, Y move or touchArea as inputs
@@ -30,7 +30,7 @@ MAIN
     -> check comments & deprecated code
  
  - add in app documentation
- >> ready for launch of version 1 (free app only)
+ >> ready for launch of version 1 (free app only or limited IAP?)
  [below: as general engine features or per app?]
  - implement MIDI output
  - implement MIDI input (will be tricky for JI/microtonal contexts)
@@ -40,14 +40,13 @@ MAIN
  >> ready for launch of version 2 (free app with IAP)
  
  
- 
- 
+
 UI
  √ ET / JI: display as EQUAL / JUST
  √ Improve spacing/layout
  √ Implement scale type graphics display (raw shapes or image files?)
  √ Implement note name display
- - Implement basic tooltip structure (toggle on/of in voice menu?)
+ ? Implement basic tooltip structure (toggle on/of in voice menu?)
  
 CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  - distinguish between iPad landscape and iPad portrait for font sizes? (apparently tricky, couldn't get to work on first try - also, looking quite good already anyway)
@@ -56,14 +55,9 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  √ Check AudioKit console warnings on startup
  √ Check multiple console messages of scale frequency updates
  √ Check AudioKit warning message streams when modulation is enabled (already fixed for aftertouch)
- - hack delay for longer max time? (could maybe be initiated with higher value for max delay time, allowing sync values above 1/4 even at slowest tempo)
+ ? hack delay for longer max time? (could maybe be initiated with higher value for max delay time, allowing sync values above 1/4 even at slowest tempo)
  
- TODO 7 jan
-  √ interactie tussen initial touch, envelopes en voice lfo
-  - parameter ranges editor pagina's
-  - parameter response (log vs linear vs log slider + lin buttons)
-  - parameter/pagina namen editor
-  - check +0.00 of -0.00 ipv gewoon 0.00
+
 
  
  
@@ -79,7 +73,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  √ Each voice will get a second oscillator and a more sophisticated internal structure
  √ In addition to the editable parameters, we will create dedicated modulators (LFOs, modulation envelopes), that will be able to update these parameters in realtime (at control rate, not at audio rate)
  √ We will create a 'developer view' allowing the creation of different presets (values for all audio and modulator parameters)
- - The final app will contain 15 different presets that should be browsable
+ - The final app will contain different presets that should be browsable
  √ We will also be creating a macro structure: while the final app will not allow the user to individually sculpt each parameter, there will be 4 macro sliders that map to one or more parameters, this will vary per preset.
  
  
@@ -141,7 +135,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  
  DOCUMENTATION
  
- Add tooltips to following UI elements
+ Add tooltips to following UI elements? Or just put everything in single 'manual' view?
  
  1. Optionsview (shared)
  1.2        Scale/Sound/Voice
@@ -217,7 +211,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  √ PAGE 3 - EFFECTS
  1) Delay time
  2) Delay feedback
- 3) Delay PingPong
+ 3) Delay tone
  4) Delay mix
  5) Reverb size
  6) Reverb tone
@@ -226,8 +220,8 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  √ PAGE 4 - GLOBAL
  1) Tempo
  2) Polyphony
- 3) Root octave
- 4) Root offset
+ 3) Octave
+ 4) Semitone
  5) Fine tune
  6) Pre volume
  7) Post volume
@@ -252,7 +246,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
 
  PAGE 7 - VOICE LFO
  1) Voice LFO waveform
- 2) Voice LFO mode (free/trigger/sync)
+ 2) Voice LFO mode (free/trigger)
  3) Voice LFO frequency
  4) Voice LFO to oscillator pitch amount
  5) Voice LFO to filter frequency amount
@@ -280,144 +274,8 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  PAGE 10 - PRESETS
  - Select and store presets
  
- PAGE 11 - TONE MACRO
- 1) ModulationIndex minimum
- 2) ModulationIndex maximum
- 3) Filter frequency minimum
- 4) Filter frequency maximum
- 5) Filter saturation minimum
- 6) Filter saturation maximum
- 
- PAGE 12 - AMBIENCE MACRO
- 1) Delay feedback minimum
- 2) Delay feedback maximum
- 3) Delay Mix minimum
- 4) Delay Mix maximum
- 5) Reverb mix minimum
- 6) Reverb mix maximum
+ PAGE 11 - MACRO SETTINGS
  
  
 
- 
- *** MODULATION PRIORITY/ORDER (REVISED by Claude)
-
- IMPORTANT CONSIDERATIONS:
- 1) Initial touch is a note-on parameter, not a continuous modulator
- 2) Envelope amounts can be positive or negative, making envelopes effectively bipolar sources
- 3) Voice LFO delay is a time-based ramp applied to all voice LFO outputs
-
- Direct modulation destinations:
-
- 1)  Oscillator pitch (FMOscillator baseFrequency) [LOGARITHMIC]
-    Sources: Aux envelope (bipolar), Voice LFO (bipolar, with delay ramp)
-    APPLICATION:
-      auxEnvSemitones = auxEnvValue × auxEnvAmount  // Can be ±
-      lfoSemitones = (lfoValue × lfoRampFactor) × lfoAmount  // Can be ±
-      totalSemitones = auxEnvSemitones + lfoSemitones
-      finalFreq = baseFreq × 2^(totalSemitones / 12)
-
- 2)  Oscillator amplitude (FMOscillator amplitude) [LINEAR]
-    Sources: Initial touch (unipolar, at note-on)
-    Note: Global LFO tremolo is now applied at voice mixer level, not per-voice oscillator amplitude
-    APPLICATION:
-      touchFactor = 1.0 + ((initialTouchValue - 0.5) × 2.0 × touchAmount)
-      finalAmp = baseAmp × touchFactor
-      clampedAmp = max(0.0, min(1.0, finalAmp))
-
- 2B) Voice mixer volume (Mixer volume) [MULTIPLICATIVE]
-    Sources: Global LFO (bipolar)
-    Note: This creates tremolo effect applied globally to all voices at once
-    APPLICATION:
-      lfoFactor = 1.0 + (globalLFOValue × globalLFOAmount)
-      finalVolume = baseVolume × lfoFactor
-      clampedVolume = max(0.0, min(1.0, finalVolume))
-
- 3)  Modulation index (FMOscillator modulationIndex) [LINEAR]
-    Sources: Mod envelope (bipolar), Voice LFO (bipolar, with delay ramp), Aftertouch (bipolar)
-    APPLICATION:
-      modEnvOffset = modEnvValue × modEnvAmount  // Can be ±
-      aftertouchOffset = aftertouchDelta × aftertouchAmount  // Can be ±
-      lfoOffset = (lfoValue × lfoRampFactor) × lfoAmount  // Can be ±
-      finalModIndex = baseModIndex + modEnvOffset + aftertouchOffset + lfoOffset
-      clampedModIndex = max(0.0, min(10.0, finalModIndex))
-
- 4)  Modulator multiplier (FMOscillator modulatingMultiplier) [LINEAR]
-    Sources: Global LFO (bipolar)
-    APPLICATION:
-      lfoOffset = globalLFOValue × globalLFOAmount  // Can be ±
-      finalMultiplier = baseMultiplier + lfoOffset
-      clampedMultiplier = max(0.1, min(20.0, finalMultiplier))
-
- 5)  Filter frequency (KorgLowPassFilter cutoffFrequency) [LOGARITHMIC]
-    Sources: Key track (unipolar, note-on offset), Aux env (bipolar), Voice LFO (bipolar, with delay ramp),
-             Global LFO (bipolar), Aftertouch (bipolar)
-    APPLICATION:
-      keyTrackOctaves = keyTrackValue × keyTrackAmount  // Direct offset based on note
-      auxEnvOctaves = auxEnvValue × auxEnvAmount  // Can be ±
-      aftertouchOctaves = aftertouchDelta × aftertouchAmount  // Can be ±
-      voiceLFOOctaves = (lfoValue × lfoRampFactor) × lfoAmount  // Can be ±
-      globalLFOOctaves = globalLFOValue × globalLFOAmount  // Can be ±
-      
-      totalOctaves = keyTrackOctaves + auxEnvOctaves + aftertouchOctaves + voiceLFOOctaves + globalLFOOctaves
-      finalCutoff = baseCutoff × 2^totalOctaves
-      clampedCutoff = max(20.0, min(22050.0, finalCutoff))
-
- 6)  Delay time (StereoDelay time) [LINEAR]
-    Sources: Global LFO (bipolar)
-    APPLICATION:
-      lfoOffset = globalLFOValue × globalLFOAmount  // Can be ±
-      finalDelayTime = baseDelayTime + lfoOffset
-      clampedDelayTime = max(0.0, min(2.0, finalDelayTime))
-
- Meta-modulation destinations [All LINEAR]:
-
- 7)  Voice LFO to oscillator pitch amount
-    Sources: Aux envelope (bipolar), Aftertouch (bipolar)
-    Note: This modulates the amount used in destination 1 above
-    APPLICATION:
-      auxEnvFactor = 1.0 + (auxEnvValue × auxEnvAmount)  // Can scale up or down
-      aftertouchOffset = aftertouchDelta × aftertouchAmount  // Can be ±
-      finalAmount = (baseAmount × auxEnvFactor) + aftertouchOffset
-      clampedAmount = max(-10.0, min(10.0, finalAmount))  // Reasonable range
-
- 8)  Voice LFO frequency
-    Sources: Key tracking (unipolar)
-    APPLICATION:
-      keyTrackFactor = 1.0 + (keyTrackValue × keyTrackAmount)
-      finalFreq = baseFreq × keyTrackFactor
-      clampedFreq = max(0.01, min(20.0, finalFreq))
-
- 9)  Mod envelope amount (applied at note-on)
-    Sources: Initial touch (unipolar)
-    APPLICATION:
-      touchFactor = initialTouchValue × touchAmount  // 0.0 to 1.0
-      finalAmount = baseAmount × (1.0 + touchFactor)  // Scales the envelope amount
-      
- 10) Aux envelope to oscillator pitch amount (applied at note-on)
-    Sources: Initial touch (unipolar)
-    APPLICATION:
-      touchFactor = initialTouchValue × touchAmount
-      finalAmount = baseAmount × (1.0 + touchFactor)
-
- 11) Aux envelope to filter frequency amount (applied at note-on)
-    Sources: Initial touch (unipolar)
-    APPLICATION:
-      touchFactor = initialTouchValue × touchAmount
-      finalAmount = baseAmount × (1.0 + touchFactor)
-
- VOICE LFO DELAY RAMP:
-    Applied to all voice LFO outputs before amounts are applied
-    Formula:
-      if timeInNote < delayTime:
-        rampFactor = timeInNote / delayTime  // Linear ramp 0 to 1
-      else:
-        rampFactor = 1.0  // Full effect
-    
-    Usage:
-      rampedLFOValue = rawLFOValue × rampFactor
-      (Then apply amounts to rampedLFOValue for each destination)
-
- 
- 
- 
  */
