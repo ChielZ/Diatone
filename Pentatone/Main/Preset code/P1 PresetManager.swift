@@ -318,23 +318,31 @@ final class PresetManager: ObservableObject {
     func loadPreset(_ preset: AudioParameterSet) {
         let paramManager = AudioParameterManager.shared
         
-        // Apply voice template
-        paramManager.voiceTemplate = preset.voiceTemplate
+        // IMPORTANT: Preset parameters are already at their FINAL values
+        // (base values + macro adjustments have already been calculated and saved)
+        // We should NOT recalculate them!
         
-        // Apply master parameters
-        paramManager.master = preset.master
-        
-        // Apply macro state
+        // Step 1: Apply macro state FIRST
+        // This sets the base values and positions for future macro adjustments
         paramManager.macroState = preset.macroState
         
-        // Apply all parameters to audio engine nodes
+        // Step 2: Apply voice template
+        // This includes all oscillator, filter, envelope, modulation params at their final values
+        paramManager.voiceTemplate = preset.voiceTemplate
+        
+        // Step 3: Apply master parameters
+        // This includes tempo, delays, reverb, output, globalLFO, etc. at their final values
+        paramManager.master = preset.master
+        
+        // Step 4: Apply all parameters to audio engine nodes
+        // These functions transfer the parameter values to the actual audio processing nodes
         paramManager.applyVoiceParameters(preset.voiceTemplate)
         paramManager.applyMasterParameters(preset.master)
         
-        // Apply macro positions (this will trigger parameter updates)
-        paramManager.updateVolumeMacro(preset.macroState.volumePosition)
-        paramManager.updateToneMacro(preset.macroState.tonePosition)
-        paramManager.updateAmbienceMacro(preset.macroState.ambiencePosition)
+        // NOTE: We do NOT call updateVolumeMacro/Tone/Ambience here!
+        // The preset already contains final parameter values.
+        // Calling those functions would recalculate and potentially change values.
+        // The macro positions are already stored in macroState for future adjustments.
         
         // Set as current preset
         currentPreset = preset
