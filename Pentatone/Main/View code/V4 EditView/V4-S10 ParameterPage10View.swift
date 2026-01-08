@@ -21,7 +21,7 @@ struct PresetView: View {
     // Sheet/Alert State
     @State private var showingSaveDialog = false
     @State private var showingImportPicker = false
-    @State private var showingDeleteConfirmation = false
+    @State private var showingOverwriteConfirmation = false
     @State private var showingCleanupView = false  // DEBUG
     @State private var newPresetName: String = ""
     @State private var alertMessage: String?
@@ -173,13 +173,13 @@ struct PresetView: View {
                 }
             }
             
-            // Row 8 - Delete Preset (User only)
+            // Row 8 - Overwrite Preset (User only)
             ZStack {
                 RoundedRectangle(cornerRadius: radius)
-                    .fill(canDeleteCurrentSlot ? Color("SupportColour") : Color("BackgroundColour"))
-                if canDeleteCurrentSlot {
+                    .fill(canOverwriteCurrentSlot ? Color("SupportColour") : Color("BackgroundColour"))
+                if canOverwriteCurrentSlot {
                     GeometryReader { geometry in
-                        Text("･DELETE PRESET･")
+                        Text("･OVERWRITE PRESET･")
                             .foregroundColor(Color("BackgroundColour"))
                             .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .frame(width: geometry.size.width, height: geometry.size.height)
@@ -188,7 +188,7 @@ struct PresetView: View {
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        showingDeleteConfirmation = true
+                        showingOverwriteConfirmation = true
                     }
                 }
             }
@@ -235,15 +235,15 @@ struct PresetView: View {
                 handleImport(from: url)
             }
         }
-        // Delete Confirmation
-        .alert("Delete Preset", isPresented: $showingDeleteConfirmation) {
+        // Overwrite Confirmation
+        .alert("Overwrite Preset", isPresented: $showingOverwriteConfirmation) {
             Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
-                handleDelete()
+            Button("Overwrite", role: .destructive) {
+                handleOverwrite()
             }
         } message: {
             if let preset = currentSlotPreset {
-                Text("Are you sure you want to delete '\(preset.name)'? This cannot be undone.")
+                Text("Overwrite '\(preset.name)' with current sound? This cannot be undone.")
             }
         }
         // General Alert
@@ -284,7 +284,7 @@ struct PresetView: View {
         return presetManager.preset(forBank: selectedBank, position: selectedPosition, type: selectedType)
     }
     
-    private var canDeleteCurrentSlot: Bool {
+    private var canOverwriteCurrentSlot: Bool {
         guard selectedType == .user else { return false }
         return currentSlotPreset != nil
     }
@@ -406,19 +406,16 @@ struct PresetView: View {
         }
     }
     
-    private func handleDelete() {
+    private func handleOverwrite() {
         guard let preset = currentSlotPreset else { return }
         
         do {
-            // Clear slot first
-            try presetManager.clearSlot(bank: selectedBank, position: selectedPosition)
+            // Update the existing preset with current parameters
+            let updatedPreset = try presetManager.updatePreset(preset)
             
-            // Then delete preset
-            try presetManager.deletePreset(preset)
-            
-            showAlert("Deleted preset '\(preset.name)'")
+            showAlert("Updated preset '\(updatedPreset.name)'")
         } catch {
-            showAlert("Failed to delete preset: \(error.localizedDescription)")
+            showAlert("Failed to update preset: \(error.localizedDescription)")
         }
     }
     

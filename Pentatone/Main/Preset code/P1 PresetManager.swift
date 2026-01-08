@@ -286,6 +286,44 @@ final class PresetManager: ObservableObject {
         return newPreset
     }
     
+    /// Update an existing user preset with current parameters
+    /// Keeps the same UUID and slot assignment, but updates the sound
+    /// - Parameter preset: The existing preset to update
+    /// - Returns: The updated preset
+    /// - Throws: File system errors or validation errors
+    @discardableResult
+    func updatePreset(_ preset: AudioParameterSet) throws -> AudioParameterSet {
+        // Safety check: ensure it's a user preset (not factory)
+        guard userPresets.contains(where: { $0.id == preset.id }) else {
+            throw PresetError.cannotUpdateFactoryPreset
+        }
+        
+        let paramManager = AudioParameterManager.shared
+        
+        // Capture current parameter values as new base values
+        paramManager.captureCurrentAsBase()
+        
+        // Create updated preset with SAME UUID and name, but new parameters
+        let updatedPreset = AudioParameterSet(
+            id: preset.id, // Keep same ID!
+            name: preset.name, // Keep same name
+            voiceTemplate: paramManager.voiceTemplate,
+            master: paramManager.master,
+            macroState: paramManager.macroState,
+            createdAt: preset.createdAt // Keep original creation date
+        )
+        
+        // Save to disk (overwrites existing file)
+        try savePreset(updatedPreset)
+        
+        // Set as current preset
+        currentPreset = updatedPreset
+        
+        print("✅ PresetManager: Updated preset '\(updatedPreset.name)' (ID: \(updatedPreset.id.uuidString))")
+        
+        return updatedPreset
+    }
+    
     // MARK: - Deleting Presets
     
     /// Delete a user preset
@@ -609,6 +647,7 @@ final class PresetManager: ObservableObject {
 
 enum PresetError: LocalizedError {
     case cannotDeleteFactoryPreset
+    case cannotUpdateFactoryPreset
     case userPresetLimitReached
     case presetNotFound
     case invalidPresetFile
@@ -619,6 +658,8 @@ enum PresetError: LocalizedError {
         switch self {
         case .cannotDeleteFactoryPreset:
             return "Factory presets cannot be deleted"
+        case .cannotUpdateFactoryPreset:
+            return "Factory presets cannot be updated"
         case .userPresetLimitReached:
             return "User preset limit reached (75 presets)"
         case .presetNotFound:
