@@ -21,11 +21,9 @@ struct PresetView: View {
     // Sheet/Alert State
     @State private var showingSaveDialog = false
     @State private var showingImportPicker = false
-    @State private var showingExportSheet = false
     @State private var showingDeleteConfirmation = false
     @State private var showingCleanupView = false  // DEBUG
     @State private var newPresetName: String = ""
-    @State private var exportURL: URL?
     @State private var alertMessage: String?
     @State private var showingAlert = false
     
@@ -232,12 +230,6 @@ struct PresetView: View {
                 handleImport(from: url)
             }
         }
-        // Export Share Sheet
-        .sheet(isPresented: $showingExportSheet) {
-            if let url = exportURL {
-                ShareSheet(items: [url])
-            }
-        }
         // Delete Confirmation
         .alert("Delete Preset", isPresented: $showingDeleteConfirmation) {
             Button("Cancel", role: .cancel) { }
@@ -373,8 +365,26 @@ struct PresetView: View {
         }
         
         do {
-            exportURL = try presetManager.exportPreset(preset)
-            showingExportSheet = true
+            let url = try presetManager.exportPreset(preset)
+            
+            // Present share sheet using UIKit directly
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let window = windowScene.windows.first,
+                  let rootViewController = window.rootViewController else {
+                showAlert("Failed to present share sheet")
+                return
+            }
+            
+            let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            
+            // For iPad: configure popover presentation
+            if let popover = activityVC.popoverPresentationController {
+                popover.sourceView = window
+                popover.sourceRect = CGRect(x: window.bounds.midX, y: window.bounds.midY, width: 0, height: 0)
+                popover.permittedArrowDirections = []
+            }
+            
+            rootViewController.present(activityVC, animated: true)
         } catch {
             showAlert("Failed to export preset: \(error.localizedDescription)")
         }
@@ -511,18 +521,6 @@ struct DocumentPicker: UIViewControllerRepresentable {
             onPick(url)
         }
     }
-}
-
-// MARK: - Share Sheet for Export
-
-struct ShareSheet: UIViewControllerRepresentable {
-    let items: [Any]
-    
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
-    }
-    
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
 // MARK: - Preview
