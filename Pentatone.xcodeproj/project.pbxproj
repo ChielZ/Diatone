@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		7F7EE6C52F0FED9D00EF9DA8 /* PRESET_FIX_SUMMARY.md in Resources */ = {isa = PBXBuildFile; fileRef = 7F7EE6C42F0FED9D00EF9DA8 /* PRESET_FIX_SUMMARY.md */; };
+		7F7EE6C72F0FEFCB00EF9DA8 /* DEBUG_PresetCleanupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7EE6C62F0FEFCB00EF9DA8 /* DEBUG_PresetCleanupView.swift */; };
+		7F7EE6C92F0FF01300EF9DA8 /* PRESET_CLEANUP_GUIDE.md in Resources */ = {isa = PBXBuildFile; fileRef = 7F7EE6C82F0FF01300EF9DA8 /* PRESET_CLEANUP_GUIDE.md */; };
 		7F94C6D22EDE355800CEE22F /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7F94C6D12EDE355800CEE22F /* AudioKit */; };
 		7F94C6DB2EDE3A4D00CEE22F /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7F94C6DA2EDE3A4D00CEE22F /* SoundpipeAudioKit */; };
 		7FF3103B2EF0955D004F4A98 /* DunneAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7FF3103A2EF0955D004F4A98 /* DunneAudioKit */; };
@@ -16,6 +18,8 @@
 /* Begin PBXFileReference section */
 		7F3D45E12EDCF9AC00538543 /* Pentatone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pentatone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F7EE6C42F0FED9D00EF9DA8 /* PRESET_FIX_SUMMARY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PRESET_FIX_SUMMARY.md; sourceTree = "<group>"; };
+		7F7EE6C62F0FEFCB00EF9DA8 /* DEBUG_PresetCleanupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DEBUG_PresetCleanupView.swift; sourceTree = "<group>"; };
+		7F7EE6C82F0FF01300EF9DA8 /* PRESET_CLEANUP_GUIDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PRESET_CLEANUP_GUIDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -65,6 +69,8 @@
 				7F3D45E22EDCF9AC00538543 /* Products */,
 				7F7EE6C32F0FEACA00EF9DA8 /* Resources */,
 				7F7EE6C42F0FED9D00EF9DA8 /* PRESET_FIX_SUMMARY.md */,
+				7F7EE6C62F0FEFCB00EF9DA8 /* DEBUG_PresetCleanupView.swift */,
+				7F7EE6C82F0FF01300EF9DA8 /* PRESET_CLEANUP_GUIDE.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -150,6 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7F7EE6C52F0FED9D00EF9DA8 /* PRESET_FIX_SUMMARY.md in Resources */,
+				7F7EE6C92F0FF01300EF9DA8 /* PRESET_CLEANUP_GUIDE.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +167,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F7EE6C72F0FEFCB00EF9DA8 /* DEBUG_PresetCleanupView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
