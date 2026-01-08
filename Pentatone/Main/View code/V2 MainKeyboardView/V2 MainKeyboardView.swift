@@ -221,7 +221,7 @@ private struct NavigationStrip: View {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("HighlightColour"))
                 
-                Text("Pentatone")
+                Text("Arithmophone")
                     .font(.custom("LobsterTwo-Italic", size: 36))
                     .foregroundColor(Color("BackgroundColour"))
                     .minimumScaleFactor(0.3)
@@ -229,6 +229,7 @@ private struct NavigationStrip: View {
                     .fixedSize()
                     .frame(width: stripWidth * 0.95, height: 250, alignment: .center)
                     .rotationEffect(Angle(degrees: 90))
+                    .offset(x:3.5)
                    
                 
                 VStack {

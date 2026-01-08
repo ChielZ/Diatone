@@ -216,12 +216,10 @@ struct PresetView: View {
                 */
             }
         }
-        // Save Dialog Sheet (no dimming)
-        .background(
-            DimmingRemoverView(isPresented: $showingSaveDialog) {
-                savePresetDialog
-            }
-        )
+        // Save Dialog Sheet
+        .sheet(isPresented: $showingSaveDialog) {
+            savePresetDialog
+        }
         // Import File Picker
         .sheet(isPresented: $showingImportPicker) {
             DocumentPicker(allowedTypes: ["public.json", "com.yourname.arithmophone.preset"]) { url in
@@ -405,23 +403,13 @@ struct PresetView: View {
     // MARK: - Save Dialog View
     
     private var savePresetDialog: some View {
-        ZStack {
-            // Clear background for overFullScreen presentation
-            Color.clear
-                .ignoresSafeArea()
-            
-            // Centered dialog card
+        NavigationView {
             VStack(spacing: 25) {
-                // Title
-                Text("SAVE PRESET")
-                    .foregroundColor(Color("HighlightColour"))
-                    .adaptiveFont("MontserratAlternates-Medium", size: 35)
-                    .padding(.top, 40)
-                
                 // Subtitle
                 Text("Name your sound")
                     .foregroundColor(Color("KeyColour1"))
                     .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                    .padding(.top, 20)
                 
                 // Text field
                 ZStack {
@@ -436,7 +424,6 @@ struct PresetView: View {
                         .autocapitalization(.words)
                 }
                 .padding(.horizontal, 40)
-                .padding(.top, 20)
                 
                 Spacer()
                 
@@ -477,11 +464,9 @@ struct PresetView: View {
                 .padding(.horizontal, 40)
                 .padding(.bottom, 40)
             }
-            .background(
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-            )
-            .padding(40)
+            .background(Color("BackgroundColour"))
+            .navigationTitle("SAVE PRESET")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
@@ -528,35 +513,6 @@ struct ShareSheet: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
-
-// MARK: - Custom Sheet Without Dimming (iOS 15 Compatible)
-
-struct DimmingRemoverView<Content: View>: UIViewControllerRepresentable {
-    @Binding var isPresented: Bool
-    let content: () -> Content
-    
-    func makeUIViewController(context: Context) -> UIViewController {
-        UIViewController()
-    }
-    
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        if isPresented && uiViewController.presentedViewController == nil {
-            let hostingController = NoDimmingHostingController(rootView: content())
-            hostingController.modalPresentationStyle = .overFullScreen
-            hostingController.view.backgroundColor = .clear
-            uiViewController.present(hostingController, animated: true)
-        } else if !isPresented && uiViewController.presentedViewController != nil {
-            uiViewController.dismiss(animated: true)
-        }
-    }
-}
-
-class NoDimmingHostingController<Content: View>: UIHostingController<Content> {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .clear
-    }
 }
 
 // MARK: - Preview
