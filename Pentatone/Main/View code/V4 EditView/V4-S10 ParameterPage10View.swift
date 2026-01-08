@@ -198,11 +198,16 @@ struct PresetView: View {
                 
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
+                /*
                     .contentShape(Rectangle())
                     .onLongPressGesture(minimumDuration: 2.0) {
                         // DEBUG: Long press to open cleanup view
                         showingCleanupView = true
                     }
+                 
+                 */
+                
+                
                 /*
                 VStack(spacing: 4) {
                     if let preset = currentSlotPreset {
@@ -249,10 +254,12 @@ struct PresetView: View {
                 Text(message)
             }
         }
+        /*
         // DEBUG: Cleanup view
         .sheet(isPresented: $showingCleanupView) {
             PresetCleanupView()
         }
+         */
     }
     
     // MARK: - Computed Properties

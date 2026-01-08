@@ -64,7 +64,7 @@ struct MainKeyboardView: View {
     var keyboardState: KeyboardState
     
     @State private var showingOptions: Bool = false
-    @State private var currentMainView: MainViewMode = .edit
+    @State private var currentMainView: MainViewMode = .options
     @State private var currentOptionsSubView: OptionsSubView = .scale
     
     // Animation timing configurations

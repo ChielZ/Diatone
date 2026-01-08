@@ -117,12 +117,12 @@ struct EditView: View {
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("BackgroundColour"))
                     GeometryReader { geometry in
-                        Text("Pentatone")
+                        Text("Arithmophone")
                             .foregroundColor(Color("KeyColour1"))
-                            .adaptiveFont("LobsterTwo-Italic", size: 55)
+                            .adaptiveFont("LobsterTwo-Italic", size: 35)
                             .frame(width: geometry.size.width, height: geometry.size.height)
                             .contentShape(Rectangle())
-                            //.offset(y: -(geometry.size.height/2 + 11))
+                            .offset(y: -(geometry.size.height/10))
                             .padding(0)
                             //.onTapGesture {
                             //    onSwitchToEdit?()

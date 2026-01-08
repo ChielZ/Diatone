@@ -23,7 +23,7 @@ struct SoundView: View {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
                 GeometryReader { geometry in
-                    Text("Pentatone")
+                    Text("Arithmophone")
                         .foregroundColor(Color("KeyColour1"))
                         .adaptiveFont("LobsterTwo-Italic", size: 55)
                         .frame(width: geometry.size.width, height: geometry.size.height)
