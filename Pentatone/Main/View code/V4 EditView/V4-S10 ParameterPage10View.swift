@@ -424,68 +424,27 @@ struct PresetView: View {
     
     private var savePresetDialog: some View {
         NavigationView {
-            VStack(spacing: 25) {
-                // Subtitle
-                Text("Name your sound")
-                    .foregroundColor(Color("KeyColour1"))
-                    .adaptiveFont("MontserratAlternates-Medium", size: 20)
-                    .padding(.top, 20)
-                
-                // Text field
-                ZStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour").opacity(0.2))
-                        .frame(height: 60)
-                    
-                    TextField("Enter preset name", text: $newPresetName)
-                        .foregroundColor(Color("HighlightColour"))
-                        .font(.custom("MontserratAlternates-Medium", size: 24))
-                        .padding(.horizontal, 20)
+            List {
+                Section {
+                    TextField("Preset name", text: $newPresetName)
                         .autocapitalization(.words)
+                } header: {
+                    Text("Name your sound")
                 }
-                .padding(.horizontal, 40)
                 
-                Spacer()
-                
-                // Buttons
-                HStack(spacing: 20) {
-                    // Cancel button
-                    Button(action: {
-                        newPresetName = ""
-                        showingSaveDialog = false
-                    }) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: radius)
-                                .fill(Color("SupportColour"))
-                                .frame(height: 60)
-                            
-                            Text("CANCEL")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 24)
-                        }
-                    }
-                    
-                    // Save button
-                    Button(action: {
+                Section {
+                    Button("Save") {
                         handleSave()
-                    }) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: radius)
-                                .fill(newPresetName.isEmpty ? Color("KeyColour1").opacity(0.3) : Color("HighlightColour"))
-                                .frame(height: 60)
-                            
-                            Text("SAVE")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 24)
-                        }
                     }
                     .disabled(newPresetName.isEmpty)
+                    
+                    Button("Cancel") {
+                        newPresetName = ""
+                        showingSaveDialog = false
+                    }
                 }
-                .padding(.horizontal, 40)
-                .padding(.bottom, 40)
             }
-            .background(Color("BackgroundColour"))
-            .navigationTitle("SAVE PRESET")
+            .navigationTitle("Save Preset")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
