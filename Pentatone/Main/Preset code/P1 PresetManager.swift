@@ -64,8 +64,17 @@ final class PresetManager: ObservableObject {
     
     /// Factory presets directory (in app bundle)
     private var factoryPresetsURL: URL? {
-        Bundle.main.url(forResource: "Presets", withExtension: nil)?
-            .appendingPathComponent("Factory")
+        // Try multiple paths to support different folder structures
+        if let url = Bundle.main.url(forResource: "Resources/presets/factory", withExtension: nil) {
+            return url
+        }
+        if let url = Bundle.main.url(forResource: "Resources/Presets/Factory", withExtension: nil) {
+            return url
+        }
+        if let url = Bundle.main.url(forResource: "Presets", withExtension: nil) {
+            return url.appendingPathComponent("Factory")
+        }
+        return nil
     }
     
     /// User presets directory (in Documents)
@@ -123,7 +132,9 @@ final class PresetManager: ObservableObject {
             for fileURL in fileURLs {
                 do {
                     let data = try Data(contentsOf: fileURL)
-                    let preset = try JSONDecoder().decode(AudioParameterSet.self, from: data)
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = .iso8601
+                    let preset = try decoder.decode(AudioParameterSet.self, from: data)
                     
                     // Add to collections
                     factoryPresets.append(preset)
@@ -157,18 +168,23 @@ final class PresetManager: ObservableObject {
         }
         
         do {
-            // Get all .json files in user directory
+            // Get all .json files in user directory, excluding UserLayout.json
             let fileURLs = try fileManager.contentsOfDirectory(
                 at: userPresetsURL,
                 includingPropertiesForKeys: nil,
                 options: [.skipsHiddenFiles]
-            ).filter { $0.pathExtension == "json" }
+            ).filter { 
+                $0.pathExtension == "json" && 
+                $0.lastPathComponent != "UserLayout.json" 
+            }
             
             // Load each preset file
             for fileURL in fileURLs {
                 do {
                     let data = try Data(contentsOf: fileURL)
-                    let preset = try JSONDecoder().decode(AudioParameterSet.self, from: data)
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = .iso8601
+                    let preset = try decoder.decode(AudioParameterSet.self, from: data)
                     
                     // Add to collections
                     userPresets.append(preset)
