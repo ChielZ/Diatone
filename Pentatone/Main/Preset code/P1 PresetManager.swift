@@ -261,7 +261,13 @@ final class PresetManager: ObservableObject {
     func saveCurrentAsNewPreset(name: String) throws -> AudioParameterSet {
         let paramManager = AudioParameterManager.shared
         
+        // IMPORTANT: Capture current parameter values as new base values
+        // This "bakes in" any macro adjustments and resets macro positions to center
+        // Result: When preset loads, macros are at neutral and ready for performance control
+        paramManager.captureCurrentAsBase()
+        
         // Create new preset from current parameters
+        // Macro positions are now at 0.0 (center), base values contain final adjusted values
         let newPreset = AudioParameterSet(
             id: UUID(),
             name: name,

@@ -647,6 +647,28 @@ final class AudioParameterManager: ObservableObject {
         macroState = MacroControlState(from: voiceTemplate, masterParams: master)
     }
     
+    /// Capture current parameter values as new base values and reset macro positions to center
+    /// This "bakes in" the current macro adjustments into the base parameters
+    /// Use this when saving a preset to ensure macros start at neutral when loaded
+    func captureCurrentAsBase() {
+        // Capture current final values as new base values
+        macroState.baseModulationIndex = voiceTemplate.oscillator.modulationIndex
+        macroState.baseFilterCutoff = voiceTemplate.filter.cutoffFrequency
+        macroState.baseFilterSaturation = voiceTemplate.filterStatic.saturation
+        macroState.baseDelayFeedback = master.delay.feedback
+        macroState.baseDelayMix = master.delay.dryWetMix
+        macroState.baseReverbFeedback = master.reverb.feedback
+        macroState.baseReverbMix = master.reverb.balance
+        macroState.basePreVolume = master.output.preVolume
+        
+        // Reset all macro positions to neutral
+        // Volume is absolute (0-1), so reset to current preVolume
+        macroState.volumePosition = master.output.preVolume
+        // Tone and Ambience are relative (-1 to +1), so reset to center (0.0)
+        macroState.tonePosition = 0.0
+        macroState.ambiencePosition = 0.0
+    }
+    
     /// Update macro state to match current parameters without resetting positions
     /// Use this when you want to sync base values but keep the current macro positions
     func syncMacroBaseValues() {
