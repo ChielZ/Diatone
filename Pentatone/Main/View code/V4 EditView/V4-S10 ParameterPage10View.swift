@@ -20,8 +20,8 @@ struct PresetView: View {
     
     // Sheet/Alert State
     @State private var showingSaveDialog = false
+    @State private var showingOverwriteDialog = false
     @State private var showingImportPicker = false
-    @State private var showingOverwriteConfirmation = false
     @State private var showingCleanupView = false  // DEBUG
     @State private var newPresetName: String = ""
     @State private var alertMessage: String?
@@ -188,7 +188,11 @@ struct PresetView: View {
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        showingOverwriteConfirmation = true
+                        // Pre-fill the name with current preset name
+                        if let preset = currentSlotPreset {
+                            newPresetName = preset.name
+                        }
+                        showingOverwriteDialog = true
                     }
                 }
             }
@@ -229,21 +233,14 @@ struct PresetView: View {
         .sheet(isPresented: $showingSaveDialog) {
             savePresetDialog
         }
+        // Overwrite Dialog Sheet
+        .sheet(isPresented: $showingOverwriteDialog) {
+            overwritePresetDialog
+        }
         // Import File Picker
         .sheet(isPresented: $showingImportPicker) {
             DocumentPicker(allowedTypes: ["public.json", "com.yourname.arithmophone.preset"]) { url in
                 handleImport(from: url)
-            }
-        }
-        // Overwrite Confirmation
-        .alert("Overwrite Preset", isPresented: $showingOverwriteConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Overwrite", role: .destructive) {
-                handleOverwrite()
-            }
-        } message: {
-            if let preset = currentSlotPreset {
-                Text("Overwrite '\(preset.name)' with current sound? This cannot be undone.")
             }
         }
         // General Alert
@@ -408,12 +405,18 @@ struct PresetView: View {
     
     private func handleOverwrite() {
         guard let preset = currentSlotPreset else { return }
+        guard !newPresetName.isEmpty else {
+            showAlert("Please enter a preset name")
+            return
+        }
         
         do {
-            // Update the existing preset with current parameters
-            let updatedPreset = try presetManager.updatePreset(preset)
+            // Update the existing preset with current parameters and new name
+            let updatedPreset = try presetManager.updatePreset(preset, newName: newPresetName)
             
             showAlert("Updated preset '\(updatedPreset.name)'")
+            newPresetName = ""
+            showingOverwriteDialog = false
         } catch {
             showAlert("Failed to update preset: \(error.localizedDescription)")
         }
@@ -449,6 +452,37 @@ struct PresetView: View {
                 }
             }
             .navigationTitle("Save Preset")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+    
+    // MARK: - Overwrite Dialog View
+    
+    private var overwritePresetDialog: some View {
+        NavigationView {
+            List {
+                Section {
+                    TextField("Preset name", text: $newPresetName)
+                        .autocapitalization(.words)
+                } header: {
+                    Text("Update your sound")
+                } footer: {
+                    Text("You can rename the preset or keep the same name.")
+                }
+                
+                Section {
+                    Button("Update") {
+                        handleOverwrite()
+                    }
+                    .disabled(newPresetName.isEmpty)
+                    
+                    Button("Cancel") {
+                        newPresetName = ""
+                        showingOverwriteDialog = false
+                    }
+                }
+            }
+            .navigationTitle("Update Preset")
             .navigationBarTitleDisplayMode(.inline)
         }
     }

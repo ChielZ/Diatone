@@ -287,12 +287,14 @@ final class PresetManager: ObservableObject {
     }
     
     /// Update an existing user preset with current parameters
-    /// Keeps the same UUID and slot assignment, but updates the sound
-    /// - Parameter preset: The existing preset to update
+    /// Keeps the same UUID and slot assignment, but updates the sound and optionally the name
+    /// - Parameters:
+    ///   - preset: The existing preset to update
+    ///   - newName: Optional new name for the preset (if nil, keeps original name)
     /// - Returns: The updated preset
     /// - Throws: File system errors or validation errors
     @discardableResult
-    func updatePreset(_ preset: AudioParameterSet) throws -> AudioParameterSet {
+    func updatePreset(_ preset: AudioParameterSet, newName: String? = nil) throws -> AudioParameterSet {
         // Safety check: ensure it's a user preset (not factory)
         guard userPresets.contains(where: { $0.id == preset.id }) else {
             throw PresetError.cannotUpdateFactoryPreset
@@ -303,10 +305,13 @@ final class PresetManager: ObservableObject {
         // Capture current parameter values as new base values
         paramManager.captureCurrentAsBase()
         
-        // Create updated preset with SAME UUID and name, but new parameters
+        // Use new name if provided, otherwise keep original
+        let finalName = newName ?? preset.name
+        
+        // Create updated preset with SAME UUID, but new parameters and potentially new name
         let updatedPreset = AudioParameterSet(
             id: preset.id, // Keep same ID!
-            name: preset.name, // Keep same name
+            name: finalName, // New or original name
             voiceTemplate: paramManager.voiceTemplate,
             master: paramManager.master,
             macroState: paramManager.macroState,
