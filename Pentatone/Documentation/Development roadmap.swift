@@ -56,15 +56,9 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  √ Check AudioKit console warnings on startup
  √ Check multiple console messages of scale frequency updates
  √ Check AudioKit warning message streams when modulation is enabled (already fixed for aftertouch)
- ? hack delay for longer max time? (could maybe be initiated with higher value for max delay time, allowing sync values above 1/4 even at slowest tempo)
- 
+  
 
- VOOR MORGEN:
- √ overwrite zonder naamverandering afmaken
- √ geheugen toevoegen voor geselecteerde preset
- - conversatie over tooltips vs losse manual pagina's
- - sounds view: preset naam ipv 'Arithmophone' en 2 x 5 drukknoppen?
- - vraag Claude over max delay time
+ 
  
  
  
