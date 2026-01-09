@@ -89,7 +89,7 @@ struct CenterStripConfig {
         
         if isIPad {
             if isLandscape {
-                percentage = isUnfolded ? 0.32 : 0.05  // 50% or 5%
+                percentage = isUnfolded ? 0.315 : 0.05  // 50% or 5%
             } else {
                 percentage = isUnfolded ? 0.65 : 0.07  // 70% or 7%
             }
