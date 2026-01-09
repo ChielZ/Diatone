@@ -178,6 +178,7 @@ struct SoundView: View {
                 Text("VOLUME")
                     .foregroundColor(Color("BackgroundColour"))
                     .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                    .minimumScaleFactor(0.5)
                     .allowsHitTesting(false)
             }
             
@@ -216,6 +217,7 @@ struct SoundView: View {
                 Text("TONE")
                     .foregroundColor(Color("BackgroundColour"))
                     .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                    .minimumScaleFactor(0.5)
                     .allowsHitTesting(false)
             }
             
@@ -255,6 +257,7 @@ struct SoundView: View {
                 Text("AMBIENCE")
                     .foregroundColor(Color("BackgroundColour"))
                     .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                    .minimumScaleFactor(0.5)
                     .allowsHitTesting(false)
             }
             

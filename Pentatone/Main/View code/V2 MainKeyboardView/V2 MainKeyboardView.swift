@@ -265,7 +265,7 @@ private struct NavigationStrip: View {
                     .fill(Color("HighlightColour"))
                 
                 Text("Arithmophone")
-                    .font(.custom("LobsterTwo-Italic", size: 36))
+                    .font(.custom("LobsterTwo-Italic", size: 30))
                     .foregroundColor(Color("BackgroundColour"))
                     .minimumScaleFactor(0.3)
                     .lineLimit(1)
@@ -277,14 +277,16 @@ private struct NavigationStrip: View {
                 
                 VStack {
                     Text("･UNFOLD･")
-                        .font(.custom("MontserratAlternates-Medium", size: 24))
+                        .font(.custom("MontserratAlternates-Medium", size: 20))
                         .foregroundColor(Color("BackgroundColour"))
                         .minimumScaleFactor(0.3)
                         .lineLimit(1)
                         .fixedSize()
-                        .frame(width: stripWidth * 0.7, height: 150, alignment: .center)
+                        .frame(width: stripWidth * 0.7, height: 50, alignment: .leading)
+                        
                         .rotationEffect(Angle(degrees: 90))
                         .contentShape(Rectangle())
+                        .offset(y:5)
                         .onTapGesture {
                             showingOptions = true
                         }
