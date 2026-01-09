@@ -188,10 +188,6 @@ struct PresetView: View {
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        // Pre-fill the name with current preset name
-                        if let preset = currentSlotPreset {
-                            newPresetName = preset.name
-                        }
                         showingOverwriteDialog = true
                     }
                 }
@@ -484,6 +480,13 @@ struct PresetView: View {
             }
             .navigationTitle("Update Preset")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                // Ensure the text field is recognized as non-empty on first appearance
+                // This fixes the issue where "Update" button is greyed out initially
+                if let preset = currentSlotPreset {
+                    newPresetName = preset.name
+                }
+            }
         }
     }
 }

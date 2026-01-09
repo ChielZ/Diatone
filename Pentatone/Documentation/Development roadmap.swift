@@ -21,7 +21,8 @@ MAIN
  √ create developer view for sound editing/storing presets
  √ add macro control
  √ sanity check code structure
- - create preset management
+ √ create preset management
+ - create presets
  ? add drone note toggles to central note buttons?
  - make engine portable for other Arithmophone apps
     -> Make initial touch flexible so it can accept X position, Y position or touchArea as inputs
@@ -58,7 +59,12 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  ? hack delay for longer max time? (could maybe be initiated with higher value for max delay time, allowing sync values above 1/4 even at slowest tempo)
  
 
-
+ VOOR MORGEN:
+ - overwrite zonder naamverandering afmaken
+ - geheugen toevoegen voor geselecteerde preset
+ - conversatie over tooltips vs losse manual pagina's
+ - sounds view: preset naam ipv 'Arithmophone' en 2 x 5 drukknoppen?
+ - vraag Claude over max delay time
  
  
  
