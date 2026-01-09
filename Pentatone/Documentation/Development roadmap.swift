@@ -60,8 +60,8 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  
 
  VOOR MORGEN:
- - overwrite zonder naamverandering afmaken
- - geheugen toevoegen voor geselecteerde preset
+ √ overwrite zonder naamverandering afmaken
+ √ geheugen toevoegen voor geselecteerde preset
  - conversatie over tooltips vs losse manual pagina's
  - sounds view: preset naam ipv 'Arithmophone' en 2 x 5 drukknoppen?
  - vraag Claude over max delay time

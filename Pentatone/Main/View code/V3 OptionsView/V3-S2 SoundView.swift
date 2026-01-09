@@ -23,7 +23,7 @@ struct SoundView: View {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
                 GeometryReader { geometry in
-                    Text("Arithmophone")
+                    Text("1.1 Keys")
                         .foregroundColor(Color("KeyColour1"))
                         .adaptiveFont("LobsterTwo-Italic", size: 55)
                         .frame(width: geometry.size.width, height: geometry.size.height)
@@ -35,7 +35,7 @@ struct SoundView: View {
                         }
                 
             }
-            
+            /*
             ZStack { // Row 5
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
@@ -61,6 +61,63 @@ struct SoundView: View {
                                 .foregroundColor(Color("BackgroundColour"))
                                 .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         )
+                }
+            }
+            */
+            
+            
+            ZStack { // Row 6
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("BackgroundColour"))
+
+                HStack {
+                   
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color("HighlightColour"))
+                            .aspectRatio(1.0, contentMode: .fit)
+                            .overlay(
+                                Text("1")
+                                    .foregroundColor(Color("BackgroundColour"))
+                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            )
+                    
+                    Spacer()
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(Color("SupportColour"))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay(
+                            Text("2")
+                                .foregroundColor(Color("BackgroundColour"))
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        )
+                    Spacer()
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(Color("SupportColour"))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay(
+                            Text("3")
+                                .foregroundColor(Color("BackgroundColour"))
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        )
+                    Spacer()
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(Color("SupportColour"))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay(
+                            Text("4")
+                                .foregroundColor(Color("BackgroundColour"))
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        )
+                    Spacer()
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(Color("SupportColour"))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay(
+                            Text("5")
+                                .foregroundColor(Color("BackgroundColour"))
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        )
+                    
                 }
             }
             
