@@ -67,12 +67,13 @@ struct OptionsView: View {
     
     // View switching
     var onSwitchToEdit: (() -> Void)? = nil
+    
+    // Computed property for note names - safer for preview compilation
+    private var noteNamesArray: [NoteName] {
+        noteNames(forScale: currentScale, inKey: currentKey)
+    }
 
     var body: some View {
-        
-        // Compute the note names for the current scale and key
-        let noteNamesArray = noteNames(forScale: currentScale, inKey: currentKey)
-        
         ZStack{
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("HighlightColour"))

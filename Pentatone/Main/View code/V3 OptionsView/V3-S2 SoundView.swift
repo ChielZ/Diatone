@@ -35,38 +35,8 @@ struct SoundView: View {
                         }
                 
             }
-            /*
+            
             ZStack { // Row 5
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("<")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                    Spacer()
-                    Text("1.1 KEYS")
-                        .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text(">")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                }
-            }
-            */
-            
-            
-            ZStack { // Row 6
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
 
@@ -181,12 +151,13 @@ struct SoundView: View {
                     .fill(Color("HighlightColour"))
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .padding(0)
+                    .padding(4)
+                
                 
                 // Volume slider (0 to 1, left to right)
                 GeometryReader { geometry in
                     HStack(spacing: 0) {
-                        RoundedRectangle(cornerRadius: radius)
+                        RoundedRectangle(cornerRadius: 0)
                             .fill(Color("HighlightColour"))
                             .frame(width: geometry.size.width * paramManager.macroState.volumePosition)
                         RoundedRectangle(cornerRadius: radius)
@@ -202,7 +173,7 @@ struct SoundView: View {
                                 paramManager.updateVolumeMacro(clampedPosition)
                             }
                     )
-                }
+                }.padding(4)
                 
                 Text("VOLUME")
                     .foregroundColor(Color("BackgroundColour"))
@@ -215,7 +186,7 @@ struct SoundView: View {
                     .fill(Color("HighlightColour"))
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .padding(0)
+                    .padding(4)
                 
                 // Tone slider (-1 to +1, bipolar with center at 0)
                 GeometryReader { geometry in
@@ -223,7 +194,7 @@ struct SoundView: View {
                         // Calculate widths based on position (-1 to +1)
                         let normalizedPosition = (paramManager.macroState.tonePosition + 1.0) / 2.0 // Convert -1...1 to 0...1
                         
-                        RoundedRectangle(cornerRadius: radius)
+                        RoundedRectangle(cornerRadius: 0)
                             .fill(Color("HighlightColour"))
                             .frame(width: geometry.size.width * normalizedPosition)
                         RoundedRectangle(cornerRadius: radius)
@@ -240,7 +211,7 @@ struct SoundView: View {
                                 paramManager.updateToneMacro(newPosition)
                             }
                     )
-                }
+                }.padding(4)
                 
                 Text("TONE")
                     .foregroundColor(Color("BackgroundColour"))
@@ -253,7 +224,8 @@ struct SoundView: View {
                     .fill(Color("HighlightColour"))
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .padding(0)
+                    .padding(4)
+            
                 
                 // Ambience slider (-1 to +1, bipolar with center at 0)
                 GeometryReader { geometry in
@@ -261,7 +233,7 @@ struct SoundView: View {
                         // Calculate widths based on position (-1 to +1)
                         let normalizedPosition = (paramManager.macroState.ambiencePosition + 1.0) / 2.0 // Convert -1...1 to 0...1
                         
-                        RoundedRectangle(cornerRadius: radius)
+                        RoundedRectangle(cornerRadius: 0)
                             .fill(Color("HighlightColour"))
                             .frame(width: geometry.size.width * normalizedPosition)
                         RoundedRectangle(cornerRadius: radius)
@@ -278,7 +250,7 @@ struct SoundView: View {
                                 paramManager.updateAmbienceMacro(newPosition)
                             }
                     )
-                }
+                }.padding(4)
                 
                 Text("AMBIENCE")
                     .foregroundColor(Color("BackgroundColour"))
