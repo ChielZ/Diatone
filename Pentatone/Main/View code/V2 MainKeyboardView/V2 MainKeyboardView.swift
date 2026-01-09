@@ -33,6 +33,47 @@ struct KeyboardEdgeSpacing {
     }
 }
 
+// MARK: - Font Size Configuration
+
+/// Device-specific font sizes and positioning for navigation strip text
+struct NavigationStripFontSizes {
+    // Arithmophone title font sizes
+    static let arithmophoneIPad: CGFloat = 30
+    static let arithmophoneIPhone: CGFloat = 24
+    
+    // Arithmophone title offsets (x-axis)
+    static let arithmophoneOffsetIPad: CGFloat = 3.5
+    static let arithmophoneOffsetIPhone: CGFloat = 2.5
+    
+    // Unfold button font sizes
+    static let unfoldIPad: CGFloat = 20
+    static let unfoldIPhone: CGFloat = 16
+    
+    // Unfold button offsets (y-axis)
+    static let unfoldOffsetIPad: CGFloat = 5
+    static let unfoldOffsetIPhone: CGFloat = 0
+    
+    /// Returns appropriate font size for the Arithmophone title
+    static func arithmophoneSize(for device: UIUserInterfaceIdiom) -> CGFloat {
+        device == .pad ? arithmophoneIPad : arithmophoneIPhone
+    }
+    
+    /// Returns appropriate x-offset for the Arithmophone title
+    static func arithmophoneOffset(for device: UIUserInterfaceIdiom) -> CGFloat {
+        device == .pad ? arithmophoneOffsetIPad : arithmophoneOffsetIPhone
+    }
+    
+    /// Returns appropriate font size for the Unfold button
+    static func unfoldSize(for device: UIUserInterfaceIdiom) -> CGFloat {
+        device == .pad ? unfoldIPad : unfoldIPhone
+    }
+    
+    /// Returns appropriate y-offset for the Unfold button
+    static func unfoldOffset(for device: UIUserInterfaceIdiom) -> CGFloat {
+        device == .pad ? unfoldOffsetIPad : unfoldOffsetIPhone
+    }
+}
+
 /// Determines the width of the center strip based on device, orientation, and fold state
 struct CenterStripConfig {
     let width: CGFloat
@@ -259,25 +300,31 @@ private struct NavigationStrip: View {
     let stripWidth: CGFloat
     
     var body: some View {
+        let deviceType = UIDevice.current.userInterfaceIdiom
+        let arithmophoneSize = NavigationStripFontSizes.arithmophoneSize(for: deviceType)
+        let arithmophoneOffset = NavigationStripFontSizes.arithmophoneOffset(for: deviceType)
+        let unfoldSize = NavigationStripFontSizes.unfoldSize(for: deviceType)
+        let unfoldOffset = NavigationStripFontSizes.unfoldOffset(for: deviceType)
+        
         VStack {
             ZStack {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("HighlightColour"))
                 
                 Text("Arithmophone")
-                    .font(.custom("LobsterTwo-Italic", size: 30))
+                    .font(.custom("LobsterTwo-Italic", size: arithmophoneSize))
                     .foregroundColor(Color("BackgroundColour"))
                     .minimumScaleFactor(0.3)
                     .lineLimit(1)
                     .fixedSize()
                     .frame(width: stripWidth * 0.95, height: 250, alignment: .center)
                     .rotationEffect(Angle(degrees: 90))
-                    .offset(x:3.5)
+                    .offset(x: arithmophoneOffset)
                    
                 
                 VStack {
                     Text("･UNFOLD･")
-                        .font(.custom("MontserratAlternates-Medium", size: 20))
+                        .font(.custom("MontserratAlternates-Medium", size: unfoldSize))
                         .foregroundColor(Color("BackgroundColour"))
                         .minimumScaleFactor(0.3)
                         .lineLimit(1)
@@ -286,7 +333,7 @@ private struct NavigationStrip: View {
                         
                         .rotationEffect(Angle(degrees: 90))
                         .contentShape(Rectangle())
-                        .offset(y:5)
+                        .offset(y: unfoldOffset)
                         .onTapGesture {
                             showingOptions = true
                         }
