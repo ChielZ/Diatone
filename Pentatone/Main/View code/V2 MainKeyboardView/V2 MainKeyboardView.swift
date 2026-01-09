@@ -10,6 +10,29 @@ import AudioKit
 import AudioKitEX
 import SoundpipeAudioKit
 
+// MARK: - Edge Spacing Configuration
+
+/// Vertical spacing around the keyboard to prevent accidental edge gesture triggers
+/// These values add non-interactive space at the top and bottom of the screen
+struct KeyboardEdgeSpacing {
+    // iPad spacing - helps prevent multitasking gestures during playing
+    static let iPadTopSpacing: CGFloat = 20
+    static let iPadBottomSpacing: CGFloat = 0
+    
+    // iPhone spacing - typically not needed due to notch/Dynamic Island
+    static let iPhoneTopSpacing: CGFloat = 0
+    static let iPhoneBottomSpacing: CGFloat = 0
+    
+    /// Returns appropriate spacing for current device
+    static func topSpacing(for device: UIUserInterfaceIdiom) -> CGFloat {
+        device == .pad ? iPadTopSpacing : iPhoneTopSpacing
+    }
+    
+    static func bottomSpacing(for device: UIUserInterfaceIdiom) -> CGFloat {
+        device == .pad ? iPadBottomSpacing : iPhoneBottomSpacing
+    }
+}
+
 /// Determines the width of the center strip based on device, orientation, and fold state
 struct CenterStripConfig {
     let width: CGFloat
@@ -93,118 +116,138 @@ struct MainKeyboardView: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            let centerConfig = CenterStripConfig.calculate(
-                geometry: geometry,
-                isUnfolded: showingOptions
-            )
-            
-            ZStack {
-                Color("BackgroundColour").ignoresSafeArea()
-                
-                // Center strip layer
-                ZStack {
-                    if showingOptions {
-                        // Switch between OptionsView and EditView based on currentMainView
-                        switch currentMainView {
-                        case .options:
-                            OptionsView(
-                                showingOptions: $showingOptions,
-                                currentSubView: $currentOptionsSubView,
-                                currentScale: currentScale,
-                                currentKey: currentKey,
-                                onCycleIntonation: onCycleIntonation,
-                                onCycleCelestial: onCycleCelestial,
-                                onCycleTerrestrial: onCycleTerrestrial,
-                                onCycleRotation: onCycleRotation,
-                                onCycleKey: onCycleKey,
-                                onSwitchToEdit: {
-                                    currentMainView = .edit
-                                }
-                            )
-                            .transition(
-                                .scale
-                                .combined(with: .opacity)
-                                )
-                            
-                        case .edit:
-                            EditView(
-                                showingOptions: $showingOptions,
-                                onSwitchToOptions: {
-                                    currentMainView = .options
-                                }
-                            )
-                            .transition(
-                                .scale
-                                .combined(with: .opacity)
-                                )
-                        }
-                    } else {
-                        NavigationStrip(
-                            showingOptions: $showingOptions,
-                            onPrevScale: onPrevScale,
-                            onNextScale: onNextScale,
-                            stripWidth: centerConfig.width
-                        )
-                        .transition(
-                            .scale//(scale: 0.8)
-                            .combined(with: .opacity)
-                        )
-                    }
-                }
-                .frame(width: centerConfig.width)
-                .animation(
-                    .easeInOut(duration: showingOptions ? unfoldCenterDuration : foldCenterDuration),
-                    value: showingOptions
-                )
-                .animation(.easeInOut(duration: 0.0), value: currentMainView)
+        let deviceType = UIDevice.current.userInterfaceIdiom
+        let topSpacing = KeyboardEdgeSpacing.topSpacing(for: deviceType)
+        let bottomSpacing = KeyboardEdgeSpacing.bottomSpacing(for: deviceType)
+        
+        VStack(spacing: 0) {
+            // Top spacer - prevents accidental edge gestures at screen top
+            if topSpacing > 0 {
+                Spacer()
+                    .frame(height: topSpacing)
             }
-            .statusBar(hidden: true)
-                
-                // Keys layer
-                HStack(spacing: 0) {
-                    // Left column - Keys
-                    VStack {
-                        KeyButton(colorName: keyColor(for: 16), keyIndex: 16, isLeftSide: true, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 14), keyIndex: 14, isLeftSide: true, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 12), keyIndex: 12, isLeftSide: true, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 10), keyIndex: 10, isLeftSide: true, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 8), keyIndex: 8, isLeftSide: true, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 6), keyIndex: 6, isLeftSide: true, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 4), keyIndex: 4, isLeftSide: true, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 2), keyIndex: 2, isLeftSide: true, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 0), keyIndex: 0, isLeftSide: true, keyboardState: keyboardState)
-                    }
-                    .padding(5)
-                    
-                    Spacer()
-                        .frame(width: centerConfig.width)
-                    
-                    // Right column - Keys
-                    VStack {
-                        KeyButton(colorName: keyColor(for: 17), keyIndex: 17, isLeftSide: false, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 15), keyIndex: 15, isLeftSide: false, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 13), keyIndex: 13, isLeftSide: false, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 11), keyIndex: 11, isLeftSide: false, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 9), keyIndex: 9, isLeftSide: false, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 7), keyIndex: 7, isLeftSide: false, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 5), keyIndex: 5, isLeftSide: false, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 3), keyIndex: 3, isLeftSide: false, keyboardState: keyboardState)
-                        KeyButton(colorName: keyColor(for: 1), keyIndex: 1, isLeftSide: false, keyboardState: keyboardState)
-                    }
-                    .padding(5)
-                }
-                .animation(
-                    .easeInOut(duration: showingOptions ? unfoldKeysDuration : foldKeysDuration),
-                    value: showingOptions
+            
+            // Main keyboard content
+            GeometryReader { geometry in
+                let centerConfig = CenterStripConfig.calculate(
+                    geometry: geometry,
+                    isUnfolded: showingOptions
                 )
                 
+                ZStack {
+                    Color("BackgroundColour").ignoresSafeArea()
+                    
+                    // Center strip layer
+                    ZStack {
+                        if showingOptions {
+                            // Switch between OptionsView and EditView based on currentMainView
+                            switch currentMainView {
+                            case .options:
+                                OptionsView(
+                                    showingOptions: $showingOptions,
+                                    currentSubView: $currentOptionsSubView,
+                                    currentScale: currentScale,
+                                    currentKey: currentKey,
+                                    onCycleIntonation: onCycleIntonation,
+                                    onCycleCelestial: onCycleCelestial,
+                                    onCycleTerrestrial: onCycleTerrestrial,
+                                    onCycleRotation: onCycleRotation,
+                                    onCycleKey: onCycleKey,
+                                    onSwitchToEdit: {
+                                        currentMainView = .edit
+                                    }
+                                )
+                                .transition(
+                                    .scale
+                                    .combined(with: .opacity)
+                                    )
+                                
+                            case .edit:
+                                EditView(
+                                    showingOptions: $showingOptions,
+                                    onSwitchToOptions: {
+                                        currentMainView = .options
+                                    }
+                                )
+                                .transition(
+                                    .scale
+                                    .combined(with: .opacity)
+                                    )
+                            }
+                        } else {
+                            NavigationStrip(
+                                showingOptions: $showingOptions,
+                                onPrevScale: onPrevScale,
+                                onNextScale: onNextScale,
+                                stripWidth: centerConfig.width
+                            )
+                            .transition(
+                                .scale//(scale: 0.8)
+                                .combined(with: .opacity)
+                            )
+                        }
+                    }
+                    .frame(width: centerConfig.width)
+                    .animation(
+                        .easeInOut(duration: showingOptions ? unfoldCenterDuration : foldCenterDuration),
+                        value: showingOptions
+                    )
+                    .animation(.easeInOut(duration: 0.0), value: currentMainView)
+                }
+                .statusBar(hidden: true)
+                    
+                    // Keys layer
+                    HStack(spacing: 0) {
+                        // Left column - Keys
+                        VStack {
+                            KeyButton(colorName: keyColor(for: 16), keyIndex: 16, isLeftSide: true, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 14), keyIndex: 14, isLeftSide: true, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 12), keyIndex: 12, isLeftSide: true, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 10), keyIndex: 10, isLeftSide: true, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 8), keyIndex: 8, isLeftSide: true, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 6), keyIndex: 6, isLeftSide: true, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 4), keyIndex: 4, isLeftSide: true, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 2), keyIndex: 2, isLeftSide: true, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 0), keyIndex: 0, isLeftSide: true, keyboardState: keyboardState)
+                        }
+                        .padding(5)
+                        
+                        Spacer()
+                            .frame(width: centerConfig.width)
+                        
+                        // Right column - Keys
+                        VStack {
+                            KeyButton(colorName: keyColor(for: 17), keyIndex: 17, isLeftSide: false, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 15), keyIndex: 15, isLeftSide: false, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 13), keyIndex: 13, isLeftSide: false, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 11), keyIndex: 11, isLeftSide: false, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 9), keyIndex: 9, isLeftSide: false, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 7), keyIndex: 7, isLeftSide: false, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 5), keyIndex: 5, isLeftSide: false, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 3), keyIndex: 3, isLeftSide: false, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 1), keyIndex: 1, isLeftSide: false, keyboardState: keyboardState)
+                        }
+                        .padding(5)
+                    }
+                    .animation(
+                        .easeInOut(duration: showingOptions ? unfoldKeysDuration : foldKeysDuration),
+                        value: showingOptions
+                    )
+                    
 
-                
-                
-                
-                
+                    
+                    
+                    
+                    
+            }
+            
+            // Bottom spacer - keeps layout balanced
+            if bottomSpacing > 0 {
+                Spacer()
+                    .frame(height: bottomSpacing)
+            }
         }
+        .background(Color("BackgroundColour").ignoresSafeArea())
     }
 }
 
