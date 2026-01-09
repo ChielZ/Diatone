@@ -8,7 +8,11 @@
 import SwiftUI
 import AudioKit
 
-let radius = 6.0
+/// Corner radius for rounded shapes throughout the app
+/// Returns device-specific values for optimal appearance
+var radius: CGFloat {
+    UIDevice.current.userInterfaceIdiom == .pad ? 6.0 : 4.0
+}
 
 let screenWidth = UIScreen.main.bounds.size.width
 let screenHeight = UIScreen.main.bounds.size.height
