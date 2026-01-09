@@ -13,10 +13,20 @@ struct PresetView: View {
     @ObservedObject private var presetManager = PresetManager.shared
     @ObservedObject private var paramManager = AudioParameterManager.shared
     
-    // UI State
-    @State private var selectedBank: Int = 1 // 1-5
-    @State private var selectedPosition: Int = 1 // 1-5
-    @State private var selectedType: PentatonePresetSlot.SlotType = .factory
+    // UI State - Using @AppStorage to persist across view changes
+    @AppStorage("presetView.selectedBank") private var selectedBank: Int = 1 // 1-5
+    @AppStorage("presetView.selectedPosition") private var selectedPosition: Int = 1 // 1-5
+    @AppStorage("presetView.selectedTypeRawValue") private var selectedTypeRawValue: String = PentatonePresetSlot.SlotType.factory.rawValue
+    
+    // Computed property for selectedType
+    private var selectedType: PentatonePresetSlot.SlotType {
+        get {
+            PentatonePresetSlot.SlotType(rawValue: selectedTypeRawValue) ?? .factory
+        }
+        set {
+            selectedTypeRawValue = newValue.rawValue
+        }
+    }
     
     // Sheet/Alert State
     @State private var showingSaveDialog = false
@@ -122,7 +132,7 @@ struct PresetView: View {
             // Row 5 - Load/Save Preset
             ZStack {
                 RoundedRectangle(cornerRadius: radius)
-                    .fill(currentSlotPreset != nil ? Color("HighlightColour") : Color("SupportColour"))
+                    .fill(currentSlotPreset != nil ? Color("SupportColour") : Color("HighlightColour"))
                 GeometryReader { geometry in
                     Text(currentSlotPreset != nil ? "･LOAD PRESET･" : "･SAVE PRESET･")
                         .foregroundColor(Color("BackgroundColour"))
@@ -142,7 +152,7 @@ struct PresetView: View {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
                 GeometryReader { geometry in
-                    Text("･IMPORT PRESET･")
+                    Text("･IMPORT･")
                         .foregroundColor(Color("BackgroundColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         .frame(width: geometry.size.width, height: geometry.size.height)
@@ -160,7 +170,7 @@ struct PresetView: View {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(currentSlotPreset != nil ? Color("SupportColour") : Color("BackgroundColour").opacity(1.0))
                 GeometryReader { geometry in
-                    Text("･EXPORT PRESET･")
+                    Text("･EXPORT･")
                         .foregroundColor(Color("BackgroundColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         .frame(width: geometry.size.width, height: geometry.size.height)
@@ -179,7 +189,7 @@ struct PresetView: View {
                     .fill(canOverwriteCurrentSlot ? Color("SupportColour") : Color("BackgroundColour"))
                 if canOverwriteCurrentSlot {
                     GeometryReader { geometry in
-                        Text("･OVERWRITE PRESET･")
+                        Text("･OVERWRITE･")
                             .foregroundColor(Color("BackgroundColour"))
                             .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .frame(width: geometry.size.width, height: geometry.size.height)
@@ -290,7 +300,7 @@ struct PresetView: View {
         } else {
             // Wrap to bank 5, and toggle type
             selectedBank = 5
-            selectedType = (selectedType == .factory) ? .user : .factory
+            selectedTypeRawValue = (selectedType == .factory) ? PentatonePresetSlot.SlotType.user.rawValue : PentatonePresetSlot.SlotType.factory.rawValue
         }
     }
     
@@ -300,7 +310,7 @@ struct PresetView: View {
         } else {
             // Wrap to bank 1, and toggle type
             selectedBank = 1
-            selectedType = (selectedType == .factory) ? .user : .factory
+            selectedTypeRawValue = (selectedType == .factory) ? PentatonePresetSlot.SlotType.user.rawValue : PentatonePresetSlot.SlotType.factory.rawValue
         }
     }
     
