@@ -9,10 +9,10 @@ import SwiftUI
 
 // MARK: - Tooltip View Modifier
 
-/// A view modifier that adds a localized tooltip/help overlay
-/// Usage: .tooltip(key: "keyboard.fold.help")
+/// A view modifier that adds a tooltip/help overlay on long press
+/// Usage: .tooltip("Tap to fold the keyboard")
 struct TooltipModifier: ViewModifier {
-    let localizedKey: String
+    let text: String
     @State private var isPresented = false
     
     func body(content: Content) -> some View {
@@ -29,12 +29,17 @@ struct TooltipModifier: ViewModifier {
                     }
                 }
             }
-            .overlay(alignment: .top) {
-                if isPresented {
-                    TooltipBubble(text: String(localized: LocalizedStringResource(stringLiteral: localizedKey)))
+            .overlay(
+                Group {
+                    if isPresented {
+                        VStack {
+                            TooltipBubble(text: text)
+                            Spacer()
+                        }
                         .transition(.scale.combined(with: .opacity))
+                    }
                 }
-            }
+            )
     }
 }
 
@@ -46,14 +51,14 @@ struct TooltipBubble: View {
     var body: some View {
         Text(text)
             .font(.caption)
-            .foregroundStyle(.primary)
+            .foregroundColor(.primary)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background {
+            .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(.ultraThinMaterial)
-                    .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
-            }
+                    .fill(Material.ultraThinMaterial)
+                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+            )
             .padding(.horizontal)
             .offset(y: -10)
     }
@@ -62,10 +67,10 @@ struct TooltipBubble: View {
 // MARK: - View Extension
 
 extension View {
-    /// Adds a localized tooltip that appears on long press
-    /// - Parameter key: The localization key for the tooltip text
-    func tooltip(key: String) -> some View {
-        modifier(TooltipModifier(localizedKey: key))
+    /// Adds a tooltip that appears on long press
+    /// - Parameter text: The text to display in the tooltip
+    func tooltip(_ text: String) -> some View {
+        modifier(TooltipModifier(text: text))
     }
 }
 
@@ -73,7 +78,7 @@ extension View {
 
 /// A question mark button that shows help text when tapped
 struct HelpButton: View {
-    let helpKey: String
+    let helpText: String
     @State private var isShowingHelp = false
     
     var body: some View {
@@ -81,18 +86,15 @@ struct HelpButton: View {
             isShowingHelp = true
         } label: {
             Image(systemName: "questionmark.circle")
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .font(.callout)
         }
-        .alert(
-            String(localized: "help.title", defaultValue: "Help"),
-            isPresented: $isShowingHelp
-        ) {
-            Button(String(localized: "help.dismiss", defaultValue: "Got it")) {
-                isShowingHelp = false
-            }
-        } message: {
-            Text(LocalizedStringResource(stringLiteral: helpKey))
+        .alert(isPresented: $isShowingHelp) {
+            Alert(
+                title: Text("Help"),
+                message: Text(helpText),
+                dismissButton: .default(Text("Got it"))
+            )
         }
     }
 }
@@ -106,13 +108,13 @@ struct TooltipExampleView: View {
             Button("Fold Keyboard") {
                 // Action
             }
-            .tooltip(key: "tooltip.keyboard.fold")
+            .tooltip("Long press any button to see help text")
             
             // Example 2: Help button with alert
             HStack {
                 Text("Voice Mode")
                 Spacer()
-                HelpButton(helpKey: "help.voicemode")
+                HelpButton(helpText: "Choose between polyphonic (multiple notes) and monophonic (single note) playing modes.")
             }
         }
         .padding()

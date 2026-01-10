@@ -56,8 +56,8 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  √ Check AudioKit console warnings on startup
  √ Check multiple console messages of scale frequency updates
  √ Check AudioKit warning message streams when modulation is enabled (already fixed for aftertouch)
-  
-
+ - make tune control in main ui a slider
+ - reconfigure voice editing menu to start on preset view
  
  
  
