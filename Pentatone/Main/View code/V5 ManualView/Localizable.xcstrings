@@ -1,0 +1,222 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "manual.title" : {
+      "comment" : "Navigation title for the manual/documentation view",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manual"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manual"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Handbuch"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manuel"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マニュアル"
+          }
+        }
+      }
+    },
+    "manual.welcome.title" : {
+      "comment" : "Title of welcome section",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to Pentatone"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenido a Pentatone"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Willkommen bei Pentatone"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenue sur Pentatone"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pentatoneへようこそ"
+          }
+        }
+      }
+    },
+    "manual.welcome.description" : {
+      "comment" : "Description of what Pentatone is",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pentatone is a musical instrument based on the Arithmophone, a keyboard designed to explore just intonation through pentatonic scales."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pentatone es un instrumento musical basado en el Arithmophone, un teclado diseñado para explorar la entonación justa a través de escalas pentatónicas."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pentatone ist ein Musikinstrument, das auf dem Arithmophone basiert, einer Tastatur zur Erforschung der reinen Stimmung mittels pentatonischer Tonleitern."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pentatone est un instrument de musique basé sur l'Arithmophone, un clavier conçu pour explorer l'intonation juste à travers des gammes pentatoniques."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pentatoneは、ペンタトニック・スケールを通じて純正律を探求するために設計されたキーボード、Arithmophoneに基づいた楽器です。"
+          }
+        }
+      }
+    },
+    "manual.section.keyboard" : {
+      "comment" : "Section title for keyboard documentation",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Keyboard"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Teclado"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Tastatur"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le Clavier"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーボード"
+          }
+        }
+      }
+    },
+    "manual.keyboard.touch.title" : {
+      "comment" : "Subsection about touch sensitivity",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touch Sensitivity"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensibilidad Táctil"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Berührungsempfindlichkeit"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensibilité Tactile"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タッチ感度"
+          }
+        }
+      }
+    },
+    "manual.keyboard.touch.content" : {
+      "comment" : "Explanation of touch sensitivity feature",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The keyboard responds to touch position and pressure. Slide your finger horizontally across a key to add vibrato. Touch harder for more expression."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El teclado responde a la posición y presión del toque. Desliza tu dedo horizontalmente sobre una tecla para añadir vibrato. Presiona más fuerte para mayor expresión."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Tastatur reagiert auf Berührungsposition und Druck. Gleiten Sie horizontal über eine Taste, um Vibrato hinzuzufügen. Drücken Sie fester für mehr Ausdruck."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le clavier répond à la position et à la pression du toucher. Glissez votre doigt horizontalement sur une touche pour ajouter du vibrato. Appuyez plus fort pour plus d'expression."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーボードはタッチの位置と圧力に反応します。キーを横にスライドしてビブラートをかけることができます。より強く押すと、より表現豊かになります。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
