@@ -65,7 +65,29 @@ struct SoundView: View {
                 
             }
             
-            ZStack { // Row 5 - Top Row of Preset Buttons (Row 1)
+            ZStack { // Row 5 - Top Row (Select Row 1-5)
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("BackgroundColour"))
+
+                HStack {
+                    ForEach(1...5, id: \.self) { row in
+                        PresetButton(
+                            row: row,
+                            column: 1,
+                            isSelected: selectedRow == row,
+                            action: {
+                                selectRow(row)
+                            }
+                        )
+                        
+                        if row < 5 {
+                            Spacer()
+                        }
+                    }
+                }
+            }
+            
+            ZStack { // Row 6 - Bottom Row (Select Column 1-5)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
 
@@ -74,31 +96,9 @@ struct SoundView: View {
                         PresetButton(
                             row: 1,
                             column: column,
-                            isSelected: selectedRow == 1 && selectedColumn == column,
+                            isSelected: selectedColumn == column,
                             action: {
-                                selectPreset(row: 1, column: column)
-                            }
-                        )
-                        
-                        if column < 5 {
-                            Spacer()
-                        }
-                    }
-                }
-            }
-            
-            ZStack { // Row 6 - Bottom Row of Preset Buttons (Row 2)
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-
-                HStack {
-                    ForEach(1...5, id: \.self) { column in
-                        PresetButton(
-                            row: 2,
-                            column: column,
-                            isSelected: selectedRow == 2 && selectedColumn == column,
-                            action: {
-                                selectPreset(row: 2, column: column)
+                                selectColumn(column)
                             }
                         )
                         
@@ -230,13 +230,25 @@ struct SoundView: View {
     
     // MARK: - Actions
     
-    private func selectPreset(row: Int, column: Int) {
-        // Update selection
+    private func selectRow(_ row: Int) {
+        // Update row selection
         selectedRow = row
+        
+        // Load the preset at the new position
+        loadCurrentPreset()
+    }
+    
+    private func selectColumn(_ column: Int) {
+        // Update column selection
         selectedColumn = column
         
-        // Load preset if it exists
-        if let preset = presetManager.preset(forBankType: selectedBankType, row: row, column: column) {
+        // Load the preset at the new position
+        loadCurrentPreset()
+    }
+    
+    private func loadCurrentPreset() {
+        // Load preset if it exists at current row/column
+        if let preset = presetManager.preset(forBankType: selectedBankType, row: selectedRow, column: selectedColumn) {
             presetManager.loadPreset(preset)
         }
         // If slot is empty, just update the display (no sound change)
