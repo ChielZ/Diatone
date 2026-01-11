@@ -436,16 +436,46 @@ final class PresetManager: ObservableObject {
     }
     
     /// Import a preset from a file (e.g., shared from another device)
-    /// - Parameter url: URL of the preset file to import
+    /// - Parameters:
+    ///   - url: URL of the preset file to import
+    ///   - loadImmediately: If true, load the preset to the audio engine after importing (default: true)
     /// - Returns: The imported preset
     /// - Throws: Decoding or file system errors
     @discardableResult
-    func importPreset(from url: URL) throws -> AudioParameterSet {
-        // Read and decode preset
+    func importPreset(from url: URL, loadImmediately: Bool = true) throws -> AudioParameterSet {
+        // Read data
         let data = try Data(contentsOf: url)
+        
+        // Attempt to decode preset
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        var preset = try decoder.decode(AudioParameterSet.self, from: data)
+        
+        var preset: AudioParameterSet
+        do {
+            preset = try decoder.decode(AudioParameterSet.self, from: data)
+        } catch {
+            // Provide detailed error information
+            print("❌ PresetManager: Failed to decode preset from \(url.lastPathComponent)")
+            print("   Error: \(error)")
+            
+            // Check if it's a decoding error with more details
+            if let decodingError = error as? DecodingError {
+                switch decodingError {
+                case .keyNotFound(let key, let context):
+                    print("   Missing key: '\(key.stringValue)' at path: \(context.codingPath.map { $0.stringValue }.joined(separator: "."))")
+                case .typeMismatch(let type, let context):
+                    print("   Type mismatch: Expected \(type) at path: \(context.codingPath.map { $0.stringValue }.joined(separator: "."))")
+                case .valueNotFound(let type, let context):
+                    print("   Value not found: \(type) at path: \(context.codingPath.map { $0.stringValue }.joined(separator: "."))")
+                case .dataCorrupted(let context):
+                    print("   Data corrupted at path: \(context.codingPath.map { $0.stringValue }.joined(separator: "."))")
+                @unknown default:
+                    print("   Unknown decoding error")
+                }
+            }
+            
+            throw PresetError.incompatibleFormat("This preset was created with an older version of the app and cannot be imported. The preset format has changed.")
+        }
         
         // Check if preset with same ID already exists
         if presetExists(withID: preset.id) {
@@ -470,6 +500,44 @@ final class PresetManager: ObservableObject {
         try savePreset(preset)
         
         print("✅ PresetManager: Imported preset '\(preset.name)'")
+        
+        // Optionally load the preset to the audio engine
+        if loadImmediately {
+            loadPreset(preset)
+            print("✅ PresetManager: Loaded imported preset '\(preset.name)' to audio engine")
+        }
+        
+        return preset
+    }
+    
+    /// Import a preset and assign it to a specific slot
+    /// - Parameters:
+    ///   - url: URL of the preset file to import
+    ///   - bankType: The bank to assign the preset to (must be a user bank)
+    ///   - row: Row position (1-5)
+    ///   - column: Column position (1-5)
+    ///   - loadImmediately: If true, load the preset to the audio engine after importing (default: true)
+    /// - Returns: The imported preset
+    /// - Throws: Decoding, file system, or slot assignment errors
+    @discardableResult
+    func importPresetToSlot(from url: URL, 
+                           bankType: PentatoneBankType, 
+                           row: Int, 
+                           column: Int,
+                           loadImmediately: Bool = true) throws -> AudioParameterSet {
+        // Import the preset (but don't auto-load yet)
+        let preset = try importPreset(from: url, loadImmediately: false)
+        
+        // Assign to the specified slot
+        try assignPresetToSlot(preset: preset, bankType: bankType, row: row, column: column)
+        
+        print("✅ PresetManager: Assigned imported preset '\(preset.name)' to \(bankType.displayName) \(row).\(column)")
+        
+        // Load if requested
+        if loadImmediately {
+            loadPreset(preset)
+            print("✅ PresetManager: Loaded imported preset '\(preset.name)' to audio engine")
+        }
         
         return preset
     }
@@ -677,6 +745,7 @@ enum PresetError: LocalizedError {
     case cannotAssignFactoryPresetToUserSlot
     case cannotModifyFactoryBank
     case invalidSlotPosition
+    case incompatibleFormat(String)
     
     var errorDescription: String? {
         switch self {
@@ -696,6 +765,8 @@ enum PresetError: LocalizedError {
             return "Factory bank cannot be modified"
         case .invalidSlotPosition:
             return "Invalid slot position (must be row 1-5, column 1-5)"
+        case .incompatibleFormat(let message):
+            return message
         }
     }
 }
