@@ -9,12 +9,13 @@ import Foundation
 
 // MARK: - Bank Type
 
-/// Represents the four available preset banks in Pentatone
+/// Represents the five available preset banks in Pentatone
 enum PentatoneBankType: String, Codable, Equatable, CaseIterable {
     case factory = "Factory"
     case userA = "User A"
     case userB = "User B"
     case userC = "User C"
+    case userD = "User D"
     
     /// Display name for the bank
     var displayName: String {
@@ -118,7 +119,7 @@ struct PentatoneFactoryLayout {
 // MARK: - User Layout (Saved to Disk)
 
 /// User preset layout for Pentatone
-/// Contains three user banks (User A, User B, User C), each with 25 slots (1.1 to 5.5)
+/// Contains four user banks (User A, User B, User C, User D), each with 25 slots (1.1 to 5.5)
 /// This is saved to disk and can be modified by the user
 struct PentatoneUserLayout: Codable, Equatable {
     
@@ -131,6 +132,9 @@ struct PentatoneUserLayout: Codable, Equatable {
     /// All user preset slots for User C bank
     var userCSlots: [PentatonePresetSlot]
     
+    /// All user preset slots for User D bank
+    var userDSlots: [PentatonePresetSlot]
+    
     /// Date this layout was last modified
     var lastModified: Date
     
@@ -138,18 +142,21 @@ struct PentatoneUserLayout: Codable, Equatable {
     init(userASlots: [PentatonePresetSlot], 
          userBSlots: [PentatonePresetSlot],
          userCSlots: [PentatonePresetSlot],
+         userDSlots: [PentatonePresetSlot],
          lastModified: Date = Date()) {
         self.userASlots = userASlots
         self.userBSlots = userBSlots
         self.userCSlots = userCSlots
+        self.userDSlots = userDSlots
         self.lastModified = lastModified
     }
     
-    /// Default layout: 3 banks × 25 empty slots each
+    /// Default layout: 4 banks × 25 empty slots each
     static let `default` = PentatoneUserLayout(
         userASlots: Self.createEmptyBank(for: .userA),
         userBSlots: Self.createEmptyBank(for: .userB),
         userCSlots: Self.createEmptyBank(for: .userC),
+        userDSlots: Self.createEmptyBank(for: .userD),
         lastModified: Date()
     )
     
@@ -181,6 +188,8 @@ struct PentatoneUserLayout: Codable, Equatable {
             return userBSlots
         case .userC:
             return userCSlots
+        case .userD:
+            return userDSlots
         }
     }
     
@@ -201,6 +210,8 @@ struct PentatoneUserLayout: Codable, Equatable {
             targetSlots = userBSlots
         case .userC:
             targetSlots = userCSlots
+        case .userD:
+            targetSlots = userDSlots
         case .factory:
             return // Cannot modify factory slots
         }
@@ -216,6 +227,8 @@ struct PentatoneUserLayout: Codable, Equatable {
                 userBSlots = targetSlots
             case .userC:
                 userCSlots = targetSlots
+            case .userD:
+                userDSlots = targetSlots
             case .factory:
                 break
             }
@@ -231,7 +244,7 @@ struct PentatoneUserLayout: Codable, Equatable {
     
     /// Get all non-empty slots across all user banks
     var assignedSlots: [PentatonePresetSlot] {
-        return (userASlots + userBSlots + userCSlots).filter { !$0.isEmpty }
+        return (userASlots + userBSlots + userCSlots + userDSlots).filter { !$0.isEmpty }
     }
     
     /// Get count of assigned slots across all user banks
@@ -241,7 +254,7 @@ struct PentatoneUserLayout: Codable, Equatable {
     
     /// Get count of empty slots across all user banks
     var emptyCount: Int {
-        return 75 - assignedCount // 3 banks × 25 slots = 75 total
+        return 100 - assignedCount // 4 banks × 25 slots = 100 total
     }
 }
 

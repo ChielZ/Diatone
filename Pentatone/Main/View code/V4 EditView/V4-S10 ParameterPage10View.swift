@@ -356,7 +356,7 @@ struct PresetView: View {
         } else {
             // Slot is empty - Save current parameters
             if selectedBankType.isFactoryBank {
-                showAlert("Cannot save to factory bank. Switch to User A, User B, or User C.")
+                showAlert("Cannot save to factory bank. Switch to User A, User B, User C, or User D.")
             } else {
                 showingSaveDialog = true
             }

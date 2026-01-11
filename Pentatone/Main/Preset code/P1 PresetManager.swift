@@ -491,14 +491,14 @@ final class PresetManager: ObservableObject {
         return factoryPresetCount + userPresetCount
     }
     
-    /// Check if user preset storage is full (75 slots for Pentatone)
+    /// Check if user preset storage is full (100 slots for Pentatone)
     var userPresetsAreFull: Bool {
-        return userPresetCount >= 75
+        return userPresetCount >= 100
     }
     
     /// Number of available user preset slots remaining
     var availableUserSlots: Int {
-        return max(0, 75 - userPresetCount)
+        return max(0, 100 - userPresetCount)
     }
     
     // MARK: - Slot Management
@@ -661,6 +661,7 @@ final class PresetManager: ObservableObject {
         print("   - User A slots: 25 total")
         print("   - User B slots: 25 total")
         print("   - User C slots: 25 total")
+        print("   - User D slots: 25 total")
         print("   - Total assigned: \(userLayout.assignedCount), Empty: \(userLayout.emptyCount)")
     }
 }
@@ -684,7 +685,7 @@ enum PresetError: LocalizedError {
         case .cannotUpdateFactoryPreset:
             return "Factory presets cannot be updated"
         case .userPresetLimitReached:
-            return "User preset limit reached (75 presets)"
+            return "User preset limit reached (100 presets)"
         case .presetNotFound:
             return "Preset not found"
         case .invalidPresetFile:
