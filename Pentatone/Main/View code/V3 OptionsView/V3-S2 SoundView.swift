@@ -10,6 +10,35 @@ import SwiftUI
 struct SoundView: View {
     // Connect to the global parameter manager
     @ObservedObject private var paramManager = AudioParameterManager.shared
+    @ObservedObject private var presetManager = PresetManager.shared
+    
+    // Get the currently selected bank from PresetView (persisted)
+    @AppStorage("presetView.selectedBankTypeRawValue") private var selectedBankTypeRawValue: String = PentatoneBankType.factory.rawValue
+    
+    // Track which slot is selected in this view
+    @State private var selectedRow: Int = 1 // 1-5
+    @State private var selectedColumn: Int = 1 // 1-5
+    
+    // Computed property for selectedBankType
+    private var selectedBankType: PentatoneBankType {
+        PentatoneBankType(rawValue: selectedBankTypeRawValue) ?? .factory
+    }
+    
+    // Get the currently selected preset
+    private var currentPreset: AudioParameterSet? {
+        presetManager.preset(forBankType: selectedBankType, row: selectedRow, column: selectedColumn)
+    }
+    
+    // Display text for current selection
+    private var presetDisplayText: String {
+        let slotName = "\(selectedRow).\(selectedColumn)"
+        
+        if let preset = currentPreset {
+            return "\(slotName) \(preset.name)"
+        } else {
+            return "\(slotName) - Empty"
+        }
+    }
     
     var body: some View {
         Group {
@@ -19,130 +48,64 @@ struct SoundView: View {
                     .fill(Color("BackgroundColour"))
                 
             }
-            ZStack { // Row 4
+            ZStack { // Row 4 - Preset Name Display
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
                 GeometryReader { geometry in
-                    Text("1.1 Keys")
+                    Text(presetDisplayText)
                         .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("LobsterTwo", size: 55)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .contentShape(Rectangle())
                         .offset(y: -(geometry.size.height/2 + 11))
                         .padding(0)
-                        //.onTapGesture {
-                        //    onSwitchToEdit?()
-                        }
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                }
                 
             }
             
-            ZStack { // Row 5
+            ZStack { // Row 5 - Top Row of Preset Buttons (Row 1)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
 
                 HStack {
-                   
-                        RoundedRectangle(cornerRadius: radius)
-                            .fill(Color("HighlightColour"))
-                            .aspectRatio(1.0, contentMode: .fit)
-                            .overlay(
-                                Text("1")
-                                    .foregroundColor(Color("BackgroundColour"))
-                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                            )
-                    
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("2")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                    ForEach(1...5, id: \.self) { column in
+                        PresetButton(
+                            row: 1,
+                            column: column,
+                            isSelected: selectedRow == 1 && selectedColumn == column,
+                            action: {
+                                selectPreset(row: 1, column: column)
+                            }
                         )
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("3")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("4")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("5")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                    
+                        
+                        if column < 5 {
+                            Spacer()
+                        }
+                    }
                 }
             }
             
-            ZStack { // Row 6
+            ZStack { // Row 6 - Bottom Row of Preset Buttons (Row 2)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
 
                 HStack {
-                   
-                        RoundedRectangle(cornerRadius: radius)
-                            .fill(Color("HighlightColour"))
-                            .aspectRatio(1.0, contentMode: .fit)
-                            .overlay(
-                                Text("1")
-                                    .foregroundColor(Color("BackgroundColour"))
-                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                            )
-                    
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("2")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                    ForEach(1...5, id: \.self) { column in
+                        PresetButton(
+                            row: 2,
+                            column: column,
+                            isSelected: selectedRow == 2 && selectedColumn == column,
+                            action: {
+                                selectPreset(row: 2, column: column)
+                            }
                         )
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("3")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("4")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("5")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                    
+                        
+                        if column < 5 {
+                            Spacer()
+                        }
+                    }
                 }
             }
             
@@ -263,6 +226,44 @@ struct SoundView: View {
             
             
         }
+    }
+    
+    // MARK: - Actions
+    
+    private func selectPreset(row: Int, column: Int) {
+        // Update selection
+        selectedRow = row
+        selectedColumn = column
+        
+        // Load preset if it exists
+        if let preset = presetManager.preset(forBankType: selectedBankType, row: row, column: column) {
+            presetManager.loadPreset(preset)
+        }
+        // If slot is empty, just update the display (no sound change)
+    }
+}
+
+// MARK: - Preset Button Component
+
+private struct PresetButton: View {
+    let row: Int
+    let column: Int
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        RoundedRectangle(cornerRadius: radius)
+            .fill(isSelected ? Color("HighlightColour") : Color("SupportColour"))
+            .aspectRatio(1.0, contentMode: .fit)
+            .overlay(
+                Text("\(column)")
+                    .foregroundColor(Color("BackgroundColour"))
+                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
+            )
+            .contentShape(Rectangle())
+            .onTapGesture {
+                action()
+            }
     }
 }
 
