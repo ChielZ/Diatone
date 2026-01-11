@@ -417,9 +417,21 @@ struct PresetView: View {
     }
     
     private func handleImport(from url: URL) {
+        // Check if trying to import into factory bank
+        if selectedBankType.isFactoryBank {
+            showAlert("Cannot import to factory bank. Switch to User A, User B, User C, or User D.")
+            return
+        }
+        
         do {
-            let preset = try presetManager.importPreset(from: url)
-            showAlert("Imported preset '\(preset.name)'")
+            // Import and assign to currently selected slot
+            let preset = try presetManager.importPresetToSlot(
+                from: url,
+                bankType: selectedBankType,
+                row: selectedRow,
+                column: selectedColumn
+            )
+            showAlert("Imported '\(preset.name)' to \(selectedBankType.displayName) \(selectedRow).\(selectedColumn)")
         } catch {
             showAlert("Failed to import preset: \(error.localizedDescription)")
         }
