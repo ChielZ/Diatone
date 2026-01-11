@@ -25,7 +25,7 @@ struct SoundView: View {
                 GeometryReader { geometry in
                     Text("1.1 Keys")
                         .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("LobsterTwo-Italic", size: 55)
+                        .adaptiveFont("LobsterTwo", size: 55)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .contentShape(Rectangle())
                         .offset(y: -(geometry.size.height/2 + 11))
