@@ -150,18 +150,20 @@ struct PresetView: View {
             // Row 6 - Import Preset
             ZStack {
                 RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("SupportColour"))
-                GeometryReader { geometry in
-                    Text("･IMPORT･")
-                        .foregroundColor(Color("BackgroundColour"))
-                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .contentShape(Rectangle())
-                        .padding(0)
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    showingImportPicker = true
+                    .fill(selectedBankType.isUserBank ? Color("SupportColour") : Color("BackgroundColour"))
+                if selectedBankType.isUserBank {
+                    GeometryReader { geometry in
+                        Text("･IMPORT･")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .contentShape(Rectangle())
+                            .padding(0)
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        showingImportPicker = true
+                    }
                 }
             }
             
@@ -275,7 +277,7 @@ struct PresetView: View {
         let slotName = "\(selectedRow).\(selectedColumn)"
         
         if let preset = currentSlotPreset {
-            return "\(slotName): \(preset.name)"
+            return "\(slotName) \(preset.name)"
         } else {
             return "\(slotName) - Empty"
         }
