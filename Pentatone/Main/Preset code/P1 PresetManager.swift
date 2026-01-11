@@ -479,14 +479,14 @@ final class PresetManager: ObservableObject {
         
         // Check if preset with same ID already exists
         if presetExists(withID: preset.id) {
-            // Generate new ID to avoid conflicts
+            // Generate new ID to avoid conflicts (keep original name)
             let oldID = preset.id
             let newID = UUID()
             
-            // Create new preset with updated ID and name
+            // Create new preset with updated ID but same name
             preset = AudioParameterSet(
                 id: newID,
-                name: "\(preset.name) (Imported)",
+                name: preset.name,
                 voiceTemplate: preset.voiceTemplate,
                 master: preset.master,
                 macroState: preset.macroState,
