@@ -14,17 +14,17 @@ struct PresetView: View {
     @ObservedObject private var paramManager = AudioParameterManager.shared
     
     // UI State - Using @AppStorage to persist across view changes
-    @AppStorage("presetView.selectedBank") private var selectedBank: Int = 1 // 1-5
-    @AppStorage("presetView.selectedPosition") private var selectedPosition: Int = 1 // 1-5
-    @AppStorage("presetView.selectedTypeRawValue") private var selectedTypeRawValue: String = PentatonePresetSlot.SlotType.factory.rawValue
+    @AppStorage("presetView.selectedBankTypeRawValue") private var selectedBankTypeRawValue: String = PentatoneBankType.factory.rawValue
+    @AppStorage("presetView.selectedRow") private var selectedRow: Int = 1 // 1-5
+    @AppStorage("presetView.selectedColumn") private var selectedColumn: Int = 1 // 1-5
     
-    // Computed property for selectedType
-    private var selectedType: PentatonePresetSlot.SlotType {
+    // Computed property for selectedBankType
+    private var selectedBankType: PentatoneBankType {
         get {
-            PentatonePresetSlot.SlotType(rawValue: selectedTypeRawValue) ?? .factory
+            PentatoneBankType(rawValue: selectedBankTypeRawValue) ?? .factory
         }
         set {
-            selectedTypeRawValue = newValue.rawValue
+            selectedBankTypeRawValue = newValue.rawValue
         }
     }
     
@@ -268,13 +268,11 @@ struct PresetView: View {
     // MARK: - Computed Properties
     
     private var bankDisplayText: String {
-        let prefix = selectedType == .factory ? "F" : "U"
-        return "\(prefix) BANK \(selectedBank)"
+        return selectedBankType.displayName.uppercased()
     }
     
     private var positionDisplayText: String {
-        let prefix = selectedType == .factory ? "F" : "U"
-        let slotName = "\(prefix)\(selectedBank).\(selectedPosition)"
+        let slotName = "\(selectedRow).\(selectedColumn)"
         
         if let preset = currentSlotPreset {
             return "\(slotName): \(preset.name)"
@@ -284,49 +282,67 @@ struct PresetView: View {
     }
     
     private var currentSlotPreset: AudioParameterSet? {
-        return presetManager.preset(forBank: selectedBank, position: selectedPosition, type: selectedType)
+        return presetManager.preset(forBankType: selectedBankType, row: selectedRow, column: selectedColumn)
     }
     
     private var canOverwriteCurrentSlot: Bool {
-        guard selectedType == .user else { return false }
+        guard selectedBankType.isUserBank else { return false }
         return currentSlotPreset != nil
     }
     
     // MARK: - Navigation
     
     private func previousBank() {
-        if selectedBank > 1 {
-            selectedBank -= 1
-        } else {
-            // Wrap to bank 5, and toggle type
-            selectedBank = 5
-            selectedTypeRawValue = (selectedType == .factory) ? PentatonePresetSlot.SlotType.user.rawValue : PentatonePresetSlot.SlotType.factory.rawValue
+        // Get all bank types and find current index
+        let allBanks = PentatoneBankType.allCases
+        if let currentIndex = allBanks.firstIndex(of: selectedBankType) {
+            if currentIndex > 0 {
+                selectedBankTypeRawValue = allBanks[currentIndex - 1].rawValue
+            } else {
+                // Wrap to last bank
+                selectedBankTypeRawValue = allBanks.last!.rawValue
+            }
         }
     }
     
     private func nextBank() {
-        if selectedBank < 5 {
-            selectedBank += 1
-        } else {
-            // Wrap to bank 1, and toggle type
-            selectedBank = 1
-            selectedTypeRawValue = (selectedType == .factory) ? PentatonePresetSlot.SlotType.user.rawValue : PentatonePresetSlot.SlotType.factory.rawValue
+        // Get all bank types and find current index
+        let allBanks = PentatoneBankType.allCases
+        if let currentIndex = allBanks.firstIndex(of: selectedBankType) {
+            if currentIndex < allBanks.count - 1 {
+                selectedBankTypeRawValue = allBanks[currentIndex + 1].rawValue
+            } else {
+                // Wrap to first bank
+                selectedBankTypeRawValue = allBanks.first!.rawValue
+            }
         }
     }
     
     private func previousPosition() {
-        if selectedPosition > 1 {
-            selectedPosition -= 1
+        // Navigate through the 5×5 grid (decrement column, then row)
+        if selectedColumn > 1 {
+            selectedColumn -= 1
+        } else if selectedRow > 1 {
+            selectedColumn = 5
+            selectedRow -= 1
         } else {
-            selectedPosition = 5
+            // Wrap to last position
+            selectedRow = 5
+            selectedColumn = 5
         }
     }
     
     private func nextPosition() {
-        if selectedPosition < 5 {
-            selectedPosition += 1
+        // Navigate through the 5×5 grid (increment column, then row)
+        if selectedColumn < 5 {
+            selectedColumn += 1
+        } else if selectedRow < 5 {
+            selectedColumn = 1
+            selectedRow += 1
         } else {
-            selectedPosition = 1
+            // Wrap to first position
+            selectedRow = 1
+            selectedColumn = 1
         }
     }
     
@@ -339,8 +355,8 @@ struct PresetView: View {
             showAlert("Loaded preset '\(preset.name)'")
         } else {
             // Slot is empty - Save current parameters
-            if selectedType == .factory {
-                showAlert("Cannot save to factory slots. Switch to user banks (U1-U5).")
+            if selectedBankType.isFactoryBank {
+                showAlert("Cannot save to factory bank. Switch to User A, User B, or User C.")
             } else {
                 showingSaveDialog = true
             }
@@ -358,9 +374,9 @@ struct PresetView: View {
             let newPreset = try presetManager.saveCurrentAsNewPreset(name: newPresetName)
             
             // Assign to current slot
-            try presetManager.assignPresetToSlot(preset: newPreset, bank: selectedBank, position: selectedPosition)
+            try presetManager.assignPresetToSlot(preset: newPreset, bankType: selectedBankType, row: selectedRow, column: selectedColumn)
             
-            showAlert("Saved preset '\(newPresetName)' to \(selectedType == .factory ? "F" : "U")\(selectedBank).\(selectedPosition)")
+            showAlert("Saved preset '\(newPresetName)' to \(selectedBankType.displayName) \(selectedRow).\(selectedColumn)")
             newPresetName = ""
             showingSaveDialog = false
         } catch {

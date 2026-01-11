@@ -546,17 +546,17 @@ final class PresetManager: ObservableObject {
     
     /// Get preset for a specific slot
     /// - Parameters:
-    ///   - bank: Bank number (1-5)
-    ///   - position: Position within bank (1-5)
-    ///   - type: Factory or user slot
+    ///   - bankType: The bank type (Factory, User A, User B, or User C)
+    ///   - row: Row within bank (1-5)
+    ///   - column: Column within bank (1-5)
     /// - Returns: The preset assigned to this slot, or nil if empty/not found
-    func preset(forBank bank: Int, position: Int, type: PentatonePresetSlot.SlotType) -> AudioParameterSet? {
+    func preset(forBankType bankType: PentatoneBankType, row: Int, column: Int) -> AudioParameterSet? {
         // Get the slot
         let slot: PentatonePresetSlot?
-        if type == .factory {
-            slot = PentatoneFactoryLayout.slot(bank: bank, position: position)
+        if bankType == .factory {
+            slot = PentatoneFactoryLayout.slot(row: row, column: column)
         } else {
-            slot = userLayout.slot(bank: bank, position: position)
+            slot = userLayout.slot(bankType: bankType, row: row, column: column)
         }
         
         // Get preset ID from slot
@@ -568,67 +568,81 @@ final class PresetManager: ObservableObject {
         return preset(withID: presetID)
     }
     
-    /// Get slot by bank and position
-    func slot(forBank bank: Int, position: Int, type: PentatonePresetSlot.SlotType) -> PentatonePresetSlot? {
-        if type == .factory {
-            return PentatoneFactoryLayout.slot(bank: bank, position: position)
+    /// Get slot by bank type, row, and column
+    func slot(forBankType bankType: PentatoneBankType, row: Int, column: Int) -> PentatonePresetSlot? {
+        if bankType == .factory {
+            return PentatoneFactoryLayout.slot(row: row, column: column)
         } else {
-            return userLayout.slot(bank: bank, position: position)
+            return userLayout.slot(bankType: bankType, row: row, column: column)
         }
     }
     
     /// Check if a slot is empty (no preset assigned)
-    func isSlotEmpty(bank: Int, position: Int, type: PentatonePresetSlot.SlotType) -> Bool {
-        return preset(forBank: bank, position: position, type: type) == nil
+    func isSlotEmpty(bankType: PentatoneBankType, row: Int, column: Int) -> Bool {
+        return preset(forBankType: bankType, row: row, column: column) == nil
     }
     
     /// Assign a preset to a user slot
     /// - Parameters:
     ///   - preset: The preset to assign (must be a user preset)
-    ///   - bank: Bank number (1-5)
-    ///   - position: Position within bank (1-5)
+    ///   - bankType: The user bank type (User A, User B, or User C)
+    ///   - row: Row within bank (1-5)
+    ///   - column: Column within bank (1-5)
     /// - Throws: File system errors or validation errors
-    func assignPresetToSlot(preset: AudioParameterSet, bank: Int, position: Int) throws {
+    func assignPresetToSlot(preset: AudioParameterSet, bankType: PentatoneBankType, row: Int, column: Int) throws {
         // Validate it's a user preset (not factory)
         guard userPresets.contains(where: { $0.id == preset.id }) else {
             throw PresetError.cannotAssignFactoryPresetToUserSlot
         }
         
-        // Validate bank and position
-        guard (1...5).contains(bank) && (1...5).contains(position) else {
+        // Validate it's a user bank (not factory)
+        guard bankType.isUserBank else {
+            throw PresetError.cannotModifyFactoryBank
+        }
+        
+        // Validate row and column
+        guard (1...5).contains(row) && (1...5).contains(column) else {
             throw PresetError.invalidSlotPosition
         }
         
         // Assign to layout
-        userLayout.assignPreset(preset.id, toBank: bank, position: position)
+        userLayout.assignPreset(preset.id, toBankType: bankType, row: row, column: column)
         
         // Save layout
         try saveUserLayout()
         
-        print("✅ PresetManager: Assigned '\(preset.name)' to U\(bank).\(position)")
+        print("✅ PresetManager: Assigned '\(preset.name)' to \(bankType.displayName) \(row).\(column)")
     }
     
     /// Clear a user slot (remove preset assignment)
     /// - Parameters:
-    ///   - bank: Bank number (1-5)
-    ///   - position: Position within bank (1-5)
-    /// - Throws: File system errors
-    func clearSlot(bank: Int, position: Int) throws {
-        userLayout.clearSlot(bank: bank, position: position)
+    ///   - bankType: The user bank type (User A, User B, or User C)
+    ///   - row: Row within bank (1-5)
+    ///   - column: Column within bank (1-5)
+    /// - Throws: File system errors or validation errors
+    func clearSlot(bankType: PentatoneBankType, row: Int, column: Int) throws {
+        guard bankType.isUserBank else {
+            throw PresetError.cannotModifyFactoryBank
+        }
+        
+        userLayout.clearSlot(bankType: bankType, row: row, column: column)
         try saveUserLayout()
         
-        print("✅ PresetManager: Cleared slot U\(bank).\(position)")
+        print("✅ PresetManager: Cleared slot \(bankType.displayName) \(row).\(column)")
     }
     
-    /// Get all slots for a specific bank and type
-    func slots(forBank bank: Int, type: PentatonePresetSlot.SlotType) -> [PentatonePresetSlot] {
-        let allSlots = type == .factory ? factoryLayout : userLayout.userSlots
-        return allSlots.filter { $0.bank == bank }.sorted { $0.position < $1.position }
+    /// Get all slots for a specific bank type
+    func slots(forBankType bankType: PentatoneBankType) -> [PentatonePresetSlot] {
+        if bankType == .factory {
+            return factoryLayout
+        } else {
+            return userLayout.slots(for: bankType)
+        }
     }
     
     /// Get all presets for a specific bank (non-nil only)
-    func presets(forBank bank: Int, type: PentatonePresetSlot.SlotType) -> [AudioParameterSet] {
-        return slots(forBank: bank, type: type)
+    func presets(forBankType bankType: PentatoneBankType) -> [AudioParameterSet] {
+        return slots(forBankType: bankType)
             .compactMap { slot in
                 guard let presetID = slot.presetID else { return nil }
                 return preset(withID: presetID)
@@ -644,7 +658,10 @@ final class PresetManager: ObservableObject {
         
         print("✅ PresetManager: Layouts initialized")
         print("   - Factory slots: \(factoryLayout.count) total")
-        print("   - User slots: \(userLayout.assignedCount) assigned, \(userLayout.emptyCount) empty")
+        print("   - User A slots: 25 total")
+        print("   - User B slots: 25 total")
+        print("   - User C slots: 25 total")
+        print("   - Total assigned: \(userLayout.assignedCount), Empty: \(userLayout.emptyCount)")
     }
 }
 
@@ -657,6 +674,7 @@ enum PresetError: LocalizedError {
     case presetNotFound
     case invalidPresetFile
     case cannotAssignFactoryPresetToUserSlot
+    case cannotModifyFactoryBank
     case invalidSlotPosition
     
     var errorDescription: String? {
@@ -673,8 +691,10 @@ enum PresetError: LocalizedError {
             return "Invalid preset file format"
         case .cannotAssignFactoryPresetToUserSlot:
             return "Factory presets cannot be assigned to user slots"
+        case .cannotModifyFactoryBank:
+            return "Factory bank cannot be modified"
         case .invalidSlotPosition:
-            return "Invalid slot position (must be bank 1-5, position 1-5)"
+            return "Invalid slot position (must be row 1-5, column 1-5)"
         }
     }
 }

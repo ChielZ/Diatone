@@ -7,36 +7,55 @@
 
 import Foundation
 
+// MARK: - Bank Type
+
+/// Represents the four available preset banks in Pentatone
+enum PentatoneBankType: String, Codable, Equatable, CaseIterable {
+    case factory = "Factory"
+    case userA = "User A"
+    case userB = "User B"
+    case userC = "User C"
+    
+    /// Display name for the bank
+    var displayName: String {
+        return rawValue
+    }
+    
+    /// Check if this is a user bank (editable)
+    var isUserBank: Bool {
+        return self != .factory
+    }
+    
+    /// Check if this is the factory bank (read-only)
+    var isFactoryBank: Bool {
+        return self == .factory
+    }
+}
+
 // MARK: - Preset Slot Structures
 
 /// Represents a single preset slot in the Pentatone 5×5 grid system
-/// Each slot can hold a reference to a preset via its UUID
+/// Each bank contains 25 slots (5 rows × 5 columns), numbered 1.1 to 5.5
 struct PentatonePresetSlot: Codable, Equatable, Identifiable {
     
     /// Unique identifier for this slot (not the preset's ID)
     var id: UUID
     
-    /// Bank number (1-5)
-    var bank: Int
+    /// Which bank this slot belongs to
+    var bankType: PentatoneBankType
     
-    /// Position within the bank (1-5)
-    var position: Int
+    /// Row number within the bank (1-5)
+    var row: Int
+    
+    /// Column number within the bank (1-5)
+    var column: Int
     
     /// UUID of the preset assigned to this slot (if any)
     var presetID: UUID?
     
-    /// Type of slot (factory or user)
-    var slotType: SlotType
-    
-    enum SlotType: String, Codable, Equatable {
-        case factory
-        case user
-    }
-    
-    /// Human-readable slot name (e.g., "F1.1" or "U2.3")
+    /// Human-readable slot name (e.g., "1.1", "3.4", "5.5")
     var displayName: String {
-        let prefix = slotType == .factory ? "F" : "U"
-        return "\(prefix)\(bank).\(position)"
+        return "\(row).\(column)"
     }
     
     /// Check if slot is empty (no preset assigned)
@@ -45,35 +64,35 @@ struct PentatonePresetSlot: Codable, Equatable, Identifiable {
     }
     
     /// Initialize a new slot
-    init(bank: Int, position: Int, presetID: UUID? = nil, slotType: SlotType) {
+    init(bankType: PentatoneBankType, row: Int, column: Int, presetID: UUID? = nil) {
         self.id = UUID()
-        self.bank = bank
-        self.position = position
+        self.bankType = bankType
+        self.row = row
+        self.column = column
         self.presetID = presetID
-        self.slotType = slotType
     }
 }
 
 // MARK: - Factory Layout (Hardcoded)
 
 /// Factory preset layout for Pentatone
-/// This defines the mapping of factory presets to the 5×5 grid (F1.1 - F5.5)
+/// This defines the mapping of factory presets to a 5×5 grid (25 slots: 1.1 to 5.5)
 struct PentatoneFactoryLayout {
     
-    /// All 25 factory preset slots
+    /// All 25 factory preset slots (5 rows × 5 columns)
     /// These UUIDs must match the IDs inside the factory preset JSON files
     static var factorySlots: [PentatonePresetSlot] = {
         var slots: [PentatonePresetSlot] = []
         
-        // For now, create 25 empty slots
+        // Create 25 empty slots (5 rows × 5 columns)
         // When factory presets are created, update this array with actual UUIDs
-        for bank in 1...5 {
-            for position in 1...5 {
+        for row in 1...5 {
+            for column in 1...5 {
                 let slot = PentatonePresetSlot(
-                    bank: bank,
-                    position: position,
-                    presetID: nil,  // Will be filled in later when factory presets exist
-                    slotType: .factory
+                    bankType: .factory,
+                    row: row,
+                    column: column,
+                    presetID: nil  // Will be filled in later when factory presets exist
                 )
                 slots.append(slot)
             }
@@ -82,15 +101,15 @@ struct PentatoneFactoryLayout {
         return slots
     }()
     
-    /// Get factory slot by bank and position
-    static func slot(bank: Int, position: Int) -> PentatonePresetSlot? {
-        return factorySlots.first { $0.bank == bank && $0.position == position }
+    /// Get factory slot by row and column
+    static func slot(row: Int, column: Int) -> PentatonePresetSlot? {
+        return factorySlots.first { $0.row == row && $0.column == column }
     }
     
     /// Update a factory slot with a preset UUID
     /// Call this during development to assign factory presets to slots
-    static func updateSlot(bank: Int, position: Int, presetID: UUID) {
-        if let index = factorySlots.firstIndex(where: { $0.bank == bank && $0.position == position }) {
+    static func updateSlot(row: Int, column: Int, presetID: UUID) {
+        if let index = factorySlots.firstIndex(where: { $0.row == row && $0.column == column }) {
             factorySlots[index].presetID = presetID
         }
     }
@@ -99,73 +118,130 @@ struct PentatoneFactoryLayout {
 // MARK: - User Layout (Saved to Disk)
 
 /// User preset layout for Pentatone
-/// This defines the mapping of user presets to the 5×5 grid (U1.1 - U5.5)
-/// Unlike factory layout, this is saved to disk and can be modified by the user
+/// Contains three user banks (User A, User B, User C), each with 25 slots (1.1 to 5.5)
+/// This is saved to disk and can be modified by the user
 struct PentatoneUserLayout: Codable, Equatable {
     
-    /// All 25 user preset slots
-    var userSlots: [PentatonePresetSlot]
+    /// All user preset slots for User A bank
+    var userASlots: [PentatonePresetSlot]
+    
+    /// All user preset slots for User B bank
+    var userBSlots: [PentatonePresetSlot]
+    
+    /// All user preset slots for User C bank
+    var userCSlots: [PentatonePresetSlot]
     
     /// Date this layout was last modified
     var lastModified: Date
     
     /// Initialize with custom slots
-    init(userSlots: [PentatonePresetSlot], lastModified: Date = Date()) {
-        self.userSlots = userSlots
+    init(userASlots: [PentatonePresetSlot], 
+         userBSlots: [PentatonePresetSlot],
+         userCSlots: [PentatonePresetSlot],
+         lastModified: Date = Date()) {
+        self.userASlots = userASlots
+        self.userBSlots = userBSlots
+        self.userCSlots = userCSlots
         self.lastModified = lastModified
     }
     
-    /// Default layout: 25 empty slots (U1.1 - U5.5)
+    /// Default layout: 3 banks × 25 empty slots each
     static let `default` = PentatoneUserLayout(
-        userSlots: {
-            var slots: [PentatonePresetSlot] = []
-            for bank in 1...5 {
-                for position in 1...5 {
-                    let slot = PentatonePresetSlot(
-                        bank: bank,
-                        position: position,
-                        presetID: nil,  // Empty by default
-                        slotType: .user
-                    )
-                    slots.append(slot)
-                }
-            }
-            return slots
-        }(),
+        userASlots: Self.createEmptyBank(for: .userA),
+        userBSlots: Self.createEmptyBank(for: .userB),
+        userCSlots: Self.createEmptyBank(for: .userC),
         lastModified: Date()
     )
     
-    /// Get user slot by bank and position
-    func slot(bank: Int, position: Int) -> PentatonePresetSlot? {
-        return userSlots.first { $0.bank == bank && $0.position == position }
+    /// Create 25 empty slots for a specific bank type
+    private static func createEmptyBank(for bankType: PentatoneBankType) -> [PentatonePresetSlot] {
+        var slots: [PentatonePresetSlot] = []
+        for row in 1...5 {
+            for column in 1...5 {
+                let slot = PentatonePresetSlot(
+                    bankType: bankType,
+                    row: row,
+                    column: column,
+                    presetID: nil
+                )
+                slots.append(slot)
+            }
+        }
+        return slots
+    }
+    
+    /// Get all slots for a specific bank type
+    func slots(for bankType: PentatoneBankType) -> [PentatonePresetSlot] {
+        switch bankType {
+        case .factory:
+            return [] // Factory slots are handled separately
+        case .userA:
+            return userASlots
+        case .userB:
+            return userBSlots
+        case .userC:
+            return userCSlots
+        }
+    }
+    
+    /// Get user slot by bank type, row, and column
+    func slot(bankType: PentatoneBankType, row: Int, column: Int) -> PentatonePresetSlot? {
+        return slots(for: bankType).first { $0.row == row && $0.column == column }
     }
     
     /// Update a user slot with a preset UUID
-    mutating func assignPreset(_ presetID: UUID?, toBank bank: Int, position: Int) {
-        if let index = userSlots.firstIndex(where: { $0.bank == bank && $0.position == position }) {
-            userSlots[index].presetID = presetID
+    mutating func assignPreset(_ presetID: UUID?, toBankType bankType: PentatoneBankType, row: Int, column: Int) {
+        guard bankType.isUserBank else { return }
+        
+        var targetSlots: [PentatonePresetSlot]
+        switch bankType {
+        case .userA:
+            targetSlots = userASlots
+        case .userB:
+            targetSlots = userBSlots
+        case .userC:
+            targetSlots = userCSlots
+        case .factory:
+            return // Cannot modify factory slots
+        }
+        
+        if let index = targetSlots.firstIndex(where: { $0.row == row && $0.column == column }) {
+            targetSlots[index].presetID = presetID
+            
+            // Write back to the appropriate property
+            switch bankType {
+            case .userA:
+                userASlots = targetSlots
+            case .userB:
+                userBSlots = targetSlots
+            case .userC:
+                userCSlots = targetSlots
+            case .factory:
+                break
+            }
+            
             lastModified = Date()
         }
     }
     
     /// Clear a user slot (remove preset assignment)
-    mutating func clearSlot(bank: Int, position: Int) {
-        assignPreset(nil, toBank: bank, position: position)
+    mutating func clearSlot(bankType: PentatoneBankType, row: Int, column: Int) {
+        assignPreset(nil, toBankType: bankType, row: row, column: column)
     }
     
-    /// Get all non-empty slots
+    /// Get all non-empty slots across all user banks
     var assignedSlots: [PentatonePresetSlot] {
-        return userSlots.filter { !$0.isEmpty }
+        return (userASlots + userBSlots + userCSlots).filter { !$0.isEmpty }
     }
     
-    /// Get count of assigned slots
+    /// Get count of assigned slots across all user banks
     var assignedCount: Int {
         return assignedSlots.count
     }
     
-    /// Get count of empty slots
+    /// Get count of empty slots across all user banks
     var emptyCount: Int {
-        return 25 - assignedCount
+        return 75 - assignedCount // 3 banks × 25 slots = 75 total
     }
 }
 
