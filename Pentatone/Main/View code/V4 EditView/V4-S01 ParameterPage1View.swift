@@ -83,7 +83,7 @@ struct OscillatorView: View {
             
             // Row 7 - Modulation Index (base level, 0-10)
             SliderRow(
-                label: "MODULATOR BASE LEVEL",
+                label: "MODULATOR LEVEL",
                 value: Binding(
                     get: { paramManager.voiceTemplate.oscillator.modulationIndex },
                     set: { newValue in

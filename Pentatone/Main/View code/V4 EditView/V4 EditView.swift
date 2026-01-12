@@ -19,8 +19,8 @@ enum EditSubView: CaseIterable {
         switch self {
         case .preset: return "PRESET"
         case .oscillators: return "OSCILLATORS"
-        case .contour: return "AMP ENV+FILTER"
-        case .modenv: return "MOD ENV+TRACK"
+        case .contour: return "AMP + FILTER"
+        case .modenv: return "MOD + TRACK"
         case .auxenv: return "AUX ENV"
         case .voicelfo: return "VOICE LFO"
         case .globallfo: return "GLOBAL LFO"

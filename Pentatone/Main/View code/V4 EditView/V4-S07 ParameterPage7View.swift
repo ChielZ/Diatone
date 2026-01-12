@@ -126,7 +126,7 @@ struct VoiceLFOView: View {
             
             // Row 7 - Voice LFO to Modulator Level (FM timbre modulation)
             SliderRow(
-                label: "LFO TO MODULATOR",
+                label: "LFO TO MOD",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.voiceLFO.amountToModulatorLevel },
                     set: { newValue in
