@@ -102,7 +102,7 @@ struct FilterParameters: Codable, Equatable {
     
     /// Clamps cutoff to valid range (0 Hz - 22.05 kHz)
     var clampedCutoff: Double {
-        min(max(cutoffFrequency, 0), 22_050)
+        min(max(cutoffFrequency, 12), 20_000)
     }
 }
 
@@ -111,11 +111,11 @@ struct FilterParameters: Codable, Equatable {
 /// Resonance and saturation control the filter's character but are not performance parameters
 struct FilterStaticParameters: Codable, Equatable {
     var resonance: Double
-    var saturation: Double
+    var saturation: Double // Actual parameter name is "distortion" for ThreePoleLowpassFilter
     
     static let `default` = FilterStaticParameters(
         resonance: 0.5,
-        saturation: 2.0
+        saturation: 0.5
     )
     
     /// Clamps resonance to valid range (0 - 2)
@@ -125,7 +125,7 @@ struct FilterStaticParameters: Codable, Equatable {
     
     /// Clamps saturation to valid range (0 - 10)
     var clampedSaturation: Double {
-        min(max(saturation, 0), 10.0)
+        min(max(saturation, 0), 2.0)
     }
 }
 

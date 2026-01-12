@@ -55,7 +55,7 @@ final class PolyphonicVoice {
     private let stereoMixer: Mixer
     
     /// Low-pass filter processing the stereo signal
-    let filter: KorgLowPassFilter
+    let filter: ThreePoleLowpassFilter
     
     /// Amplitude envelope shaping the stereo signal
     let envelope: AmplitudeEnvelope
@@ -154,13 +154,13 @@ final class PolyphonicVoice {
         self.stereoMixer = Mixer(panLeft, panRight)
         
         // Create filter processing the stereo signal
-        self.filter = KorgLowPassFilter(
+        self.filter = ThreePoleLowpassFilter(
             stereoMixer,
+            distortion: AUValue(parameters.filterStatic.clampedSaturation),  // use saturation slot for distortion
             cutoffFrequency: AUValue(parameters.filter.clampedCutoff),
-            resonance: AUValue(parameters.filterStatic.clampedResonance),
-            saturation: AUValue(parameters.filterStatic.clampedSaturation)
+            resonance: AUValue(parameters.filterStatic.clampedResonance)
         )
-        
+
         // Create envelope shaping the stereo signal
         self.envelope = AmplitudeEnvelope(
             filter,
@@ -362,7 +362,7 @@ final class PolyphonicVoice {
         // These are NOTE-ON properties - set once and never modulated
         if let filterStatic = templateFilterStatic {
             filter.$resonance.ramp(to: AUValue(filterStatic.clampedResonance), duration: 0)
-            filter.$saturation.ramp(to: AUValue(filterStatic.clampedSaturation), duration: 0)
+            filter.$distortion.ramp(to: AUValue(filterStatic.clampedSaturation), duration: 0)
         }
         
         // CRITICAL: Set initial touch value BEFORE any calculations that depend on it
@@ -512,7 +512,7 @@ final class PolyphonicVoice {
         // Use zero-duration ramps for immediate application
         // These parameters are NEVER touched by the modulation system
         filter.$resonance.ramp(to: AUValue(parameters.clampedResonance), duration: 0)
-        filter.$saturation.ramp(to: AUValue(parameters.clampedSaturation), duration: 0)
+        filter.$distortion.ramp(to: AUValue(parameters.clampedSaturation), duration: 0)
     }
     
     /// Updates envelope parameters

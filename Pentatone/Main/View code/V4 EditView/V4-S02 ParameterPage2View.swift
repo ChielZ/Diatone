@@ -115,7 +115,7 @@ struct ContourView: View {
                         // No need to call applyFilterToAllVoices - it's handled internally now
                     }
                 ),
-                range: 20...20000,
+                range: 12...20000,
                 buttonStep: 1.0,  // Fixed 1 Hz steps for buttons
                 displayFormatter: { value in
                     //if value < 1000 {
@@ -143,7 +143,7 @@ struct ContourView: View {
             
             // Row 9 - Filter Saturation (0-10)
             SliderRow(
-                label: "FILTER SATURATION",
+                label: "FILTER DRIVE",
                 value: Binding(
                     get: { paramManager.voiceTemplate.filterStatic.saturation },
                     set: { newValue in
@@ -151,7 +151,7 @@ struct ContourView: View {
                         // No need to call applyFilterToAllVoices - it's handled internally now
                     }
                 ),
-                range: 0...10,
+                range: 0...2,
                 step: 0.01,
                 displayFormatter: { String(format: "%.2f", $0) }
             )
