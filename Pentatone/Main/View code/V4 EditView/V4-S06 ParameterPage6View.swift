@@ -136,7 +136,7 @@ struct AuxEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: -3...3,
+                range: -5...5,
                 step: 0.1,
                 displayFormatter: { value in
                     if abs(value) < 0.05 {  // Use epsilon for floating-point comparison

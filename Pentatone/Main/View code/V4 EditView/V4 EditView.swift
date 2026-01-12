@@ -13,20 +13,20 @@ import SwiftUI
 
 
 enum EditSubView: CaseIterable {
-    case oscillators, contour, effects, global, modenv, auxenv,voicelfo,globallfo, touch, preset, macro
+    case preset,oscillators,contour,modenv, auxenv,voicelfo,globallfo,touch,effects,global,macro
     
     var displayName: String {
         switch self {
+        case .preset: return "PRESET"
         case .oscillators: return "OSCILLATORS"
-        case .contour: return "CONTOUR"
-        case .effects: return "EFFECTS"
-        case .global: return "MASTER"
-        case .modenv: return "MOD / TRACK"
+        case .contour: return "AMP ENV+FILTER"
+        case .modenv: return "MOD ENV+TRACK"
         case .auxenv: return "AUX ENV"
         case .voicelfo: return "VOICE LFO"
         case .globallfo: return "GLOBAL LFO"
         case .touch: return "TOUCH"
-        case .preset: return "PRESET"
+        case .effects: return "EFFECTS"
+        case .global: return "MASTER"
         case .macro: return "MACRO"
         }
     }
@@ -34,7 +34,7 @@ enum EditSubView: CaseIterable {
 
 struct EditView: View {
     @Binding var showingOptions: Bool
-    @State private var currentSubView: EditSubView = .oscillators
+    @State private var currentSubView: EditSubView = .preset
     
     // View switching
     var onSwitchToOptions: (() -> Void)? = nil
@@ -130,20 +130,15 @@ struct EditView: View {
                     
                 }
 
-                
-   
+
                 Group {
                     switch currentSubView {
+                    case .preset:
+                        PresetView()
                     case .oscillators:
-                        OscillatorView(
-                            
-                        )
+                        OscillatorView()
                     case .contour:
                         ContourView()
-                    case .effects:
-                        EffectsView()
-                    case .global:
-                        GlobalView()
                     case .modenv:
                         ModEnvView()
                     case .auxenv:
@@ -154,8 +149,10 @@ struct EditView: View {
                         GlobLFOView()
                     case .touch:
                         TouchView()
-                    case .preset:
-                        PresetView()
+                    case .effects:
+                        EffectsView()
+                    case .global:
+                        GlobalView()
                     case .macro:
                         MacroView()
                     }

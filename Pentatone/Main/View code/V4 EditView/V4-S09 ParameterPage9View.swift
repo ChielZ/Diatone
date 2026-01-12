@@ -98,7 +98,7 @@ struct TouchView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...3,
+                range: 0...5,
                 step: 0.01,
                 displayFormatter: { value in
                     return value > 0 ? String(format: "%.2f oct", value) : String(format: "%.2f oct", value)

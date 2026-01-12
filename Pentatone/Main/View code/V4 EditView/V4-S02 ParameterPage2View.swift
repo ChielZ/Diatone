@@ -136,7 +136,7 @@ struct ContourView: View {
                         // No need to call applyFilterToAllVoices - it's handled internally now
                     }
                 ),
-                range: 0.01...2,
+                range: 0...2,
                 step: 0.01,
                 displayFormatter: { String(format: "%.2f", $0) }
             )
