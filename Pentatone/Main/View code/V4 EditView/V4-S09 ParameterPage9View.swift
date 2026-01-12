@@ -54,23 +54,7 @@ struct TouchView: View {
                 displayFormatter: { String(format: "%.2f", $0) }
             )
             
-            // Row 3 - Aftertouch to Oscillator Pitch (replaces Initial to Pitch Env temporarily)
-            SliderRow(
-                label: "AFTER TO PITCH",
-                value: Binding(
-                    get: { paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch },
-                    set: { newValue in
-                        paramManager.updateAftertouchAmountToPitch(newValue)
-                        applyModulationToAllVoices()
-                    }
-                ),
-                range: 0...24,
-                step: 1.0,
-                displayFormatter: { value in
-                    let semitones = Int(value)
-                    return semitones == 1 ? "±\(semitones) st" : "±\(semitones) st"
-                }
-            )
+        
             
             // Row 4 - Initial Touch to Aux Envelope Cutoff Amount (meta-modulation)
             SliderRow(
@@ -85,6 +69,23 @@ struct TouchView: View {
                 range: 0...2,
                 step: 0.01,
                 displayFormatter: { String(format: "%.2f", $0) }
+            )
+            
+            // Row 6 - Aftertouch to Modulator Level (modulation index)
+            SliderRow(
+                label: "AFTER TO MOD",
+                value: Binding(
+                    get: { paramManager.voiceTemplate.modulation.touchAftertouch.amountToModulatorLevel },
+                    set: { newValue in
+                        paramManager.updateAftertouchAmountToModulatorLevel(newValue)
+                        applyModulationToAllVoices()
+                    }
+                ),
+                range: 0...5,
+                step: 0.01,
+                displayFormatter: { value in
+                    return value > 0 ? String(format: "%.2f", value) : String(format: "%.2f", value)
+                }
             )
             
             // Row 5 - Aftertouch to Filter Frequency
@@ -104,20 +105,23 @@ struct TouchView: View {
                 }
             )
             
-            // Row 6 - Aftertouch to Modulator Level (modulation index)
+
+            
+            // Row 3 - Aftertouch to Oscillator Pitch (replaces Initial to Pitch Env temporarily)
             SliderRow(
-                label: "AFTER TO MOD INDEX",
+                label: "AFTER TO PITCH",
                 value: Binding(
-                    get: { paramManager.voiceTemplate.modulation.touchAftertouch.amountToModulatorLevel },
+                    get: { paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch },
                     set: { newValue in
-                        paramManager.updateAftertouchAmountToModulatorLevel(newValue)
+                        paramManager.updateAftertouchAmountToPitch(newValue)
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...5,
-                step: 0.01,
+                range: 0...24,
+                step: 1.0,
                 displayFormatter: { value in
-                    return value > 0 ? String(format: "%.2f", value) : String(format: "%.2f", value)
+                    let cents = Int(value * 100)  // Half the semitones, convert to cents (1 semitone = 100 cents)
+                    return "\(cents) ct"
                 }
             )
             
