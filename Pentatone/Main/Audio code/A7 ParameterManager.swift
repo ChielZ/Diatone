@@ -16,6 +16,14 @@ import SoundpipeAudioKit
 
 /// Central manager for all audio parameters
 /// This provides the interface between UI and the AudioKit engine
+///
+/// MACRO CONTROL ARCHITECTURE (Option 1):
+/// - Macro controls are PERFORMANCE controls (slider positions don't save with presets)
+/// - However, macro adjustments DO update base parameter values
+/// - This means: "What you hear is what you save"
+/// - When a preset loads, macro sliders reset to neutral, but parameters retain their values
+/// - Example: Load preset with cutoff=1000, move tone slider to get cutoff=2000,
+///   save preset → new preset has cutoff=2000 (and tone slider resets to neutral on load)
 @MainActor
 final class AudioParameterManager: ObservableObject {
     
@@ -63,6 +71,8 @@ final class AudioParameterManager: ObservableObject {
     
     func updateDelayFeedback(_ feedback: Double) {
         master.delay.feedback = feedback
+        // Update macro base value so ambience slider operates around the new value
+        macroState.baseDelayFeedback = feedback
         fxDelay?.feedback = AUValue(feedback)
     }
     
@@ -73,6 +83,8 @@ final class AudioParameterManager: ObservableObject {
     
     func updateDelayMix(_ mix: Double) {
         master.delay.dryWetMix = mix
+        // Update macro base value so ambience slider operates around the new value
+        macroState.baseDelayMix = mix
         delayDryWetMixer?.balance = AUValue(mix)
     }
     
@@ -83,11 +95,15 @@ final class AudioParameterManager: ObservableObject {
     
     func updateReverbMix(_ balance: Double) {
         master.reverb.balance = balance
+        // Update macro base value so ambience slider operates around the new value
+        macroState.baseReverbMix = balance
         fxReverb?.balance = AUValue(balance)
     }
     
     func updateReverbFeedback(_ feedback: Double) {
         master.reverb.feedback = feedback
+        // Update macro base value so ambience slider operates around the new value
+        macroState.baseReverbFeedback = feedback
         fxReverb?.feedback = AUValue(feedback)
     }
     
@@ -227,8 +243,11 @@ final class AudioParameterManager: ObservableObject {
     }
     
     /// Update modulation index (base level)
+    /// When called directly (not via macro), this also updates the macro base value
     func updateModulationIndex(_ value: Double) {
         voiceTemplate.oscillator.modulationIndex = value
+        // Update macro base value so tone slider operates around the new value
+        macroState.baseModulationIndex = value
     }
     
     /// Update detune mode
@@ -271,8 +290,11 @@ final class AudioParameterManager: ObservableObject {
     // MARK: - Individual Filter Parameter Updates
     
     /// Update filter cutoff frequency (MODULATABLE parameter)
+    /// When called directly (not via macro), this also updates the macro base value
     func updateFilterCutoff(_ value: Double) {
         voiceTemplate.filter.cutoffFrequency = value
+        // Update macro base value so tone slider operates around the new value
+        macroState.baseFilterCutoff = value
         // VoicePool updates all voices immediately to ensure consistent state
         voicePool?.updateAllVoiceFilters(voiceTemplate.filter)
     }
@@ -284,8 +306,11 @@ final class AudioParameterManager: ObservableObject {
     }
     
     /// Update filter saturation (NON-MODULATABLE, NOTE-ON parameter)
+    /// When called directly (not via macro), this also updates the macro base value
     func updateFilterSaturation(_ value: Double) {
         voiceTemplate.filterStatic.saturation = value
+        // Update macro base value so tone slider operates around the new value
+        macroState.baseFilterSaturation = value
         voicePool?.updateAllVoiceFilterStatic(voiceTemplate.filterStatic)
     }
     
@@ -686,6 +711,8 @@ final class AudioParameterManager: ObservableObject {
     // MARK: - Private Macro Application Methods
     
     /// Apply tone macro to modulation index, filter cutoff, and saturation
+    /// OPTION 1 IMPLEMENTATION: Macro adjustments update base values
+    /// This ensures that presets save the current sonic state (what you hear is what you save)
     private func applyToneMacro() {
         let position = macroState.tonePosition
         let ranges = master.macroControl
@@ -693,28 +720,36 @@ final class AudioParameterManager: ObservableObject {
         // Modulation Index: base +/- range
         let newModIndex = macroState.baseModulationIndex + (position * ranges.toneToModulationIndexRange)
         let clampedModIndex = min(max(newModIndex, 0.0), 10.0)
-        updateModulationIndex(clampedModIndex)
         
         // Filter Cutoff: base * 2^(position * octaves)
         // Moving up increases frequency, moving down decreases
         let octaveMultiplier = pow(2.0, position * ranges.toneToFilterCutoffOctaves)
         let newCutoff = macroState.baseFilterCutoff * octaveMultiplier
         let clampedCutoff = min(max(newCutoff, 20.0), 20000.0)
-        updateFilterCutoff(clampedCutoff)
         
         // Filter Saturation: base +/- range
         let newSaturation = macroState.baseFilterSaturation + (position * ranges.toneToFilterSaturationRange)
         let clampedSaturation = min(max(newSaturation, 0.0), 10.0)
-        updateFilterSaturation(clampedSaturation)
         
-        // Apply oscillator changes to all voices
-        applyOscillatorToAllVoices()
+        // Apply to voiceTemplate (this is what gets saved with presets)
+        voiceTemplate.oscillator.modulationIndex = clampedModIndex
+        voiceTemplate.filter.cutoffFrequency = clampedCutoff
+        voiceTemplate.filterStatic.saturation = clampedSaturation
         
-        // Filter changes are already applied by updateFilterCutoff/Saturation calls above
-        // No need for separate applyFilterToAllVoices() call
+        // Apply to audio engine
+        voicePool?.updateAllVoiceOscillators(voiceTemplate.oscillator)
+        voicePool?.updateAllVoiceFilters(voiceTemplate.filter)
+        voicePool?.updateAllVoiceFilterStatic(voiceTemplate.filterStatic)
+        
+        // NOTE: We do NOT update macroState.base* values here!
+        // Those remain at the original base values from when the preset was loaded
+        // or when the user last made a direct parameter edit.
+        // This way, the macro always modulates around the same base value.
     }
     
     /// Apply ambience macro to delay and reverb parameters
+    /// OPTION 1 IMPLEMENTATION: Macro adjustments update base values
+    /// This ensures that presets save the current sonic state (what you hear is what you save)
     private func applyAmbienceMacro() {
         let position = macroState.ambiencePosition
         let ranges = master.macroControl
@@ -722,22 +757,35 @@ final class AudioParameterManager: ObservableObject {
         // Delay Feedback: base +/- range
         let newDelayFeedback = macroState.baseDelayFeedback + (position * ranges.ambienceToDelayFeedbackRange)
         let clampedDelayFeedback = min(max(newDelayFeedback, 0.0), 1.0)
-        updateDelayFeedback(clampedDelayFeedback)
         
         // Delay Mix: base +/- range
         let newDelayMix = macroState.baseDelayMix + (position * ranges.ambienceToDelayMixRange)
         let clampedDelayMix = min(max(newDelayMix, 0.0), 1.0)
-        updateDelayMix(clampedDelayMix)
         
         // Reverb Feedback: base +/- range
         let newReverbFeedback = macroState.baseReverbFeedback + (position * ranges.ambienceToReverbFeedbackRange)
         let clampedReverbFeedback = min(max(newReverbFeedback, 0.0), 1.0)
-        updateReverbFeedback(clampedReverbFeedback)
         
         // Reverb Mix: base +/- range
         let newReverbMix = macroState.baseReverbMix + (position * ranges.ambienceToReverbMixRange)
         let clampedReverbMix = min(max(newReverbMix, 0.0), 1.0)
-        updateReverbMix(clampedReverbMix)
+        
+        // Apply to master parameters (this is what gets saved with presets)
+        master.delay.feedback = clampedDelayFeedback
+        master.delay.dryWetMix = clampedDelayMix
+        master.reverb.feedback = clampedReverbFeedback
+        master.reverb.balance = clampedReverbMix
+        
+        // Apply to audio engine directly
+        fxDelay?.feedback = AUValue(clampedDelayFeedback)
+        delayDryWetMixer?.balance = AUValue(clampedDelayMix)
+        fxReverb?.feedback = AUValue(clampedReverbFeedback)
+        fxReverb?.balance = AUValue(clampedReverbMix)
+        
+        // NOTE: We do NOT update macroState.base* values here!
+        // Those remain at the original base values from when the preset was loaded
+        // or when the user last made a direct parameter edit.
+        // This way, the macro always modulates around the same base value.
     }
     
     /// Apply oscillator parameters to all voices
