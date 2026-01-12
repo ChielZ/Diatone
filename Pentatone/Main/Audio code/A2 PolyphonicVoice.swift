@@ -596,7 +596,8 @@ final class PolyphonicVoice {
         )
         applyCombinedPitch(
             auxiliaryEnvValue: auxiliaryEnvValue,
-            voiceLFORawValue: voiceLFORawValue
+            voiceLFORawValue: voiceLFORawValue,
+            aftertouchDelta: aftertouchDelta
         )
         applyCombinedFilterFrequency(
             auxiliaryEnvValue: auxiliaryEnvValue,
@@ -700,10 +701,11 @@ final class PolyphonicVoice {
     }
     
     /// Applies combined pitch modulation from all sources
-    /// Sources: Auxiliary envelope, Voice LFO (with meta-modulation from aux env and aftertouch)
+    /// Sources: Auxiliary envelope, Voice LFO (with meta-modulation from aux env and aftertouch), Aftertouch
     private func applyCombinedPitch(
         auxiliaryEnvValue: Double,
-        voiceLFORawValue: Double
+        voiceLFORawValue: Double,
+        aftertouchDelta: Double
     ) {
         // Check if any source is active (including meta-modulation sources)
         let hasAuxEnv = voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch != 0.0
@@ -711,8 +713,9 @@ final class PolyphonicVoice {
         let hasVibratoMetaMod = voiceModulation.auxiliaryEnvelope.amountToVibrato != 0.0
             || voiceModulation.touchAftertouch.amountToVibrato != 0.0
         let hasInitialTouchToPitch = voiceModulation.touchInitial.amountToAuxEnvPitch != 0.0
+        let hasAftertouchToPitch = voiceModulation.touchAftertouch.amountToOscillatorPitch != 0.0
         
-        guard hasAuxEnv || hasVoiceLFO || hasVibratoMetaMod || hasInitialTouchToPitch else { return }
+        guard hasAuxEnv || hasVoiceLFO || hasVibratoMetaMod || hasInitialTouchToPitch || hasAftertouchToPitch else { return }
         
         // Apply initial touch meta-modulation to aux envelope pitch amount
         var effectiveAuxEnvPitchAmount = voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch
@@ -730,7 +733,6 @@ final class PolyphonicVoice {
         
         if hasVibratoMetaMod {
             // Meta-modulation: aux envelope and aftertouch can modulate the vibrato amount
-            let aftertouchDelta = modulationState.currentTouchX - modulationState.initialTouchX
             effectiveVoiceLFOAmount = ModulationRouter.calculateVoiceLFOPitchAmount(
                 baseAmount: effectiveVoiceLFOAmount,
                 auxEnvValue: auxiliaryEnvValue,
@@ -740,14 +742,16 @@ final class PolyphonicVoice {
             )
         }
         
-        // Combine aux envelope and voice LFO for pitch
+        // Combine aux envelope, voice LFO, and aftertouch for pitch
         let finalFreq = ModulationRouter.calculateOscillatorPitch(
             baseFrequency: modulationState.baseFrequency,
             auxEnvValue: auxiliaryEnvValue,
             auxEnvAmount: effectiveAuxEnvPitchAmount,
             voiceLFOValue: voiceLFORawValue,
             voiceLFOAmount: effectiveVoiceLFOAmount,
-            voiceLFORampFactor: modulationState.voiceLFORampFactor
+            voiceLFORampFactor: modulationState.voiceLFORampFactor,
+            aftertouchDelta: aftertouchDelta,
+            aftertouchAmount: voiceModulation.touchAftertouch.amountToOscillatorPitch
         )
         
         currentFrequency = finalFreq

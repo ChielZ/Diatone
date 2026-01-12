@@ -9,7 +9,7 @@
 PAGE 9 - TOUCH RESPONSE (REFACTORED - FIXED DESTINATIONS)
 √ 1) Initial touch to oscillator amplitude amount
 √ 2) Initial touch to mod envelope amount
-√ 3) Initial touch to aux envelope pitch amount
+√ 3) Aftertouch to oscillator pitch amount (REPLACING: Initial touch to aux envelope pitch amount)
 √ 4) Initial touch to aux envelope cutoff amount
 √ 5) Aftertouch to filter frequency amount
 √ 6) Aftertouch to modulator level amount
@@ -54,19 +54,22 @@ struct TouchView: View {
                 displayFormatter: { String(format: "%.2f", $0) }
             )
             
-            // Row 3 - Initial Touch to Aux Envelope Pitch Amount (meta-modulation)
+            // Row 3 - Aftertouch to Oscillator Pitch (replaces Initial to Pitch Env temporarily)
             SliderRow(
-                label: "INITIAL TO PITCH ENV",
+                label: "AFTER TO PITCH",
                 value: Binding(
-                    get: { paramManager.voiceTemplate.modulation.touchInitial.amountToAuxEnvPitch },
+                    get: { paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch },
                     set: { newValue in
-                        paramManager.updateInitialTouchAmountToAuxEnvPitch(newValue)
+                        paramManager.updateAftertouchAmountToPitch(newValue)
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...2,
-                step: 0.01,
-                displayFormatter: { String(format: "%.2f", $0) }
+                range: 0...24,
+                step: 1.0,
+                displayFormatter: { value in
+                    let semitones = Int(value)
+                    return semitones == 1 ? "±\(semitones) st" : "±\(semitones) st"
+                }
             )
             
             // Row 4 - Initial Touch to Aux Envelope Cutoff Amount (meta-modulation)

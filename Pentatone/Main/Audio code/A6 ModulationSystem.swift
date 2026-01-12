@@ -338,7 +338,8 @@ struct TouchInitialParameters: Codable, Equatable {
 /// Aftertouch modulation from change in X position while holding
 /// Tracks movement of the finger while the key is held (continuous modulation)
 struct TouchAftertouchParameters: Codable, Equatable {
-    // Fixed destinations with individual amounts (Page 9, items 5-7)
+    // Fixed destinations with individual amounts (Page 9, items 5-8)
+    var amountToOscillatorPitch: Double        // ±semitones (bipolar modulation)
     var amountToFilterFrequency: Double        // ±octaves (bipolar modulation)
     var amountToModulatorLevel: Double         // ±modulation index (bipolar modulation)
     var amountToVibrato: Double                // Meta-modulation: adds to voice LFO pitch amount
@@ -346,6 +347,7 @@ struct TouchAftertouchParameters: Codable, Equatable {
     var isEnabled: Bool
     
     static let `default` = TouchAftertouchParameters(
+        amountToOscillatorPitch: 0.0,          // No aftertouch pitch control by default
         amountToFilterFrequency: 0.0,          // No aftertouch filter control by default
         amountToModulatorLevel: 0.0,           // No aftertouch timbre control by default
         amountToVibrato: 0.0,                  // No aftertouch vibrato control by default
@@ -354,7 +356,8 @@ struct TouchAftertouchParameters: Codable, Equatable {
     
     /// Check if any destination has a non-zero amount
     var hasActiveDestinations: Bool {
-        return amountToFilterFrequency != 0.0
+        return amountToOscillatorPitch != 0.0
+            || amountToFilterFrequency != 0.0
             || amountToModulatorLevel != 0.0
             || amountToVibrato != 0.0
     }
@@ -633,15 +636,17 @@ struct ModulationRouter {
     // MARK: - 1) Oscillator Pitch [LOGARITHMIC]
     
     /// Calculate oscillator pitch modulation
-    /// Sources: Aux envelope (bipolar), Voice LFO (bipolar, with delay ramp)
-    /// Formula: finalFreq = baseFreq × 2^((auxEnvSemitones + lfoSemitones) / 12)
+    /// Sources: Aux envelope (bipolar), Voice LFO (bipolar, with delay ramp), Aftertouch (bipolar)
+    /// Formula: finalFreq = baseFreq × 2^((auxEnvSemitones + lfoSemitones + aftertouchSemitones) / 12)
     static func calculateOscillatorPitch(
         baseFrequency: Double,
         auxEnvValue: Double,
         auxEnvAmount: Double,
         voiceLFOValue: Double,
         voiceLFOAmount: Double,
-        voiceLFORampFactor: Double
+        voiceLFORampFactor: Double,
+        aftertouchDelta: Double,
+        aftertouchAmount: Double
     ) -> Double {
         // Aux envelope: can be ± semitones
         let auxEnvSemitones = auxEnvValue * auxEnvAmount
@@ -649,8 +654,11 @@ struct ModulationRouter {
         // Voice LFO: can be ± semitones, scaled by delay ramp
         let lfoSemitones = (voiceLFOValue * voiceLFORampFactor) * voiceLFOAmount
         
+        // Aftertouch: can be ± semitones
+        let aftertouchSemitones = aftertouchDelta * aftertouchAmount
+        
         // Add in semitone space
-        let totalSemitones = auxEnvSemitones + lfoSemitones
+        let totalSemitones = auxEnvSemitones + lfoSemitones + aftertouchSemitones
         
         // Convert to frequency
         let finalFreq = baseFrequency * pow(2.0, totalSemitones / 12.0)

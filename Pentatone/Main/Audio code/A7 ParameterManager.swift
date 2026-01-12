@@ -570,6 +570,11 @@ final class AudioParameterManager: ObservableObject {
         voiceTemplate.modulation.touchInitial.amountToAuxEnvCutoff = value
     }
     
+    /// Update aftertouch amount to oscillator pitch
+    func updateAftertouchAmountToPitch(_ value: Double) {
+        voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch = value
+    }
+    
     /// Update aftertouch amount to filter frequency
     func updateAftertouchAmountToFilter(_ value: Double) {
         voiceTemplate.modulation.touchAftertouch.amountToFilterFrequency = value
