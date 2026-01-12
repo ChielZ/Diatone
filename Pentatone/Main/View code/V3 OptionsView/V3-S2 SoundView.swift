@@ -73,7 +73,7 @@ struct SoundView: View {
                     ForEach(1...5, id: \.self) { row in
                         PresetButton(
                             row: row,
-                            column: 1,
+                            column: row,
                             isSelected: selectedRow == row,
                             action: {
                                 selectRow(row)
