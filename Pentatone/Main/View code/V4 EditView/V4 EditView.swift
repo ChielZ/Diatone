@@ -12,12 +12,11 @@ import SwiftUI
 
 
 
-enum EditSubView: CaseIterable {
-    case preset,oscillators,contour,modenv, auxenv,voicelfo,globallfo,touch,effects,global,macro
+enum EditSubView: String, CaseIterable {
+    case oscillators,contour,modenv, auxenv,voicelfo,globallfo,touch,effects,global,macro, preset
     
     var displayName: String {
         switch self {
-        case .preset: return "PRESET"
         case .oscillators: return "OSCILLATORS"
         case .contour: return "AMP + FILTER"
         case .modenv: return "MOD + TRACK"
@@ -28,13 +27,26 @@ enum EditSubView: CaseIterable {
         case .effects: return "EFFECTS"
         case .global: return "MASTER"
         case .macro: return "MACRO"
+        case .preset: return "PRESET"
         }
     }
 }
 
 struct EditView: View {
     @Binding var showingOptions: Bool
-    @State private var currentSubView: EditSubView = .preset
+    
+    // Persist the current subview selection across app sessions
+    @AppStorage("lastEditSubView") private var lastEditSubViewRawValue: String = EditSubView.preset.rawValue
+    
+    // Computed property to work with the enum
+    private var currentSubView: EditSubView {
+        get {
+            EditSubView(rawValue: lastEditSubViewRawValue) ?? .preset
+        }
+        nonmutating set {
+            lastEditSubViewRawValue = newValue.rawValue
+        }
+    }
     
     // View switching
     var onSwitchToOptions: (() -> Void)? = nil
@@ -133,8 +145,7 @@ struct EditView: View {
 
                 Group {
                     switch currentSubView {
-                    case .preset:
-                        PresetView()
+                    
                     case .oscillators:
                         OscillatorView()
                     case .contour:
@@ -155,6 +166,8 @@ struct EditView: View {
                         GlobalView()
                     case .macro:
                         MacroView()
+                    case .preset:
+                        PresetView()
                     }
                 }
                 .frame(maxHeight: .infinity)
