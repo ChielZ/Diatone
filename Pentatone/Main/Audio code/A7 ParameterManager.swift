@@ -858,21 +858,25 @@ final class AudioParameterManager: ObservableObject {
     
     /// Apply voice parameters from a preset to all voices
     func applyVoiceParameters(_ voiceParams: VoiceParameters) {
-        // Update voice template
+        let waveform = voiceParams.oscillator.waveform
+        print("🎵 Preset loading: Recreating oscillators with waveform \(waveform.displayName)...")
+        
+        // Update voice template first so the waveform is reflected in the template
         voiceTemplate = voiceParams
         
-        // Apply to voice pool
-        applyOscillatorToAllVoices()
-        
-        // Apply filter parameters to all voices (separate calls for modulatable and static)
-        voicePool?.updateAllVoiceFilters(voiceParams.filter)
-        voicePool?.updateAllVoiceFilterStatic(voiceParams.filterStatic)
-        
-        // Apply envelope parameters to all voices
-        voicePool?.updateAllVoiceEnvelopes(voiceParams.envelope)
-        
-        // Apply modulation parameters to all voices
-        voicePool?.updateAllVoiceModulation(voiceParams.modulation)
+        // Always recreate oscillators when loading a preset to ensure waveform is correct
+        // This is necessary because waveform changes require physical recreation of oscillators
+        voicePool?.recreateOscillators(waveform: waveform) {
+            // After oscillators are recreated, apply all other parameters
+            // Note: voicePool is a global variable from A5 AudioEngine.swift
+            voicePool?.updateAllVoiceOscillators(voiceParams.oscillator)
+            voicePool?.updateAllVoiceFilters(voiceParams.filter)
+            voicePool?.updateAllVoiceFilterStatic(voiceParams.filterStatic)
+            voicePool?.updateAllVoiceEnvelopes(voiceParams.envelope)
+            voicePool?.updateAllVoiceModulation(voiceParams.modulation)
+            
+            print("✅ Preset loading: All voice parameters applied after oscillator recreation")
+        }
     }
     
     /// Apply master parameters from a preset
