@@ -453,25 +453,47 @@ final class PolyphonicVoice {
     // MARK: - Parameter Updates
     
     /// Updates oscillator parameters
-    /// Updates oscillator parameters
-    func updateOscillatorParameters(_ parameters: OscillatorParameters) {
-        // Use zero-duration ramps to avoid AudioKit parameter ramping artifacts
-        oscLeft.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0.005)
-        oscLeft.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.005)
-        oscLeft.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.005)
-        oscLeft.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0.005)
+    /// MODULATION-AWARE: Avoids fighting with active modulation sources during playback
+    /// - Parameters:
+    ///   - parameters: New oscillator parameters to apply
+    ///   - globalLFO: Optional global LFO state to check for active modulation
+    /// - Note: Updates base values immediately, but defers audio parameter application
+    ///         if modulation is active and voice is playing. This prevents glitches
+    ///         caused by main thread updates conflicting with background modulation thread.
+    func updateOscillatorParameters(_ parameters: OscillatorParameters, globalLFO: GlobalLFOParameters? = nil) {
+        // Always update base values first (needed by modulation system)
+        modulationState.baseModulatorMultiplier = parameters.modulatingMultiplier
+        modulationState.baseModulationIndex = parameters.modulationIndex
         
+        // Check if modulation is active for modulation index
+        let hasActiveModIndexModulation = 
+            voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0 ||
+            voiceModulation.voiceLFO.amountToModulatorLevel != 0.0 ||
+            voiceModulation.touchAftertouch.amountToModulatorLevel != 0.0
+        
+        // Check if global LFO is modulating modulator multiplier
+        let hasGlobalLFOModMultiplier = (globalLFO?.amountToModulatorMultiplier ?? 0.0) != 0.0
+        
+        // Apply non-modulated parameters (always safe to update)
+        oscLeft.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0.005)
         oscRight.$carrierMultiplier.ramp(to: AUValue(parameters.carrierMultiplier), duration: 0.005)
-        oscRight.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.005)
-        oscRight.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.005)
+        
+        oscLeft.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0.005)
         oscRight.$amplitude.ramp(to: AUValue(parameters.amplitude), duration: 0.005)
         
-        // Store base modulator multiplier for global LFO modulation
-        modulationState.baseModulatorMultiplier = parameters.modulatingMultiplier
+        // Modulation Index: Only apply directly if no active modulation AND voice not playing
+        if !hasActiveModIndexModulation || isAvailable {
+            oscLeft.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.005)
+            oscRight.$modulationIndex.ramp(to: AUValue(parameters.modulationIndex), duration: 0.005)
+        }
+        // else: modulation system will pick up the new base value at its next update cycle
         
-        // Update the base modulation index in modulation state
-        // This ensures the modulation system uses the new value as the base
-        modulationState.baseModulationIndex = parameters.modulationIndex
+        // Modulator Multiplier: Only apply directly if no global LFO modulation AND voice not playing
+        if !hasGlobalLFOModMultiplier || isAvailable {
+            oscLeft.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.005)
+            oscRight.$modulatingMultiplier.ramp(to: AUValue(parameters.modulatingMultiplier), duration: 0.005)
+        }
+        // else: modulation system will pick up the new base value at its next update cycle
         
         // Update stereo spread parameters
         detuneMode = parameters.detuneMode
@@ -495,14 +517,33 @@ final class PolyphonicVoice {
         oscLeft.$modulationIndex.ramp(to: AUValue(modulationState.baseModulationIndex), duration: 0.05)
         oscRight.$modulationIndex.ramp(to: AUValue(modulationState.baseModulationIndex), duration: 0.05)
     }
+    /// Updates filter parameters (MODULATABLE only - cutoff frequency)
+    /// MODULATION-AWARE: Avoids fighting with active modulation sources during playback
+    /// - Parameter parameters: New filter parameters to apply
+    /// - Note: Updates base cutoff immediately, but defers audio parameter application
+    ///         if modulation is active and voice is playing. This prevents glitches
+    ///         caused by main thread updates conflicting with background modulation thread.
     func updateFilterParameters(_ parameters: FilterParameters) {
-        // Use zero-duration ramps to avoid AudioKit parameter ramping artifacts
-        // ONLY updates modulatable parameters (cutoff frequency)
-        filter.$cutoffFrequency.ramp(to: AUValue(parameters.clampedCutoff), duration: 0)
-        
-        // Update the base filter cutoff in modulation state
+        // Update the base filter cutoff in modulation state FIRST
         // This ensures the modulation system uses the new value as the base
         modulationState.baseFilterCutoff = parameters.clampedCutoff
+        
+        // Check if modulation is active for this parameter
+        let hasActiveFilterModulation = 
+            voiceModulation.auxiliaryEnvelope.amountToFilterFrequency != 0.0 ||
+            voiceModulation.voiceLFO.amountToFilterFrequency != 0.0 ||
+            voiceModulation.touchAftertouch.amountToFilterFrequency != 0.0 ||
+            voiceModulation.keyTracking.amountToFilterFrequency != 0.0
+        
+        // If modulation is active AND voice is currently playing, let the modulation
+        // system handle the update at its next cycle (don't fight with it)
+        if hasActiveFilterModulation && !isAvailable {
+            // Modulation system will pick up the new base value at its next update
+            return
+        }
+        
+        // No modulation active or voice not playing: apply directly
+        filter.$cutoffFrequency.ramp(to: AUValue(parameters.clampedCutoff), duration: 0)
     }
     
     /// Updates static (non-modulatable) filter parameters

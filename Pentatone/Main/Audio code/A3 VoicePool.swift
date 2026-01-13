@@ -336,9 +336,9 @@ final class VoicePool {
         // Update template
         currentTemplate.oscillator = parameters
         
-        // Update active voices
+        // Update all voices with global LFO awareness
         for voice in voices {
-            voice.updateOscillatorParameters(parameters)
+            voice.updateOscillatorParameters(parameters, globalLFO: globalLFO)
         }
     }
     

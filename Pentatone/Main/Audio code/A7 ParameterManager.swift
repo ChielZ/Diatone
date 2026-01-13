@@ -24,6 +24,14 @@ import SoundpipeAudioKit
 /// - When a preset loads, macro sliders reset to neutral, but parameters retain their values
 /// - Example: Load preset with cutoff=1000, move tone slider to get cutoff=2000,
 ///   save preset → new preset has cutoff=2000 (and tone slider resets to neutral on load)
+///
+/// MODULATION-AWARE PARAMETER UPDATES:
+/// - Parameter updates check for active modulation before applying changes
+/// - If modulation is active on a playing voice, only the base value is updated
+/// - The modulation system picks up new base values at its next cycle (5ms)
+/// - This prevents glitchy behavior from main thread fighting with modulation thread
+/// - Example: If aux envelope is sweeping filter, moving filter slider updates the base
+///   frequency that the envelope sweeps around, without causing parameter conflicts
 @MainActor
 final class AudioParameterManager: ObservableObject {
     
