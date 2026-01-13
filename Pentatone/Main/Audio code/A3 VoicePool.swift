@@ -429,7 +429,7 @@ final class VoicePool {
     /// Resets the delay time to its base (unmodulated) value
     /// Called when LFO modulation amount is set to zero
     func resetDelayTimeToBase() {
-        delay?.$time.ramp(to: AUValue(baseDelayTime), duration: 0.05)
+        delay?.$time.ramp(to: AUValue(baseDelayTime), duration: 0.005)
     }
     
     /// Resets the voice mixer volume to its base (unmodulated) value

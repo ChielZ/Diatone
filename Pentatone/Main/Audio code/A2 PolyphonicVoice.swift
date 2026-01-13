@@ -278,11 +278,11 @@ final class PolyphonicVoice {
         
         // Reinitialize if the voice was previously initialized
         if wasInitialized {
-            // Set ramp duration to 0 for instant parameter changes
-            oscLeft.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0.05)
-            oscRight.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0.05)
-            oscLeft.$amplitude.ramp(to: currentAmplitude, duration: 0.05)
-            oscRight.$amplitude.ramp(to: currentAmplitude, duration: 0.05)
+            // Set ramp duration for smooth parameter changes
+            oscLeft.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0.005)
+            oscRight.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0.005)
+            oscLeft.$amplitude.ramp(to: currentAmplitude, duration: 0.005)
+            oscRight.$amplitude.ramp(to: currentAmplitude, duration: 0.005)
             
             // Start new oscillators
             oscLeft.start()
@@ -361,8 +361,8 @@ final class PolyphonicVoice {
         // CRITICAL: Apply static filter parameters (resonance, saturation) at note-on
         // These are NOTE-ON properties - set once and never modulated
         if let filterStatic = templateFilterStatic {
-            filter.$resonance.ramp(to: AUValue(filterStatic.clampedResonance), duration: 0)
-            filter.$distortion.ramp(to: AUValue(filterStatic.clampedSaturation), duration: 0)
+            filter.$resonance.ramp(to: AUValue(filterStatic.clampedResonance), duration: 0.005)
+            filter.$distortion.ramp(to: AUValue(filterStatic.clampedSaturation), duration: 0.005)
         }
         
         // CRITICAL: Set initial touch value BEFORE any calculations that depend on it
@@ -507,15 +507,15 @@ final class PolyphonicVoice {
     /// Resets modulator multiplier to base (unmodulated) value
     /// Called when global LFO modulation amount is set to zero
     func resetModulatorMultiplierToBase() {
-        oscLeft.$modulatingMultiplier.ramp(to: AUValue(modulationState.baseModulatorMultiplier), duration: 0.05)
-        oscRight.$modulatingMultiplier.ramp(to: AUValue(modulationState.baseModulatorMultiplier), duration: 0.05)
+        oscLeft.$modulatingMultiplier.ramp(to: AUValue(modulationState.baseModulatorMultiplier), duration: 0.005)
+        oscRight.$modulatingMultiplier.ramp(to: AUValue(modulationState.baseModulatorMultiplier), duration: 0.005)
     }
     
     /// Resets modulation index to base (unmodulated) value
     /// Called when voice LFO modulation amount is set to zero
     func resetModulationIndexToBase() {
-        oscLeft.$modulationIndex.ramp(to: AUValue(modulationState.baseModulationIndex), duration: 0.05)
-        oscRight.$modulationIndex.ramp(to: AUValue(modulationState.baseModulationIndex), duration: 0.05)
+        oscLeft.$modulationIndex.ramp(to: AUValue(modulationState.baseModulationIndex), duration: 0.005)
+        oscRight.$modulationIndex.ramp(to: AUValue(modulationState.baseModulationIndex), duration: 0.005)
     }
     /// Updates filter parameters (MODULATABLE only - cutoff frequency)
     /// MODULATION-AWARE: Avoids fighting with active modulation sources during playback
@@ -543,26 +543,26 @@ final class PolyphonicVoice {
         }
         
         // No modulation active or voice not playing: apply directly
-        filter.$cutoffFrequency.ramp(to: AUValue(parameters.clampedCutoff), duration: 0)
+        filter.$cutoffFrequency.ramp(to: AUValue(parameters.clampedCutoff), duration: 0.005)
     }
     
     /// Updates static (non-modulatable) filter parameters
     /// These are applied immediately and never modulated
     /// Should be called on main thread only, never during modulation
     func updateFilterStaticParameters(_ parameters: FilterStaticParameters) {
-        // Use zero-duration ramps for immediate application
+        // Use 5ms ramps for smooth application
         // These parameters are NEVER touched by the modulation system
-        filter.$resonance.ramp(to: AUValue(parameters.clampedResonance), duration: 0)
-        filter.$distortion.ramp(to: AUValue(parameters.clampedSaturation), duration: 0)
+        filter.$resonance.ramp(to: AUValue(parameters.clampedResonance), duration: 0.005)
+        filter.$distortion.ramp(to: AUValue(parameters.clampedSaturation), duration: 0.005)
     }
     
     /// Updates envelope parameters
     func updateEnvelopeParameters(_ parameters: EnvelopeParameters) {
-        // Use zero-duration ramps to avoid AudioKit parameter ramping artifacts
-        envelope.$attackDuration.ramp(to: AUValue(parameters.attackDuration), duration: 0)
-        envelope.$decayDuration.ramp(to: AUValue(parameters.decayDuration), duration: 0)
-        envelope.$sustainLevel.ramp(to: AUValue(parameters.sustainLevel), duration: 0)
-        envelope.$releaseDuration.ramp(to: AUValue(parameters.releaseDuration), duration: 0)
+        // Use 5ms ramps for smooth parameter changes
+        envelope.$attackDuration.ramp(to: AUValue(parameters.attackDuration), duration: 0.005)
+        envelope.$decayDuration.ramp(to: AUValue(parameters.decayDuration), duration: 0.005)
+        envelope.$sustainLevel.ramp(to: AUValue(parameters.sustainLevel), duration: 0.005)
+        envelope.$releaseDuration.ramp(to: AUValue(parameters.releaseDuration), duration: 0.005)
     }
     
     /// Updates modulation parameters (Phase 5)
