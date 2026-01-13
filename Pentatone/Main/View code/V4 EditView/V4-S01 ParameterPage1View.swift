@@ -81,7 +81,7 @@ struct OscillatorView: View {
                 updateModulatingMultiplier(coarse: Int(modulatorCoarse), fine: newFine)
             }
             
-            // Row 7 - Modulation Index (base level, 0-10)
+            // Row 7 - Modulation Index (base level, 0-5 internally, 0-1 displayed)
             SliderRow(
                 label: "MODULATOR LEVEL",
                 value: Binding(
@@ -92,8 +92,11 @@ struct OscillatorView: View {
                     }
                 ),
                 range: 0...5,
-                step: 0.01,
-                displayFormatter: { String(format: "%.2f", $0) }
+                step: 0.05,
+                displayFormatter: { value in
+                    let normalizedValue = value / 5.0
+                    return String(format: "%.2f", normalizedValue)
+                }
             )
             
             // Row 8 - Stereo Offset Mode (enum cycling)
