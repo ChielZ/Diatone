@@ -377,6 +377,301 @@ struct LogarithmicSliderRow: View {
     }
 }
 
+// MARK: - Musical Frequency Slider (Quantized to MIDI Notes)
+
+/// A row for adjusting frequency parameters with hybrid behavior:
+/// Drag: snaps to nearest MIDI note frequency (musically relevant)
+/// Buttons: precise linear 1 Hz steps
+/// This combines musical targeting with fine-tuning precision
+struct MusicalFrequencySliderRow: View {
+    let label: String
+    @Binding var value: Double
+    let range: ClosedRange<Double>
+    let buttonStep: Double  // Linear step for buttons (e.g., 1.0 Hz)
+    let displayFormatter: (Double) -> String
+    
+    @State private var isDragging: Bool = false
+    @State private var dragStartValue: Double = 0
+    @State private var dragStartLocation: CGFloat = 0
+    
+    init(
+        label: String,
+        value: Binding<Double>,
+        range: ClosedRange<Double>,
+        buttonStep: Double = 1.0,  // Default to 1 Hz
+        displayFormatter: @escaping (Double) -> String
+    ) {
+        self.label = label
+        self._value = value
+        self.range = range
+        self.buttonStep = buttonStep
+        self.displayFormatter = displayFormatter
+    }
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: radius)
+                .fill(Color("BackgroundColour"))
+            
+            HStack {
+                // Left button (<) - Decrease by fixed linear step
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text("<")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        decrementValue()
+                    }
+                
+                // Center - Draggable area with label and value
+                VStack(spacing: 2) {
+                    Text(label)
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 18)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                    
+                    Text(displayFormatter(value))
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 24)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 2)
+                        .onChanged { gesture in
+                            if !isDragging {
+                                isDragging = true
+                                dragStartValue = value
+                                dragStartLocation = gesture.startLocation.x
+                            }
+                            
+                            // Calculate delta from drag start
+                            let delta = gesture.location.x - dragStartLocation
+                            
+                            // Convert to MIDI note scale
+                            let midiStart = frequencyToMIDI(dragStartValue)
+                            
+                            // Sensitivity: ~300 pixels to traverse full range
+                            let sensitivity: CGFloat = 300.0
+                            let midiChange = Double(delta) / Double(sensitivity) * 88.0  // 88 piano keys
+                            
+                            let newMIDI = midiStart + midiChange
+                            
+                            // Convert back to frequency and quantize to nearest semitone
+                            let quantizedFrequency = midiToFrequency(round(newMIDI))
+                            
+                            // Clamp to range
+                            value = min(max(quantizedFrequency, range.lowerBound), range.upperBound)
+                        }
+                        .onEnded { _ in
+                            isDragging = false
+                            // Ensure we're snapped to a MIDI note when done
+                            value = midiToFrequency(round(frequencyToMIDI(value)))
+                        }
+                )
+                .background(
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(isDragging ? Color("HighlightColour").opacity(0.1) : Color.clear)
+                )
+                
+                // Right button (>) - Increase by fixed linear step
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text(">")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        incrementValue()
+                    }
+            }
+            .padding(.horizontal, 0)
+        }
+    }
+    
+    private func incrementValue() {
+        // Linear step (e.g., +1 Hz for fine-tuning)
+        let newValue = value + buttonStep
+        value = min(newValue, range.upperBound)
+    }
+    
+    private func decrementValue() {
+        // Linear step (e.g., -1 Hz for fine-tuning)
+        let newValue = value - buttonStep
+        value = max(newValue, range.lowerBound)
+    }
+    
+    // MIDI conversion helpers (used for drag quantization only)
+    private func frequencyToMIDI(_ frequency: Double) -> Double {
+        return 69.0 + 12.0 * log2(frequency / 440.0)
+    }
+    
+    private func midiToFrequency(_ midi: Double) -> Double {
+        return 440.0 * pow(2.0, (midi - 69.0) / 12.0)
+    }
+}
+
+// MARK: - Quantized Logarithmic Slider (5 Hz or 10 Hz Steps)
+
+/// A row for adjusting logarithmic parameters with quantization
+/// Drag: logarithmic behavior with quantized steps
+/// Buttons: fixed step size (e.g., 5 Hz or 10 Hz)
+/// This provides a good balance between musical precision and ease of targeting
+struct QuantizedLogarithmicSliderRow: View {
+    let label: String
+    @Binding var value: Double
+    let range: ClosedRange<Double>
+    let quantization: Double  // e.g., 5.0 for 5 Hz steps
+    let buttonStep: Double    // e.g., 10.0 for 10 Hz button increments
+    let displayFormatter: (Double) -> String
+    
+    @State private var isDragging: Bool = false
+    @State private var dragStartValue: Double = 0
+    @State private var dragStartLocation: CGFloat = 0
+    
+    init(
+        label: String,
+        value: Binding<Double>,
+        range: ClosedRange<Double>,
+        quantization: Double = 5.0,
+        buttonStep: Double? = nil,
+        displayFormatter: @escaping (Double) -> String
+    ) {
+        self.label = label
+        self._value = value
+        self.range = range
+        self.quantization = quantization
+        self.buttonStep = buttonStep ?? quantization
+        self.displayFormatter = displayFormatter
+    }
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: radius)
+                .fill(Color("BackgroundColour"))
+            
+            HStack {
+                // Left button (<) - Decrease by button step
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text("<")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        decrementValue()
+                    }
+                
+                // Center - Draggable area with label and value
+                VStack(spacing: 2) {
+                    Text(label)
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 18)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                    
+                    Text(displayFormatter(value))
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 24)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 2)
+                        .onChanged { gesture in
+                            if !isDragging {
+                                isDragging = true
+                                dragStartValue = value
+                                dragStartLocation = gesture.startLocation.x
+                            }
+                            
+                            // Calculate delta from drag start
+                            let delta = gesture.location.x - dragStartLocation
+                            
+                            // Convert to logarithmic scale
+                            let logMin = log(range.lowerBound)
+                            let logMax = log(range.upperBound)
+                            let logRange = logMax - logMin
+                            
+                            let logStartValue = log(dragStartValue)
+                            
+                            // Sensitivity: pixels to traverse full logarithmic range
+                            let sensitivity: CGFloat = 200.0
+                            let logChange = Double(delta) * logRange / Double(sensitivity)
+                            
+                            let newLogValue = logStartValue + logChange
+                            let newValue = exp(newLogValue)
+                            
+                            // Quantize to nearest step
+                            let quantizedValue = round(newValue / quantization) * quantization
+                            
+                            // Clamp to range
+                            value = min(max(quantizedValue, range.lowerBound), range.upperBound)
+                        }
+                        .onEnded { _ in
+                            isDragging = false
+                        }
+                )
+                .background(
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(isDragging ? Color("HighlightColour").opacity(0.1) : Color.clear)
+                )
+                
+                // Right button (>) - Increase by button step
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text(">")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        incrementValue()
+                    }
+            }
+            .padding(.horizontal, 0)
+        }
+    }
+    
+    private func incrementValue() {
+        let newValue = value + buttonStep
+        let quantizedValue = round(newValue / quantization) * quantization
+        value = min(quantizedValue, range.upperBound)
+    }
+    
+    private func decrementValue() {
+        let newValue = value - buttonStep
+        let quantizedValue = round(newValue / quantization) * quantization
+        value = max(quantizedValue, range.lowerBound)
+    }
+}
+
 // MARK: - Logarithmic Slider with Linear Button Steps
 
 /// A row for adjusting logarithmic/exponential parameters with fixed linear button steps
@@ -447,7 +742,7 @@ struct LogarithmicSliderRowWithLinearButtons: View {
                 .frame(maxWidth: .infinity)
                 .contentShape(Rectangle())
                 .gesture(
-                    DragGesture(minimumDistance: 0)
+                    DragGesture(minimumDistance: 2)
                         .onChanged { gesture in
                             if !isDragging {
                                 isDragging = true
@@ -563,59 +858,51 @@ private struct ParameterComponentsPreview: View {
     @State private var multiplier: Double = 8.0
     @State private var fineValue: Double = 0.5
     @State private var detuneMode: DetuneMode = .proportional
-    @State private var cutoffFrequency: Double = 1000.0
+    @State private var cutoffFrequency: Double = 880.0  // Start at A5 (musical frequency)
+    @State private var cutoffFrequency2: Double = 1760.0  // Start at A6
     
     var body: some View {
         ZStack {
             Color("BackgroundColour").ignoresSafeArea()
             
             VStack(spacing: 11) {
-                // Example: Enum cycling
+                Text("Hybrid: MIDI Snap (Drag) + 1 Hz Steps (Buttons)")
+                    .foregroundColor(Color("HighlightColour"))
+                    .adaptiveFont("MontserratAlternates-Medium", size: 14)
+                    .multilineTextAlignment(.center)
+                
+                // Example: Musical frequency slider with 1 Hz button steps
+                MusicalFrequencySliderRow(
+                    label: "FILTER CUTOFF",
+                    value: $cutoffFrequency,
+                    range: 55...14080,
+                    buttonStep: 1.0,  // Precise 1 Hz increments
+                    displayFormatter: { value in
+                        return String(format: "%.0f Hz", value)
+                    }
+                )
+                
+                Text("Drag to snap to musical notes • Buttons for 1 Hz precision")
+                    .foregroundColor(Color("HighlightColour").opacity(0.6))
+                    .adaptiveFont("MontserratAlternates-Medium", size: 12)
+                    .multilineTextAlignment(.center)
+                
+                Divider().background(Color("HighlightColour").opacity(0.3))
+                
+                // Other examples
                 ParameterRow(
                     label: "WAVEFORM",
                     value: $waveform,
                     displayText: { $0.displayName }
                 )
                 
-                // Example: Integer slider
                 IntegerSliderRow(
                     label: "CARRIER MULTIPLIER",
                     value: $multiplier,
                     range: 1...16
                 )
-                
-                // Example: Continuous slider
-                SliderRow(
-                    label: "MODULATOR FINE",
-                    value: $fineValue,
-                    range: 0...1,
-                    step: 0.01,
-                    displayFormatter: { String(format: "%.2f", $0) }
-                )
-                
-                // Example: Logarithmic slider with linear button steps (for filter)
-                LogarithmicSliderRowWithLinearButtons(
-                    label: "FILTER CUTOFF",
-                    value: $cutoffFrequency,
-                    range: 20...20000,
-                    buttonStep: 1.0,  // Always ±1 Hz per button press
-                    displayFormatter: { value in
-                        if value < 1000 {
-                            return String(format: "%.0f Hz", value)
-                        } else {
-                            return String(format: "%.1f kHz", value / 1000)
-                        }
-                    }
-                )
-                
-                // Example: Another enum
-                ParameterRow(
-                    label: "STEREO MODE",
-                    value: $detuneMode,
-                    displayText: { $0.displayName }
-                )
             }
-            .padding(0)
+            .padding(25)
         }
     }
 }

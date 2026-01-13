@@ -105,24 +105,20 @@ struct ContourView: View {
                 }
             )
             
-            // Row 7 - Filter Cutoff (20-20000 Hz, logarithmic drag, linear 1 Hz button steps)
-            LogarithmicSliderRowWithLinearButtons(
+            // Row 7 - Filter Cutoff
+            // Musical (MIDI note) quantization on drag, 1 Hz precision with buttons
+            MusicalFrequencySliderRow(
                 label: "FILTER CUTOFF",
                 value: Binding(
                     get: { paramManager.voiceTemplate.filter.cutoffFrequency },
                     set: { newValue in
                         paramManager.updateFilterCutoff(newValue)
-                        // No need to call applyFilterToAllVoices - it's handled internally now
                     }
                 ),
-                range: 12...20000,
-                buttonStep: 1.0,  // Fixed 1 Hz steps for buttons
+                range: 55...14080,
+                buttonStep: 1.0,  // Precise 1 Hz steps for fine-tuning
                 displayFormatter: { value in
-                    //if value < 1000 {
-                        return String(format: "%.0f Hz", value)
-                    //} else {
-                      //  return String(format: "%.1f kHz", value / 1000)
-                    //}
+                    return String(format: "%.0f Hz", value)
                 }
             )
             
