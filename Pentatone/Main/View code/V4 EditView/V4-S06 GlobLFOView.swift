@@ -58,8 +58,8 @@ struct GlobLFOView: View {
             // Row 3 - Global LFO Frequency (Hz or Sync Value based on mode)
             if paramManager.master.globalLFO.resetMode == .sync {
                 // Sync mode: Show tempo-synced divisions
-                ParameterRow(
-                    label: "LFO FREQUENCY",
+                RevTimeSyncParameterRow(
+                    label: "LFO RATE",
                     value: Binding(
                         get: { paramManager.master.globalLFO.syncValue },
                         set: { newValue in

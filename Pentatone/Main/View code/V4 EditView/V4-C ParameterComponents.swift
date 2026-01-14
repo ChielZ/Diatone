@@ -99,6 +99,210 @@ struct ParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.Index ==
     }
 }
 
+// MARK: - Time Sync Parameter Row (for tempo-synced values)
+
+/// A row for cycling through tempo-synced parameter values (like delay time)
+/// Shows < value > with tap targets on the left and right buttons
+/// Behavior optimized for tempo divisions where:
+/// - Right button (>) increases speed (smaller note values like 1/32)
+/// - Left button (<) decreases speed (larger note values like 1/4)
+/// - Does not wrap around at the ends
+struct TimeSyncParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.Index == Int {
+    let label: String
+    @Binding var value: T
+    let displayText: (T) -> String
+    
+    init(label: String, value: Binding<T>, displayText: @escaping (T) -> String) {
+        self.label = label
+        self._value = value
+        self.displayText = displayText
+    }
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: radius)
+                .fill(Color("BackgroundColour"))
+            
+            HStack {
+                // Left button (<)
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text("<")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        cycleNext()
+                    }
+                
+                Spacer()
+                
+                // Center display - label and value
+                VStack(spacing: 2) {
+                    Text(label)
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 18)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                    
+                    Text(displayText(value))
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 24)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                }
+                
+                Spacer()
+                
+                // Right button (>)
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text(">")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        cyclePrevious()
+                    }
+            }
+            .padding(.horizontal, 0)
+        }
+    }
+    
+    private func cycleNext() {
+        let allCases = Array(T.allCases)
+        guard let currentIndex = allCases.firstIndex(of: value) else { return }
+        // Decrement index to go to faster speeds (smaller fractions)
+        // Clamp to 0 instead of wrapping
+        let nextIndex = max(currentIndex - 1, 0)
+        value = allCases[nextIndex]
+    }
+    
+    private func cyclePrevious() {
+        let allCases = Array(T.allCases)
+        guard let currentIndex = allCases.firstIndex(of: value) else { return }
+        // Increment index to go to slower speeds (larger fractions)
+        // Clamp to last index instead of wrapping
+        let previousIndex = min(currentIndex + 1, allCases.count - 1)
+        value = allCases[previousIndex]
+    }
+}
+
+
+// MARK: - Time Sync Parameter Row (for tempo-synced values)
+
+/// A row for cycling through tempo-synced parameter values (like delay time)
+/// Shows < value > with tap targets on the left and right buttons
+/// Behavior optimized for tempo divisions where:
+/// - Right button (>) increases speed (smaller note values like 1/32)
+/// - Left button (<) decreases speed (larger note values like 1/4)
+/// - Does not wrap around at the ends
+struct RevTimeSyncParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.Index == Int {
+    let label: String
+    @Binding var value: T
+    let displayText: (T) -> String
+    
+    init(label: String, value: Binding<T>, displayText: @escaping (T) -> String) {
+        self.label = label
+        self._value = value
+        self.displayText = displayText
+    }
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: radius)
+                .fill(Color("BackgroundColour"))
+            
+            HStack {
+                // Left button (<)
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text("<")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        cyclePrevious()
+                    }
+                
+                Spacer()
+                
+                // Center display - label and value
+                VStack(spacing: 2) {
+                    Text(label)
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 18)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                    
+                    Text(displayText(value))
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 24)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                }
+                
+                Spacer()
+                
+                // Right button (>)
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text(">")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        cycleNext()
+                    }
+            }
+            .padding(.horizontal, 0)
+        }
+    }
+    
+    private func cycleNext() {
+        let allCases = Array(T.allCases)
+        guard let currentIndex = allCases.firstIndex(of: value) else { return }
+        // Decrement index to go to faster speeds (smaller fractions)
+        // Clamp to 0 instead of wrapping
+        let nextIndex = max(currentIndex - 1, 0)
+        value = allCases[nextIndex]
+    }
+    
+    private func cyclePrevious() {
+        let allCases = Array(T.allCases)
+        guard let currentIndex = allCases.firstIndex(of: value) else { return }
+        // Increment index to go to slower speeds (larger fractions)
+        // Clamp to last index instead of wrapping
+        let previousIndex = min(currentIndex + 1, allCases.count - 1)
+        value = allCases[previousIndex]
+    }
+}
+
+
+
+
+
+
 // MARK: - Slider Row (for continuous parameters)
 
 /// A row for adjusting continuous numeric parameters

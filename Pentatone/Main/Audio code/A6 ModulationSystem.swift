@@ -118,24 +118,34 @@ enum LFOFrequencyMode: String, Codable, CaseIterable {
 /// - 4 = 8 seconds per cycle = 0.125 Hz
 enum LFOSyncValue: Double, Codable, Equatable, CaseIterable {
     case thirtySecond = 32.0    // 1/32 - very fast
+    case twentyFourth = 24.0
     case sixteenth = 16.0       // 1/16
+    case twelfth = 12.0
     case eighth = 8.0           // 1/8
+    case sixth = 6.0
     case quarter = 4.0          // 1/4
+    case third = 3.0
     case half = 2.0             // 1/2
     case whole = 1.0            // 1 bar
     case two = 0.5              // 2 bars
+    case three = 0.33333333
     case four = 0.25            // 4 bars
     
     var displayName: String {
         switch self {
         case .thirtySecond: return "1/32"
+        case .twentyFourth: return "1/24"
         case .sixteenth: return "1/16"
+        case .twelfth: return "1/12"
         case .eighth: return "1/8"
+        case .sixth: return "1/6"
         case .quarter: return "1/4"
+        case .third: return "1/3"
         case .half: return "1/2"
-        case .whole: return "1"
-        case .two: return "2"
-        case .four: return "4"
+        case .whole: return "1/1"
+        case .two: return "2/1"
+        case .three: return "3/1"
+        case .four: return "4/1"
         }
     }
     

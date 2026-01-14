@@ -200,7 +200,7 @@ struct DelayParameters: Codable, Equatable {
     // Note: pingPong is now always enabled (removed as parameter)
     
     static let `default` = DelayParameters(
-        timeValue: .quarter,  // 1/4 note
+        timeValue: .eighth,  // 1/4 note
         feedback: 0.5,
         dryWetMix: 0.0,
         toneCutoff: 10_000    // Wide open by default
@@ -310,13 +310,13 @@ struct MacroControlParameters: Codable, Equatable {
     var ambienceToReverbMixRange: Double        // +/- range (0-1)
     
     static let `default` = MacroControlParameters(
-        toneToModulationIndexRange: 2.5,
-        toneToFilterCutoffOctaves: 2.0,
-        toneToFilterSaturationRange: 1.0,
-        ambienceToDelayFeedbackRange: 0.5,
-        ambienceToDelayMixRange: 0.5,
-        ambienceToReverbFeedbackRange: 0.5,
-        ambienceToReverbMixRange: 0.5
+        toneToModulationIndexRange: 1.25,
+        toneToFilterCutoffOctaves: 2.5,
+        toneToFilterSaturationRange: 0.5,
+        ambienceToDelayFeedbackRange: 0.25,
+        ambienceToDelayMixRange: 0.25,
+        ambienceToReverbFeedbackRange: 0.25,
+        ambienceToReverbMixRange: 0.25
     )
 }
 
@@ -399,7 +399,7 @@ struct MasterParameters: Codable, Equatable {
         output: .default,
         globalPitch: .default,
         globalLFO: .default,  // Uses GlobalLFOParameters.default
-        tempo: 120.0,
+        tempo: 100.0,
         voiceMode: .polyphonic,
         macroControl: .default
     )

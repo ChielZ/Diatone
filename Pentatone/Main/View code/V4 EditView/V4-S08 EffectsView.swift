@@ -51,7 +51,7 @@ struct EffectsView: View {
     var body: some View {
         Group {
             // Row 3 - Delay Time (tempo-synced divisions)
-            ParameterRow(
+            TimeSyncParameterRow(
                 label: "DELAY TIME",
                 value: Binding(
                     get: { paramManager.master.delay.timeValue },
