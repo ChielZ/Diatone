@@ -59,7 +59,7 @@ struct VoiceLFOView: View {
             )
             
             // Row 3 - Voice LFO Frequency (0.01-20 Hz)
-            SliderRow(
+            QuantizedLogarithmicSliderRow(
                 label: "LFO FREQUENCY",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.voiceLFO.frequency },
@@ -69,10 +69,14 @@ struct VoiceLFOView: View {
                     }
                 ),
                 range: 0.01...32,
-                step: 0.01,
-                displayFormatter: { String(format: "%.2f Hz", $0) }
+                quantization: 0.01,
+                buttonStep: 0.01,
+                displayFormatter: { value in
+                    return String(format: "%.2f Hz", value)
+                }
             )
             
+         
             // Row 4 - Voice LFO Delay (ramp time for amounts)
             SliderRow(
                 label: "LFO DELAY",

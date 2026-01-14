@@ -70,7 +70,7 @@ struct GlobLFOView: View {
                 )
             } else {
                 // Free mode: Show Hz slider
-                SliderRow(
+                QuantizedLogarithmicSliderRow(
                     label: "LFO FREQUENCY",
                     value: Binding(
                         get: { paramManager.master.globalLFO.frequency },
@@ -79,8 +79,10 @@ struct GlobLFOView: View {
                         }
                     ),
                     range: 0.01...32,  // Raised to match max sync mode frequency
-                    step: 0.01,
-                    displayFormatter: { String(format: "%.2f Hz", $0) }
+                    quantization: 0.01,
+                    buttonStep: 0.01,
+                    displayFormatter: { value in
+                        return String(format: "%.2f Hz", value) }
                 )
             }
             
