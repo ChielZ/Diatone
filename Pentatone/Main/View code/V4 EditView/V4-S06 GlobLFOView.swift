@@ -1,9 +1,9 @@
 //
-//  V4-S08 ParameterPage8View.swift
+//  V4-S06 GlobLFOView.swift
 //  Pentatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
-// SUBVIEW 8 - GLOBAL LFO
+// SUBVIEW 6 - GLOBAL LFO
 
 /*
  PAGE 8 - GLOBAL LFO (REFACTORED - FIXED DESTINATIONS)

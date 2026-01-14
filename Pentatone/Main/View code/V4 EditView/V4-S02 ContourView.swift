@@ -1,5 +1,5 @@
 //
-//  V4-S02 ParameterPage2View.swift
+//  V4-S02 ContourView.swift
 //  Pentatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.

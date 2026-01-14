@@ -1,9 +1,9 @@
 //
-//  V4-S09 ParameterPage9View.swift
+//  V4-S07 TouchView.swift
 //  Pentatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
-// SUBVIEW 9 - TOUCH RESPONSE
+// SUBVIEW 7 - TOUCH RESPONSE
 
 /*
 PAGE 9 - TOUCH RESPONSE (REFACTORED - FIXED DESTINATIONS)

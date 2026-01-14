@@ -1,8 +1,8 @@
-//  V4-S06 ParameterPage6View.swift
+//  V4-S04 AuxEnvView.swift
 //  Pentatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
-// SUBVIEW 6 - AUX ENVELOPE
+// SUBVIEW 4 - AUX ENVELOPE
 
 /*
  PAGE 6 - AUXILIARY ENVELOPE (REFACTORED - FIXED DESTINATIONS)

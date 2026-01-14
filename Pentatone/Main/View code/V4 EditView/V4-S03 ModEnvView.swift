@@ -1,9 +1,9 @@
 //
-//  V4-S05 ParameterPage5View.swift
+//  V4-S03 ModEnvView.swift
 //  Pentatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
-// SUBVIEW 5 - MOD ENVELOPE + KEY TRACKING
+// SUBVIEW 3 - MOD ENVELOPE + KEY TRACKING
 
 /*
  PAGE 5 - MODULATOR ENVELOPE + KEYBOARD TRACKING (REFACTORED - FIXED DESTINATIONS)

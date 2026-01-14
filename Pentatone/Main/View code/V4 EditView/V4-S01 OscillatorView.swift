@@ -1,5 +1,5 @@
 //
-//  V4-S01 ParameterPage1View.swift
+//  V4-S01 OscillatorView.swift
 //  Pentatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.

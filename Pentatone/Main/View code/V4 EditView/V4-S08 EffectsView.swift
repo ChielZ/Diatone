@@ -1,9 +1,9 @@
 //
-//  V4-S03 ParameterPage3View.swift
+//  V4-S08 EffectsView.swift
 //  Pentatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
-// SUBVIEW 3 - EFFECTS
+// SUBVIEW 8 - EFFECTS
 
 /*
  PAGE 3 - EFFECTS

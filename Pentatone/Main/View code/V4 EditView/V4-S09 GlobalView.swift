@@ -1,9 +1,9 @@
 //
-//  V4-S04 ParameterPage4View.swift
+//  V4-S09 GlobalView.swift
 //  Pentatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
-// SUBVIEW 4 - GLOBAL
+// SUBVIEW 9 - GLOBAL
 
 /*
 PAGE 4 - GLOBAL
