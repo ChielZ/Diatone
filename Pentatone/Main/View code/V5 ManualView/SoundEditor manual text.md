@@ -1,5 +1,11 @@
 
+ Per-page description of the parameter editing and preset management pages for in app documentation/manual
+ NEEDS PROOFREADING
+ 
+ 
  PAGE 1 - OSCILLATORS (OscillatorView)
+ 
+ This page controls the core sound generation parameters of the FM synthesis engine. The oscillator section determines the fundamental character of the sound through the interaction between the carrier and modulator oscillators. Here you can shape the basic timbre, select waveforms, set frequency relationships, and add stereo width to your sounds.
  
  1) Oscillator Waveform
  Here you can select the waveform of the FM carrier and modulator oscillators (they both always share the same waveform). Sine waves are the standard for FM synthesis and produce predictable and familiar sounding results. Triangle waves produce a subtly different tonal palette. Square waves will yield wild and unpredictable results.
@@ -11,94 +17,283 @@
  This sets the modulator oscillator frequency to a multiple of the base frequency of the note being played. Changing this will mainly affect the timbre of the sound, because the modulator oscillator's output is not heard directly, but used to alter the carrier oscillator.
 
  4) Modulator multiplier fine
+ This provides fine-tuning adjustment to the modulator oscillator frequency, adding fractional values (0-1) to the coarse multiplier setting. For example, if the coarse multiplier is set to 2 and the fine multiplier is 0.5, the total modulator multiplier will be 2.5. This allows for more subtle timbral variations and can be used to create inharmonic or detuned sounds when set to non-integer values.
+ 
  5) Modulator base level
+ This controls the base amount of frequency modulation applied to the carrier oscillator. Higher values produce brighter, more harmonically rich tones, while lower values yield simpler, purer sounds. This parameter is also known as the modulation index in FM synthesis terminology. The modulator level can be further shaped by various modulation sources throughout the synthesizer.
+ 
  6) Stereo offset mode
+ This determines how the stereo detuning effect is calculated. In 'Constant' mode, the offset is applied as a fixed frequency difference in Hz, creating a more pronounced detuning effect on lower notes. In 'Proportional' mode, the offset is applied as a percentage or in cents, maintaining a consistent detuning character across the entire pitch range.
+ 
  7) Stereo offset amount
+ This sets the amount of detuning between the left and right stereo channels, creating a wider, richer sound. In Constant mode, the value represents the frequency offset in Hz (0-4 Hz). In Proportional mode, the value represents the offset in cents (0-20 cents). Subtle settings can add warmth and width, while larger values create a chorusing or doubling effect.
+ 
+ 
  
  PAGE 2 - AMP + FILTER (ContourView)
+ 
+ This page provides control over the amplitude envelope and lowpass filter, which together shape the volume contour and tonal character of your sounds over time. The amplitude envelope (ADSR) determines how the volume evolves from the moment you trigger a note until it fades away, while the filter section sculpts the frequency content to create anything from warm, mellow tones to bright, resonant sounds.
+ 
  1) Amp Envelope Attack time
+ This sets the time it takes for the sound to reach full volume after a note is triggered. Short attack times (0-10ms) produce immediate, percussive sounds, while longer attack times create gradual swells. The range extends from 0ms to 5000ms, allowing for everything from sharp strikes to slow, pad-like fades.
+ 
  2) Amp Envelope Decay time
+ This determines how long it takes for the sound to fall from its peak level to the sustain level after the attack phase completes. Together with the sustain level, this shapes the body of the sound. Short decay times are useful for plucked or struck sounds, while longer decay times work well for sustained instruments.
+ 
  3) Amp Envelope Sustain level
+ This sets the volume level that the sound maintains while a note is held down, after the attack and decay phases have completed. A sustain level of 1.0 means the sound remains at full volume, while lower values create sounds that naturally die away even while held. A value of 0 produces purely percussive sounds with no sustain.
+ 
  4) Amp Envelope Release time
+ This controls how long the sound takes to fade to silence after a note is released. Short release times create tight, staccato sounds, while longer release times allow notes to ring out naturally. This is particularly useful for creating realistic piano or string-like decay characteristics.
+ 
  5) Filter Cutoff frequency
+ This sets the cutoff frequency of the lowpass filter, determining which frequencies are allowed to pass through. Frequencies below the cutoff pass through largely unaffected, while frequencies above the cutoff are progressively attenuated. Lower settings create darker, more muffled tones, while higher settings yield brighter sounds. The range spans from 55Hz to 14080Hz, covering the full audible spectrum.
+ 
  6) Filter Resonance
+ This emphasizes the frequencies around the cutoff point, creating a peaked response at the filter's cutoff frequency. Low resonance values produce a gentle, natural-sounding roll-off, while higher values add character and emphasis, making the filter effect more pronounced. At extreme settings, the filter can produce a whistling self-resonance.
+ 
  7) Filter Drive
+ This applies saturation or distortion to the signal before it enters the filter, adding harmonic richness and warmth to the sound. Low drive settings provide clean filtering, while higher values introduce progressively more coloration and grit. This can be used to add analog-style character or aggressive distortion to the tone.
+
+
 
  PAGE 3 - MOD + TRACK (ModEnvView)
+ 
+ This page houses the modulation envelope and key tracking controls. The modulation envelope allows you to shape how the FM brightness and harmonic complexity evolve over time, independently from the amplitude envelope. The key tracking parameters make the synthesizer respond naturally to different pitches, adjusting the filter brightness and LFO speed based on which notes you play—essential for creating realistic and musically expressive sounds.
+ 
  1) Mod Envelope Attack time
+ This sets the attack time for the modulation envelope, which controls how quickly the FM modulation amount increases when a note is triggered. Short attack times allow for immediate timbral brightness, useful for percussive sounds, while longer attack times create evolving textures that gradually become brighter or more complex.
+ 
  2) Mod Envelope Decay time
+ This determines how long it takes for the modulation envelope to fall from its peak to the sustain level. Since this envelope controls the modulator level, the decay time directly affects how the timbre evolves after the initial attack. Short decay times create sounds with a bright attack that quickly settles, while longer decay times produce more gradual timbral shifts.
+ 
  3) Mod Envelope Sustain level
+ This sets the sustained level of the modulation envelope while a note is held. A sustain level of 1.0 maintains full modulation throughout the note, while lower values reduce the brightness or harmonic complexity during the sustain phase. This is useful for creating sounds that have a bright attack but a simpler, more fundamental sustained tone.
+ 
  4) Mod Envelope Release time
+ This controls how long the modulation envelope takes to return to zero after a note is released. This affects the timbral character of the note's tail—shorter release times maintain the tone quality as the note fades, while longer release times can create interesting evolving or softening effects as notes decay.
+ 
  5) Mod Envelope amount
+ This sets how much the modulation envelope affects the FM modulator level. Positive values increase the modulation amount over the envelope's contour, making the sound brighter during the envelope peaks. Negative values decrease the modulation amount, creating an inverse effect where the sound becomes darker during envelope peaks and brighter in the valleys. At zero, the envelope has no effect on modulation.
+ 
  6) Key track to filter frequency amount
+ This makes the filter cutoff frequency respond to the pitch of notes being played. Higher values cause higher notes to open the filter more, creating a more natural response where brighter notes sound brighter. This helps maintain consistent timbral balance across the keyboard range and is particularly useful for emulating acoustic instruments.
+ 
  7) Key track to voice lfo rate amount
+ This causes the Voice LFO speed to increase with higher notes. When set to higher values, notes played higher on the keyboard will have faster vibrato or modulation effects, while lower notes have slower modulation. This can create more natural-sounding expression, as higher pitched instruments often have faster natural vibrato.
+ 
+ 
  
  PAGE 4 - AUX ENV (AuxEnvView)
+ 
+ This page contains the auxiliary envelope, a versatile modulation source that can simultaneously affect multiple sound parameters. Unlike the amplitude and modulation envelopes which have fixed destinations, the auxiliary envelope can modulate pitch, filter frequency, and even the amount of vibrato applied by the Voice LFO. This makes it ideal for creating expressive articulations, pitch sweeps, evolving filter movements, and dynamic vibrato effects that change over the course of a note.
+ 
  1) Aux envelope Attack time
+ This sets the attack time for the auxiliary envelope, determining how quickly it rises to its peak when a note is triggered. Short attack times create immediate modulation effects, while longer attack times produce gradual, evolving changes to pitch, filter, or vibrato over time.
+ 
  2) Aux envelope Decay time
+ This controls how long the auxiliary envelope takes to fall from its peak to the sustain level. The decay phase can create dramatic sweeps or transitions in the parameters being modulated, such as pitch bends that settle or filter movements that evolve after the initial attack.
+ 
  3) Aux envelope Sustain level
+ This sets the level at which the auxiliary envelope remains while a note is held. A sustain level of 1.0 maintains full modulation throughout the held note, while lower values reduce the modulation amount during the sustain phase. At 0, all modulation returns to neutral during sustain.
+ 
  4) Aux envelope Release time
+ This determines how long the auxiliary envelope takes to return to zero after a note is released. This can create interesting release effects, such as pitch droops, filter closings, or vibrato fadeouts as notes decay.
+ 
  5) Aux envelope to oscillator pitch amount
+ This controls how much the auxiliary envelope modulates the oscillator pitch. Positive values create upward pitch sweeps during envelope peaks, while negative values create downward pitch movements. This is useful for creating pitch drops, rises, or expressive articulations that add character to the attack or release of notes.
+ 
  6) Aux envelope to filter frequency amount
- 7) Aux envelope to vibrato (voice lfo to oscillator pitch amount) amount
+ This sets how much the auxiliary envelope affects the filter cutoff frequency. Positive values open the filter during envelope peaks (creating brighter sounds), while negative values close the filter (creating darker sounds). This provides an additional layer of filter animation beyond the static cutoff setting and any modulation from other sources.
+ 
+ 7) Aux envelope to vibrato amount
+ This is a meta-modulation parameter that controls how much the auxiliary envelope affects the amount of vibrato applied by the Voice LFO. Positive values increase vibrato during envelope peaks, while negative values decrease it. This allows you to create sounds where vibrato gradually increases over time, or where notes start with vibrato that fades away—adding expressive, organic character to sustained sounds.
+
+
 
  PAGE 5 - VOICE LFO (VoiceLFOView)
+ 
+ This page controls the Voice LFO, a per-voice low frequency oscillator that provides cyclic modulation to create vibrato, filter sweeps, and timbral animation. Unlike the Global LFO which affects all voices simultaneously, each voice has its own independent Voice LFO, making it ideal for expressive effects like natural vibrato. The Voice LFO can modulate pitch, filter frequency, and FM modulation depth, with adjustable waveforms, rates, and delay settings.
+ 
  1) Voice LFO waveform
+ This selects the shape of the Voice LFO's modulation wave. Sine waves produce smooth, natural vibrato. Triangle waves create a similar but slightly more linear motion. Square waves produce abrupt alternating modulation, useful for trills or special effects. Sawtooth waves create ramping modulation in one direction, while Reverse Sawtooth ramps in the opposite direction—both useful for cyclical sweeps.
+ 
  2) Voice LFO mode (free/trigger)
+ This determines when the Voice LFO's cycle begins. In 'Free' mode, the LFO runs continuously and independently for each voice, starting at a random phase when a note is triggered—creating natural, unpredictable variation between notes. In 'Trigger' mode, the LFO resets to the beginning of its cycle every time a note is played, ensuring consistent, repeatable modulation that starts from the same point each time.
+ 
  3) Voice LFO rate
+ This sets the speed of the Voice LFO oscillation in Hz (cycles per second). Lower rates (0.01-1 Hz) create slow, sweeping modulations suitable for gentle vibrato or evolving textures. Medium rates (1-8 Hz) produce typical vibrato speeds. Higher rates (8-32 Hz) can create tremolo-like effects or even venture into audio-rate modulation for special timbral effects.
+ 
  4) Voice LFO delay
- 4) Voice LFO to oscillator pitch amount (vibrato)
- 5) Voice LFO to filter frequency amount
- 6) Voice LFO to modulator level amount
+ This sets a delay time before the Voice LFO's modulation effects fade in after a note is triggered. During this delay period, the LFO modulation amounts gradually ramp up from zero to their set values. This is particularly useful for vibrato, allowing notes to start with a pure tone that gradually develops natural-sounding vibrato—mimicking the expressive technique of acoustic instruments and vocalists.
+ 
+ 5) Voice LFO to oscillator pitch amount (vibrato)
+ This controls how much the Voice LFO modulates the oscillator pitch, creating vibrato. The value is displayed in cents (hundredths of a semitone), with a range from 0 to 500 cents. Subtle settings (5-20 cents) create natural, musical vibrato, while larger values produce dramatic pitch wobbles or special effects. Combined with LFO delay, this creates realistic, expressive vibrato that grows over time.
+ 
+ 6) Voice LFO to filter frequency amount
+ This sets how much the Voice LFO modulates the filter cutoff frequency, displayed in octaves. The LFO cycles the filter cutoff up and down, creating animated, rhythmic tonal changes. Subtle amounts add movement and interest to sustained sounds, while larger values create dramatic wah-wah or sweeping effects that pulse in time with the LFO rate.
+ 
+ 7) Voice LFO to modulator level amount
+ This controls how much the Voice LFO modulates the FM modulator level, creating cyclic changes in timbral brightness and harmonic complexity. As the LFO oscillates, the sound alternates between brighter (more harmonics) and simpler (fewer harmonics) tones. This creates evolving, animated textures that add life and movement to sustained sounds, particularly effective with slower LFO rates.
+
  
  
  PAGE 6 - GLOBAL LFO (GlobLFOView)
+ 
+ This page controls the Global LFO, a single low frequency oscillator that affects all voices simultaneously. Unlike the per-voice LFO, the Global LFO creates synchronized modulation across your entire sound, making it perfect for tremolo, rhythmic filter sweeps, and coordinated timbral animation. It can run freely or sync to tempo, and can modulate amplitude, filter frequency, FM characteristics, and even the delay time for dynamic spatial effects.
+ 
  1) Global LFO waveform
+ This selects the shape of the Global LFO's modulation wave. Sine waves produce smooth, flowing modulation. Triangle waves create similar but more linear movement. Square waves produce abrupt on/off modulation, useful for gating or rhythmic effects. Sawtooth waves create rising ramps, while Reverse Sawtooth creates falling ramps—both excellent for directional sweeps and rhythmic patterns.
+ 
  2) Global LFO mode (free/sync)
+ This determines how the Global LFO timing is controlled. In 'Free' mode, the LFO runs at a freely adjustable speed in Hz, independent of tempo. In 'Sync' mode, the LFO locks to the global tempo setting, with its rate specified as musical divisions (whole notes, quarter notes, etc.), ensuring that modulation stays perfectly synchronized with your music's rhythm.
+ 
  3) Global LFO rate
+ This sets the speed of the Global LFO. In Free mode, the rate is adjustable from 0.01 to 32 Hz—from very slow evolving textures to fast rhythmic pulsing. In Sync mode, the rate is set using tempo divisions (1/32 note through whole notes), allowing the LFO to create modulation patterns that align precisely with musical timing.
+ 
  4) Global LFO to amplitude (tremolo, applied at mixer level)
+ This controls how much the Global LFO modulates the overall amplitude, creating tremolo—a rhythmic pulsing in volume. The modulation is applied at the mixer level, affecting all voices together. Subtle amounts add gentle movement and life to sustained sounds, while larger values create pronounced rhythmic pulsing. When synced to tempo, this creates perfectly timed rhythmic effects.
+ 
  5) Global LFO to modulator multiplier (fine) amount
+ This sets how much the Global LFO modulates the fine component of the FM modulator multiplier, creating cyclic variations in the frequency relationship between the carrier and modulator. This produces subtle to dramatic shifts in timbre and harmonic content, adding animation and interest to the sound. The effect can range from gentle timbral wavering to dramatic sweeping changes in tone color.
+ 
  6) Global LFO to filter frequency amount
+ This controls how much the Global LFO modulates the filter cutoff frequency, displayed in octaves. All voices' filters move together in sync, creating unified sweeping effects. This is excellent for creating wah-wah effects, rhythmic filter pumping, or slowly evolving timbral changes that affect your entire sound simultaneously. When synced to tempo, it creates rhythmic filter movement locked to your music.
+ 
  7) Global LFO to delay time amount
+ This sets how much the Global LFO modulates the delay time, displayed in milliseconds (0-50ms range). Modulating delay time creates pitch-shifting and chorusing effects as the delay length changes, adding movement and modulation to the delay's repeating echoes. This can create subtle warbling, tape-like wow and flutter, or dramatic pitch-bending delay effects that evolve over time.
+ 
+ 
  
  PAGE 7 - TOUCH (TouchView)
+ 
+ This page controls how the synthesizer responds to touch position and movement on the keyboard. The horizontal oblong keys detect both where you initially touch (initial touch position) and how your finger moves horizontally across the key (touch movement). For all parameters, touching or moving toward the center of the keyboard produces positive changes (louder, brighter, higher), while touching or moving away from center produces negative changes (softer, darker, lower). Several of these parameters use meta-modulation, controlling the intensity of other modulation sources rather than directly affecting sound parameters—allowing for sophisticated expressive techniques.
+ 
  1) Initial touch to oscillator amplitude amount
+ This controls how much the horizontal position of your initial touch affects the volume of notes. Higher values create more dynamic range based on touch position. Touching toward the center of the keyboard produces louder notes, while touching away from center produces softer notes. At zero, all notes play at the same volume regardless of where they're touched, useful for consistent, even playing.
+ 
  2) Initial touch to mod envelope amount
+ This is a meta-modulation parameter that controls how much initial touch position affects the amount of modulation envelope applied to the FM modulator level. Touching toward center increases the brightness and harmonic complexity added by the modulation envelope, while touching away from center reduces it. This allows center touches to produce brighter, more evolving timbres, while edge touches create simpler, more static tones—adding expressive timbral response based on where you touch the keys.
+ 
  3) Initial touch to aux envelope to cutoff amount
+ This is a meta-modulation parameter controlling how much initial touch position affects the auxiliary envelope's modulation of the filter cutoff. Touching toward center increases the filter movement created by the aux envelope, while touching away from center reduces it. Center touches produce more dramatic filter sweeps and animation, while edge touches produce subtler filter effects. This adds another layer of expressive timbral control responsive to touch position.
+ 
  4) Aftertouch to modulator level
+ This controls how much horizontal finger movement across the key directly modulates the FM modulator level. Moving your finger toward the center of the keyboard makes the sound brighter and more harmonically rich in real-time, while moving away from center makes it darker. This is excellent for adding expressive brightness to sustained notes, allowing you to swell from simple tones into complex, rich textures by sliding your finger horizontally across the key surface.
+ 
  5) Aftertouch to filter frequency amount
+ This sets how much horizontal finger movement affects the filter cutoff frequency, displayed in octaves. Moving toward center opens the filter and brightens the sound, while moving away from center closes it and darkens the sound. This provides immediate, intuitive tonal control during sustained notes—you can start with one tonal color and slide your finger to create dramatic filter sweeps or subtle timbral shifts.
+ 
  6) Aftertouch to oscillator pitch amount
- 7) Aftertouch to vibrato (voice lfo to oscillator pitch amount) amount
+ This controls how much horizontal finger movement bends the oscillator pitch, displayed in cents. Moving toward the center of the keyboard raises the pitch, while moving away from center lowers it. This allows you to add expressive pitch bends or subtle vibrato-like movement through horizontal finger slides, particularly effective for creating vocal-like expression or string-instrument-style pitch inflections during sustained notes.
  
- √ PAGE 8 - EFFECTS EffectsView)
+ 7) Aftertouch to vibrato amount
+ This is a meta-modulation parameter that controls how much horizontal finger movement affects the amount of vibrato applied by the Voice LFO. Rather than directly changing the sound, it modulates the depth of the pitch modulation created by the Voice LFO. Moving toward center increases vibrato intensity, while moving away from center decreases it. This allows you to start notes with minimal vibrato and gradually introduce more by sliding toward center, or dynamically control vibrato depth through horizontal finger movement for highly expressive, natural-sounding performance—mimicking the technique of acoustic instrumentalists who vary their vibrato intensity.
+ 
+ 
+ 
+ PAGE 8 - EFFECTS (EffectsView)
+ 
+ This page houses the delay and reverb effects, which add space, depth, and ambience to your sounds. The delay creates rhythmic echoes that can be synced to tempo, while the reverb simulates acoustic spaces from small rooms to vast halls. Both effects feature tone controls to shape the character of the reflections, and mix controls to blend the perfect balance of dry and wet signal.
+ 
  1) Delay time
- 2) Delay feedback
- 3) Delay lowpass
- 4) Delay mix
- 5) Reverb size
- 6) Reverb lowpass
- 7) Reverb mix
+ This sets the timing of the delay's repeating echoes using tempo-synced musical divisions. The delay automatically synchronizes with the global tempo setting, with available divisions ranging from fast 1/32 notes to slow whole notes. This ensures that delay echoes align perfectly with your music's rhythm, creating musical repetitions that enhance rather than clutter your sound. Common settings like quarter notes and eighth notes create classic rhythmic delay patterns.
  
- √ PAGE 10 - MASTER (GlobalView)
+ 2) Delay feedback
+ This controls how much of the delay's output is fed back into its input, determining how many times the echo repeats before fading away. Low feedback values (0.0-0.3) produce a few discrete echoes, useful for slapback delays or subtle doubling. Medium values (0.3-0.7) create multiple repeating echoes suitable for rhythmic patterns. High values (0.7-1.0) produce long, sustained trails of echoes. At maximum, the delay can create infinite, self-sustaining repeats.
+ 
+ 3) Delay lowpass
+ This sets the cutoff frequency of a lowpass filter applied to the delay's repeating echoes, displayed in Hz. Lower settings progressively darken each successive echo, creating warm, analog-style delays where high frequencies naturally decay—mimicking vintage tape and analog delay units. Higher settings keep the echoes bright and clear. This is excellent for preventing delays from cluttering the mix or for creating distinctly vintage or modern delay characters.
+ 
+ 4) Delay mix
+ This controls the balance between the dry (unaffected) and wet (delayed) signal. At zero, no delay is heard—only the dry signal passes through. As you increase the value, more of the delayed signal is blended in. Lower mix values add subtle depth and rhythmic enhancement without overwhelming the original sound, while higher values create prominent, obvious echo effects. The sweet spot depends on the musical context and desired effect intensity.
+ 
+ 5) Reverb size
+ This controls the size and decay time of the reverb's simulated acoustic space. Lower values create small, intimate spaces with short decay times, like small rooms or studios. Medium values simulate medium-sized halls or chambers. Higher values create vast, cathedral-like spaces with long, lush decays. This parameter fundamentally shapes the character of the space—from tight and controlled to expansive and ethereal.
+ 
+ 6) Reverb lowpass
+ This sets the cutoff frequency of a lowpass filter applied to the reverb reflections, displayed in Hz. Lower settings create darker, warmer reverbs by filtering out high frequencies from the reflections—useful for creating distant, muffled spaces or vintage reverb characters. Higher settings preserve brightness and air, creating crisp, clear modern reverb sounds. This helps the reverb sit properly in a mix and prevents excessive brightness from accumulating.
+ 
+ 7) Reverb mix
+ This controls the balance between the dry (unaffected) and wet (reverberated) signal. At zero, no reverb is heard. As you increase the value, more of the reverb's reflections are blended in. Subtle settings (0.1-0.3) add natural space and depth without making sounds seem distant. Medium settings (0.3-0.6) create noticeable ambience. Higher settings (0.6-1.0) place sounds in prominent, immersive spaces—useful for atmospheric pads and special effects.
+ 
+ 
+ 
+ PAGE 9 - MASTER (GlobalView)
+ 
+ This page contains the master controls that affect the overall behavior and tuning of the entire instrument. Here you can set the global tempo for tempo-synced effects and LFOs, choose between monophonic and polyphonic voice modes, transpose the entire keyboard, fine-tune the pitch, and control the output levels at different stages in the signal path. These are fundamental settings that shape how the instrument responds and integrates with other musical elements.
+ 
  1) Tempo
+ This sets the global tempo in beats per minute (BPM), ranging from 30 to 240 BPM. This tempo serves as the master clock for all tempo-synchronized features including the delay time, the Global LFO when in sync mode, and any other rhythmic effects. Changing the tempo affects all synced parameters simultaneously, allowing you to match the instrument's rhythmic elements to your music's tempo or adjust everything proportionally when working at different tempos.
+ 
  2) Voice mode
+ This determines how the synthesizer allocates and manages voices when multiple notes are played. In 'Poly' (polyphonic) mode, each note you play gets its own independent voice, allowing you to play chords and multiple notes simultaneously—up to the maximum number of available voices. In 'Mono' (monophonic) mode, only one note sounds at a time, with new notes cutting off previous ones. Monophonic mode is ideal for lead sounds and bass lines where you want single-note articulation.
+ 
  3) Octave offset
+ This transposes the entire keyboard up or down by whole octaves, with a range of -2 to +2 octaves. This allows you to quickly shift the playing range of the instrument without changing the underlying tuning or scale. Negative values shift the keyboard down (lower pitch), while positive values shift it up (higher pitch). This is particularly useful for accessing different registers or matching the range of other instruments without having to physically play in different positions.
+ 
  4) Semitone offset
+ This transposes the entire keyboard up or down by semitones (half-steps), with a range of -7 to +7 semitones. This allows you to change the key of the instrument to match other instruments or musical contexts without affecting the scale structure. Each step represents one semitone in the chromatic scale. Combined with the octave offset, this provides flexible transposition capabilities across a wide range.
+ 
  5) Fine tune
+ This provides precise pitch adjustment measured in cents (hundredths of a semitone), with a range of -50 to +50 cents. This allows you to fine-tune the instrument's overall pitch to match other instruments that might be slightly sharp or flat, or to create subtle detuning effects. This is essential when playing with acoustic instruments, older synthesizers, or when you want the instrument slightly detuned for creative purposes.
+ 
  6) Pre volume
+ This controls the volume level at the voice mixer stage, before the signal reaches the effects processors. This acts as a gain staging control, allowing you to adjust the level of signal being sent into the delay and reverb effects. Lower values prevent the effects from being overdriven, while higher values can push the effects harder for more pronounced processing. Proper pre-volume settings help maintain clean signal flow and optimal effect response.
+ 
  7) Post volume
+ This controls the final output volume of the entire instrument, after all processing including effects. This is the master output level that determines how loud the instrument sounds overall. Use this to balance the instrument's level with other sound sources in your mix, or to adjust for different playback systems. This control affects the final output without changing any internal gain staging or effect characteristics.
+  
+  
   
  PAGE 10 - MACRO (MacroView)
+ 
+ This page allows you to customize the range and behavior of the two main macro controls: Tone and Ambience. These macro controls are designed for quick, intuitive sound shaping accessible from the main playing interface. The Tone macro simultaneously adjusts timbral parameters (FM modulation, filter frequency, and filter drive), while the Ambience macro controls the spatial effects (delay and reverb). By adjusting the ranges here, you define how much each macro affects its assigned parameters, tailoring the macros' response to the specific needs of each preset.
+ 
  1) Tone to modulator level
+ This sets the range by which the Tone macro controls the FM modulator level. Higher values mean the Tone macro has a greater effect on brightness and harmonic complexity. When the Tone macro is at minimum, the modulator level will be at its preset value. When the Tone macro is at maximum, the modulator level will be increased by the range amount you set here. This allows you to define how dramatically the Tone control brightens the sound.
+ 
  2) Tone to filter frequency
+ This sets the range in octaves by which the Tone macro affects the filter cutoff frequency. Higher values give the Tone macro more dramatic control over the filter, allowing it to sweep across a wide frequency range. Lower values create subtler tonal shifts. This parameter defines how much the filter opens when you increase the Tone macro, determining whether it provides gentle tone shaping or dramatic filter sweeps.
+ 
  3) Tone to filter drive
+ This sets the range by which the Tone macro controls the filter drive (saturation). Higher values mean the Tone macro adds more distortion and harmonic richness as you increase it. This works together with the modulator level and filter frequency ranges to create cohesive timbral changes—allowing the Tone macro to simultaneously brighten the FM synthesis, open the filter, and add saturation for comprehensive tone control.
+ 
  4) Ambience to delay feedback
+ This sets the range by which the Ambience macro controls the delay feedback amount. Higher values mean the Ambience macro creates longer, more sustained delay trails as you increase it. At minimum Ambience settings, the delay feedback will be at its preset value. At maximum Ambience, the feedback will be increased by the range you set here. This determines how much the Ambience control extends the delay's echo repetitions.
+ 
  5) Ambience to delay mix
+ This sets the range by which the Ambience macro controls the balance between dry and delayed signal. Higher values mean the Ambience macro blends in more delay effect as you increase it. This defines how prominent the delay becomes when you raise the Ambience control—from subtle spatial enhancement to obvious rhythmic echoes.
+ 
  6) Ambience to reverb size
+ This sets the range by which the Ambience macro affects the reverb size and decay time. Higher values mean the Ambience macro creates larger, longer-decaying spaces as you increase it. This determines how dramatically the Ambience control can transform the reverb from tight, short spaces to expansive, long-decaying environments.
+ 
  7) Ambience to reverb mix
+ This sets the range by which the Ambience macro controls the balance between dry and reverberated signal. Higher values mean the Ambience macro blends in more reverb as you increase it. This defines how wet and spacious the sound becomes at maximum Ambience settings. Together with the other Ambience ranges, this allows the macro to provide comprehensive control over the spatial character—simultaneously adjusting delay length, delay presence, reverb size, and reverb presence for intuitive ambience shaping.
+
+
 
  PAGE 11 - PRESET (PresetView)
  
+ This page is the preset management center, where you can save, load, organize, and share your sounds. The preset system is organized into banks: one Factory bank containing the built-in presets, and four User banks (User 1-4) for your own creations. Each bank contains 25 preset slots arranged in a 5×5 grid, with positions numbered from 1.1 to 5.5. This structure provides 125 total preset slots—25 factory presets plus 100 user preset locations for your custom sounds.
  
+ BANK NAVIGATION
+ Use the left and right arrows in the top row to cycle through the five available banks: Factory, User 1, User 2, User 3, and User 4. The Factory bank contains presets that cannot be modified or overwritten—they serve as starting points and references. The four User banks are yours to fill with custom presets, modified factory presets, or imported sounds from other sources.
  
+ POSITION NAVIGATION
+ The second row displays the current preset slot position (e.g., "2.3") along with the name of the preset stored in that slot, or "Empty" if the slot is vacant. Use the left and right arrows to navigate through all 25 positions within the current bank. The positions cycle through in order: 1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 2.2... through 5.5, then back to 1.1.
  
+ LOAD / SAVE PRESET
+ This button serves a dual purpose depending on the current slot's status. If the selected slot contains a preset, the button displays "LOAD PRESET" and will load that sound into the synthesizer, replacing your current settings. If the selected slot is empty (only possible in User banks), the button displays "SAVE PRESET" and will open a dialog allowing you to save your current sound to this slot with a custom name. Factory bank slots always show "LOAD PRESET" since factory presets cannot be replaced.
+ 
+ IMPORT
+ This button (available only when viewing a User bank) allows you to import preset files from outside the app. Tap it to open the file picker, where you can select a previously exported .preset file from your device storage, cloud services, or shared locations. The imported preset will be saved to the currently selected slot in the User bank, replacing any existing preset in that location. This is useful for sharing presets between devices or with other users.
+ 
+ EXPORT
+ This button allows you to export the currently loaded sound as a preset file that can be shared or backed up. When you tap "EXPORT," the system will create a .preset file and present the share sheet, allowing you to save it to Files, send it via message or email, or share it through other apps. You can export any sound—whether it's a factory preset, a saved user preset, or your current unsaved edits. This is the primary way to back up your presets or share them with others.
+ 
+ OVERWRITE
+ This button (available only when viewing a User bank slot that already contains a preset) allows you to replace the existing preset with your current sound settings. When tapped, a confirmation dialog appears to prevent accidental overwrites. This is useful when you want to update a preset you've been refining, keeping the same name and slot position but updating it with your new settings. Note that factory presets cannot be overwritten—you must save modifications to a User bank slot instead.
+ 
+ WORKFLOW TIPS
+ To modify a factory preset: Load the factory preset, make your changes, navigate to an empty User bank slot, and save it with a new name. To organize your presets: Use the four User banks to categorize sounds by type—for example, Bank 1 for basses, Bank 2 for leads, Bank 3 for pads, and Bank 4 for experimental sounds. To back up your work: Regularly export your user presets to a safe location using the export function—this protects your sounds and makes them portable across devices.
