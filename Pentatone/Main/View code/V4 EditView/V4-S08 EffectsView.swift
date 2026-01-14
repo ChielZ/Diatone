@@ -125,10 +125,12 @@ struct EffectsView: View {
                         applyDelayToEngine()
                     }
                 ),
-                range: 0...1,
-                step: 0.01,
-                displayFormatter: { String(format: "%.2f", $0) }
-            )
+                range: 0...0.5,
+                step: 0.005,
+                displayFormatter: { value in
+                    let normalizedValue = value * 2
+                    return String(format: "%.2f", normalizedValue)
+                }            )
             
             // Row 7 - Reverb Size (feedback 0-1)
             SliderRow(
@@ -139,9 +141,12 @@ struct EffectsView: View {
                         paramManager.updateReverbFeedback(newValue)
                     }
                 ),
-                range: 0...1,
-                step: 0.01,
-                displayFormatter: { String(format: "%.2f", $0) }
+                range: 0.5...1,
+                step: 0.005,
+                displayFormatter: { value in
+                    let normalizedValue = -1 + value * 2
+                    return String(format: "%.2f", normalizedValue)
+                }
             )
             
             // Row 8 - Reverb Tone (cutoff frequency, logarithmic)
@@ -192,9 +197,12 @@ struct EffectsView: View {
                         paramManager.updateReverbMix(newValue)
                     }
                 ),
-                range: 0...1,
-                step: 0.01,
-                displayFormatter: { String(format: "%.2f", $0) }
+                range: 0...0.5,
+                step: 0.005,
+                displayFormatter: { value in
+                    let normalizedValue = value * 2
+                    return String(format: "%.2f", normalizedValue)
+                }
             )
         }
     }
