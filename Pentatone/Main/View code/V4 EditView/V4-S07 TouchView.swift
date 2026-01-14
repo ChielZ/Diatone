@@ -127,7 +127,7 @@ struct TouchView: View {
                 range: 0...24,
                 step: 1.0,
                 displayFormatter: { value in
-                    let cents = Int(value * 100)  // Half the semitones, convert to cents (1 semitone = 100 cents)
+                    let cents = Int(value * 50)  // Half the semitones, convert to cents (1 semitone = 100 cents)
                     return "\(cents) ct"
                 }
             )

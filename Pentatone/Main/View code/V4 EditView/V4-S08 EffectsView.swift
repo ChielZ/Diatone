@@ -78,6 +78,30 @@ struct EffectsView: View {
             )
             
             // Row 5 - Delay Tone (cutoff frequency, logarithmic)
+            QuantizedLogarithmicSliderRow(
+                            label: "DELAY LOWPASS",
+                            value: Binding(
+                                get: { paramManager.master.delay.toneCutoff },
+                                set: { newValue in
+                                    paramManager.updateDelayToneCutoff(newValue)
+                                }
+                            ),
+                            range: 50...15000,
+                            quantization: 5.0,
+                            buttonStep: 5.0,
+                            displayFormatter: { value in
+                                return String(format: "%.0f Hz", value)
+                            }
+                        )
+            
+            
+            
+            
+            
+            
+            
+            /*
+            // Row 5 - Delay Tone (cutoff frequency, logarithmic)
             // Map 0-1 to 200-20000 Hz for user-friendly control
             SliderRow(
                 label: "DELAY TONE",
@@ -115,6 +139,9 @@ struct EffectsView: View {
                     //}
                 }
             )
+             
+             
+             */
             // Row 6 - Delay Mix (0-1)
             SliderRow(
                 label: "DELAY MIX",
@@ -149,6 +176,29 @@ struct EffectsView: View {
                 }
             )
             
+            
+            
+            // Row 8 - Reverb Tone (cutoff frequency, logarithmic)
+            QuantizedLogarithmicSliderRow(
+                            label: "REVERB LOWPASS",
+                            value: Binding(
+                                get: { paramManager.master.reverb.cutoffFrequency },
+                                set: { newValue in
+                                    paramManager.updateReverbCutoff(newValue)
+                                }
+                            ),
+                            range: 50...20000,
+                            quantization: 5.0,
+                            buttonStep: 5.0,
+                            displayFormatter: { value in
+                                return String(format: "%.0f Hz", value)
+                            }
+                        )
+            
+            
+            
+            
+            /*
             // Row 8 - Reverb Tone (cutoff frequency, logarithmic)
             // Map 0-1 to 200-20000 Hz for user-friendly control
             SliderRow(
@@ -187,7 +237,10 @@ struct EffectsView: View {
                     //}
                 }
             )
-            
+            */
+             
+             
+             
             // Row 9 - Reverb Mix (0-1)
             SliderRow(
                 label: "REVERB MIX",
