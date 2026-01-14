@@ -130,6 +130,7 @@ struct MainKeyboardView: View {
     @State private var showingOptions: Bool = false
     @State private var currentMainView: MainViewMode = .options
     @State private var currentOptionsSubView: OptionsSubView = .scale
+    @State private var currentEditSubView: EditSubView = .oscillators
     
     // Animation timing configurations
     private let unfoldCenterDuration: Double = 0.75      // Center strip unfolds
@@ -206,6 +207,7 @@ struct MainKeyboardView: View {
                             case .edit:
                                 EditView(
                                     showingOptions: $showingOptions,
+                                    currentSubView: $currentEditSubView,
                                     onSwitchToOptions: {
                                         currentMainView = .options
                                     }

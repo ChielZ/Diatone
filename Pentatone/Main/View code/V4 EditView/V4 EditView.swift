@@ -34,19 +34,7 @@ enum EditSubView: String, CaseIterable {
 
 struct EditView: View {
     @Binding var showingOptions: Bool
-    
-    // Persist the current subview selection across app sessions
-    @AppStorage("lastEditSubView") private var lastEditSubViewRawValue: String = EditSubView.preset.rawValue
-    
-    // Computed property to work with the enum
-    private var currentSubView: EditSubView {
-        get {
-            EditSubView(rawValue: lastEditSubViewRawValue) ?? .preset
-        }
-        nonmutating set {
-            lastEditSubViewRawValue = newValue.rawValue
-        }
-    }
+    @Binding var currentSubView: EditSubView
     
     // View switching
     var onSwitchToOptions: (() -> Void)? = nil
@@ -250,6 +238,7 @@ struct EditView: View {
 #Preview {
     EditView(
         showingOptions: .constant(true),
+        currentSubView: .constant(.preset),
         onSwitchToOptions: {}
      )
 }
