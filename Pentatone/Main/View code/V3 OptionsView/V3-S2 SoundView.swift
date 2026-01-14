@@ -60,7 +60,7 @@ struct SoundView: View {
                         .offset(y: -(geometry.size.height/2 + 11))
                         .padding(0)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.5)
+                        //.minimumScaleFactor(0.5)
                 }
                 
             }
