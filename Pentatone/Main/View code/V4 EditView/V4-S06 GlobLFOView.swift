@@ -71,7 +71,7 @@ struct GlobLFOView: View {
             } else {
                 // Free mode: Show Hz slider
                 QuantizedLogarithmicSliderRow(
-                    label: "LFO FREQUENCY",
+                    label: "LFO RATE",
                     value: Binding(
                         get: { paramManager.master.globalLFO.frequency },
                         set: { newValue in

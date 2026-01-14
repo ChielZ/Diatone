@@ -1,61 +1,15 @@
-//
-//  Manual sketchpad.swift
-//  Pentatone
-//
-//  Created by Chiel Zwinkels on 10/01/2026.
-//
 
-/*
- 
- INTRODUCTION
- - What is an Arithmophone?
- - What is Pentatone?
- 
- THE KEYBOARD
- - Touch sensitivity
- - Fold/Unfold
- 
- THE SCALES
- - Just intonation vs ET (short, with reference to background)
- - Keys
- - Scales (short, with a few examples and reference to background)
- - Rotation
- 
- THE SOUNDS
- - Preset selector
- - Macro sliders
- 
- THE SETTINGS
- - voice mode
- - octave
- - tune
- - The editor (short pro version explanation with reference to editor)
- 
- BACKGROUND
- - What is just intonation?
- - What is equal temperament?
- - The arithmophone pentatonic scale system
- - Scale diagrams
- 
- THE EDITOR
- - What is FM? (make skippable)
- - Preset management
- - Oscillators
- - Contour
- - Effects
- - Master
- - Mod Envelope
- - Aux Envelope
- - Voice LFO
- - Global LFO
- - Touch
- - Macro ranges
-
- 
  PAGE 1 - OSCILLATORS (OscillatorView)
+ 
  1) Oscillator Waveform
+ Here you can select the waveform of the FM carrier and modulator oscillators (they both always share the same waveform). Sine waves are the standard for FM synthesis and produce predictable and familiar sounding results. Triangle waves produce a subtly different tonal palette. Square waves will yield wild and unpredictable results.
+ 
  2) Carrier multiplier
+ This sets the carrier oscillator frequency to a multiple of the base frequency of the note being played. Changing this will affect the pitch of the sound directly and set it to the corresponding harmonic of the base note.
+ 
  3) Modulator multiplier coarse
+ This sets the modulator oscillator frequency to a multiple of the base frequency of the note being played. Changing this will mainly affect the timbre of the sound, because the modulator oscillator's output is not heard directly, but used to alter the carrier oscillator.
+
  4) Modulator multiplier fine
  5) Modulator base level
  6) Stereo offset mode
@@ -148,5 +102,3 @@
  
  
  
- 
- */

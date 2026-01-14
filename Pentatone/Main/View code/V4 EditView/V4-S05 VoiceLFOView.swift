@@ -60,7 +60,7 @@ struct VoiceLFOView: View {
             
             // Row 3 - Voice LFO Frequency (0.01-20 Hz)
             QuantizedLogarithmicSliderRow(
-                label: "LFO FREQUENCY",
+                label: "LFO RATE",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.voiceLFO.frequency },
                     set: { newValue in

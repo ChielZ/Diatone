@@ -190,7 +190,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  
  CONCEPT FOR FINAL STRUCTURE OF EDITABLE PARAMETERS / SOUND EDITING SCREENS
  
- √ PAGE 1 - VOICE OSCILLATORS
+ PAGE 1 - OSCILLATORS (OscillatorView)
  1) Oscillator Waveform
  2) Carrier multiplier
  3) Modulator multiplier coarse
@@ -199,82 +199,89 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  6) Stereo offset mode
  7) Stereo offset amount
  
- √ PAGE 2 - VOICE CONTOUR
+ PAGE 2 - AMP + FILTER (ContourView)
  1) Amp Envelope Attack time
  2) Amp Envelope Decay time
  3) Amp Envelope Sustain level
  4) Amp Envelope Release time
- 5) Lowpass Filter Cutoff frequency
- 6) Lowpass Filter Resonance
- 7) Lowpass Filter Saturation
+ 5) Filter Cutoff frequency
+ 6) Filter Resonance
+ 7) Filter Drive
 
- √ PAGE 3 - EFFECTS
- 1) Delay time
- 2) Delay feedback
- 3) Delay tone
- 4) Delay mix
- 5) Reverb size
- 6) Reverb tone
- 7) Reverb mix
- 
- √ PAGE 4 - GLOBAL
- 1) Tempo
- 2) Polyphony
- 3) Octave
- 4) Semitone
- 5) Fine tune
- 6) Pre volume
- 7) Post volume
-  
- PAGE 5 - MODULATOR ENVELOPE  + KEYBOARD TRACKING
+ PAGE 3 - MOD + TRACK (ModEnvView)
  1) Mod Envelope Attack time
  2) Mod Envelope Decay time
  3) Mod Envelope Sustain level
  4) Mod Envelope Release time
  5) Mod Envelope amount
  6) Key track to filter frequency amount
- 7) Key track to voice lfo frequency
+ 7) Key track to voice lfo rate amount
  
- PAGE 6 - AUXILIARY ENVELOPE
+ PAGE 4 - AUX ENV (AuxEnvView)
  1) Aux envelope Attack time
  2) Aux envelope Decay time
  3) Aux envelope Sustain level
  4) Aux envelope Release time
  5) Aux envelope to oscillator pitch amount
  6) Aux envelope to filter frequency amount
- 7) Aux envelope to vibrato (voice lfo >> oscillator pitch) amount
+ 7) Aux envelope to vibrato (voice lfo to oscillator pitch amount) amount
 
- PAGE 7 - VOICE LFO
+ PAGE 5 - VOICE LFO (VoiceLFOView)
  1) Voice LFO waveform
  2) Voice LFO mode (free/trigger)
- 3) Voice LFO frequency
- 4) Voice LFO to oscillator pitch amount
+ 3) Voice LFO rate
+ 4) Voice LFO delay
+ 4) Voice LFO to oscillator pitch amount (vibrato)
  5) Voice LFO to filter frequency amount
  6) Voice LFO to modulator level amount
- 7) Voice LFO delay (ramps amounts)
  
- PAGE 8 - GLOBAL LFO
+ 
+ PAGE 6 - GLOBAL LFO (GlobLFOView)
  1) Global LFO waveform
  2) Global LFO mode (free/sync)
- 3) Global LFO frequency
- 4) Global LFO to voice mixer volume amount (tremolo, applied at mixer level)
+ 3) Global LFO rate
+ 4) Global LFO to amplitude (tremolo, applied at mixer level)
  5) Global LFO to modulator multiplier (fine) amount
  6) Global LFO to filter frequency amount
  7) Global LFO to delay time amount
  
- PAGE 9 - TOUCH RESPONSE
+ PAGE 7 - TOUCH (TouchView)
  1) Initial touch to oscillator amplitude amount
  2) Initial touch to mod envelope amount
- 3) Initial touch to aux envelope pitch amount
- 4) Initial touch to aux envelope cutoff amount
+ 3) Initial touch to aux envelope to cutoff amount
+ 4) Aftertouch to modulator level
  5) Aftertouch to filter frequency amount
- 6) Aftertouch to modulator level amount
- 7) Aftertouch to vibrato (voice lfo >> oscillator pitch) amount
-
- PAGE 10 - PRESETS
- - Select and store presets
+ 6) Aftertouch to oscillator pitch amount
+ 7) Aftertouch to vibrato (voice lfo to oscillator pitch amount) amount
  
- PAGE 11 - MACRO SETTINGS
+ √ PAGE 8 - EFFECTS EffectsView)
+ 1) Delay time
+ 2) Delay feedback
+ 3) Delay lowpass
+ 4) Delay mix
+ 5) Reverb size
+ 6) Reverb lowpass
+ 7) Reverb mix
+ 
+ √ PAGE 10 - MASTER (GlobalView)
+ 1) Tempo
+ 2) Voice mode
+ 3) Octave offset
+ 4) Semitone offset
+ 5) Fine tune
+ 6) Pre volume
+ 7) Post volume
+  
+ PAGE 10 - MACRO (MacroView)
+ 1) Tone to modulator level
+ 2) Tone to filter frequency
+ 3) Tone to filter drive
+ 4) Ambience to delay feedback
+ 5) Ambience to delay mix
+ 6) Ambience to reverb size
+ 7) Ambience to reverb mix
+
+ PAGE 11 - PRESET (PresetView)
  
  
 
