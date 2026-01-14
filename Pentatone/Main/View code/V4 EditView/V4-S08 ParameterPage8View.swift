@@ -110,9 +110,10 @@ struct GlobLFOView: View {
                     }
                 ),
                 range: 0...2,
-                step: 0.01,
+                step: 0.02,
                 displayFormatter: { value in
-                    return value > 0 ? String(format: "%.2f", value) : String(format: "%.2f", value)
+                    let normalizedValue = value / 2
+                    return String(format: "%.2f", normalizedValue)
                 }
             )
             

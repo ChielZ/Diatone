@@ -76,8 +76,8 @@ struct AuxEnvView: View {
                     }
                 ),
                 range: 0...1,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f", $0) }
+                step: 0.01,
+                displayFormatter: { String(format: "%.2f", $0) }
             )
             
             // Row 4 - Auxiliary Envelope Release (0-5 seconds, displayed in ms)
@@ -137,14 +137,14 @@ struct AuxEnvView: View {
                     }
                 ),
                 range: -5...5,
-                step: 0.1,
+                step: 0.01,
                 displayFormatter: { value in
                     if abs(value) < 0.05 {  // Use epsilon for floating-point comparison
                         return "0.0 oct"
                     } else if value > 0 {
-                        return String(format: "+%.1f oct", value)
+                        return String(format: "+%.2f oct", value)
                     } else {
-                        return String(format: "%.1f oct", value)
+                        return String(format: "%.2f oct", value)
                     }
                 }
             )
@@ -160,14 +160,15 @@ struct AuxEnvView: View {
                     }
                 ),
                 range: -2...2,
-                step: 0.01,
+                step: 0.02,
                 displayFormatter: { value in
+                    let normalizedValue = value / 2
                     if abs(value) < 0.005 {  // Use epsilon for floating-point comparison
                         return "0.00"
-                    } else if value > 0 {
-                        return String(format: "+%.2f", value)
+                    } else if normalizedValue > 0 {
+                        return String(format: "+%.2f", normalizedValue)
                     } else {
-                        return String(format: "%.2f", value)
+                        return String(format: "%.2f", normalizedValue)
                     }
                 }
             )

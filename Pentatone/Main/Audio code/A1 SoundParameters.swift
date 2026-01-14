@@ -97,7 +97,7 @@ struct FilterParameters: Codable, Equatable {
     var cutoffFrequency: Double
     
     static let `default` = FilterParameters(
-        cutoffFrequency: 1200
+        cutoffFrequency: 880
     )
     
     /// Clamps cutoff to valid range (0 Hz - 22.05 kHz)

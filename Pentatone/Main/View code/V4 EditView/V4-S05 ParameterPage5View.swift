@@ -77,8 +77,8 @@ struct ModEnvView: View {
                     }
                 ),
                 range: 0...1,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f", $0) }
+                step: 0.01,
+                displayFormatter: { String(format: "%.2f", $0) }
             )
             
             // Row 4 - Modulator Envelope Release (0-5 seconds, displayed in ms)
@@ -114,17 +114,23 @@ struct ModEnvView: View {
                     }
                 ),
                 range: -5...5,
-                step: 0.01,
+                step: 0.05,
                 displayFormatter: { value in
+                    let normalizedValue = value / 5
                     if abs(value) < 0.005 {  // Use epsilon for floating-point comparison
                         return "0.00"
-                    } else if value > 0 {
-                        return String(format: "+%.2f", value)
+                    } else if normalizedValue > 0 {
+                        return String(format: "+%.2f", normalizedValue)
                     } else {
-                        return String(format: "%.2f", value)
+                        return String(format: "%.2f", normalizedValue)
                     }
                 }
             )
+            
+            
+            
+           
+            
             
             // Row 6 - Key Tracking to Filter Frequency Amount (0.0 to 1.0)
             // Fixed destination 1: filter frequency (scales envelope/aftertouch modulation)

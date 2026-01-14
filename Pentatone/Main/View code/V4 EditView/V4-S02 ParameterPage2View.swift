@@ -80,8 +80,8 @@ struct ContourView: View {
                     }
                 ),
                 range: 0...1,
-                step: 0.001,
-                displayFormatter: { String(format: "%.3f", $0) }
+                step: 0.01,
+                displayFormatter: { String(format: "%.2f", $0) }
             )
             
             // Row 6 - Amp Envelope Release (0-5 seconds, displayed in ms)
@@ -133,8 +133,11 @@ struct ContourView: View {
                     }
                 ),
                 range: 0...2,
-                step: 0.01,
-                displayFormatter: { String(format: "%.2f", $0) }
+                step: 0.02,
+                displayFormatter: { value in
+                    let normalizedValue = value / 2
+                    return String(format: "%.2f", normalizedValue)
+                }
             )
             
             // Row 9 - Filter Saturation (0-10)
@@ -148,8 +151,11 @@ struct ContourView: View {
                     }
                 ),
                 range: 0...2,
-                step: 0.01,
-                displayFormatter: { String(format: "%.2f", $0) }
+                step: 0.02,
+                displayFormatter: { value in
+                    let normalizedValue = value / 2
+                    return String(format: "%.2f", normalizedValue)
+                }
             )
         }
     }

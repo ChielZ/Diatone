@@ -94,7 +94,7 @@ struct OscillatorView: View {
                 range: 0...5,
                 step: 0.05,
                 displayFormatter: { value in
-                    let normalizedValue = value / 5.0
+                    let normalizedValue = value / 5
                     return String(format: "%.2f", normalizedValue)
                 }
             )

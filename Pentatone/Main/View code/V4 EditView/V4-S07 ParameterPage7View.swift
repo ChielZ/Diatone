@@ -68,7 +68,7 @@ struct VoiceLFOView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0.01...20,
+                range: 0.01...32,
                 step: 0.01,
                 displayFormatter: { String(format: "%.2f Hz", $0) }
             )
@@ -135,9 +135,10 @@ struct VoiceLFOView: View {
                     }
                 ),
                 range: 0...5,
-                step: 0.01,
+                step: 0.05,
                 displayFormatter: { value in
-                    return value > 0 ? String(format: "%.2f", value) : String(format: "%.2f", value)
+                    let normalizedValue = value / 5
+                    return String(format: "%.2f", normalizedValue)
                 }
             )
             
