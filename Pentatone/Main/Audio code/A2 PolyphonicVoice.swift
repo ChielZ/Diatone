@@ -393,7 +393,7 @@ final class PolyphonicVoice {
         oscRight.$amplitude.ramp(to: AUValue(immediateAmplitude), duration: 0)
         
         // Apply unmodulated filter cutoff (modulation will be applied at control rate)
-        filter.$cutoffFrequency.ramp(to: AUValue(modulationState.baseFilterCutoff), duration: 0)
+        filter.$cutoffFrequency.ramp(to: AUValue(modulationState.baseFilterCutoff), duration: 0.005)
         
         envelope.reset()
         envelope.openGate()
