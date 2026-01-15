@@ -469,6 +469,15 @@ struct GlobalLFOParameters: Codable, Equatable {
 /// Runtime state for modulation calculation
 /// This tracks the current state of modulation sources during voice playback
 /// Not part of presets (ephemeral state)
+/// 
+/// **NOTE-ON PROPERTIES** (calculated once at trigger, constant for note lifetime):
+/// - `keyTrackingValue`: Octave offset based on note frequency (for filter tracking)
+/// - `initialTouchX`: Touch position where note was triggered (for velocity-like modulation)
+/// - `baseFrequency`: Unmodulated frequency set at note-on (reference for pitch modulation)
+/// 
+/// **CONTINUOUS PROPERTIES** (updated at 200 Hz by modulation system):
+/// - Envelope times, LFO phases, aftertouch position
+/// - Current modulated frequency (includes pitch modulation)
 struct ModulationState {
     // Envelope timing
     var modulatorEnvelopeTime: Double = 0.0
@@ -756,9 +765,11 @@ struct ModulationRouter {
     
     // MARK: - 5) Filter Frequency [LOGARITHMIC]
     
-    /// Calculate filter cutoff frequency
+    /// Calculate filter cutoff frequency (LEGACY - includes key tracking)
     /// Sources: Key track (note-on offset), Aux env, Voice LFO, Global LFO, Aftertouch
     /// Key tracking provides a per-note octave offset applied at note-on
+    /// NOTE: This method is kept for backward compatibility but should not be used
+    /// for continuous modulation. Use calculateFilterFrequencyContinuous instead.
     static func calculateFilterFrequency(
         baseCutoff: Double,
         keyTrackValue: Double,
@@ -790,6 +801,39 @@ struct ModulationRouter {
         let totalOctaves = keyTrackOctaves + auxEnvOctaves + aftertouchOctaves + voiceLFOOctaves + globalLFOOctaves
         
         // Step 5: Apply to base cutoff frequency
+        let finalCutoff = baseCutoff * pow(2.0, totalOctaves)
+        
+        return max(20.0, min(22050.0, finalCutoff))
+    }
+    
+    /// Calculate filter cutoff frequency for CONTINUOUS modulation only
+    /// Sources: Aux env, Voice LFO, Global LFO, Aftertouch
+    /// NOTE: Key tracking is NOT included - it's a note-on property applied in trigger()
+    /// The baseCutoff passed in should already include key tracking if enabled
+    static func calculateFilterFrequencyContinuous(
+        baseCutoff: Double,  // Already includes key tracking offset if enabled
+        auxEnvValue: Double,
+        auxEnvAmount: Double,
+        aftertouchDelta: Double,
+        aftertouchAmount: Double,
+        voiceLFOValue: Double,
+        voiceLFOAmount: Double,
+        voiceLFORampFactor: Double,
+        globalLFOValue: Double,
+        globalLFOAmount: Double
+    ) -> Double {
+        // Step 1: Envelope and aftertouch offsets in octave space
+        let auxEnvOctaves = auxEnvValue * auxEnvAmount
+        let aftertouchOctaves = aftertouchDelta * aftertouchAmount
+        
+        // Step 2: LFO offsets in octave space
+        let voiceLFOOctaves = (voiceLFOValue * voiceLFORampFactor) * voiceLFOAmount
+        let globalLFOOctaves = globalLFOValue * globalLFOAmount
+        
+        // Step 3: Sum all octave offsets (no key tracking)
+        let totalOctaves = auxEnvOctaves + aftertouchOctaves + voiceLFOOctaves + globalLFOOctaves
+        
+        // Step 4: Apply to base cutoff frequency (which already includes key tracking)
         let finalCutoff = baseCutoff * pow(2.0, totalOctaves)
         
         return max(20.0, min(22050.0, finalCutoff))

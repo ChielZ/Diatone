@@ -342,6 +342,16 @@ final class PolyphonicVoice {
     // MARK: - Triggering
     
     /// Triggers this voice (starts envelope attack)
+    /// 
+    /// **CRITICAL TIMING REQUIREMENTS:**
+    /// - Initial touch amplitude modulation is applied immediately (zero-latency)
+    /// - Key tracking filter offset is applied immediately (zero-latency)
+    /// - Both must complete BEFORE the envelope opens to avoid audible transients
+    /// 
+    /// **NOTE-ON PROPERTIES (applied once at trigger):**
+    /// - Key tracking: Calculated based on note frequency, remains constant for note lifetime
+    /// - Initial touch: Captured at note-on, used for amplitude and meta-modulation
+    /// 
     /// - Parameters:
     ///   - initialTouchX: Initial touch x-position (0.0 = left, 1.0 = right) for velocity-like response
     ///   - templateFilterCutoff: Optional override for base filter cutoff (from current template)
@@ -392,17 +402,9 @@ final class PolyphonicVoice {
         oscLeft.$amplitude.ramp(to: AUValue(immediateAmplitude), duration: 0)
         oscRight.$amplitude.ramp(to: AUValue(immediateAmplitude), duration: 0)
         
-        // Apply unmodulated filter cutoff (modulation will be applied at control rate)
-        filter.$cutoffFrequency.ramp(to: AUValue(modulationState.baseFilterCutoff), duration: 0.005)
-        
-        envelope.reset()
-        envelope.openGate()
-        isAvailable = false
-        triggerTime = Date()
-        
-        // Phase 5: Initialize modulation state with the actual initial touch value
-        // Note: voiceLFOPhase is only reset if LFO reset mode is .trigger or .sync
-        // IMPORTANT: Pass key tracking parameters so the key tracking value is calculated ONCE at note-on
+        // CRITICAL: Calculate and apply key-tracked filter cutoff IMMEDIATELY at note-on
+        // This must happen BEFORE the envelope opens to avoid transients
+        // First, reset modulation state to get the key tracking value
         let shouldResetLFO = voiceModulation.voiceLFO.resetMode != .free
         modulationState.reset(
             frequency: currentFrequency, 
@@ -410,6 +412,26 @@ final class PolyphonicVoice {
             resetLFOPhase: shouldResetLFO,
             keyTrackingParams: voiceModulation.keyTracking
         )
+        
+        // Now calculate the initial filter cutoff with key tracking applied
+        // This is a note-on property - calculated once and used as the base for continuous modulation
+        let initialFilterCutoff: Double
+        if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
+            // Apply key tracking at note-on (logarithmic, in octave space)
+            let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
+            initialFilterCutoff = modulationState.baseFilterCutoff * pow(2.0, keyTrackOctaves)
+            // Clamp to valid range
+            let clampedCutoff = max(12.0, min(20000.0, initialFilterCutoff))
+            filter.$cutoffFrequency.ramp(to: AUValue(clampedCutoff), duration: 0)
+        } else {
+            // No key tracking - use base cutoff
+            filter.$cutoffFrequency.ramp(to: AUValue(modulationState.baseFilterCutoff), duration: 0)
+        }
+        
+        envelope.reset()
+        envelope.openGate()
+        isAvailable = false
+        triggerTime = Date()
     }
     
     /// Releases this voice (starts envelope release)
@@ -800,25 +822,25 @@ final class PolyphonicVoice {
     }
     
     /// Applies combined filter frequency modulation from all sources
-    /// Sources: Key tracking, Auxiliary envelope, Voice LFO, Global LFO, Aftertouch
+    /// Sources: Auxiliary envelope, Voice LFO, Global LFO, Aftertouch
+    /// Note: Key tracking is NOT applied here - it's a note-on property applied in trigger()
     private func applyCombinedFilterFrequency(
         auxiliaryEnvValue: Double,
         voiceLFORawValue: Double,
         globalLFORawValue: Double,
         globalLFOParameters: GlobalLFOParameters,
-        keyTrackValue: Double,
+        keyTrackValue: Double,  // Kept for signature compatibility but not used
         aftertouchDelta: Double
     ) {
-        // Check if any source is active
-        // Key tracking is now a direct additive source (note-on offset), not just a multiplier
-        let hasKeyTrack = voiceModulation.keyTracking.amountToFilterFrequency != 0.0
+        // Check if any CONTINUOUS modulation source is active
+        // Key tracking is NOT checked here - it's applied once at note-on in trigger()
         let hasAuxEnv = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency != 0.0
         let hasVoiceLFO = voiceModulation.voiceLFO.amountToFilterFrequency != 0.0
         let hasGlobalLFO = globalLFOParameters.amountToFilterFrequency != 0.0
         let hasAftertouch = voiceModulation.touchAftertouch.amountToFilterFrequency != 0.0
         let hasInitialTouchToFilter = voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0
         
-        guard hasKeyTrack || hasAuxEnv || hasVoiceLFO || hasGlobalLFO || hasAftertouch || hasInitialTouchToFilter else { return }
+        guard hasAuxEnv || hasVoiceLFO || hasGlobalLFO || hasAftertouch || hasInitialTouchToFilter else { return }
         
         // Apply initial touch meta-modulation to aux envelope filter amount
         var effectiveAuxEnvFilterAmount = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency
@@ -830,11 +852,20 @@ final class PolyphonicVoice {
             )
         }
         
-        // Use the ModulationRouter to properly combine all sources
-        let finalCutoff = ModulationRouter.calculateFilterFrequency(
-            baseCutoff: modulationState.baseFilterCutoff,
-            keyTrackValue: keyTrackValue,
-            keyTrackAmount: voiceModulation.keyTracking.amountToFilterFrequency,
+        // Calculate the base cutoff with key tracking already applied
+        // Key tracking was applied once at note-on and becomes part of the base
+        let keyTrackedBaseCutoff: Double
+        if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
+            let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
+            keyTrackedBaseCutoff = modulationState.baseFilterCutoff * pow(2.0, keyTrackOctaves)
+        } else {
+            keyTrackedBaseCutoff = modulationState.baseFilterCutoff
+        }
+        
+        // Apply CONTINUOUS modulation sources relative to the key-tracked base
+        // Note: Key tracking is NO LONGER passed to ModulationRouter - it's already in the base
+        let finalCutoff = ModulationRouter.calculateFilterFrequencyContinuous(
+            baseCutoff: keyTrackedBaseCutoff,  // Base already includes key tracking
             auxEnvValue: auxiliaryEnvValue,
             auxEnvAmount: effectiveAuxEnvFilterAmount,
             aftertouchDelta: aftertouchDelta,
