@@ -100,7 +100,7 @@ struct FilterParameters: Codable, Equatable {
         cutoffFrequency: 880
     )
     
-    /// Clamps cutoff to valid range (0 Hz - 22.05 kHz)
+    /// Clamps cutoff to valid range for ThreePoleLowpassFilter (12 Hz - 20 kHz)
     var clampedCutoff: Double {
         min(max(cutoffFrequency, 12), 20_000)
     }

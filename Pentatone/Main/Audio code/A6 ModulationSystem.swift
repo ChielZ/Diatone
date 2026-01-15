@@ -803,7 +803,8 @@ struct ModulationRouter {
         // Step 5: Apply to base cutoff frequency
         let finalCutoff = baseCutoff * pow(2.0, totalOctaves)
         
-        return max(20.0, min(22050.0, finalCutoff))
+        // Clamp to ThreePoleLowpassFilter valid range (12 Hz - 20 kHz)
+        return max(12.0, min(20000.0, finalCutoff))
     }
     
     /// Calculate filter cutoff frequency for CONTINUOUS modulation only
@@ -836,7 +837,8 @@ struct ModulationRouter {
         // Step 4: Apply to base cutoff frequency (which already includes key tracking)
         let finalCutoff = baseCutoff * pow(2.0, totalOctaves)
         
-        return max(20.0, min(22050.0, finalCutoff))
+        // Clamp to ThreePoleLowpassFilter valid range (12 Hz - 20 kHz)
+        return max(12.0, min(20000.0, finalCutoff))
     }
     
     // MARK: - 6) Delay Time [LINEAR]
