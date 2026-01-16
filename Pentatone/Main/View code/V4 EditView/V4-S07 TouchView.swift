@@ -26,7 +26,7 @@ struct TouchView: View {
         Group {
             // Row 1 - Initial Touch to Oscillator Amplitude (velocity-like control)
             SliderRow(
-                label: "INITIAL TO AMP",
+                label: "XSTART TO AMP",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.touchInitial.amountToOscillatorAmplitude },
                     set: { newValue in
@@ -41,7 +41,7 @@ struct TouchView: View {
             
             // Row 2 - Initial Touch to Mod Envelope Amount (meta-modulation)
             SliderRow(
-                label: "INITIAL TO MOD ENV",
+                label: "XSTART TO MOD ENV",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.touchInitial.amountToModEnvelope },
                     set: { newValue in
@@ -59,9 +59,9 @@ struct TouchView: View {
             
         
             
-            // Row 4 - Initial Touch to Aux Envelope Cutoff Amount (meta-modulation)
+            // Row 3 - Initial Touch to Aux Envelope Cutoff Amount (meta-modulation)
             SliderRow(
-                label: "INITIAL TO FILTER ENV",
+                label: "XSTART TO FILTER ENV",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.touchInitial.amountToAuxEnvCutoff },
                     set: { newValue in
@@ -77,9 +77,9 @@ struct TouchView: View {
                 }
             )
             
-            // Row 6 - Aftertouch to Modulator Level (modulation index)
+            // Row 4 - Aftertouch to Modulator Level (modulation index)
             SliderRow(
-                label: "AFTER TO MOD",
+                label: "XMOVE TO MOD",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.touchAftertouch.amountToModulatorLevel },
                     set: { newValue in
@@ -97,7 +97,7 @@ struct TouchView: View {
             
             // Row 5 - Aftertouch to Filter Frequency
             SliderRow(
-                label: "AFTER TO FILTER",
+                label: "XMOVE TO FILTER",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.touchAftertouch.amountToFilterFrequency },
                     set: { newValue in
@@ -114,9 +114,9 @@ struct TouchView: View {
             
 
             
-            // Row 3 - Aftertouch to Oscillator Pitch (replaces Initial to Pitch Env temporarily)
+            // Row 6 - Aftertouch to Oscillator Pitch (replaces Initial to Pitch Env temporarily)
             SliderRow(
-                label: "AFTER TO PITCH",
+                label: "XMOVE TO PITCH",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch },
                     set: { newValue in
@@ -134,7 +134,7 @@ struct TouchView: View {
             
             // Row 7 - Aftertouch to Vibrato (meta-modulation of voice LFO pitch amount)
             SliderRow(
-                label: "AFTER TO VIBRATO",
+                label: "XMOVE TO VIBRATO",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.touchAftertouch.amountToVibrato },
                     set: { newValue in

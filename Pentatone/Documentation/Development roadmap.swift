@@ -79,14 +79,14 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  
  IDEAS FOR PRESETS
  
- 1 - ACOUSTIC PERCUSSIVE
+ 1 - PERCUSSIVE
  1.1  Keys (Wurlitzer-esque sound)
  1.2  Mallets (Marimba-esque sound)
  1.3  Sticks (Glockenspiel-esque sound)
  1.4  Pluck (Harp-esque sound)
  1.5  Pick (Koto-esque sound)
  
- 2 - ACOUSTIC SUSTAINED
+ 2 - SUSTAINED
  2.1  Bow (Cello-esque sound)
  2.2  Breath (Low whistle-esque sound)
  2.3
@@ -100,7 +100,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  3.4  Antenna (Theremin-esque sound)
  3.5
  
- 4 - SYNTH
+ 4 - SYNTHETIC
  4.1  Transistor (Analog polysynth-esque sound)
  4.2  Chip (Square Lead-esque sound)
  4.3  ... (Analog bass-esque sound)
