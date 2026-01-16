@@ -888,12 +888,14 @@ final class AudioParameterManager: ObservableObject {
         applyDelayParameters()
         applyReverbParameters()
         
-        // Apply output levels
+        // Apply global LFO FIRST (before output levels)
+        // This ensures the correct LFO state is checked when applying preVolume
+        voicePool?.updateGlobalLFO(masterParams.globalLFO)
+        
+        // Apply output levels AFTER global LFO is updated
+        // This ensures that if LFO modulation is disabled, the base volume is applied correctly
         updateOutputVolume(masterParams.output.volume)
         updatePreVolume(masterParams.output.preVolume)
-        
-        // Apply global LFO
-        voicePool?.updateGlobalLFO(masterParams.globalLFO)
         
         // Apply tempo (this will update tempo-synced effects)
         updateTempo(masterParams.tempo)

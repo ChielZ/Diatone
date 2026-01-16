@@ -367,13 +367,14 @@ final class PolyphonicVoice {
         if let cutoff = templateFilterCutoff {
             modulationState.baseFilterCutoff = cutoff
         }
-        
+        /* DEPRECATED - no longer need to set filter static values at note on
         // CRITICAL: Apply static filter parameters (resonance, saturation) at note-on
         // These are NOTE-ON properties - set once and never modulated
         if let filterStatic = templateFilterStatic {
             filter.$resonance.ramp(to: AUValue(filterStatic.clampedResonance), duration: 0.005)
             filter.$distortion.ramp(to: AUValue(filterStatic.clampedSaturation), duration: 0.005)
         }
+        */
         
         // CRITICAL: Set initial touch value BEFORE any calculations that depend on it
         // This ensures amplitude modulation uses the correct touch value from the start
@@ -428,7 +429,7 @@ final class PolyphonicVoice {
             filter.$cutoffFrequency.ramp(to: AUValue(modulationState.baseFilterCutoff), duration: 0)
         }
         
-        envelope.reset()
+       // envelope.reset()
         envelope.openGate()
         isAvailable = false
         triggerTime = Date()
@@ -484,6 +485,7 @@ final class PolyphonicVoice {
     ///         caused by main thread updates conflicting with background modulation thread.
     func updateOscillatorParameters(_ parameters: OscillatorParameters, globalLFO: GlobalLFOParameters? = nil) {
         // Always update base values first (needed by modulation system)
+        modulationState.baseAmplitude = parameters.amplitude
         modulationState.baseModulatorMultiplier = parameters.modulatingMultiplier
         modulationState.baseModulationIndex = parameters.modulationIndex
         
