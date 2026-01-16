@@ -441,7 +441,7 @@ final class PolyphonicVoice {
         envelope.closeGate()
         
         // Capture current envelope values for smooth release using ModulationRouter
-        let modulatorValue = ModulationRouter.calculateEnvelopeValue(
+        let modulatorValue = ModulationRouter.calculateExponentialEnvelopeValue(
             time: modulationState.modulatorEnvelopeTime,
             isGateOpen: true,
             attack: voiceModulation.modulatorEnvelope.attack,
@@ -451,7 +451,7 @@ final class PolyphonicVoice {
             capturedLevel: 0.0  // Not used when gate is open
         )
         
-        let auxiliaryValue = ModulationRouter.calculateEnvelopeValue(
+        let auxiliaryValue = ModulationRouter.calculateExponentialEnvelopeValue(
             time: modulationState.auxiliaryEnvelopeTime,
             isGateOpen: true,
             attack: voiceModulation.auxiliaryEnvelope.attack,
@@ -621,7 +621,7 @@ final class PolyphonicVoice {
         )
         
         // Calculate envelope values using ModulationRouter
-        let modulatorEnvValue = ModulationRouter.calculateEnvelopeValue(
+        let modulatorEnvValue = ModulationRouter.calculateExponentialEnvelopeValue(
             time: modulationState.modulatorEnvelopeTime,
             isGateOpen: modulationState.isGateOpen,
             attack: voiceModulation.modulatorEnvelope.attack,
@@ -631,7 +631,7 @@ final class PolyphonicVoice {
             capturedLevel: modulationState.modulatorSustainLevel
         )
         
-        let auxiliaryEnvValue = ModulationRouter.calculateEnvelopeValue(
+        let auxiliaryEnvValue = ModulationRouter.calculateExponentialEnvelopeValue(
             time: modulationState.auxiliaryEnvelopeTime,
             isGateOpen: modulationState.isGateOpen,
             attack: voiceModulation.auxiliaryEnvelope.attack,

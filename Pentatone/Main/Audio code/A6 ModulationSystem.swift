@@ -607,7 +607,8 @@ struct ModulationRouter {
     
     // MARK: - Envelope Value Calculation
     
-    /// Calculate ADSR envelope value at a given time
+    /// Calculate ADSR envelope value at a given time (LINEAR version)
+    /// This version uses linear ramps for all stages.
     /// - Parameters:
     ///   - time: Time in envelope (seconds)
     ///   - isGateOpen: Whether gate is open (attack/decay/sustain) or closed (release)
@@ -650,6 +651,140 @@ struct ModulationRouter {
                 return 0.0
             }
         }
+    }
+    
+    // MARK: - Exponential Envelope Calculation
+    
+    /// Calculate ADSR envelope value with EXPONENTIAL curves (matches AudioKit AmplitudeEnvelope behavior)
+    /// 
+    /// This implementation mimics the analog-style exponential behavior of the C `adsr.c` code.
+    /// Time constants represent τ (tau), where the envelope reaches ~63% of target in τ seconds.
+    /// 
+    /// **Key differences from linear envelopes:**
+    /// - Attack: Exponential approach to peak (fast start, slow finish)
+    /// - Decay: Exponential decay to sustain (~63% in τ seconds)
+    /// - Release: Exponential decay to zero (~63% in τ seconds)
+    /// 
+    /// **Time constant behavior:**
+    /// - After 1τ: 63% complete (37% remaining)
+    /// - After 3τ: 95% complete (5% remaining)
+    /// - After 5τ: 99.3% complete (0.7% remaining)
+    /// - After 6.91τ: 99.9% complete (-60dB)
+    /// 
+    /// **Usage Example:**
+    /// ```swift
+    /// // To use exponential envelopes, simply replace calculateEnvelopeValue with calculateExponentialEnvelopeValue
+    /// let modEnvValue = ModulationRouter.calculateExponentialEnvelopeValue(
+    ///     time: state.modulatorEnvelopeTime,
+    ///     isGateOpen: state.isGateOpen,
+    ///     attack: params.modulatorEnvelope.attack,
+    ///     decay: params.modulatorEnvelope.decay,
+    ///     sustain: params.modulatorEnvelope.sustain,
+    ///     release: params.modulatorEnvelope.release,
+    ///     capturedLevel: state.modulatorSustainLevel
+    /// )
+    /// 
+    /// // If you want to convert UI time values (practical time) to time constants:
+    /// let userDecayTime = 1.0  // User wants "1 second" decay
+    /// let actualTau = ModulationRouter.convertPracticalTimeToTau(userDecayTime)  // ≈ 0.145 seconds
+    /// params.modulatorEnvelope.decay = actualTau
+    /// 
+    /// // Or display time constants as practical times:
+    /// let displayTime = ModulationRouter.convertTauToPracticalTime(params.modulatorEnvelope.decay)
+    /// // User sees: "Decay: 1.0s" (time to near-silence) instead of "Decay: 0.145s" (time constant)
+    /// ```
+    /// 
+    /// - Parameters:
+    ///   - time: Time in current envelope stage (seconds)
+    ///   - isGateOpen: Whether gate is open (attack/decay/sustain) or closed (release)
+    ///   - attack: Attack time constant in seconds (τ)
+    ///   - decay: Decay time constant in seconds (τ)
+    ///   - sustain: Sustain level (0.0 - 1.0)
+    ///   - release: Release time constant in seconds (τ)
+    ///   - capturedLevel: Level when gate closed (for release stage)
+    /// - Returns: Envelope value (0.0 - 1.0)
+    static func calculateExponentialEnvelopeValue(
+        time: Double,
+        isGateOpen: Bool,
+        attack: Double,
+        decay: Double,
+        sustain: Double,
+        release: Double,
+        capturedLevel: Double = 0.0
+    ) -> Double {
+        if isGateOpen {
+            // Attack stage: exponential rise from 0 to 1
+            // Attack is considered complete when we reach 99% (or when attack time expires)
+            let attackComplete = (attack > 0) ? (1.0 - exp(-time / (attack * 0.6))) : 1.0
+            
+            if attackComplete < 0.99 {
+                // Still in attack phase
+                return attackComplete
+            }
+            
+            // Decay stage: exponential decay from 1.0 to sustain
+            // Calculate time spent in decay (time beyond attack completion)
+            let attackDuration = attack > 0 ? (attack * 0.6 * log(100.0)) : 0.0  // Time to reach 99%
+            let decayTime = max(0, time - attackDuration)
+            
+            return calculateExponentialApproach(
+                time: decayTime,
+                startValue: 1.0,
+                targetValue: sustain,
+                tau: decay
+            )
+        } else {
+            // Release stage: exponential decay from captured level to 0
+            return calculateExponentialApproach(
+                time: time,
+                startValue: capturedLevel,
+                targetValue: 0.0,
+                tau: release
+            )
+        }
+    }
+    
+    /// Calculate exponential approach from start value to target value
+    /// Uses the exponential formula: y(t) = target + (start - target) × e^(-t/τ)
+    /// This creates the classic RC circuit charging/discharging curve
+    /// - Parameters:
+    ///   - time: Time since start of this stage (seconds)
+    ///   - startValue: Starting value (where we're coming from)
+    ///   - targetValue: Target value (where we're going to)
+    ///   - tau: Time constant τ in seconds
+    /// - Returns: Current envelope value
+    private static func calculateExponentialApproach(
+        time: Double,
+        startValue: Double,
+        targetValue: Double,
+        tau: Double
+    ) -> Double {
+        guard tau > 0 else { return targetValue }
+        
+        // Exponential approach formula
+        // At t=0: returns startValue
+        // At t=∞: approaches targetValue
+        // At t=τ: 63% of the way from start to target
+        let coefficient = exp(-time / tau)
+        let value = targetValue + (startValue - targetValue) * coefficient
+        
+        return max(0.0, min(1.0, value))
+    }
+    
+    /// Convert a "practical time" (time to -60dB) to a time constant τ
+    /// Use this if you want to display times as "time to near-silence" rather than time constants
+    /// - Parameter time60dB: Time in seconds to reach -60dB (0.1% of original)
+    /// - Returns: Time constant τ in seconds
+    static func convertPracticalTimeToTau(_ time60dB: Double) -> Double {
+        return time60dB / 6.91
+    }
+    
+    /// Convert a time constant τ to "practical time" (time to -60dB)
+    /// Use this for display purposes to show users intuitive time values
+    /// - Parameter tau: Time constant in seconds
+    /// - Returns: Time in seconds to reach -60dB (0.1% of original)
+    static func convertTauToPracticalTime(_ tau: Double) -> Double {
+        return tau * 6.91
     }
     
     // MARK: - 1) Oscillator Pitch [LOGARITHMIC]
