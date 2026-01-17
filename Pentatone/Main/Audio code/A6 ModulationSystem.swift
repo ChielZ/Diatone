@@ -611,22 +611,29 @@ struct ModulationRouter {
     
     // MARK: - Envelope Value Calculation
     
-    /// **ACTIVE ENVELOPE CALCULATOR** - Switch between linear and exponential here
+    /// **ACTIVE ENVELOPE CALCULATOR** - Switch between linear, exponential, and hybrid here
     /// 
     /// This is the main envelope calculation method used throughout the system.
-    /// Currently set to: **LINEAR** (for testing timing synchronization with trigger ramps)
+    /// Currently set to: **HYBRID** (linear attack, exponential decay/release)
     /// 
-    /// To switch envelope types:
-    /// - For linear envelopes (matches AudioKit ramps): Use `calculateEnvelopeValue`
-    /// - For exponential envelopes (analog-style): Use `calculateExponentialEnvelopeValue`
+    /// Available envelope modes:
+    /// 1. **Linear** (all stages linear) - Use `calculateEnvelopeValue`
+    ///    - Pros: Perfect alignment with AudioKit ramps
+    ///    - Cons: Less natural sound, especially on decay/release
     /// 
-    /// **Why linear for now:**
+    /// 2. **Exponential** (all stages exponential) - Use `calculateExponentialEnvelopeValue`
+    ///    - Pros: Analog-style character, natural sound
+    ///    - Cons: Attack curve doesn't match AudioKit's linear ramps
+    /// 
+    /// 3. **Hybrid** (linear attack, exponential decay/release) - Use `calculateHybridEnvelopeValue`
+    ///    - Pros: Best of both worlds - perfect trigger alignment + natural decay/release
+    ///    - Cons: Mixed envelope curves (not a problem in practice)
+    /// 
+    /// **Why hybrid is recommended:**
     /// The trigger() method applies initial envelope modulation using AudioKit's `.ramp()`,
-    /// which uses linear interpolation. To ensure seamless handoff from trigger ramps to
-    /// control-rate envelope calculation, both must use the same curve shape.
-    /// 
-    /// Once timing synchronization is verified, we can switch to exponential envelopes
-    /// or implement hybrid envelopes (linear attack, exponential decay/release).
+    /// which uses linear interpolation. The hybrid mode ensures:
+    /// - Attack phase: Linear (matches trigger ramps perfectly, zero artifacts)
+    /// - Decay/Release: Exponential (natural analog-style sound)
     static func calculateActiveEnvelopeValue(
         time: Double,
         isGateOpen: Bool,
@@ -636,8 +643,8 @@ struct ModulationRouter {
         release: Double,
         capturedLevel: Double = 0.0
     ) -> Double {
-        // CURRENT MODE: Linear (matches AudioKit ramps)
-        return calculateEnvelopeValue(
+        // CURRENT MODE: Hybrid (linear attack, exponential decay/release) - RECOMMENDED
+        return calculateHybridEnvelopeValue(
             time: time,
             isGateOpen: isGateOpen,
             attack: attack,
@@ -647,8 +654,22 @@ struct ModulationRouter {
             capturedLevel: capturedLevel
         )
         
-        // FUTURE MODE: Exponential (analog-style)
-        // Uncomment this and comment out the linear version above to switch:
+        // ALTERNATIVE MODE 1: Linear (all stages)
+        // Uncomment this and comment out the hybrid version above to switch:
+        /*
+        return calculateEnvelopeValue(
+            time: time,
+            isGateOpen: isGateOpen,
+            attack: attack,
+            decay: decay,
+            sustain: sustain,
+            release: release,
+            capturedLevel: capturedLevel
+        )
+        */
+        
+        // ALTERNATIVE MODE 2: Exponential (all stages)
+        // Uncomment this and comment out the hybrid version above to switch:
         /*
         return calculateExponentialEnvelopeValue(
             time: time,
@@ -840,6 +861,93 @@ struct ModulationRouter {
     /// - Returns: Time in seconds to reach -60dB (0.1% of original)
     static func convertTauToPracticalTime(_ tau: Double) -> Double {
         return tau * 6.91
+    }
+    
+    // MARK: - Hybrid Envelope Calculation (Linear Attack + Exponential Decay/Release)
+    
+    /// Calculate ADSR envelope value with HYBRID curves (RECOMMENDED)
+    /// 
+    /// This implementation combines the best aspects of linear and exponential envelopes:
+    /// - **Attack**: Linear (matches AudioKit ramps perfectly, no trigger artifacts)
+    /// - **Decay**: Exponential (natural analog-style sound)
+    /// - **Release**: Exponential (smooth natural fadeout)
+    /// 
+    /// **Why hybrid is ideal:**
+    /// 1. The trigger() method uses AudioKit's `.ramp()` for attack, which is linear
+    /// 2. Linear attack ensures perfect synchronization (no pops/clicks)
+    /// 3. Exponential decay/release provides natural, musical envelope character
+    /// 4. No need to compromise between timing accuracy and sound quality
+    /// 
+    /// **Attack behavior (Linear):**
+    /// - Constant rate of change from 0 to 1
+    /// - Matches the linear ramp applied at trigger time
+    /// - Seamless handoff from trigger ramp to control rate updates
+    /// 
+    /// **Decay/Release behavior (Exponential):**
+    /// - Natural RC circuit-style decay curves
+    /// - Smooth, musical fadeouts
+    /// - Uses time constants (τ) for predictable behavior
+    /// 
+    /// **Time constant behavior for decay/release:**
+    /// - After 1τ: 63% complete (37% remaining)
+    /// - After 3τ: 95% complete (5% remaining)
+    /// - After 5τ: 99.3% complete (0.7% remaining)
+    /// 
+    /// **Usage Example:**
+    /// ```swift
+    /// let envValue = ModulationRouter.calculateHybridEnvelopeValue(
+    ///     time: state.modulatorEnvelopeTime,
+    ///     isGateOpen: state.isGateOpen,
+    ///     attack: 0.05,    // 50ms linear attack
+    ///     decay: 0.2,      // 200ms exponential decay
+    ///     sustain: 0.3,    // 30% sustain level
+    ///     release: 0.3,    // 300ms exponential release
+    ///     capturedLevel: state.modulatorSustainLevel
+    /// )
+    /// ```
+    /// 
+    /// - Parameters:
+    ///   - time: Time in current envelope stage (seconds)
+    ///   - isGateOpen: Whether gate is open (attack/decay/sustain) or closed (release)
+    ///   - attack: Attack time in seconds (linear ramp)
+    ///   - decay: Decay time constant in seconds (τ for exponential)
+    ///   - sustain: Sustain level (0.0 - 1.0)
+    ///   - release: Release time constant in seconds (τ for exponential)
+    ///   - capturedLevel: Level when gate closed (for release stage)
+    /// - Returns: Envelope value (0.0 - 1.0)
+    static func calculateHybridEnvelopeValue(
+        time: Double,
+        isGateOpen: Bool,
+        attack: Double,
+        decay: Double,
+        sustain: Double,
+        release: Double,
+        capturedLevel: Double = 0.0
+    ) -> Double {
+        if isGateOpen {
+            // Attack stage: LINEAR (matches AudioKit ramps)
+            if time < attack {
+                return attack > 0 ? time / attack : 1.0
+            }
+            // Decay stage: EXPONENTIAL (natural analog-style)
+            else {
+                let decayTime = time - attack
+                return calculateExponentialApproach(
+                    time: decayTime,
+                    startValue: 1.0,
+                    targetValue: sustain,
+                    tau: decay
+                )
+            }
+        } else {
+            // Release stage: EXPONENTIAL (natural fadeout)
+            return calculateExponentialApproach(
+                time: time,
+                startValue: capturedLevel,
+                targetValue: 0.0,
+                tau: release
+            )
+        }
     }
     
     // MARK: - 1) Oscillator Pitch [LOGARITHMIC]
