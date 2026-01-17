@@ -10,6 +10,7 @@ import SoundpipeAudioKit
 import AudioKitEX
 import AVFAudio
 import DunneAudioKit
+import QuartzCore  // For CACurrentMediaTime()
 
 // MARK: - Detune Mode
 
@@ -341,12 +342,125 @@ final class PolyphonicVoice {
     
     // MARK: - Triggering
     
+    /// Applies initial envelope modulation values at trigger time
+    /// This eliminates 0-5ms timing jitter by applying envelope peak values immediately
+    /// with ramp duration = attack time, so the ramp IS the attack phase
+    /// 
+    /// Handles three critical destinations:
+    /// 1. Mod envelope → Modulation Index
+    /// 2. Aux envelope → Pitch
+    /// 3. Aux envelope → Filter Frequency
+    private func applyInitialEnvelopeModulation() {
+        // Calculate peak envelope values (what they will be after attack completes)
+        // Peak value for envelopes is always 1.0 (full modulation amount)
+        let modEnvPeakValue = 1.0
+        let auxEnvPeakValue = 1.0
+        
+        // Get attack times for ramp durations
+        let modEnvAttack = voiceModulation.modulatorEnvelope.attack
+        let auxEnvAttack = voiceModulation.auxiliaryEnvelope.attack
+        
+        // 1) MOD ENVELOPE → MODULATION INDEX
+        if voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0 {
+            // Apply initial touch meta-modulation if active
+            var effectiveModEnvAmount = voiceModulation.modulatorEnvelope.amountToModulationIndex
+            if voiceModulation.touchInitial.amountToModEnvelope != 0.0 {
+                effectiveModEnvAmount = ModulationRouter.calculateTouchScaledAmount(
+                    baseAmount: effectiveModEnvAmount,
+                    initialTouchValue: modulationState.initialTouchX,
+                    initialTouchAmount: voiceModulation.touchInitial.amountToModEnvelope
+                )
+            }
+            
+            // Calculate target modulation index (base + peak envelope offset)
+            let targetModIndex = modulationState.baseModulationIndex + (modEnvPeakValue * effectiveModEnvAmount)
+            let clampedModIndex = max(0.0, min(10.0, targetModIndex))
+            
+            // Apply with ramp duration = attack time
+            // When attack = 0, this applies instantly (no ramp)
+            oscLeft.$modulationIndex.ramp(to: AUValue(clampedModIndex), duration: Float(modEnvAttack))
+            oscRight.$modulationIndex.ramp(to: AUValue(clampedModIndex), duration: Float(modEnvAttack))
+        }
+        
+        // 2) AUX ENVELOPE → PITCH
+        if voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch != 0.0 {
+            // Apply initial touch meta-modulation if active
+            var effectiveAuxEnvPitchAmount = voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch
+            if voiceModulation.touchInitial.amountToAuxEnvPitch != 0.0 {
+                effectiveAuxEnvPitchAmount = ModulationRouter.calculateTouchScaledAmount(
+                    baseAmount: effectiveAuxEnvPitchAmount,
+                    initialTouchValue: modulationState.initialTouchX,
+                    initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvPitch
+                )
+            }
+            
+            // Calculate target frequency (base + peak envelope offset in semitones)
+            let semitoneOffset = auxEnvPeakValue * effectiveAuxEnvPitchAmount
+            let targetFrequency = modulationState.baseFrequency * pow(2.0, semitoneOffset / 12.0)
+            let clampedFrequency = max(20.0, min(20000.0, targetFrequency))
+            
+            // Apply with ramp duration = attack time
+            // Note: We apply to baseFrequency directly, then update oscillators
+            // The ramp is applied at the oscillator level via updateOscillatorFrequencies
+            currentFrequency = clampedFrequency
+            
+            // Calculate left/right frequencies with stereo offset
+            let leftFreq: Double
+            let rightFreq: Double
+            
+            switch detuneMode {
+            case .proportional:
+                let ratio = pow(2.0, frequencyOffsetCents / 1200.0)
+                leftFreq = clampedFrequency * ratio
+                rightFreq = clampedFrequency / ratio
+            case .constant:
+                leftFreq = clampedFrequency + frequencyOffsetHz
+                rightFreq = clampedFrequency - frequencyOffsetHz
+            }
+            
+            // Apply with ramp duration = attack time
+            oscLeft.$baseFrequency.ramp(to: Float(leftFreq), duration: Float(auxEnvAttack))
+            oscRight.$baseFrequency.ramp(to: Float(rightFreq), duration: Float(auxEnvAttack))
+        }
+        
+        // 3) AUX ENVELOPE → FILTER FREQUENCY
+        if voiceModulation.auxiliaryEnvelope.amountToFilterFrequency != 0.0 {
+            // Apply initial touch meta-modulation if active
+            var effectiveAuxEnvFilterAmount = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency
+            if voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0 {
+                effectiveAuxEnvFilterAmount = ModulationRouter.calculateTouchScaledAmount(
+                    baseAmount: effectiveAuxEnvFilterAmount,
+                    initialTouchValue: modulationState.initialTouchX,
+                    initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvCutoff
+                )
+            }
+            
+            // Calculate base cutoff with key tracking applied (note-on property)
+            let keyTrackedBaseCutoff: Double
+            if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
+                let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
+                keyTrackedBaseCutoff = modulationState.baseFilterCutoff * pow(2.0, keyTrackOctaves)
+            } else {
+                keyTrackedBaseCutoff = modulationState.baseFilterCutoff
+            }
+            
+            // Calculate target filter frequency (key-tracked base + peak envelope offset in octaves)
+            let octaveOffset = auxEnvPeakValue * effectiveAuxEnvFilterAmount
+            let targetCutoff = keyTrackedBaseCutoff * pow(2.0, octaveOffset)
+            let clampedCutoff = max(12.0, min(20000.0, targetCutoff))
+            
+            // Apply with ramp duration = attack time
+            filter.$cutoffFrequency.ramp(to: AUValue(clampedCutoff), duration: Float(auxEnvAttack))
+        }
+    }
+    
     /// Triggers this voice (starts envelope attack)
     /// 
     /// **CRITICAL TIMING REQUIREMENTS:**
     /// - Initial touch amplitude modulation is applied immediately (zero-latency)
     /// - Key tracking filter offset is applied immediately (zero-latency)
-    /// - Both must complete BEFORE the envelope opens to avoid audible transients
+    /// - Envelope modulation values are applied immediately with ramp time = attack time
+    /// - Envelope elapsed time tracking starts immediately at trigger (not at next control rate cycle)
     /// 
     /// **NOTE-ON PROPERTIES (applied once at trigger):**
     /// - Key tracking: Calculated based on note frequency, remains constant for note lifetime
@@ -381,6 +495,10 @@ final class PolyphonicVoice {
         modulationState.initialTouchX = initialTouchX
         modulationState.currentTouchX = initialTouchX
         
+        // CRITICAL: Start envelope time tracking IMMEDIATELY at trigger
+        // Record precise trigger timestamp so control rate can calculate exact elapsed time
+        modulationState.triggerTimestamp = CACurrentMediaTime()
+        
         // Apply base values (unmodulated) at note trigger
         // EXCEPT amplitude - that gets immediate initial touch modulation to avoid attack transients
         
@@ -414,22 +532,12 @@ final class PolyphonicVoice {
             keyTrackingParams: voiceModulation.keyTracking
         )
         
-        // Now calculate the initial filter cutoff with key tracking applied
-        // This is a note-on property - calculated once and used as the base for continuous modulation
-        let initialFilterCutoff: Double
-        if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
-            // Apply key tracking at note-on (logarithmic, in octave space)
-            let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
-            initialFilterCutoff = modulationState.baseFilterCutoff * pow(2.0, keyTrackOctaves)
-            // Clamp to valid range
-            let clampedCutoff = max(12.0, min(20000.0, initialFilterCutoff))
-            filter.$cutoffFrequency.ramp(to: AUValue(clampedCutoff), duration: 0)
-        } else {
-            // No key tracking - use base cutoff
-            filter.$cutoffFrequency.ramp(to: AUValue(modulationState.baseFilterCutoff), duration: 0)
-        }
+        // CRITICAL: Apply envelope modulation values immediately with ramp time = attack time
+        // This eliminates 0-5ms timing jitter between trigger and first control rate update
+        applyInitialEnvelopeModulation()
         
        // envelope.reset()
+        filter.reset()
         envelope.openGate()
         isAvailable = false
         triggerTime = Date()
@@ -441,7 +549,7 @@ final class PolyphonicVoice {
         envelope.closeGate()
         
         // Capture current envelope values for smooth release using ModulationRouter
-        let modulatorValue = ModulationRouter.calculateExponentialEnvelopeValue(
+        let modulatorValue = ModulationRouter.calculateActiveEnvelopeValue(
             time: modulationState.modulatorEnvelopeTime,
             isGateOpen: true,
             attack: voiceModulation.modulatorEnvelope.attack,
@@ -451,7 +559,7 @@ final class PolyphonicVoice {
             capturedLevel: 0.0  // Not used when gate is open
         )
         
-        let auxiliaryValue = ModulationRouter.calculateExponentialEnvelopeValue(
+        let auxiliaryValue = ModulationRouter.calculateActiveEnvelopeValue(
             time: modulationState.auxiliaryEnvelopeTime,
             isGateOpen: true,
             attack: voiceModulation.auxiliaryEnvelope.attack,
@@ -609,11 +717,17 @@ final class PolyphonicVoice {
         deltaTime: Double,
         currentTempo: Double = 120.0
     ) {
-        // Update envelope times
-        modulationState.modulatorEnvelopeTime += deltaTime
-        modulationState.auxiliaryEnvelopeTime += deltaTime
+        // Calculate precise elapsed time from trigger timestamp
+        // This ensures envelope timing is accurate regardless of control rate jitter
+        let currentTime = CACurrentMediaTime()
+        let preciseElapsedTime = currentTime - modulationState.triggerTimestamp
         
-        // Update voice LFO phase and delay ramp
+        // Update envelope times with precise elapsed time (not accumulated deltaTime)
+        // This keeps envelopes synchronized with the ramps applied at trigger time
+        modulationState.modulatorEnvelopeTime = preciseElapsedTime
+        modulationState.auxiliaryEnvelopeTime = preciseElapsedTime
+        
+        // Update voice LFO phase and delay ramp (still uses deltaTime for incremental updates)
         updateVoiceLFOPhase(deltaTime: deltaTime, tempo: currentTempo)
         modulationState.updateVoiceLFODelayRamp(
             deltaTime: deltaTime,
@@ -621,7 +735,7 @@ final class PolyphonicVoice {
         )
         
         // Calculate envelope values using ModulationRouter
-        let modulatorEnvValue = ModulationRouter.calculateExponentialEnvelopeValue(
+        let modulatorEnvValue = ModulationRouter.calculateActiveEnvelopeValue(
             time: modulationState.modulatorEnvelopeTime,
             isGateOpen: modulationState.isGateOpen,
             attack: voiceModulation.modulatorEnvelope.attack,
@@ -631,7 +745,7 @@ final class PolyphonicVoice {
             capturedLevel: modulationState.modulatorSustainLevel
         )
         
-        let auxiliaryEnvValue = ModulationRouter.calculateExponentialEnvelopeValue(
+        let auxiliaryEnvValue = ModulationRouter.calculateActiveEnvelopeValue(
             time: modulationState.auxiliaryEnvelopeTime,
             isGateOpen: modulationState.isGateOpen,
             attack: voiceModulation.auxiliaryEnvelope.attack,

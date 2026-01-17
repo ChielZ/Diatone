@@ -474,6 +474,7 @@ struct GlobalLFOParameters: Codable, Equatable {
 /// - `keyTrackingValue`: Octave offset based on note frequency (for filter tracking)
 /// - `initialTouchX`: Touch position where note was triggered (for velocity-like modulation)
 /// - `baseFrequency`: Unmodulated frequency set at note-on (reference for pitch modulation)
+/// - `triggerTimestamp`: Precise CACurrentMediaTime() when note was triggered (for envelope sync)
 /// 
 /// **CONTINUOUS PROPERTIES** (updated at 200 Hz by modulation system):
 /// - Envelope times, LFO phases, aftertouch position
@@ -483,6 +484,9 @@ struct ModulationState {
     var modulatorEnvelopeTime: Double = 0.0
     var auxiliaryEnvelopeTime: Double = 0.0
     var isGateOpen: Bool = false
+    
+    // Precise trigger timing for envelope synchronization
+    var triggerTimestamp: TimeInterval = 0.0
     
     // Track sustain level at gate close for proper release
     var modulatorSustainLevel: Double = 0.0
@@ -606,6 +610,57 @@ struct GlobalModulationState {
 struct ModulationRouter {
     
     // MARK: - Envelope Value Calculation
+    
+    /// **ACTIVE ENVELOPE CALCULATOR** - Switch between linear and exponential here
+    /// 
+    /// This is the main envelope calculation method used throughout the system.
+    /// Currently set to: **LINEAR** (for testing timing synchronization with trigger ramps)
+    /// 
+    /// To switch envelope types:
+    /// - For linear envelopes (matches AudioKit ramps): Use `calculateEnvelopeValue`
+    /// - For exponential envelopes (analog-style): Use `calculateExponentialEnvelopeValue`
+    /// 
+    /// **Why linear for now:**
+    /// The trigger() method applies initial envelope modulation using AudioKit's `.ramp()`,
+    /// which uses linear interpolation. To ensure seamless handoff from trigger ramps to
+    /// control-rate envelope calculation, both must use the same curve shape.
+    /// 
+    /// Once timing synchronization is verified, we can switch to exponential envelopes
+    /// or implement hybrid envelopes (linear attack, exponential decay/release).
+    static func calculateActiveEnvelopeValue(
+        time: Double,
+        isGateOpen: Bool,
+        attack: Double,
+        decay: Double,
+        sustain: Double,
+        release: Double,
+        capturedLevel: Double = 0.0
+    ) -> Double {
+        // CURRENT MODE: Linear (matches AudioKit ramps)
+        return calculateEnvelopeValue(
+            time: time,
+            isGateOpen: isGateOpen,
+            attack: attack,
+            decay: decay,
+            sustain: sustain,
+            release: release,
+            capturedLevel: capturedLevel
+        )
+        
+        // FUTURE MODE: Exponential (analog-style)
+        // Uncomment this and comment out the linear version above to switch:
+        /*
+        return calculateExponentialEnvelopeValue(
+            time: time,
+            isGateOpen: isGateOpen,
+            attack: attack,
+            decay: decay,
+            sustain: sustain,
+            release: release,
+            capturedLevel: capturedLevel
+        )
+        */
+    }
     
     /// Calculate ADSR envelope value at a given time (LINEAR version)
     /// This version uses linear ramps for all stages.

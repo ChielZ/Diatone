@@ -115,7 +115,7 @@ struct ContourView: View {
                         paramManager.updateFilterCutoff(newValue)
                     }
                 ),
-                range: 55...14080,
+                range: 12...20000,
                 buttonStep: 1.0,  // Precise 1 Hz steps for fine-tuning
                 displayFormatter: { value in
                     return String(format: "%.0f Hz", value)
