@@ -434,11 +434,11 @@ final class AudioParameterManager: ObservableObject {
     
     /// Update voice LFO amount to modulator level
     func updateVoiceLFOAmountToModulatorLevel(_ value: Double) {
-        let wasZero = voiceTemplate.modulation.voiceLFO.amountToModulatorLevel == 0.0
+        let wasZero = abs(voiceTemplate.modulation.voiceLFO.amountToModulatorLevel) <= 0.0001
         voiceTemplate.modulation.voiceLFO.amountToModulatorLevel = value
         
         // If amount changed from non-zero to zero, reset parameter to base value
-        if !wasZero && value == 0.0 {
+        if !wasZero && abs(value) <= 0.0001 {
             voicePool?.resetModulationIndexToBase()
             voicePool?.resetFilterCutoffToBase()
         }
@@ -498,24 +498,24 @@ final class AudioParameterManager: ObservableObject {
     
     /// Update global LFO amount to voice mixer volume (tremolo)
     func updateGlobalLFOAmountToMixerVolume(_ value: Double) {
-        let wasZero = master.globalLFO.amountToVoiceMixerVolume == 0.0
+        let wasZero = abs(master.globalLFO.amountToVoiceMixerVolume) <= 0.0001
         master.globalLFO.amountToVoiceMixerVolume = value
         voicePool?.updateGlobalLFO(master.globalLFO)
         
         // If amount is now zero, reset mixer volume to base
-        if value == 0.0 && !wasZero {
+        if abs(value) <= 0.0001 && !wasZero {
             voicePool?.resetMixerVolumeToBase()
         }
     }
     
     /// Update global LFO amount to modulator multiplier
     func updateGlobalLFOAmountToModulatorMultiplier(_ value: Double) {
-        let wasZero = master.globalLFO.amountToModulatorMultiplier == 0.0
+        let wasZero = abs(master.globalLFO.amountToModulatorMultiplier) <= 0.0001
         master.globalLFO.amountToModulatorMultiplier = value
         voicePool?.updateGlobalLFO(master.globalLFO)
         
         // If amount changed from non-zero to zero, reset parameter to base value
-        if !wasZero && value == 0.0 {
+        if !wasZero && abs(value) <= 0.0001 {
             voicePool?.resetModulatorMultiplierToBase()
         }
     }
@@ -528,12 +528,12 @@ final class AudioParameterManager: ObservableObject {
     
     /// Update global LFO amount to delay time
     func updateGlobalLFOAmountToDelayTime(_ value: Double) {
-        let wasZero = master.globalLFO.amountToDelayTime == 0.0
+        let wasZero = abs(master.globalLFO.amountToDelayTime) <= 0.0001
         master.globalLFO.amountToDelayTime = value
         voicePool?.updateGlobalLFO(master.globalLFO)
         
         // If amount changed from non-zero to zero, reset parameter to base value
-        if !wasZero && value == 0.0 {
+        if !wasZero && abs(value) <= 0.0001 {
             voicePool?.resetDelayTimeToBase()
         }
     }

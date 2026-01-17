@@ -444,7 +444,7 @@ final class VoicePool {
     func updateBasePreVolume(_ preVolume: Double) {
         basePreVolume = preVolume
         // If no global LFO modulation is active, apply directly to mixer
-        if globalLFO.amountToVoiceMixerVolume == 0.0 {
+        if globalLFO.amountToVoiceMixerVolume <= 0.0001 {
             voiceMixer.volume = AUValue(preVolume)
         }
         print("🎵 VoicePool: Base preVolume updated to \(preVolume)")
