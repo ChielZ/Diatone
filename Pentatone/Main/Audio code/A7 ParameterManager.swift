@@ -440,6 +440,7 @@ final class AudioParameterManager: ObservableObject {
         // If amount changed from non-zero to zero, reset parameter to base value
         if !wasZero && value == 0.0 {
             voicePool?.resetModulationIndexToBase()
+            voicePool?.resetFilterCutoffToBase()
         }
     }
      

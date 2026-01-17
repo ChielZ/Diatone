@@ -466,6 +466,14 @@ final class VoicePool {
         }
     }
     
+    /// Resets filter cutoff to base for all voices
+    /// Called when voice LFO or other filter modulation amounts are set to zero
+    func resetFilterCutoffToBase() {
+        for voice in voices {
+            voice.resetFilterCutoffToBase()
+        }
+    }
+    
     /// Updates the base delay time (tempo-synced value before LFO modulation)
     /// Should be called whenever tempo or delay time value changes
     /// - Parameter delayTime: The delay time in seconds (already calculated from tempo and time value)

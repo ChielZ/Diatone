@@ -345,7 +345,7 @@ final class PolyphonicVoice {
     /// Applies initial envelope modulation values at trigger time
     /// This eliminates 0-5ms timing jitter by applying envelope peak values immediately
     /// with ramp duration = attack time, so the ramp IS the attack phase
-    /// 
+    ///
     /// Handles three critical destinations:
     /// 1. Mod envelope → Modulation Index
     /// 2. Aux envelope → Pitch
@@ -455,17 +455,17 @@ final class PolyphonicVoice {
     }
     
     /// Triggers this voice (starts envelope attack)
-    /// 
+    ///
     /// **CRITICAL TIMING REQUIREMENTS:**
     /// - Initial touch amplitude modulation is applied immediately (zero-latency)
     /// - Key tracking filter offset is applied immediately (zero-latency)
     /// - Envelope modulation values are applied immediately with ramp time = attack time
     /// - Envelope elapsed time tracking starts immediately at trigger (not at next control rate cycle)
-    /// 
+    ///
     /// **NOTE-ON PROPERTIES (applied once at trigger):**
     /// - Key tracking: Calculated based on note frequency, remains constant for note lifetime
     /// - Initial touch: Captured at note-on, used for amplitude and meta-modulation
-    /// 
+    ///
     /// - Parameters:
     ///   - initialTouchX: Initial touch x-position (0.0 = left, 1.0 = right) for velocity-like response
     ///   - templateFilterCutoff: Optional override for base filter cutoff (from current template)
@@ -526,8 +526,8 @@ final class PolyphonicVoice {
         // First, reset modulation state to get the key tracking value
         let shouldResetLFO = voiceModulation.voiceLFO.resetMode != .free
         modulationState.reset(
-            frequency: currentFrequency, 
-            touchX: initialTouchX, 
+            frequency: currentFrequency,
+            touchX: initialTouchX,
             resetLFOPhase: shouldResetLFO,
             keyTrackingParams: voiceModulation.keyTracking
         )
@@ -598,7 +598,7 @@ final class PolyphonicVoice {
         modulationState.baseModulationIndex = parameters.modulationIndex
         
         // Check if modulation is active for modulation index
-        let hasActiveModIndexModulation = 
+        let hasActiveModIndexModulation =
             voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0 ||
             voiceModulation.voiceLFO.amountToModulatorLevel != 0.0 ||
             voiceModulation.touchAftertouch.amountToModulatorLevel != 0.0
@@ -649,6 +649,24 @@ final class PolyphonicVoice {
         oscLeft.$modulationIndex.ramp(to: AUValue(modulationState.baseModulationIndex), duration: 0.005)
         oscRight.$modulationIndex.ramp(to: AUValue(modulationState.baseModulationIndex), duration: 0.005)
     }
+    
+    /// Resets filter cutoff to base (unmodulated) value
+    /// Called when voice LFO or other modulation amounts are set to zero
+    func resetFilterCutoffToBase() {
+        // Calculate the key-tracked base (if key tracking is active)
+        let keyTrackedBaseCutoff: Double
+        if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
+            let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
+            keyTrackedBaseCutoff = modulationState.baseFilterCutoff * pow(2.0, keyTrackOctaves)
+        } else {
+            keyTrackedBaseCutoff = modulationState.baseFilterCutoff
+        }
+        
+        // Clamp to valid range
+        let clampedCutoff = max(12.0, min(20000.0, keyTrackedBaseCutoff))
+        
+        filter.$cutoffFrequency.ramp(to: AUValue(clampedCutoff), duration: 0.005)
+    }
     /// Updates filter parameters (MODULATABLE only - cutoff frequency)
     /// MODULATION-AWARE: Avoids fighting with active modulation sources during playback
     /// - Parameter parameters: New filter parameters to apply
@@ -661,7 +679,7 @@ final class PolyphonicVoice {
         modulationState.baseFilterCutoff = parameters.clampedCutoff
         
         // Check if modulation is active for this parameter
-        let hasActiveFilterModulation = 
+        let hasActiveFilterModulation =
             voiceModulation.auxiliaryEnvelope.amountToFilterFrequency != 0.0 ||
             voiceModulation.voiceLFO.amountToFilterFrequency != 0.0 ||
             voiceModulation.touchAftertouch.amountToFilterFrequency != 0.0 ||
@@ -793,6 +811,11 @@ final class PolyphonicVoice {
     
     /// Updates the voice LFO phase based on time
     /// Note: Voice LFO frequency is always in Hz (no tempo sync)
+    ///
+    /// **Timing Precision:**
+    /// - Free mode: Uses incremental deltaTime (continuous, ignores trigger)
+    /// - Trigger mode: Uses precise elapsed time from trigger timestamp (eliminates jitter)
+    /// - Sync mode: Uses incremental deltaTime (global timing, not per-note)
     private func updateVoiceLFOPhase(deltaTime: Double, tempo: Double) {
         guard voiceModulation.voiceLFO.isEnabled else { return }
         
@@ -811,29 +834,32 @@ final class PolyphonicVoice {
             )
         }
         
-        // Voice LFO is always in Hz (no tempo sync)
-        // Phase increment = frequency * deltaTime
-        let phaseIncrement = effectiveFrequency * deltaTime
-        
         // Update phase based on reset mode
         switch lfo.resetMode {
         case .free:
-            // Free running: just increment and wrap
+            // Free running: just increment and wrap (no trigger dependency)
+            let phaseIncrement = effectiveFrequency * deltaTime
             modulationState.voiceLFOPhase += phaseIncrement
             if modulationState.voiceLFOPhase >= 1.0 {
                 modulationState.voiceLFOPhase -= floor(modulationState.voiceLFOPhase)
             }
             
         case .trigger:
-            // Trigger reset: phase was reset to 0 in trigger(), now just increment
-            modulationState.voiceLFOPhase += phaseIncrement
-            if modulationState.voiceLFOPhase >= 1.0 {
-                modulationState.voiceLFOPhase -= floor(modulationState.voiceLFOPhase)
-            }
+            // Trigger reset: calculate precise phase from trigger timestamp
+            // This eliminates 0-5ms timing jitter by using absolute time
+            let currentTime = CACurrentMediaTime()
+            let elapsedSinceTrigger = currentTime - modulationState.triggerTimestamp
+            
+            // Calculate absolute phase based on elapsed time (cycles = frequency × time)
+            let absolutePhase = elapsedSinceTrigger * effectiveFrequency
+            
+            // Wrap to 0-1 range
+            modulationState.voiceLFOPhase = absolutePhase - floor(absolutePhase)
             
         case .sync:
-            // Tempo sync reset mode: phase aligns to global timing
-            // (Currently same as trigger - external sync could be added later)
+            // Tempo sync reset mode: uses incremental updates (global timing)
+            // Not tied to individual note triggers, so deltaTime is appropriate
+            let phaseIncrement = effectiveFrequency * deltaTime
             modulationState.voiceLFOPhase += phaseIncrement
             if modulationState.voiceLFOPhase >= 1.0 {
                 modulationState.voiceLFOPhase -= floor(modulationState.voiceLFOPhase)
@@ -1035,3 +1061,4 @@ final class PolyphonicVoice {
         // Note: Delay time and mixer volume (tremolo) modulation are handled at VoicePool level
     }
 }
+
