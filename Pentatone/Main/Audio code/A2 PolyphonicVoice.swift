@@ -981,6 +981,7 @@ final class PolyphonicVoice {
         let hasGlobalLFO = globalLFOParameters.amountToFilterFrequency != 0.0
         let hasAftertouch = voiceModulation.touchAftertouch.amountToFilterFrequency != 0.0
         let hasInitialTouchToFilter = voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0
+        //let hasKeyTrackToFilter = voiceModulation.keyTracking.amountToFilterFrequency != 0.0
         
         guard hasAuxEnv || hasVoiceLFO || hasGlobalLFO || hasAftertouch || hasInitialTouchToFilter else { return }
         

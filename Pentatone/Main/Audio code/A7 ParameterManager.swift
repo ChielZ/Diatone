@@ -429,18 +429,21 @@ final class AudioParameterManager: ObservableObject {
     
     /// Update voice LFO amount to filter frequency
     func updateVoiceLFOAmountToFilter(_ value: Double) {
+        let wasZero = abs(voiceTemplate.modulation.voiceLFO.amountToFilterFrequency) <= 0.0001
         voiceTemplate.modulation.voiceLFO.amountToFilterFrequency = value
+        // If amount changed from non-zero to zero, reset parameter to base value
+        if !wasZero && abs(value) <= 0.0001 {
+            voicePool?.resetFilterCutoffToBase()
+        }
     }
     
     /// Update voice LFO amount to modulator level
     func updateVoiceLFOAmountToModulatorLevel(_ value: Double) {
         let wasZero = abs(voiceTemplate.modulation.voiceLFO.amountToModulatorLevel) <= 0.0001
         voiceTemplate.modulation.voiceLFO.amountToModulatorLevel = value
-        
         // If amount changed from non-zero to zero, reset parameter to base value
         if !wasZero && abs(value) <= 0.0001 {
             voicePool?.resetModulationIndexToBase()
-            voicePool?.resetFilterCutoffToBase()
         }
     }
      
