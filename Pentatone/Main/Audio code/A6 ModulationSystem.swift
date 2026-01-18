@@ -31,43 +31,87 @@ enum LFOWaveform: String, Codable, CaseIterable {
     }
     
     /// Calculate the waveform value at a given phase
-    /// - Parameter phase: Current phase of the LFO (0.0 = start, 1.0 = end of cycle)
-    /// - Returns: Raw waveform value in range -1.0 to +1.0 (bipolar, unscaled)
-    func value(at phase: Double) -> Double {
+    /// - Parameters:
+    ///   - phase: Current phase of the LFO (0.0 = start, 1.0 = end of cycle)
+    ///   - bipolar: If true, returns -1.0 to +1.0 (for Global LFO). If false, returns 0.0 to 1.0 (for Voice LFO)
+    /// - Returns: Raw waveform value in specified range
+    func value(at phase: Double, bipolar: Bool = true) -> Double {
         // Normalize phase to 0-1 range (handle wraparound)
         let normalizedPhase = phase - floor(phase)
         
+        let rawValue: Double
+        
         switch self {
         case .sine:
-            // Sine wave: smooth oscillation
-            return sin(normalizedPhase * 2.0 * .pi)
+            if bipolar {
+                // Sine wave: smooth oscillation (bipolar: -1 to +1)
+                rawValue = sin(normalizedPhase * 2.0 * .pi)
+            } else {
+                // Sine wave starting at minimum (unipolar: 0 to 1)
+                // Phase shift by -90° (subtract 0.25 from phase) so it starts at bottom
+                let shiftedPhase = normalizedPhase - 0.25
+                rawValue = (sin(shiftedPhase * 2.0 * .pi) + 1.0) / 2.0
+            }
             
         case .triangle:
-            // Triangle wave: linear rise and fall
-            // 0.0-0.5: rise from -1 to +1
-            // 0.5-1.0: fall from +1 to -1
-            if normalizedPhase < 0.5 {
-                return (normalizedPhase * 4.0) - 1.0  // -1 to +1
+            if bipolar {
+                // Triangle wave: linear rise and fall (bipolar: -1 to +1)
+                // 0.0-0.5: rise from -1 to +1
+                // 0.5-1.0: fall from +1 to -1
+                if normalizedPhase < 0.5 {
+                    rawValue = (normalizedPhase * 4.0) - 1.0  // -1 to +1
+                } else {
+                    rawValue = 3.0 - (normalizedPhase * 4.0)  // +1 to -1
+                }
             } else {
-                return 3.0 - (normalizedPhase * 4.0)  // +1 to -1
+                // Triangle wave starting at minimum (unipolar: 0 to 1)
+                // 0.0-0.5: rise from 0 to 1
+                // 0.5-1.0: fall from 1 to 0
+                if normalizedPhase < 0.5 {
+                    rawValue = normalizedPhase * 2.0  // 0 to 1
+                } else {
+                    rawValue = 2.0 - (normalizedPhase * 2.0)  // 1 to 0
+                }
             }
             
         case .square:
-            // Square wave: instant transitions
-            // 0.0-0.5: +1
-            // 0.5-1.0: -1
-            return normalizedPhase < 0.5 ? 1.0 : -1.0
+            if bipolar {
+                // Square wave: instant transitions (bipolar: -1 to +1)
+                // 0.0-0.5: +1
+                // 0.5-1.0: -1
+                rawValue = normalizedPhase < 0.5 ? 1.0 : -1.0
+            } else {
+                // Square wave starting at minimum (unipolar: 0 to 1)
+                // 0.0-0.5: 0
+                // 0.5-1.0: 1
+                rawValue = normalizedPhase < 0.5 ? 0.0 : 1.0
+            }
             
         case .sawtooth:
-            // Sawtooth wave: linear rise, instant drop
-            // 0.0-1.0: -1 to +1 (then instant drop to -1)
-            return (normalizedPhase * 2.0) - 1.0
+            if bipolar {
+                // Sawtooth wave: linear rise, instant drop (bipolar: -1 to +1)
+                // 0.0-1.0: -1 to +1 (then instant drop to -1)
+                rawValue = (normalizedPhase * 2.0) - 1.0
+            } else {
+                // Sawtooth wave starting at minimum (unipolar: 0 to 1)
+                // 0.0-1.0: 0 to 1 (then instant drop to 0)
+                rawValue = normalizedPhase
+            }
             
         case .reverseSawtooth:
-            // Reverse sawtooth: instant rise, linear fall
-            // 0.0-1.0: +1 to -1 (instant rise from -1 to +1 at start)
-            return 1.0 - (normalizedPhase * 2.0)
+            if bipolar {
+                // Reverse sawtooth: instant rise, linear fall (bipolar: -1 to +1)
+                // 0.0-1.0: +1 to -1 (instant rise from -1 to +1 at start)
+                rawValue = 1.0 - (normalizedPhase * 2.0)
+            } else {
+                // Reverse sawtooth starting at minimum (unipolar: 0 to 1)
+                // 0.0-1.0: 1 to 0 (instant rise from 0 to 1 at start)
+                // Note: This is now redundant for Voice LFO (use negative amounts instead)
+                rawValue = 1.0 - normalizedPhase
+            }
         }
+        
+        return rawValue
     }
 }
 
@@ -167,16 +211,19 @@ enum LFOSyncValue: Double, Codable, Equatable, CaseIterable {
 /// Voice LFO with fixed destinations and individual amounts
 /// Each voice has its own LFO instance with independent phase
 /// Note: Voice LFO frequency is always in Hz (no tempo sync)
+/// **IMPORTANT**: Voice LFO uses UNIPOLAR modulation (0.0 to 1.0)
+/// All waveforms start at their minimum (nominal parameter value) and rise upward.
+/// Amounts can be positive (increase parameter) or negative (decrease parameter).
 struct VoiceLFOParameters: Codable, Equatable {
     // Configuration
     var waveform: LFOWaveform
     var resetMode: LFOResetMode
     var frequency: Double                      // Hz (0.01 - 20 Hz) - always in Hz, no tempo sync
     
-    // Fixed destinations with individual amounts (can be positive or negative)
-    var amountToOscillatorPitch: Double        // ±semitones (Page 7, item 4)
-    var amountToFilterFrequency: Double        // ±octaves (Page 7, item 5)
-    var amountToModulatorLevel: Double         // ±modulation index (Page 7, item 6)
+    // Fixed destinations with individual amounts (unipolar LFO, amounts can be + or -)
+    var amountToOscillatorPitch: Double        // semitones (Page 7, item 4) - positive = raise pitch, negative = lower pitch
+    var amountToFilterFrequency: Double        // octaves (Page 7, item 5) - positive = raise cutoff, negative = lower cutoff
+    var amountToModulatorLevel: Double         // modulation index (Page 7, item 6) - positive = brighten, negative = darken
     
     // Delay/ramp applied to all LFO outputs (Page 7, item 7)
     var delayTime: Double                      // 0 to 5 seconds
@@ -203,10 +250,10 @@ struct VoiceLFOParameters: Codable, Equatable {
     
     /// Calculate the raw LFO waveform value at a given phase
     /// - Parameter phase: Current phase of the LFO (0.0 = start, 1.0 = end of cycle)
-    /// - Returns: Raw LFO value in range -1.0 to +1.0 (unscaled)
+    /// - Returns: Raw LFO value in range 0.0 to 1.0 (unipolar, unscaled)
     func rawValue(at phase: Double) -> Double {
         guard isEnabled else { return 0.0 }
-        return waveform.value(at: phase)
+        return waveform.value(at: phase, bipolar: false)  // Voice LFO uses unipolar mode
     }
 }
 
@@ -457,10 +504,10 @@ struct GlobalLFOParameters: Codable, Equatable {
     
     /// Calculate the raw LFO waveform value at a given phase
     /// - Parameter phase: Current phase of the LFO (0.0 = start, 1.0 = end of cycle)
-    /// - Returns: Raw LFO value in range -1.0 to +1.0 (unscaled)
+    /// - Returns: Raw LFO value in range -1.0 to +1.0 (bipolar, unscaled)
     func rawValue(at phase: Double) -> Double {
         guard isEnabled else { return 0.0 }
-        return waveform.value(at: phase)
+        return waveform.value(at: phase, bipolar: true)  // Global LFO uses bipolar mode
     }
 }
 
@@ -953,7 +1000,8 @@ struct ModulationRouter {
     // MARK: - 1) Oscillator Pitch [LOGARITHMIC]
     
     /// Calculate oscillator pitch modulation
-    /// Sources: Aux envelope (bipolar), Voice LFO (bipolar, with delay ramp), Aftertouch (bipolar)
+    /// Sources: Aux envelope (bipolar), Voice LFO (unipolar 0-1, with delay ramp), Aftertouch (bipolar)
+    /// Voice LFO now modulates unidirectionally from base frequency upward
     /// Formula: finalFreq = baseFreq × 2^((auxEnvSemitones + lfoSemitones + aftertouchSemitones) / 12)
     static func calculateOscillatorPitch(
         baseFrequency: Double,
@@ -965,13 +1013,14 @@ struct ModulationRouter {
         aftertouchDelta: Double,
         aftertouchAmount: Double
     ) -> Double {
-        // Aux envelope: can be ± semitones
+        // Aux envelope: can be ± semitones (bipolar)
         let auxEnvSemitones = auxEnvValue * auxEnvAmount
         
-        // Voice LFO: can be ± semitones, scaled by delay ramp
+        // Voice LFO: unipolar (0-1), modulates upward from base
+        // Full amount is applied at LFO peak, zero at LFO minimum
         let lfoSemitones = (voiceLFOValue * voiceLFORampFactor) * voiceLFOAmount
         
-        // Aftertouch: can be ± semitones
+        // Aftertouch: can be ± semitones (bipolar)
         let aftertouchSemitones = aftertouchDelta * aftertouchAmount
         
         // Add in semitone space
@@ -1023,7 +1072,8 @@ struct ModulationRouter {
     // MARK: - 3) Modulation Index [LINEAR]
     
     /// Calculate modulation index
-    /// Sources: Mod envelope (bipolar), Voice LFO (bipolar, with delay ramp), Aftertouch (bipolar)
+    /// Sources: Mod envelope (bipolar), Voice LFO (unipolar 0-1, with delay ramp), Aftertouch (bipolar)
+    /// Voice LFO now modulates unidirectionally from base upward
     /// Formula: finalModIndex = baseModIndex + modEnvOffset + aftertouchOffset + lfoOffset
     static func calculateModulationIndex(
         baseModIndex: Double,
@@ -1035,9 +1085,13 @@ struct ModulationRouter {
         aftertouchDelta: Double,
         aftertouchAmount: Double
     ) -> Double {
-        // All sources simply add
+        // Mod envelope: bipolar offset
         let modEnvOffset = modEnvValue * modEnvAmount
+        
+        // Aftertouch: bipolar offset
         let aftertouchOffset = aftertouchDelta * aftertouchAmount
+        
+        // Voice LFO: unipolar (0-1), adds positive offset from base
         let lfoOffset = (voiceLFOValue * voiceLFORampFactor) * voiceLFOAmount
         
         let finalModIndex = baseModIndex + modEnvOffset + aftertouchOffset + lfoOffset
@@ -1064,7 +1118,8 @@ struct ModulationRouter {
     // MARK: - 5) Filter Frequency [LOGARITHMIC]
     
     /// Calculate filter cutoff frequency (LEGACY - includes key tracking)
-    /// Sources: Key track (note-on offset), Aux env, Voice LFO, Global LFO, Aftertouch
+    /// Sources: Key track (note-on offset), Aux env (bipolar), Voice LFO (unipolar 0-1), Global LFO (bipolar), Aftertouch (bipolar)
+    /// Voice LFO now modulates unidirectionally from base upward
     /// Key tracking provides a per-note octave offset applied at note-on
     /// NOTE: This method is kept for backward compatibility but should not be used
     /// for continuous modulation. Use calculateFilterFrequencyContinuous instead.
@@ -1087,12 +1142,14 @@ struct ModulationRouter {
         // At amount = 0.0, no tracking (all notes same filter freq)
         let keyTrackOctaves = keyTrackValue * keyTrackAmount
         
-        // Step 2: Envelope and aftertouch offsets in octave space
+        // Step 2: Envelope and aftertouch offsets in octave space (bipolar)
         let auxEnvOctaves = auxEnvValue * auxEnvAmount
         let aftertouchOctaves = aftertouchDelta * aftertouchAmount
         
         // Step 3: LFO offsets in octave space
+        // Voice LFO: unipolar (0-1), adds positive offset
         let voiceLFOOctaves = (voiceLFOValue * voiceLFORampFactor) * voiceLFOAmount
+        // Global LFO: bipolar
         let globalLFOOctaves = globalLFOValue * globalLFOAmount
         
         // Step 4: Sum all octave offsets
@@ -1106,7 +1163,8 @@ struct ModulationRouter {
     }
     
     /// Calculate filter cutoff frequency for CONTINUOUS modulation only
-    /// Sources: Aux env, Voice LFO, Global LFO, Aftertouch
+    /// Sources: Aux env (bipolar), Voice LFO (unipolar 0-1), Global LFO (bipolar), Aftertouch (bipolar)
+    /// Voice LFO now modulates unidirectionally from base upward
     /// NOTE: Key tracking is NOT included - it's a note-on property applied in trigger()
     /// The baseCutoff passed in should already include key tracking if enabled
     static func calculateFilterFrequencyContinuous(
@@ -1121,12 +1179,14 @@ struct ModulationRouter {
         globalLFOValue: Double,
         globalLFOAmount: Double
     ) -> Double {
-        // Step 1: Envelope and aftertouch offsets in octave space
+        // Step 1: Envelope and aftertouch offsets in octave space (bipolar)
         let auxEnvOctaves = auxEnvValue * auxEnvAmount
         let aftertouchOctaves = aftertouchDelta * aftertouchAmount
         
         // Step 2: LFO offsets in octave space
+        // Voice LFO: unipolar (0-1), adds positive offset
         let voiceLFOOctaves = (voiceLFOValue * voiceLFORampFactor) * voiceLFOAmount
+        // Global LFO: bipolar
         let globalLFOOctaves = globalLFOValue * globalLFOAmount
         
         // Step 3: Sum all octave offsets (no key tracking)
