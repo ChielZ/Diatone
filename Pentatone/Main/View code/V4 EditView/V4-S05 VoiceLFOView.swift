@@ -25,8 +25,9 @@ struct VoiceLFOView: View {
     
     var body: some View {
         Group {
-            // Row 1 - Voice LFO Waveform (sine, triangle, square, sawtooth, reverse sawtooth)
-            ParameterRow(
+            // Row 1 - Voice LFO Waveform (sine, triangle, square, sawtooth only)
+            // Note: Reverse sawtooth excluded - redundant in Voice LFO hybrid mode
+            VoiceLFOWaveformRow(
                 label: "LFO WAVEFORM",
                 value: Binding(
                     get: { paramManager.voiceTemplate.modulation.voiceLFO.waveform },
@@ -34,16 +35,7 @@ struct VoiceLFOView: View {
                         paramManager.updateVoiceLFOWaveform(newValue)
                         applyModulationToAllVoices()
                     }
-                ),
-                displayText: { waveform in
-                    switch waveform {
-                    case .sine: return "Sine"
-                    case .triangle: return "Triangle"
-                    case .square: return "Square"
-                    case .sawtooth: return "Sawtooth"
-                    case .reverseSawtooth: return "Reverse Saw"
-                    }
-                }
+                )
             )
             
             // Row 2 - Voice LFO Reset Mode (free, trigger only)
@@ -252,6 +244,109 @@ private struct VoiceLFOModeRow: View {
         guard let currentIndex = validModes.firstIndex(of: value) else { return }
         let previousIndex = (currentIndex - 1 + validModes.count) % validModes.count
         value = validModes[previousIndex]
+    }
+}
+
+// MARK: - Voice LFO Waveform Row (Excludes Reverse Sawtooth)
+
+/// Custom parameter row for Voice LFO waveform that excludes reverse sawtooth
+/// (Reverse sawtooth is redundant in Voice LFO hybrid mode - use negative amounts with sawtooth instead)
+private struct VoiceLFOWaveformRow: View {
+    let label: String
+    @Binding var value: LFOWaveform
+    
+    // Valid waveforms for Voice LFO (excludes reverse sawtooth)
+    private let validWaveforms: [LFOWaveform] = [.sine, .triangle, .square, .sawtooth]
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: radius)
+                .fill(Color("BackgroundColour"))
+            
+            HStack {
+                // Left button (<)
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text("<")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        cyclePrevious()
+                    }
+                
+                Spacer()
+                
+                // Center display - label and value
+                VStack(spacing: 2) {
+                    Text(label)
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 18)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                    
+                    Text(displayText(value))
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 24)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                }
+                
+                Spacer()
+                
+                // Right button (>)
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text(">")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        cycleNext()
+                    }
+            }
+            .padding(.horizontal, 0)
+        }
+    }
+    
+    private func displayText(_ waveform: LFOWaveform) -> String {
+        switch waveform {
+        case .sine: return "Sine"
+        case .triangle: return "Triangle"
+        case .square: return "Square"
+        case .sawtooth: return "Sawtooth"
+        case .reverseSawtooth: return "Reverse Saw"  // Should never be displayed
+        }
+    }
+    
+    private func cycleNext() {
+        guard let currentIndex = validWaveforms.firstIndex(of: value) else {
+            // If current value is not in valid list (e.g., reverseSawtooth), default to sine
+            value = .sine
+            return
+        }
+        let nextIndex = (currentIndex + 1) % validWaveforms.count
+        value = validWaveforms[nextIndex]
+    }
+    
+    private func cyclePrevious() {
+        guard let currentIndex = validWaveforms.firstIndex(of: value) else {
+            // If current value is not in valid list (e.g., reverseSawtooth), default to sine
+            value = .sine
+            return
+        }
+        let previousIndex = (currentIndex - 1 + validWaveforms.count) % validWaveforms.count
+        value = validWaveforms[previousIndex]
     }
 }
 
