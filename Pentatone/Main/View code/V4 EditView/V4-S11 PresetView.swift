@@ -18,6 +18,10 @@ struct PresetView: View {
     @AppStorage("presetView.selectedRow") private var selectedRow: Int = 1 // 1-5
     @AppStorage("presetView.selectedColumn") private var selectedColumn: Int = 1 // 1-5
     
+    // SoundView's @AppStorage properties - update these when loading a preset
+    @AppStorage("soundView.selectedRow") private var soundViewSelectedRow: Int = 1
+    @AppStorage("soundView.selectedColumn") private var soundViewSelectedColumn: Int = 1
+    
     // Computed property for selectedBankType
     private var selectedBankType: PentatoneBankType {
         get {
@@ -354,6 +358,11 @@ struct PresetView: View {
         if let preset = currentSlotPreset {
             // Slot has preset - Load it
             presetManager.loadPreset(preset)
+            
+            // Sync SoundView's selection to match what we just loaded
+            soundViewSelectedRow = selectedRow
+            soundViewSelectedColumn = selectedColumn
+            
             showAlert("Loaded preset '\(preset.name)'")
         } else {
             // Slot is empty - Save current parameters

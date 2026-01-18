@@ -15,9 +15,9 @@ struct SoundView: View {
     // Get the currently selected bank from PresetView (persisted)
     @AppStorage("presetView.selectedBankTypeRawValue") private var selectedBankTypeRawValue: String = PentatoneBankType.factory.rawValue
     
-    // Track which slot is selected in this view
-    @State private var selectedRow: Int = 1 // 1-5
-    @State private var selectedColumn: Int = 1 // 1-5
+    // Persist the currently selected row and column (survives view reloads during app session)
+    @AppStorage("soundView.selectedRow") private var selectedRow: Int = 1 // 1-5
+    @AppStorage("soundView.selectedColumn") private var selectedColumn: Int = 1 // 1-5
     
     // Computed property for selectedBankType
     private var selectedBankType: PentatoneBankType {
