@@ -538,7 +538,8 @@ final class VoicePool {
         
         // Update all active voices with global LFO parameters
         // Note: This runs on background thread, AudioKit parameter updates are thread-safe
-        for voice in voices where !voice.isAvailable {
+        for voice in voices //where !voice.isAvailable
+        {
             voice.applyModulation(
                 globalLFO: (rawValue: globalLFORawValue, parameters: globalLFO),
                 deltaTime: deltaTime,

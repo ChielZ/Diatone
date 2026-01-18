@@ -584,7 +584,7 @@ final class PolyphonicVoice {
         modulationState.closeGate(modulatorValue: modulatorValue, auxiliaryValue: auxiliaryValue)
         
         // Mark voice available after release completes
-        let releaseTime = envelope.releaseDuration * 7
+        let releaseTime = envelope.releaseDuration * 3 // 'middle ground' value for exponential envelopes (actual time to complete silence is approx. 6 times the nominal release duration)
         Task {
             try? await Task.sleep(nanoseconds: UInt64(releaseTime * 1_000_000_000))
             await MainActor.run {

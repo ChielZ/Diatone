@@ -139,8 +139,8 @@ struct AuxEnvView: View {
                 range: -5...5,
                 step: 0.01,
                 displayFormatter: { value in
-                    if abs(value) < 0.05 {  // Use epsilon for floating-point comparison
-                        return "0.0 oct"
+                    if abs(value) < 0.005 {  // Use epsilon for floating-point comparison
+                        return "0.00 oct"
                     } else if value > 0 {
                         return String(format: "+%.2f oct", value)
                     } else {
