@@ -102,11 +102,11 @@ struct VoiceLFOView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...5,
-                step: 0.01,
+                range: -6...6,
+                step: 0.005,
                 displayFormatter: { value in
                     // Convert semitones to cents (1 semitone = 100 cents)
-                    let cents = value * 100
+                    let cents = value * 200
                     return cents > 0 ? String(format: "%.0f ct", cents) : String(format: "%.0f ct", cents)
                 }
             )
@@ -121,7 +121,7 @@ struct VoiceLFOView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...2,
+                range: -2...2,
                 step: 0.01,
                 displayFormatter: { value in
                     return value > 0 ? String(format: "%.2f oct", value) : String(format: "%.2f oct", value)
@@ -138,7 +138,7 @@ struct VoiceLFOView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...5,
+                range: -5...5,
                 step: 0.05,
                 displayFormatter: { value in
                     let normalizedValue = value / 5
