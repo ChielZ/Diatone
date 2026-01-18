@@ -568,7 +568,7 @@ final class PolyphonicVoice {
             decay: voiceModulation.modulatorEnvelope.decay,
             sustain: voiceModulation.modulatorEnvelope.sustain,
             release: voiceModulation.modulatorEnvelope.release,
-            capturedLevel: 0.0  // Not used when gate is open
+            //capturedLevel: 0.0 // Not used when gate is open
         )
         
         let auxiliaryValue = ModulationRouter.calculateActiveEnvelopeValue(
@@ -578,13 +578,13 @@ final class PolyphonicVoice {
             decay: voiceModulation.auxiliaryEnvelope.decay,
             sustain: voiceModulation.auxiliaryEnvelope.sustain,
             release: voiceModulation.auxiliaryEnvelope.release,
-            capturedLevel: 0.0  // Not used when gate is open
+            //capturedLevel: 0.0  // Not used when gate is open
         )
         
         modulationState.closeGate(modulatorValue: modulatorValue, auxiliaryValue: auxiliaryValue)
         
         // Mark voice available after release completes
-        let releaseTime = envelope.releaseDuration
+        let releaseTime = envelope.releaseDuration * 7
         Task {
             try? await Task.sleep(nanoseconds: UInt64(releaseTime * 1_000_000_000))
             await MainActor.run {
@@ -747,15 +747,21 @@ final class PolyphonicVoice {
         deltaTime: Double,
         currentTempo: Double = 120.0
     ) {
-        // Calculate precise elapsed time from trigger timestamp
-        // This ensures envelope timing is accurate regardless of control rate jitter
-        let currentTime = CACurrentMediaTime()
-        let preciseElapsedTime = currentTime - modulationState.triggerTimestamp
-        
-        // Update envelope times with precise elapsed time (not accumulated deltaTime)
-        // This keeps envelopes synchronized with the ramps applied at trigger time
-        modulationState.modulatorEnvelopeTime = preciseElapsedTime
-        modulationState.auxiliaryEnvelopeTime = preciseElapsedTime
+        // Update envelope times based on gate state
+        if modulationState.isGateOpen {
+            // Gate open (Attack/Decay/Sustain): use precise timestamp-based timing
+            // This ensures perfect alignment with the initial trigger ramps (eliminates jitter)
+            let currentTime = CACurrentMediaTime()
+            let preciseElapsedTime = currentTime - modulationState.triggerTimestamp
+            modulationState.modulatorEnvelopeTime = preciseElapsedTime
+            modulationState.auxiliaryEnvelopeTime = preciseElapsedTime
+        } else {
+            // Gate closed (Release): use incremental deltaTime
+            // Release starts at time=0.0 (set by closeGate) and increments from there
+            // This avoids parameter jumps by quantizing release to the control rate
+            modulationState.modulatorEnvelopeTime += deltaTime
+            modulationState.auxiliaryEnvelopeTime += deltaTime
+        }
         
         // Update voice LFO phase and delay ramp (still uses deltaTime for incremental updates)
         updateVoiceLFOPhase(deltaTime: deltaTime, tempo: currentTempo)
