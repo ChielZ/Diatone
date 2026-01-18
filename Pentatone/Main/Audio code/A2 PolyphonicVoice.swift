@@ -350,7 +350,9 @@ final class PolyphonicVoice {
     /// 1. Mod envelope → Modulation Index
     /// 2. Aux envelope → Pitch
     /// 3. Aux envelope → Filter Frequency
-    private func applyInitialEnvelopeModulation() {
+    ///
+    /// - Parameter keyTrackedBaseCutoff: Pre-calculated key-tracked filter cutoff (from trigger())
+    private func applyInitialEnvelopeModulation(keyTrackedBaseCutoff: Double) {
         // Calculate peak envelope values (what they will be after attack completes)
         // Peak value for envelopes is always 1.0 (full modulation amount)
         let modEnvPeakValue = 1.0
@@ -435,14 +437,8 @@ final class PolyphonicVoice {
                 )
             }
             
-            // Calculate base cutoff with key tracking applied (note-on property)
-            let keyTrackedBaseCutoff: Double
-            if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
-                let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
-                keyTrackedBaseCutoff = modulationState.baseFilterCutoff * pow(2.0, keyTrackOctaves)
-            } else {
-                keyTrackedBaseCutoff = modulationState.baseFilterCutoff
-            }
+            // Use the pre-calculated key-tracked base cutoff passed in from trigger()
+            // This ensures key tracking is always applied, even if envelope amount is 0
             
             // Calculate target filter frequency (key-tracked base + peak envelope offset in octaves)
             let octaveOffset = auxEnvPeakValue * effectiveAuxEnvFilterAmount
@@ -532,9 +528,25 @@ final class PolyphonicVoice {
             keyTrackingParams: voiceModulation.keyTracking
         )
         
+        // CRITICAL: Calculate key-tracked filter cutoff UNCONDITIONALLY
+        // This is a NOTE-ON property that applies regardless of envelope/LFO modulation
+        let keyTrackedBaseCutoff: Double
+        if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
+            let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
+            keyTrackedBaseCutoff = modulationState.baseFilterCutoff * pow(2.0, keyTrackOctaves)
+        } else {
+            keyTrackedBaseCutoff = modulationState.baseFilterCutoff
+        }
+        
+        // Apply key-tracked filter cutoff immediately (zero-latency)
+        // This ensures key tracking works even when all modulation amounts are zero
+        let clampedKeyTrackedCutoff = max(12.0, min(20000.0, keyTrackedBaseCutoff))
+        filter.$cutoffFrequency.ramp(to: AUValue(clampedKeyTrackedCutoff), duration: 0)
+        
         // CRITICAL: Apply envelope modulation values immediately with ramp time = attack time
         // This eliminates 0-5ms timing jitter between trigger and first control rate update
-        applyInitialEnvelopeModulation()
+        // Pass the key-tracked base cutoff so envelope modulation applies on top of it
+        applyInitialEnvelopeModulation(keyTrackedBaseCutoff: keyTrackedBaseCutoff)
         
        // envelope.reset()
         filter.reset()
