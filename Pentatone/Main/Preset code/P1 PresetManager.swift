@@ -362,41 +362,25 @@ final class PresetManager: ObservableObject {
     
     // MARK: - Loading Presets (Apply to Engine)
     
-    /// Load a preset and apply it to the audio engine
+    /// Load a preset and apply it to the audio engine with smooth transition
+    /// Uses fade-out/fade-in to eliminate noise during preset switching
     /// - Parameter preset: The preset to load
     func loadPreset(_ preset: AudioParameterSet) {
         let paramManager = AudioParameterManager.shared
         
-        // IMPORTANT: Preset parameters are already at their FINAL values
-        // (base values + macro adjustments have already been calculated and saved)
-        // We should NOT recalculate them!
+        print("🎵 PresetManager: Loading preset '\(preset.name)' with smooth transition...")
         
-        // Step 1: Apply macro state FIRST
-        // This sets the base values and positions for future macro adjustments
-        paramManager.macroState = preset.macroState
-        
-        // Step 2: Apply voice template
-        // This includes all oscillator, filter, envelope, modulation params at their final values
-        paramManager.voiceTemplate = preset.voiceTemplate
-        
-        // Step 3: Apply master parameters
-        // This includes tempo, delays, reverb, output, globalLFO, etc. at their final values
-        paramManager.master = preset.master
-        
-        // Step 4: Apply all parameters to audio engine nodes
-        // These functions transfer the parameter values to the actual audio processing nodes
-        paramManager.applyVoiceParameters(preset.voiceTemplate)
-        paramManager.applyMasterParameters(preset.master)
-        
-        // NOTE: We do NOT call updateVolumeMacro/Tone/Ambience here!
-        // The preset already contains final parameter values.
-        // Calling those functions would recalculate and potentially change values.
-        // The macro positions are already stored in macroState for future adjustments.
-        
-        // Set as current preset
-        currentPreset = preset
-        
-        print("✅ PresetManager: Loaded preset '\(preset.name)'")
+        // Use the new fade-based loading method from ParameterManager
+        // This handles:
+        // 1. Fade out to silence (100ms)
+        // 2. Stop all voices
+        // 3. Apply new parameters
+        // 4. Fade back in (100ms)
+        paramManager.loadPresetWithFade(preset) {
+            // Set as current preset after loading is complete
+            self.currentPreset = preset
+            print("✅ PresetManager: Preset '\(preset.name)' loaded successfully")
+        }
     }
     
     /// Load preset by ID

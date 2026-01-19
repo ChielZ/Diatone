@@ -162,32 +162,92 @@ struct VoiceParameters: Codable, Equatable {
     var oscillator: OscillatorParameters
     var filter: FilterParameters                   // Modulatable (cutoff only)
     var filterStatic: FilterStaticParameters       // Non-modulatable (resonance, saturation)
-    var envelope: EnvelopeParameters?              // DEPRECATED: Maintained for backward compatibility
+    var envelope: EnvelopeParameters               // Maintained for preset compatibility
     var modulation: VoiceModulationParameters      // Phase 5: Modulation system (includes loudnessEnvelope)
+    
+    // MARK: - Initializers
+    
+    /// Standard memberwise initializer (required because we have custom Codable)
+    init(oscillator: OscillatorParameters, filter: FilterParameters, filterStatic: FilterStaticParameters, envelope: EnvelopeParameters, modulation: VoiceModulationParameters) {
+        self.oscillator = oscillator
+        self.filter = filter
+        self.filterStatic = filterStatic
+        self.envelope = envelope
+        self.modulation = modulation
+    }
     
     static let `default` = VoiceParameters(
         oscillator: .default,
         filter: .default,
         filterStatic: .default,
-        envelope: nil,  // No longer used in new presets
+        envelope: .default,  // Keep for preset compatibility
         modulation: .default  // Uses VoiceModulationParameters.default
     )
     
-    /// Migrate old envelope parameters to new loudness envelope if needed
-    /// This ensures backward compatibility when loading old presets
-    mutating func migrateEnvelopeIfNeeded() {
-        if let oldEnvelope = envelope {
-            // Migrate old envelope to new loudness envelope
-            modulation.loudnessEnvelope = oldEnvelope.toLoudnessEnvelope()
-            // Clear the old envelope field (optional - keeps presets cleaner)
-            envelope = nil
-        }
+    // MARK: - Custom Codable Implementation for Transparent Migration
+    
+    enum CodingKeys: String, CodingKey {
+        case oscillator
+        case filter
+        case filterStatic
+        case envelope
+        case modulation
+    }
+    
+    /// Custom decoder that transparently migrates envelope to loudnessEnvelope
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        oscillator = try container.decode(OscillatorParameters.self, forKey: .oscillator)
+        filter = try container.decode(FilterParameters.self, forKey: .filter)
+        filterStatic = try container.decode(FilterStaticParameters.self, forKey: .filterStatic)
+        envelope = try container.decode(EnvelopeParameters.self, forKey: .envelope)
+        
+        // Decode modulation, or create default if missing (old presets)
+        var modulation = (try? container.decode(VoiceModulationParameters.self, forKey: .modulation)) ?? .default
+        
+        // CRITICAL: Sync loudness envelope from envelope field
+        // This happens every time a preset is loaded, ensuring envelope data is never lost
+        modulation.loudnessEnvelope = envelope.toLoudnessEnvelope()
+        
+        self.modulation = modulation
+    }
+    
+    /// Custom encoder that keeps envelope field in sync with loudnessEnvelope
+    /// This ensures presets remain in the old format for maximum compatibility
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(oscillator, forKey: .oscillator)
+        try container.encode(filter, forKey: .filter)
+        try container.encode(filterStatic, forKey: .filterStatic)
+        
+        // CRITICAL: Convert loudnessEnvelope back to envelope format for saving
+        // This keeps preset files in the old format
+        let envelopeForSaving = EnvelopeParameters(
+            attackDuration: modulation.loudnessEnvelope.attack,
+            decayDuration: modulation.loudnessEnvelope.decay,
+            sustainLevel: modulation.loudnessEnvelope.sustain,
+            releaseDuration: modulation.loudnessEnvelope.release
+        )
+        try container.encode(envelopeForSaving, forKey: .envelope)
+        
+        try container.encode(modulation, forKey: .modulation)
     }
     
     /// Get the current loudness envelope (for UI and parameter updates)
     var loudnessEnvelope: LoudnessEnvelopeParameters {
         get { modulation.loudnessEnvelope }
-        set { modulation.loudnessEnvelope = newValue }
+        set { 
+            modulation.loudnessEnvelope = newValue
+            // Keep envelope field in sync for consistency
+            envelope = EnvelopeParameters(
+                attackDuration: newValue.attack,
+                decayDuration: newValue.decay,
+                sustainLevel: newValue.sustain,
+                releaseDuration: newValue.release
+            )
+        }
     }
 }
 
@@ -456,18 +516,6 @@ struct AudioParameterSet: Codable, Equatable, Identifiable {
     var macroState: MacroControlState   // Current macro positions and base values
     var createdAt: Date
     
-    // MARK: - Initializers
-    
-    /// Standard initializer
-    init(id: UUID, name: String, voiceTemplate: VoiceParameters, master: MasterParameters, macroState: MacroControlState, createdAt: Date) {
-        self.id = id
-        self.name = name
-        self.voiceTemplate = voiceTemplate
-        self.master = master
-        self.macroState = macroState
-        self.createdAt = createdAt
-    }
-    
     /// Default preset
     static let `default` = AudioParameterSet(
         id: UUID(),
@@ -477,31 +525,5 @@ struct AudioParameterSet: Codable, Equatable, Identifiable {
         macroState: .default,
         createdAt: Date()
     )
-    
-    // MARK: - Migration
-    
-    /// Migrate old envelope parameters to new loudness envelope system
-    /// This is automatically called when loading presets to ensure backward compatibility
-    mutating func migrateEnvelopeIfNeeded() {
-        voiceTemplate.migrateEnvelopeIfNeeded()
-    }
-    
-    // MARK: - Codable with Automatic Migration
-    
-    /// Custom decoder that automatically migrates old presets
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(UUID.self, forKey: .id)
-        name = try container.decode(String.self, forKey: .name)
-        var voiceTemplate = try container.decode(VoiceParameters.self, forKey: .voiceTemplate)
-        master = try container.decode(MasterParameters.self, forKey: .master)
-        macroState = try container.decode(MacroControlState.self, forKey: .macroState)
-        createdAt = try container.decode(Date.self, forKey: .createdAt)
-        
-        // Automatically migrate old envelope to new loudness envelope
-        voiceTemplate.migrateEnvelopeIfNeeded()
-        
-        self.voiceTemplate = voiceTemplate
-    }
 }
 

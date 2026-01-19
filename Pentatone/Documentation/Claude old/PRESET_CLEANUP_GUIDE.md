@@ -1,3 +1,17 @@
+# Preset Loading Cleanup - Implementation Complete ✅
+
+## Latest Update: FX Buffer Clearing (Fixed Ghost Notes Issue)
+
+**Problem:** When switching presets, you could hear notes even when it was silent before switching.
+
+**Root Cause:** The delay and reverb FX have internal buffers (up to 2 seconds for delay) that hold audio even after voices are silenced. When the new preset loads, these buffers continue playing back, causing "ghost notes."
+
+**Solution:** Added `clearFXBuffers()` method that calls `reset()` on the delay, reverb, and filter `AVAudioUnit` instances to clear all internal buffers.
+
+**Status:** ✅ FIXED - Preset switching now provides a completely clean slate with no ghost notes.
+
+---
+
 # How to Clean Up Orphaned Presets
 
 You now have **two methods** to access and delete your orphaned presets:

@@ -293,6 +293,33 @@ final class VoicePool {
         print("🎵 All voices stopped")
     }
     
+    /// Immediately silences all voices and resets them to available state
+    /// This is more aggressive than stopAll() - it sets faders to zero instantly
+    /// Used during preset switching to ensure a completely clean slate
+    func silenceAndResetAllVoices() {
+        for voice in voices {
+            // Set fader gains to zero immediately (no ramp)
+            voice.fader.$leftGain.ramp(to: 0.0, duration: 0)
+            voice.fader.$rightGain.ramp(to: 0.0, duration: 0)
+            
+            // Mark voice as available and not playing
+            voice.isAvailable = true
+            voice.isPlaying = false
+            
+            // Reset modulation state so envelope tracking stops
+            voice.modulationState.isGateOpen = false
+            voice.modulationState.loudnessEnvelopeTime = 0.0
+            voice.modulationState.loudnessStartLevel = 0.0
+            voice.modulationState.loudnessSustainLevel = 0.0
+        }
+        
+        // Clear all key mappings
+        keyToVoiceMap.removeAll()
+        monoVoiceOwner = nil
+        
+        print("🎵 All voices silenced and reset to available state")
+    }
+    
     // MARK: - Voice Recreation (for waveform changes)
     
     /// Recreates only the oscillators in all voices with a new waveform

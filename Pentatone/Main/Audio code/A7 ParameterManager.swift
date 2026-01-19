@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import AVFoundation
 import AudioKit
 import DunneAudioKit
 import AudioKitEX
@@ -861,7 +862,121 @@ final class AudioParameterManager: ObservableObject {
     
     // MARK: - Preset Application Methods (called by PresetManager)
     
-    /// Apply voice parameters from a preset to all voices
+    /// Apply voice parameters from a preset to all voices with smooth transition
+    /// Uses a fade-out/fade-in approach to eliminate noise during preset switching
+    /// - Parameters:
+    ///   - voiceParams: The voice parameters to apply
+    ///   - completion: Called after preset is fully loaded and faded back in
+    func applyVoiceParametersWithFade(_ voiceParams: VoiceParameters, completion: (() -> Void)? = nil) {
+        // Capture current output volume for restoration
+        let currentOutputVolume = master.output.volume
+        
+        print("🎵 Preset transition: Fading out...")
+        
+        // Step 1: Fade out to silence (100ms)
+        fadeOutputVolume(to: 0.0, duration: 0.1) {
+            print("🎵 Preset transition: Silenced, stopping all voices...")
+            
+            // Step 2: CRITICAL - Immediately silence all voices and reset to available state
+            // This sets all faders to zero, marks voices as available, and clears key mappings
+            // Provides a completely clean slate with no sound carried over from previous preset
+            voicePool?.silenceAndResetAllVoices()
+            
+            // Step 3: CRITICAL - Clear delay and reverb buffers
+            // This prevents any lingering audio from the previous preset from playing back
+            // through the FX when the new preset loads
+            //self.clearFXBuffers()
+            
+            // Small delay to ensure voices are fully stopped and FX buffers cleared
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                print("🎵 Preset transition: Applying new parameters...")
+                
+                // Step 4: Apply the new preset parameters
+                voicePool?.silenceAndResetAllVoices()
+                self.applyVoiceParameters(voiceParams)
+                self.clearFXBuffers()
+                // Step 5: Wait for oscillator recreation to complete, then fade back in
+                // The applyVoiceParameters completion handler is called after oscillators are ready
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    print("🎵 Preset transition: Fading back in...")
+                    
+                    // Fade back to the new preset's output volume (100ms)
+                    self.fadeOutputVolume(to: currentOutputVolume, duration: 0.1) {
+                        print("✅ Preset transition complete")
+                        completion?()
+                    }
+                }
+            }
+        }
+    }
+    
+    /// Fade output volume smoothly over a duration
+    /// - Parameters:
+    ///   - targetVolume: Target volume level (0.0 - 1.0)
+    ///   - duration: Fade duration in seconds
+    ///   - completion: Called when fade is complete
+    private func fadeOutputVolume(to targetVolume: Double, duration: TimeInterval, completion: @escaping () -> Void) {
+        let startVolume = master.output.volume
+        let startTime = Date()
+        
+        // Create a timer for smooth fading (60 Hz for smooth animation)
+        let timer = Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: true) { timer in
+            let elapsed = Date().timeIntervalSince(startTime)
+            let progress = min(elapsed / duration, 1.0)
+            
+            // Linear interpolation
+            let currentVolume = startVolume + (targetVolume - startVolume) * progress
+            
+            // Apply volume (removed self. to eliminate warning)
+            //self.master.output.volume = currentVolume
+            // Apply to global outputMixer if it exists
+            outputMixer?.volume = AUValue(currentVolume)
+            
+            // Complete when done
+            if progress >= 1.0 {
+                timer.invalidate()
+                completion()
+            }
+        }
+        
+        // Start timer on main run loop
+        RunLoop.main.add(timer, forMode: .common)
+    }
+   /*
+    /// Clear delay and reverb buffers to eliminate any lingering audio
+    /// This is called during preset transitions to ensure a completely clean slate
+    private func clearFXBuffers() {
+        // Reset delay buffer - clears all internal delay lines
+        if let delayUnit = fxDelay?.avAudioNode as? AVAudioUnit {
+            delayUnit.reset()
+            print("🎵 Preset transition: Delay buffers cleared")
+        }
+        
+        // Reset reverb buffer - clears all internal delay lines
+        if let reverbUnit = fxReverb?.avAudioNode as? AVAudioUnit {
+            reverbUnit.reset()
+            print("🎵 Preset transition: Reverb buffers cleared")
+        }
+        
+        // Also reset the delay lowpass filter to clear any state
+        if let filterUnit = delayLowpass?.avAudioNode as? AVAudioUnit {
+            filterUnit.reset()
+            print("🎵 Preset transition: Delay filter buffers cleared")
+        }
+    }
+    */
+    
+    private func clearFXBuffers() {
+        fxDelay.reset()
+        fxReverb.reset()
+    }
+    
+    
+    
+    
+    
+    /// Apply voice parameters from a preset to all voices (without fade)
+    /// Use applyVoiceParametersWithFade() for preset switching to avoid noise
     func applyVoiceParameters(_ voiceParams: VoiceParameters) {
         let waveform = voiceParams.oscillator.waveform
         print("🎵 Preset loading: Recreating oscillators with waveform \(waveform.displayName)...")
@@ -908,4 +1023,27 @@ final class AudioParameterManager: ObservableObject {
         // Note: Voice mode and global pitch are handled by the voice pool internally
         // Voice mode changes require special handling via updateVoiceMode() if needed
     }
+    
+    /// Load a complete preset with smooth transition (fade-out/fade-in)
+    /// This is the main method for preset switching from the UI
+    /// - Parameters:
+    ///   - preset: The preset to load
+    ///   - completion: Called after preset is fully loaded and faded back in
+    func loadPresetWithFade(_ preset: AudioParameterSet, completion: (() -> Void)? = nil) {
+        print("🎵 Loading preset with fade: \(preset.name)")
+        
+        // Apply voice parameters with fade (this handles the fade-out/in cycle)
+        applyVoiceParametersWithFade(preset.voiceTemplate) {
+            // After voice parameters are applied and faded in, apply master parameters
+            // Master parameters don't need fading since voices are already silent during transition
+            self.applyMasterParameters(preset.master)
+            
+            // Update macro state
+            self.macroState = preset.macroState
+            
+            print("✅ Preset loaded successfully: \(preset.name)")
+            completion?()
+        }
+    }
 }
+
