@@ -92,7 +92,7 @@ final class VoicePool {
         
         // Connect all voices to mixer
         for voice in voices {
-            voiceMixer.addInput(voice.envelope)
+            voiceMixer.addInput(voice.fader)
         }
         
         print("🎵 VoicePool created with \(voices.count) voice(s) available, starting in \(voiceCount == 1 ? "monophonic" : "polyphonic") mode")
@@ -137,8 +137,8 @@ final class VoicePool {
             if monoVoice.isAvailable {
                 return monoVoice
             } else {
-                // Steal the mono voice
-                // monoVoice.envelope.closeGate()
+                // Steal the mono voice - no explicit release needed
+                // The new trigger will handle smoothing via fader level capture
                 monoVoice.isAvailable = true
                 print("⚠️ Mono voice stealing")
                 return monoVoice
@@ -164,8 +164,7 @@ final class VoicePool {
         // Find voice with earliest trigger time (from all voices)
         let oldestVoice = voices.min(by: { $0.triggerTime < $1.triggerTime })!
         
-        // Force release the oldest voice (instant cutoff as per requirements)
-        oldestVoice.envelope.closeGate()
+        // Mark as available - the new trigger will handle smoothing via fader level capture
         oldestVoice.isAvailable = true  // Mark immediately available
         
         print("⚠️ Voice stealing: Took voice triggered at \(oldestVoice.triggerTime)")
@@ -286,7 +285,7 @@ final class VoicePool {
     /// Stops all voices immediately
     func stopAll() {
         for voice in voices {
-            voice.envelope.closeGate()
+            voice.release()  // Use voice's release method instead of direct envelope access
             voice.isAvailable = true
         }
         keyToVoiceMap.removeAll()
@@ -391,15 +390,25 @@ final class VoicePool {
         }
     }
     
-    /// Updates envelope parameters for all voices
-    func updateAllVoiceEnvelopes(_ parameters: EnvelopeParameters) {
+    /// Updates loudness envelope parameters for all voices
+    /// Note: The old envelope field is maintained for backward compatibility with presets
+    func updateAllVoiceLoudnessEnvelopes(_ parameters: LoudnessEnvelopeParameters) {
         // Update template
-        currentTemplate.envelope = parameters
+        currentTemplate.loudnessEnvelope = parameters
         
         // Update all voices (envelope affects ongoing playback)
         for voice in voices {
-            voice.updateEnvelopeParameters(parameters)
+            voice.updateLoudnessEnvelopeParameters(parameters)
         }
+    }
+    
+    /// Updates loudness envelope parameters from old EnvelopeParameters structure
+    /// This is for backward compatibility when the UI or preset system uses the old structure
+    @available(*, deprecated, message: "Use updateAllVoiceLoudnessEnvelopes with LoudnessEnvelopeParameters instead")
+    func updateAllVoiceEnvelopes(_ parameters: EnvelopeParameters) {
+        // Convert old parameters to new loudness envelope
+        let loudnessParams = parameters.toLoudnessEnvelope()
+        updateAllVoiceLoudnessEnvelopes(loudnessParams)
     }
     
     /// Updates detune mode for all voices

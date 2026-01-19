@@ -130,6 +130,8 @@ struct FilterStaticParameters: Codable, Equatable {
 }
 
 /// Parameters for the amplitude envelope
+/// ⚠️ DEPRECATED: This struct is maintained for backward compatibility with old presets
+/// New code should use modulation.loudnessEnvelope instead
 struct EnvelopeParameters: Codable, Equatable {
     var attackDuration: Double
     var decayDuration: Double
@@ -142,6 +144,17 @@ struct EnvelopeParameters: Codable, Equatable {
         sustainLevel: 1.0,
         releaseDuration: 0.1
     )
+    
+    /// Convert to new LoudnessEnvelopeParameters for migration
+    func toLoudnessEnvelope() -> LoudnessEnvelopeParameters {
+        return LoudnessEnvelopeParameters(
+            attack: attackDuration,
+            decay: decayDuration,
+            sustain: sustainLevel,
+            release: releaseDuration,
+            isEnabled: true
+        )
+    }
 }
 
 /// Combined parameters for a single voice
@@ -149,16 +162,33 @@ struct VoiceParameters: Codable, Equatable {
     var oscillator: OscillatorParameters
     var filter: FilterParameters                   // Modulatable (cutoff only)
     var filterStatic: FilterStaticParameters       // Non-modulatable (resonance, saturation)
-    var envelope: EnvelopeParameters
-    var modulation: VoiceModulationParameters      // Phase 5: Modulation system
+    var envelope: EnvelopeParameters?              // DEPRECATED: Maintained for backward compatibility
+    var modulation: VoiceModulationParameters      // Phase 5: Modulation system (includes loudnessEnvelope)
     
     static let `default` = VoiceParameters(
         oscillator: .default,
         filter: .default,
         filterStatic: .default,
-        envelope: .default,
+        envelope: nil,  // No longer used in new presets
         modulation: .default  // Uses VoiceModulationParameters.default
     )
+    
+    /// Migrate old envelope parameters to new loudness envelope if needed
+    /// This ensures backward compatibility when loading old presets
+    mutating func migrateEnvelopeIfNeeded() {
+        if let oldEnvelope = envelope {
+            // Migrate old envelope to new loudness envelope
+            modulation.loudnessEnvelope = oldEnvelope.toLoudnessEnvelope()
+            // Clear the old envelope field (optional - keeps presets cleaner)
+            envelope = nil
+        }
+    }
+    
+    /// Get the current loudness envelope (for UI and parameter updates)
+    var loudnessEnvelope: LoudnessEnvelopeParameters {
+        get { modulation.loudnessEnvelope }
+        set { modulation.loudnessEnvelope = newValue }
+    }
 }
 
 /// Musical note divisions for tempo-synced delay
@@ -424,5 +454,29 @@ struct AudioParameterSet: Codable, Equatable, Identifiable {
         macroState: .default,
         createdAt: Date()
     )
+    
+    /// Migrate old envelope parameters to new loudness envelope system
+    /// This is automatically called when loading presets to ensure backward compatibility
+    mutating func migrateEnvelopeIfNeeded() {
+        voiceTemplate.migrateEnvelopeIfNeeded()
+    }
+    
+    // MARK: - Codable with Migration
+    
+    /// Custom decoder that automatically migrates old presets
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        var voiceTemplate = try container.decode(VoiceParameters.self, forKey: .voiceTemplate)
+        master = try container.decode(MasterParameters.self, forKey: .master)
+        macroState = try container.decode(MacroControlState.self, forKey: .macroState)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        
+        // Automatically migrate old envelope to new loudness envelope
+        voiceTemplate.migrateEnvelopeIfNeeded()
+        
+        self.voiceTemplate = voiceTemplate
+    }
 }
 

@@ -230,7 +230,30 @@ final class AudioParameterManager: ObservableObject {
     }
     
     func updateTemplateEnvelope(_ parameters: EnvelopeParameters) {
-        voiceTemplate.envelope = parameters
+        // Convert old parameters to new loudness envelope
+        voiceTemplate.loudnessEnvelope = parameters.toLoudnessEnvelope()
+    }
+    
+    // MARK: - Loudness Envelope Parameter Updates (NEW)
+    
+    /// Update loudness envelope attack duration
+    func updateEnvelopeAttack(_ value: Double) {
+        voiceTemplate.loudnessEnvelope.attack = value
+    }
+    
+    /// Update loudness envelope decay duration
+    func updateEnvelopeDecay(_ value: Double) {
+        voiceTemplate.loudnessEnvelope.decay = value
+    }
+    
+    /// Update loudness envelope sustain level
+    func updateEnvelopeSustain(_ value: Double) {
+        voiceTemplate.loudnessEnvelope.sustain = value
+    }
+    
+    /// Update loudness envelope release duration
+    func updateEnvelopeRelease(_ value: Double) {
+        voiceTemplate.loudnessEnvelope.release = value
     }
     
     // MARK: - Individual Oscillator Parameter Updates
@@ -271,28 +294,6 @@ final class AudioParameterManager: ObservableObject {
     /// Update stereo offset (constant)
     func updateStereoOffsetConstant(_ value: Double) {
         voiceTemplate.oscillator.stereoOffsetConstant = value
-    }
-    
-    // MARK: - Individual Envelope Parameter Updates
-    
-    /// Update envelope attack duration
-    func updateEnvelopeAttack(_ value: Double) {
-        voiceTemplate.envelope.attackDuration = value
-    }
-    
-    /// Update envelope decay duration
-    func updateEnvelopeDecay(_ value: Double) {
-        voiceTemplate.envelope.decayDuration = value
-    }
-    
-    /// Update envelope sustain level
-    func updateEnvelopeSustain(_ value: Double) {
-        voiceTemplate.envelope.sustainLevel = value
-    }
-    
-    /// Update envelope release duration
-    func updateEnvelopeRelease(_ value: Double) {
-        voiceTemplate.envelope.releaseDuration = value
     }
     
     // MARK: - Individual Filter Parameter Updates
@@ -876,7 +877,7 @@ final class AudioParameterManager: ObservableObject {
             voicePool?.updateAllVoiceOscillators(voiceParams.oscillator)
             voicePool?.updateAllVoiceFilters(voiceParams.filter)
             voicePool?.updateAllVoiceFilterStatic(voiceParams.filterStatic)
-            voicePool?.updateAllVoiceEnvelopes(voiceParams.envelope)
+            voicePool?.updateAllVoiceLoudnessEnvelopes(voiceParams.loudnessEnvelope)
             voicePool?.updateAllVoiceModulation(voiceParams.modulation)
             
             print("✅ Preset loading: All voice parameters applied after oscillator recreation")

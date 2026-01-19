@@ -31,7 +31,7 @@ struct ContourView: View {
             LogarithmicSliderRowWithLinearButtons(
                 label: "AMP ENV ATTACK",
                 value: Binding(
-                    get: { paramManager.voiceTemplate.envelope.attackDuration },
+                    get: { paramManager.voiceTemplate.loudnessEnvelope.attack },
                     set: { newValue in
                         paramManager.updateEnvelopeAttack(newValue)
                         applyEnvelopeToAllVoices()
@@ -52,7 +52,7 @@ struct ContourView: View {
             LogarithmicSliderRowWithLinearButtons(
                 label: "AMP ENV DECAY",
                 value: Binding(
-                    get: { paramManager.voiceTemplate.envelope.decayDuration },
+                    get: { paramManager.voiceTemplate.loudnessEnvelope.decay },
                     set: { newValue in
                         paramManager.updateEnvelopeDecay(newValue)
                         applyEnvelopeToAllVoices()
@@ -73,7 +73,7 @@ struct ContourView: View {
             SliderRow(
                 label: "AMP ENV SUSTAIN",
                 value: Binding(
-                    get: { paramManager.voiceTemplate.envelope.sustainLevel },
+                    get: { paramManager.voiceTemplate.loudnessEnvelope.sustain },
                     set: { newValue in
                         paramManager.updateEnvelopeSustain(newValue)
                         applyEnvelopeToAllVoices()
@@ -88,7 +88,7 @@ struct ContourView: View {
             LogarithmicSliderRowWithLinearButtons(
                 label: "AMP ENV RELEASE",
                 value: Binding(
-                    get: { paramManager.voiceTemplate.envelope.releaseDuration },
+                    get: { paramManager.voiceTemplate.loudnessEnvelope.release },
                     set: { newValue in
                         paramManager.updateEnvelopeRelease(newValue)
                         applyEnvelopeToAllVoices()
@@ -164,11 +164,11 @@ struct ContourView: View {
     
     /// Applies current envelope parameters to all active voices
     private func applyEnvelopeToAllVoices() {
-        let params = paramManager.voiceTemplate.envelope
+        let params = paramManager.voiceTemplate.loudnessEnvelope
         
         // Apply to all voices in the pool
         for voice in voicePool.voices {
-            voice.updateEnvelopeParameters(params)
+            voice.updateLoudnessEnvelopeParameters(params)
         }
     }
 }
