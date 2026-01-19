@@ -405,10 +405,20 @@ struct MacroControlState: Codable, Equatable {
         self.ambiencePosition = ambiencePosition
     }
     
-    /// Default macro state derived from default parameters
+    /// Default macro state with neutral values
+    /// Note: This uses hardcoded defaults to avoid circular dependency with MasterParameters
     static let `default` = MacroControlState(
-        from: VoiceParameters.default,
-        masterParams: MasterParameters.default
+        baseModulationIndex: 1.0,           // matches OscillatorParameters.default.modulationIndex
+        baseFilterCutoff: 880.0,            // matches FilterParameters.default.cutoffFrequency
+        baseFilterSaturation: 0.5,          // matches FilterStaticParameters.default.saturation
+        baseDelayFeedback: 0.5,             // matches DelayParameters.default.feedback
+        baseDelayMix: 0.0,                  // matches DelayParameters.default.dryWetMix
+        baseReverbFeedback: 0.5,            // matches ReverbParameters.default.feedback
+        baseReverbMix: 0.0,                 // matches ReverbParameters.default.balance
+        basePreVolume: 0.5,                 // matches OutputParameters.default.preVolume
+        volumePosition: 0.5,                // matches preVolume
+        tonePosition: 0.0,                  // neutral
+        ambiencePosition: 0.0               // neutral
     )
 }
 
@@ -446,6 +456,19 @@ struct AudioParameterSet: Codable, Equatable, Identifiable {
     var macroState: MacroControlState   // Current macro positions and base values
     var createdAt: Date
     
+    // MARK: - Initializers
+    
+    /// Standard initializer
+    init(id: UUID, name: String, voiceTemplate: VoiceParameters, master: MasterParameters, macroState: MacroControlState, createdAt: Date) {
+        self.id = id
+        self.name = name
+        self.voiceTemplate = voiceTemplate
+        self.master = master
+        self.macroState = macroState
+        self.createdAt = createdAt
+    }
+    
+    /// Default preset
     static let `default` = AudioParameterSet(
         id: UUID(),
         name: "Default",
@@ -455,13 +478,15 @@ struct AudioParameterSet: Codable, Equatable, Identifiable {
         createdAt: Date()
     )
     
+    // MARK: - Migration
+    
     /// Migrate old envelope parameters to new loudness envelope system
     /// This is automatically called when loading presets to ensure backward compatibility
     mutating func migrateEnvelopeIfNeeded() {
         voiceTemplate.migrateEnvelopeIfNeeded()
     }
     
-    // MARK: - Codable with Migration
+    // MARK: - Codable with Automatic Migration
     
     /// Custom decoder that automatically migrates old presets
     init(from decoder: Decoder) throws {
