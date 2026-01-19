@@ -58,8 +58,9 @@ final class PolyphonicVoice {
     /// Low-pass filter processing the stereo signal
     let filter: ThreePoleLowpassFilter
     
-    /// Amplitude envelope shaping the stereo signal
-    let envelope: AmplitudeEnvelope
+    /// Fader for loudness envelope control (replaces AmplitudeEnvelope)
+    /// Controlled manually via loudness envelope calculation
+    let fader: Fader
     
     // MARK: - Voice State
     
@@ -163,14 +164,9 @@ final class PolyphonicVoice {
             resonance: AUValue(parameters.filterStatic.clampedResonance)
         )
 
-        // Create envelope shaping the stereo signal
-        self.envelope = AmplitudeEnvelope(
-            filter,
-            attackDuration: AUValue(parameters.envelope.attackDuration),
-            decayDuration: AUValue(parameters.envelope.decayDuration),
-            sustainLevel: AUValue(parameters.envelope.sustainLevel),
-            releaseDuration: AUValue(parameters.envelope.releaseDuration)
-        )
+        // Create fader for loudness envelope control (replaces AmplitudeEnvelope)
+        // Start with gain = 0 (silent) - will be ramped up on trigger
+        self.fader = Fader(filter, gain: 0.0)
         
         // Initialize base values in modulation state
         modulationState.baseAmplitude = parameters.oscillator.amplitude
@@ -612,9 +608,21 @@ final class PolyphonicVoice {
         // Pass the key-tracked base cutoff so envelope modulation applies on top of it
         applyInitialEnvelopeModulation(keyTrackedBaseCutoff: keyTrackedBaseCutoff)
         
-       // envelope.reset()
+        // CRITICAL: Apply initial loudness envelope ramp (replaces envelope.openGate())
+        // Start from current fader level (for voice stealing) and ramp to 1.0 over attack time
+        let currentFaderLevel = Double(fader.leftGain)
+        let loudnessAttack = voiceModulation.loudnessEnvelope.attack
+        
+        // Apply immediate attack ramp with duration = attack time
+        // This IS the attack phase - no separate envelope node needed
+        fader.$leftGain.ramp(to: 1.0, duration: Float(loudnessAttack))
+        fader.$rightGain.ramp(to: 1.0, duration: Float(loudnessAttack))
+        
+        // Store the start level for envelope calculation (needed for voice stealing)
+        modulationState.loudnessStartLevel = currentFaderLevel
+        
+        // Reset filter and mark voice as active
         filter.reset()
-        envelope.openGate()
         isAvailable = false
         isPlaying = true
         triggerTime = Date()
@@ -623,34 +631,45 @@ final class PolyphonicVoice {
     /// Releases this voice (starts envelope release)
     /// The voice will be marked available after the release duration
     func release() {
-        envelope.closeGate()
-        
         // Capture current envelope values for smooth release using ModulationRouter
-        let modulatorValue = ModulationRouter.calculateActiveEnvelopeValue(
+        let modulatorValue = ModulationRouter.calculateHybridEnvelopeValue(
             time: modulationState.modulatorEnvelopeTime,
             isGateOpen: true,
             attack: voiceModulation.modulatorEnvelope.attack,
             decay: voiceModulation.modulatorEnvelope.decay,
             sustain: voiceModulation.modulatorEnvelope.sustain,
-            release: voiceModulation.modulatorEnvelope.release,
-            //capturedLevel: 0.0 // Not used when gate is open
+            release: voiceModulation.modulatorEnvelope.release
         )
         
-        let auxiliaryValue = ModulationRouter.calculateActiveEnvelopeValue(
+        let auxiliaryValue = ModulationRouter.calculateHybridEnvelopeValue(
             time: modulationState.auxiliaryEnvelopeTime,
             isGateOpen: true,
             attack: voiceModulation.auxiliaryEnvelope.attack,
             decay: voiceModulation.auxiliaryEnvelope.decay,
             sustain: voiceModulation.auxiliaryEnvelope.sustain,
-            release: voiceModulation.auxiliaryEnvelope.release,
-            //capturedLevel: 0.0  // Not used when gate is open
+            release: voiceModulation.auxiliaryEnvelope.release
         )
         
-        modulationState.closeGate(modulatorValue: modulatorValue, auxiliaryValue: auxiliaryValue)
+        // NEW: Capture current loudness envelope value for smooth release
+        let loudnessValue = ModulationRouter.calculateLoudnessEnvelopeValue(
+            time: modulationState.loudnessEnvelopeTime,
+            isGateOpen: true,
+            attack: voiceModulation.loudnessEnvelope.attack,
+            decay: voiceModulation.loudnessEnvelope.decay,
+            sustain: voiceModulation.loudnessEnvelope.sustain,
+            release: voiceModulation.loudnessEnvelope.release,
+            startLevel: modulationState.loudnessStartLevel
+        )
+        
+        modulationState.closeGate(
+            modulatorValue: modulatorValue,
+            auxiliaryValue: auxiliaryValue,
+            loudnessValue: loudnessValue
+        )
         
         // Mark voice available after release completes
         isPlaying = false
-        let releaseTime = envelope.releaseDuration * 3 // 'middle ground' value for exponential envelopes (actual time to complete silence is approx. 6 times the nominal release duration)
+        let releaseTime = voiceModulation.loudnessEnvelope.release * 3 // 'middle ground' value for exponential envelopes
         Task {
             try? await Task.sleep(nanoseconds: UInt64(releaseTime * 1_000_000_000))
             await MainActor.run {
@@ -784,20 +803,19 @@ final class PolyphonicVoice {
         filter.$distortion.ramp(to: AUValue(parameters.clampedSaturation), duration: 0.005)
     }
     
-    /// Updates envelope parameters
-    func updateEnvelopeParameters(_ parameters: EnvelopeParameters) {
-        // Use 5ms ramps for smooth parameter changes
-        envelope.$attackDuration.ramp(to: AUValue(parameters.attackDuration), duration: 0.005)
-        envelope.$decayDuration.ramp(to: AUValue(parameters.decayDuration), duration: 0.005)
-        envelope.$sustainLevel.ramp(to: AUValue(parameters.sustainLevel), duration: 0.005)
-        envelope.$releaseDuration.ramp(to: AUValue(parameters.releaseDuration), duration: 0.005)
-    }
-    
     /// Updates modulation parameters (Phase 5)
     func updateModulationParameters(_ parameters: VoiceModulationParameters) {
         voiceModulation = parameters
         // Note: Runtime state (modulationState) is not reset here
         // It continues tracking from current position
+    }
+    
+    /// Updates loudness envelope parameters
+    /// Note: This only affects the modulation calculation, not the initial attack ramp
+    /// Initial attack is always applied at trigger() time with the attack duration
+    func updateLoudnessEnvelopeParameters(_ parameters: LoudnessEnvelopeParameters) {
+        voiceModulation.loudnessEnvelope = parameters
+        // The modulation system will pick up the new parameters on the next update cycle
     }
     
     // MARK: - Modulation Application (Refactored - Fixed Destinations)
@@ -821,12 +839,14 @@ final class PolyphonicVoice {
             let preciseElapsedTime = currentTime - modulationState.triggerTimestamp
             modulationState.modulatorEnvelopeTime = preciseElapsedTime
             modulationState.auxiliaryEnvelopeTime = preciseElapsedTime
+            modulationState.loudnessEnvelopeTime = preciseElapsedTime  // NEW: Track loudness envelope time
         } else {
             // Gate closed (Release): use incremental deltaTime
             // Release starts at time=0.0 (set by closeGate) and increments from there
             // This avoids parameter jumps by quantizing release to the control rate
             modulationState.modulatorEnvelopeTime += deltaTime
             modulationState.auxiliaryEnvelopeTime += deltaTime
+            modulationState.loudnessEnvelopeTime += deltaTime  // NEW: Increment loudness envelope time
         }
         
         // Update voice LFO phase and delay ramp (still uses deltaTime for incremental updates)
@@ -889,6 +909,10 @@ final class PolyphonicVoice {
             aftertouchDelta: aftertouchDelta
         )
         applyGlobalLFO(rawValue: globalLFO.rawValue, parameters: globalLFO.parameters)
+        
+        // NEW: Apply loudness envelope to fader
+        // This controls the voice output level, replacing the old AmplitudeEnvelope node
+        applyLoudnessEnvelope()
     }
     
     // MARK: - Voice LFO Phase Update (Phase 5C)
@@ -1144,6 +1168,27 @@ final class PolyphonicVoice {
         
         // Note: Filter frequency modulation is handled in applyCombinedFilterFrequency()
         // Note: Delay time and mixer volume (tremolo) modulation are handled at VoicePool level
+    }
+    
+    /// Applies loudness envelope to the fader (replaces AmplitudeEnvelope node)
+    /// This provides manual control over the voice output level with support for
+    /// starting from non-zero levels (critical for voice stealing and legato)
+    private func applyLoudnessEnvelope() {
+        // Calculate current loudness envelope value using ModulationRouter
+        let loudnessValue = ModulationRouter.calculateLoudnessEnvelopeValue(
+            time: modulationState.loudnessEnvelopeTime,
+            isGateOpen: modulationState.isGateOpen,
+            attack: voiceModulation.loudnessEnvelope.attack,
+            decay: voiceModulation.loudnessEnvelope.decay,
+            sustain: voiceModulation.loudnessEnvelope.sustain,
+            release: voiceModulation.loudnessEnvelope.release,
+            capturedLevel: modulationState.loudnessSustainLevel,
+            startLevel: modulationState.loudnessStartLevel
+        )
+        
+        // Apply to fader with 5ms ramp for smooth modulation (works with 200 Hz control rate)
+        fader.$leftGain.ramp(to: AUValue(loudnessValue), duration: 0.005)
+        fader.$rightGain.ramp(to: AUValue(loudnessValue), duration: 0.005)
     }
 }
 

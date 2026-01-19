@@ -333,6 +333,27 @@ struct AuxiliaryEnvelopeParameters: Codable, Equatable {
     }
 }
 
+/// Loudness Envelope - controls voice output level via fader gain
+/// Replaces the built-in AmplitudeEnvelope node for better control over attack behavior
+/// and ability to start from non-zero levels (critical for voice stealing and legato)
+struct LoudnessEnvelopeParameters: Codable, Equatable {
+    // ADSR timing
+    var attack: Double                         // Attack time in seconds (LINEAR ramp)
+    var decay: Double                          // Decay time in seconds (EXPONENTIAL)
+    var sustain: Double                        // Sustain level (0.0 - 1.0)
+    var release: Double                        // Release time in seconds (EXPONENTIAL)
+    
+    var isEnabled: Bool
+    
+    static let `default` = LoudnessEnvelopeParameters(
+        attack: 0.01,
+        decay: 0.1,
+        sustain: 0.7,
+        release: 0.2,
+        isEnabled: true
+    )
+}
+
 // MARK: - Key Tracking (Fixed Destinations)
 
 /// Key tracking provides modulation based on the pitch of the triggered note
@@ -438,6 +459,7 @@ struct VoiceModulationParameters: Codable, Equatable {
     // Envelopes
     var modulatorEnvelope: ModulatorEnvelopeParameters   // Fixed: modulation index only
     var auxiliaryEnvelope: AuxiliaryEnvelopeParameters   // Fixed: pitch, filter, vibrato
+    var loudnessEnvelope: LoudnessEnvelopeParameters     // Fixed: voice output level (replaces AmplitudeEnvelope)
     
     // LFO
     var voiceLFO: VoiceLFOParameters                     // Fixed: pitch, filter, modulator level
@@ -450,6 +472,7 @@ struct VoiceModulationParameters: Codable, Equatable {
     static let `default` = VoiceModulationParameters(
         modulatorEnvelope: .default,
         auxiliaryEnvelope: .default,
+        loudnessEnvelope: .default,
         voiceLFO: .default,
         keyTracking: .default,
         touchInitial: .default,
@@ -540,6 +563,7 @@ struct ModulationState {
     // Envelope timing
     var modulatorEnvelopeTime: Double = 0.0
     var auxiliaryEnvelopeTime: Double = 0.0
+    var loudnessEnvelopeTime: Double = 0.0      // NEW: Loudness envelope time
     var isGateOpen: Bool = false
     
     // Precise trigger timing for envelope synchronization
@@ -548,6 +572,7 @@ struct ModulationState {
     // Track sustain level at gate close for proper release
     var modulatorSustainLevel: Double = 0.0
     var auxiliarySustainLevel: Double = 0.0
+    var loudnessSustainLevel: Double = 0.0      // NEW: Loudness envelope sustain capture
     
     // LFO phase tracking
     var voiceLFOPhase: Double = 0.0        // 0.0 - 1.0 (one full cycle)
@@ -575,6 +600,9 @@ struct ModulationState {
     var baseModulationIndex: Double = 1.0  // User's desired modulation index (0.0 - 10.0)
     var baseModulatorMultiplier: Double = 1.0  // User's desired FM ratio (0.1 - 20.0)
     var baseFrequency: Double = 440.0      // User's desired base frequency (Hz, unmodulated)
+    
+    // Loudness envelope state
+    var loudnessStartLevel: Double = 0.0   // Starting level for loudness envelope attack (for voice stealing)
     
     // Smoothing state for filter modulation
     var lastSmoothedFilterCutoff: Double? = nil  // Last smoothed filter value (for aftertouch smoothing)
@@ -622,13 +650,15 @@ struct ModulationState {
     
     /// Update state when gate closes (note released)
     /// Captures current envelope values for smooth release
-    mutating func closeGate(modulatorValue: Double, auxiliaryValue: Double) {
+    mutating func closeGate(modulatorValue: Double, auxiliaryValue: Double, loudnessValue: Double) {
         isGateOpen = false
         modulatorSustainLevel = modulatorValue
         auxiliarySustainLevel = auxiliaryValue
+        loudnessSustainLevel = loudnessValue  // NEW: Capture loudness envelope value
         // Reset envelope times to 0 for release stage
         modulatorEnvelopeTime = 0.0
         auxiliaryEnvelopeTime = 0.0
+        loudnessEnvelopeTime = 0.0  // NEW: Reset loudness envelope time
     }
     
     /// Update voice LFO delay ramp factor
@@ -998,6 +1028,87 @@ struct ModulationRouter {
             }
         } else {
             // Release stage: EXPONENTIAL (natural fadeout)
+            return calculateExponentialApproach(
+                time: time,
+                startValue: capturedLevel,
+                targetValue: 0.0,
+                tau: release
+            )
+        }
+    }
+    
+    /// Calculate loudness envelope value with support for starting from non-zero levels
+    /// 
+    /// This variant of the hybrid envelope allows the attack to begin from any starting level,
+    /// which is critical for voice stealing and legato playing where the previous note's
+    /// envelope may still be active.
+    /// 
+    /// **Key Features:**
+    /// - **Attack**: Linear ramp from current level to peak level
+    /// - **Decay**: Exponential decay from peak to sustain
+    /// - **Release**: Exponential decay from captured level to zero
+    /// - **Non-zero start**: Can begin attack from any level (not just zero)
+    /// 
+    /// **Usage Example:**
+    /// ```swift
+    /// // Voice stealing: start new envelope from current fader level
+    /// let currentLevel = fader.leftGain  // e.g., 0.3 (30%)
+    /// let envValue = ModulationRouter.calculateLoudnessEnvelopeValue(
+    ///     time: state.loudnessEnvelopeTime,
+    ///     isGateOpen: state.isGateOpen,
+    ///     attack: 0.05,
+    ///     decay: 0.2,
+    ///     sustain: 0.7,
+    ///     release: 0.3,
+    ///     capturedLevel: state.loudnessSustainLevel,
+    ///     startLevel: currentLevel  // Start from current level!
+    /// )
+    /// ```
+    /// 
+    /// - Parameters:
+    ///   - time: Time in current envelope stage (seconds)
+    ///   - isGateOpen: Whether gate is open (attack/decay/sustain) or closed (release)
+    ///   - attack: Attack time in seconds (linear ramp)
+    ///   - decay: Decay time constant in seconds (τ for exponential)
+    ///   - sustain: Sustain level (0.0 - 1.0)
+    ///   - release: Release time constant in seconds (τ for exponential)
+    ///   - capturedLevel: Level when gate closed (for release stage)
+    ///   - startLevel: Starting level for attack (default 0.0, can be non-zero for voice stealing)
+    /// - Returns: Envelope value (0.0 - 1.0)
+    static func calculateLoudnessEnvelopeValue(
+        time: Double,
+        isGateOpen: Bool,
+        attack: Double,
+        decay: Double,
+        sustain: Double,
+        release: Double,
+        capturedLevel: Double = 0.0,
+        startLevel: Double = 0.0
+    ) -> Double {
+        if isGateOpen {
+            // Attack stage: LINEAR from startLevel to 1.0
+            if time < attack {
+                if attack > 0 {
+                    // Linear interpolation from startLevel to 1.0
+                    let progress = time / attack
+                    return startLevel + (1.0 - startLevel) * progress
+                } else {
+                    // Instant attack: jump to 1.0
+                    return 1.0
+                }
+            }
+            // Decay stage: EXPONENTIAL from 1.0 to sustain
+            else {
+                let decayTime = time - attack
+                return calculateExponentialApproach(
+                    time: decayTime,
+                    startValue: 1.0,
+                    targetValue: sustain,
+                    tau: decay
+                )
+            }
+        } else {
+            // Release stage: EXPONENTIAL from capturedLevel to 0.0
             return calculateExponentialApproach(
                 time: time,
                 startValue: capturedLevel,
