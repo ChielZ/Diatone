@@ -65,6 +65,7 @@ final class PolyphonicVoice {
     
     /// Whether this voice is available for allocation
     var isAvailable: Bool = true
+    var isPlaying: Bool = false
     
     /// The current base frequency (center frequency between left and right oscillators)
     private(set) var currentFrequency: Double = 440.0
@@ -342,6 +343,69 @@ final class PolyphonicVoice {
     
     // MARK: - Triggering
     
+    /// Retriggers this voice for legato (updates parameters without restarting envelopes)
+    /// Used in monophonic mode when a note is triggered while another is playing
+    /// - Parameters:
+    ///   - frequency: New frequency to play
+    ///   - initialTouchX: Initial touch x-position for the new note
+    ///   - templateFilterCutoff: Optional override for base filter cutoff (from current template)
+    func retrigger(frequency: Double, initialTouchX: Double = 0.5, templateFilterCutoff: Double? = nil) {
+        guard isInitialized else {
+            assertionFailure("Voice must be initialized before retriggering")
+            return
+        }
+        
+        // Update base filter cutoff from template if provided
+        if let cutoff = templateFilterCutoff {
+            modulationState.baseFilterCutoff = cutoff
+        }
+        
+        // Update initial touch value for new note
+        modulationState.initialTouchX = initialTouchX
+        modulationState.currentTouchX = initialTouchX
+        
+        // Update base frequency in modulation state
+        modulationState.baseFrequency = frequency
+        
+        // Apply immediate amplitude adjustment for initial touch
+        let immediateAmplitude: Double
+        if voiceModulation.touchInitial.amountToOscillatorAmplitude != 0.0 {
+            immediateAmplitude = ModulationRouter.calculateOscillatorAmplitude(
+                baseAmplitude: modulationState.baseAmplitude,
+                initialTouchValue: initialTouchX,
+                initialTouchAmount: voiceModulation.touchInitial.amountToOscillatorAmplitude
+            )
+        } else {
+            immediateAmplitude = modulationState.baseAmplitude
+        }
+        
+        oscLeft.$amplitude.ramp(to: AUValue(immediateAmplitude), duration: 0.005)
+        oscRight.$amplitude.ramp(to: AUValue(immediateAmplitude), duration: 0.005)
+        
+        // Update key tracking value for new frequency
+        modulationState.keyTrackingValue = voiceModulation.keyTracking.trackingValue(forFrequency: frequency)
+        
+        // Calculate and apply new key-tracked filter cutoff
+        let keyTrackedBaseCutoff: Double
+        if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
+            let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
+            keyTrackedBaseCutoff = modulationState.baseFilterCutoff * pow(2.0, keyTrackOctaves)
+        } else {
+            keyTrackedBaseCutoff = modulationState.baseFilterCutoff
+        }
+        
+        let clampedKeyTrackedCutoff = max(12.0, min(20000.0, keyTrackedBaseCutoff))
+        filter.$cutoffFrequency.ramp(to: AUValue(clampedKeyTrackedCutoff), duration: 0.005)
+        
+        // Update oscillator frequencies with smooth glide
+        setFrequency(frequency)
+        
+        print("🎵 Legato retrigger: frequency \(frequency) Hz, touchX \(String(format: "%.2f", initialTouchX))")
+        
+        // NOTE: Envelopes are NOT restarted - this is the key difference from trigger()
+        // The voice continues playing with its current envelope state
+    }
+    
     /// Applies initial envelope modulation values at trigger time
     /// This eliminates 0-5ms timing jitter by applying envelope peak values immediately
     /// with ramp duration = attack time, so the ramp IS the attack phase
@@ -552,6 +616,7 @@ final class PolyphonicVoice {
         filter.reset()
         envelope.openGate()
         isAvailable = false
+        isPlaying = true
         triggerTime = Date()
     }
     
@@ -584,6 +649,7 @@ final class PolyphonicVoice {
         modulationState.closeGate(modulatorValue: modulatorValue, auxiliaryValue: auxiliaryValue)
         
         // Mark voice available after release completes
+        isPlaying = false
         let releaseTime = envelope.releaseDuration * 3 // 'middle ground' value for exponential envelopes (actual time to complete silence is approx. 6 times the nominal release duration)
         Task {
             try? await Task.sleep(nanoseconds: UInt64(releaseTime * 1_000_000_000))

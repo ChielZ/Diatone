@@ -38,6 +38,9 @@ final class VoicePool {
     /// Only the owning key can release the voice (last-note priority)
     private var monoVoiceOwner: Int? = nil
     
+    /// Legato mode: in monophonic mode, retriggers without restarting envelopes
+    var legatoMode: Bool = true
+    
     /// Flag to track if the voice pool has been initialized
     private var isInitialized: Bool = false
     
@@ -135,7 +138,7 @@ final class VoicePool {
                 return monoVoice
             } else {
                 // Steal the mono voice
-                monoVoice.envelope.closeGate()
+                // monoVoice.envelope.closeGate()
                 monoVoice.isAvailable = true
                 print("⚠️ Mono voice stealing")
                 return monoVoice
@@ -195,38 +198,58 @@ final class VoicePool {
             return voices[0]
         }
         
-        // Find an available voice (or steal one)
-        let voice = findAvailableVoice()
-        
         // Apply global pitch modifiers to the base frequency
         let finalFrequency = frequency * globalPitch.combinedFactor
         
-        // Set frequency and trigger with initial touch value
-        // Pass the current template filter cutoff to ensure freshest value
-        // Also pass static filter parameters (resonance, saturation) as note-on properties
-        voice.setFrequency(finalFrequency)
-        voice.trigger(
-            initialTouchX: initialTouchX, 
-            templateFilterCutoff: currentTemplate.filter.clampedCutoff,
+        // Check for legato conditions: monophonic mode + active voice + legato enabled
+        let isLegatoRetrigger = currentPolyphony == 1 && voices[0].isPlaying && legatoMode
+        
+        if isLegatoRetrigger {
+            // Legato retrigger: update parameters without restarting envelopes
+            let voice = voices[0]
+            //voice.filter.reset()
+            // Update frequency with smooth glide
+            voice.retrigger(
+                frequency: finalFrequency,
+                initialTouchX: initialTouchX,
+                
+                templateFilterCutoff: currentTemplate.filter.clampedCutoff
+            )
             
-            // This should be redundant but is kept in place as a safety measure against potential race conditions and possible per-voice inconsistencies
-            templateFilterStatic: currentTemplate.filterStatic
-        )
-        
-        // Map this key to the voice for precise release tracking
-        keyToVoiceMap[keyIndex] = voice
-        
-        // In monophonic mode, this key becomes the new owner
-        if currentPolyphony == 1 {
+            // Update key mapping and ownership
+            keyToVoiceMap[keyIndex] = voice
             monoVoiceOwner = keyIndex
+            
+            print("🎵 Key \(keyIndex): Legato retrigger, frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
+            
+            return voice
+        } else {
+            // Normal trigger: find/allocate voice and start envelopes
+            let voice = findAvailableVoice()
+            
+            // Set frequency and trigger with initial touch value
+            voice.setFrequency(finalFrequency)
+            voice.trigger(
+                initialTouchX: initialTouchX, 
+                templateFilterCutoff: currentTemplate.filter.clampedCutoff,
+                templateFilterStatic: currentTemplate.filterStatic
+            )
+            
+            // Map this key to the voice for precise release tracking
+            keyToVoiceMap[keyIndex] = voice
+            
+            // In monophonic mode, this key becomes the new owner
+            if currentPolyphony == 1 {
+                monoVoiceOwner = keyIndex
+            }
+            
+            print("🎵 Key \(keyIndex): Allocated voice, base frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
+            
+            // Move to next voice for round-robin
+            incrementVoiceIndex()
+            
+            return voice
         }
-        
-        print("🎵 Key \(keyIndex): Allocated voice, base frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
-        
-        // Move to next voice for round-robin
-        incrementVoiceIndex()
-        
-        return voice
     }
     
     /// Releases the voice associated with a specific key
