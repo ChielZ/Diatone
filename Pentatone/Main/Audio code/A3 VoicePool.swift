@@ -281,7 +281,7 @@ final class VoicePool {
         
         // Note: Voice will mark itself available after release duration completes
     }
-    
+    /*
     /// Stops all voices immediately
     func stopAll() {
         for voice in voices {
@@ -292,6 +292,7 @@ final class VoicePool {
         monoVoiceOwner = nil
         print("🎵 All voices stopped")
     }
+    */
     
     /// Immediately silences all voices and resets them to available state
     /// This is more aggressive than stopAll() - it sets faders to zero instantly
@@ -332,7 +333,7 @@ final class VoicePool {
         print("🎵 Starting oscillator recreation with waveform: \(waveform)...")
         
         // Stop all playing notes and clear key mappings
-        stopAll()
+        silenceAndResetAllVoices()
         
         // Recreate oscillators in each voice
         for (index, voice) in voices.enumerated() {
@@ -356,7 +357,7 @@ final class VoicePool {
         print("🎵 Switching from \(currentPolyphony == 1 ? "monophonic" : "polyphonic") to \(count == 1 ? "monophonic" : "polyphonic") mode...")
         
         // Stop all playing notes and clear key mappings
-        stopAll()
+        silenceAndResetAllVoices()
         
         // Reset voice index
         currentVoiceIndex = 0

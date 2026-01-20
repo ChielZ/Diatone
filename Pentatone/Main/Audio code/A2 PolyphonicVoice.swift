@@ -601,7 +601,7 @@ final class PolyphonicVoice {
         // Apply key-tracked filter cutoff immediately (zero-latency)
         // This ensures key tracking works even when all modulation amounts are zero
         let clampedKeyTrackedCutoff = max(12.0, min(20000.0, keyTrackedBaseCutoff))
-        filter.$cutoffFrequency.ramp(to: AUValue(clampedKeyTrackedCutoff), duration: 0)
+        filter.$cutoffFrequency.ramp(to: AUValue(clampedKeyTrackedCutoff), duration: 0.0)
         
         // CRITICAL: Apply envelope modulation values immediately with ramp time = attack time
         // This eliminates 0-5ms timing jitter between trigger and first control rate update
