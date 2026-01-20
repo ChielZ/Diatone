@@ -381,7 +381,9 @@ final class PolyphonicVoice {
         // Update key tracking value for new frequency
         modulationState.keyTrackingValue = voiceModulation.keyTracking.trackingValue(forFrequency: frequency)
         
-        // Calculate and apply new key-tracked filter cutoff
+        // IMPROVED: Calculate final filter target including both key tracking AND envelope modulation
+        // In legato mode, we want the filter to follow the new note's key tracking
+        // but maintain the current envelope state (not restart to peak)
         let keyTrackedBaseCutoff: Double
         if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
             let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
@@ -390,8 +392,41 @@ final class PolyphonicVoice {
             keyTrackedBaseCutoff = modulationState.baseFilterCutoff
         }
         
-        let clampedKeyTrackedCutoff = max(12.0, min(20000.0, keyTrackedBaseCutoff))
-        filter.$cutoffFrequency.ramp(to: AUValue(clampedKeyTrackedCutoff), duration: 0.005)
+        // In legato retrigger, we need to consider if aux envelope is currently modulating
+        // If so, apply the CURRENT envelope value (not the peak), so the filter smoothly transitions
+        let finalFilterTarget: Double
+        if voiceModulation.auxiliaryEnvelope.amountToFilterFrequency != 0.0 {
+            // Aux envelope IS modulating - calculate current envelope value
+            let currentAuxEnvValue = ModulationRouter.calculateActiveEnvelopeValue(
+                time: modulationState.auxiliaryEnvelopeTime,
+                isGateOpen: modulationState.isGateOpen,
+                attack: voiceModulation.auxiliaryEnvelope.attack,
+                decay: voiceModulation.auxiliaryEnvelope.decay,
+                sustain: voiceModulation.auxiliaryEnvelope.sustain,
+                release: voiceModulation.auxiliaryEnvelope.release,
+                capturedLevel: modulationState.auxiliarySustainLevel
+            )
+            
+            // Apply initial touch meta-modulation if active
+            var effectiveAuxEnvFilterAmount = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency
+            if voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0 {
+                effectiveAuxEnvFilterAmount = ModulationRouter.calculateTouchScaledAmount(
+                    baseAmount: effectiveAuxEnvFilterAmount,
+                    initialTouchValue: initialTouchX,
+                    initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvCutoff
+                )
+            }
+            
+            // Calculate target with current envelope value (not peak)
+            let octaveOffset = currentAuxEnvValue * effectiveAuxEnvFilterAmount
+            finalFilterTarget = keyTrackedBaseCutoff * pow(2.0, octaveOffset)
+        } else {
+            // Aux envelope is NOT modulating - just use key-tracked base
+            finalFilterTarget = keyTrackedBaseCutoff
+        }
+        
+        let clampedFilterTarget = max(12.0, min(20000.0, finalFilterTarget))
+        filter.$cutoffFrequency.ramp(to: AUValue(clampedFilterTarget), duration: 0.000)
         
         // Update oscillator frequencies with smooth glide
         setFrequency(frequency)
@@ -406,12 +441,13 @@ final class PolyphonicVoice {
     /// This eliminates 0-5ms timing jitter by applying envelope peak values immediately
     /// with ramp duration = attack time, so the ramp IS the attack phase
     ///
-    /// Handles three critical destinations:
+    /// Handles two critical destinations:
     /// 1. Mod envelope → Modulation Index
     /// 2. Aux envelope → Pitch
-    /// 3. Aux envelope → Filter Frequency
     ///
-    /// - Parameter keyTrackedBaseCutoff: Pre-calculated key-tracked filter cutoff (from trigger())
+    /// NOTE: Filter frequency is now handled directly in trigger() to avoid overlapping ramps
+    ///
+    /// - Parameter keyTrackedBaseCutoff: Pre-calculated key-tracked filter cutoff (kept for compatibility, not used)
     private func applyInitialEnvelopeModulation(keyTrackedBaseCutoff: Double) {
         // Calculate peak envelope values (what they will be after attack completes)
         // Peak value for envelopes is always 1.0 (full modulation amount)
@@ -438,10 +474,11 @@ final class PolyphonicVoice {
             let targetModIndex = modulationState.baseModulationIndex + (modEnvPeakValue * effectiveModEnvAmount)
             let clampedModIndex = max(0.0, min(10.0, targetModIndex))
             
-            // Apply with ramp duration = attack time
-            // When attack = 0, this applies instantly (no ramp)
-            oscLeft.$modulationIndex.ramp(to: AUValue(clampedModIndex), duration: Float(modEnvAttack))
-            oscRight.$modulationIndex.ramp(to: AUValue(clampedModIndex), duration: Float(modEnvAttack))
+            // IMPROVED: Use minimum smoothing duration to avoid pops on voice stealing
+            // Even with zero attack, ramp smoothly from current value
+            let smoothingDuration = max(Float(modEnvAttack), 0.000)
+            oscLeft.$modulationIndex.ramp(to: AUValue(clampedModIndex), duration: smoothingDuration)
+            oscRight.$modulationIndex.ramp(to: AUValue(clampedModIndex), duration: smoothingDuration)
         }
         
         // 2) AUX ENVELOPE → PITCH
@@ -485,30 +522,11 @@ final class PolyphonicVoice {
             oscRight.$baseFrequency.ramp(to: Float(rightFreq), duration: Float(auxEnvAttack))
         }
         
-        // 3) AUX ENVELOPE → FILTER FREQUENCY
-        if voiceModulation.auxiliaryEnvelope.amountToFilterFrequency != 0.0 {
-            // Apply initial touch meta-modulation if active
-            var effectiveAuxEnvFilterAmount = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency
-            if voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0 {
-                effectiveAuxEnvFilterAmount = ModulationRouter.calculateTouchScaledAmount(
-                    baseAmount: effectiveAuxEnvFilterAmount,
-                    initialTouchValue: modulationState.initialTouchX,
-                    initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvCutoff
-                )
-            }
-            
-            // Use the pre-calculated key-tracked base cutoff passed in from trigger()
-            // This ensures key tracking is always applied, even if envelope amount is 0
-            
-            // Calculate target filter frequency (key-tracked base + peak envelope offset in octaves)
-            let octaveOffset = auxEnvPeakValue * effectiveAuxEnvFilterAmount
-            let targetCutoff = keyTrackedBaseCutoff * pow(2.0, octaveOffset)
-            let clampedCutoff = max(12.0, min(20000.0, targetCutoff))
-            
-            // Apply with ramp duration = attack time
-            filter.$cutoffFrequency.ramp(to: AUValue(clampedCutoff), duration: Float(auxEnvAttack))
-        }
+        // NOTE: Filter frequency modulation is now handled directly in trigger()
+        // to avoid overlapping ramps and ensure smooth voice stealing behavior
+    
     }
+
     
     /// Triggers this voice (starts envelope attack)
     ///
@@ -577,7 +595,7 @@ final class PolyphonicVoice {
         oscLeft.$amplitude.ramp(to: AUValue(immediateAmplitude), duration: 0)
         oscRight.$amplitude.ramp(to: AUValue(immediateAmplitude), duration: 0)
         
-        // CRITICAL: Calculate and apply key-tracked filter cutoff IMMEDIATELY at note-on
+        // CRITICAL: Calculate and apply key-tracked filter cutoff with smooth transition
         // This must happen BEFORE the envelope opens to avoid transients
         // First, reset modulation state to get the key tracking value
         let shouldResetLFO = voiceModulation.voiceLFO.resetMode != .free
@@ -598,10 +616,43 @@ final class PolyphonicVoice {
             keyTrackedBaseCutoff = modulationState.baseFilterCutoff
         }
         
-        // Apply key-tracked filter cutoff immediately (zero-latency)
-        // This ensures key tracking works even when all modulation amounts are zero
-        let clampedKeyTrackedCutoff = max(12.0, min(20000.0, keyTrackedBaseCutoff))
-        filter.$cutoffFrequency.ramp(to: AUValue(clampedKeyTrackedCutoff), duration: 0.0)
+        // IMPROVED: Calculate final filter target including both key tracking AND envelope modulation
+        // This ensures we do a SINGLE smooth ramp from current value to final target
+        // (avoids overlapping ramps that can cause discontinuities)
+        let finalFilterTarget: Double
+        let filterRampDuration: Float
+        
+        if voiceModulation.auxiliaryEnvelope.amountToFilterFrequency != 0.0 {
+            // Aux envelope IS modulating filter - calculate peak target with envelope
+            var effectiveAuxEnvFilterAmount = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency
+            
+            // Apply initial touch meta-modulation if active
+            if voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0 {
+                effectiveAuxEnvFilterAmount = ModulationRouter.calculateTouchScaledAmount(
+                    baseAmount: effectiveAuxEnvFilterAmount,
+                    initialTouchValue: initialTouchX,
+                    initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvCutoff
+                )
+            }
+            
+            // Calculate target with envelope at peak (1.0)
+            let auxEnvPeakValue = 1.0
+            let octaveOffset = auxEnvPeakValue * effectiveAuxEnvFilterAmount
+            finalFilterTarget = keyTrackedBaseCutoff * pow(2.0, octaveOffset)
+            
+            // Use attack time as ramp duration (with minimum for smoothness)
+            filterRampDuration = max(Float(voiceModulation.auxiliaryEnvelope.attack), 0.000)
+        } else {
+            // Aux envelope is NOT modulating - just use key-tracked base
+            finalFilterTarget = keyTrackedBaseCutoff
+            
+            // Use short ramp for voice stealing smoothness
+            filterRampDuration = 0.000
+        }
+        
+        // Apply single smooth ramp to final target
+        let clampedFilterTarget = max(12.0, min(20000.0, finalFilterTarget))
+        filter.$cutoffFrequency.ramp(to: AUValue(clampedFilterTarget), duration: filterRampDuration)
         
         // CRITICAL: Apply envelope modulation values immediately with ramp time = attack time
         // This eliminates 0-5ms timing jitter between trigger and first control rate update
@@ -622,7 +673,7 @@ final class PolyphonicVoice {
         modulationState.loudnessStartLevel = currentFaderLevel
         
         // Reset filter and mark voice as active
-        filter.reset()
+        //filter.reset()
         isAvailable = false
         isPlaying = true
         triggerTime = Date()

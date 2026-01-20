@@ -12,7 +12,7 @@ import SoundpipeAudioKit
 import DunneAudioKit
 
 /// actual polyphony
-let nominalPolyphony = 10
+let nominalPolyphony = 5
 var currentPolyphony = nominalPolyphony
 
 /// Manages allocation and lifecycle of polyphonic voices
