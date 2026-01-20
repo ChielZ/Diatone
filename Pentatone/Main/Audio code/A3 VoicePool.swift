@@ -41,6 +41,18 @@ final class VoicePool {
     /// Legato mode: in monophonic mode, retriggers without restarting envelopes
     var legatoMode: Bool = true
     
+    /// Note stack entry for monophonic mode
+    private struct MonoNoteStackEntry {
+        let keyIndex: Int
+        let frequency: Double
+        let globalPitch: GlobalPitchParameters
+    }
+    
+    /// Note stack for monophonic mode - tracks held keys in order pressed
+    /// Most recent key is at the end of the array (top of stack)
+    /// When a key is released, we can return to playing the previous key
+    private var monoNoteStack: [MonoNoteStackEntry] = []
+    
     /// Flag to track if the voice pool has been initialized
     private var isInitialized: Bool = false
     
@@ -200,6 +212,16 @@ final class VoicePool {
         // Apply global pitch modifiers to the base frequency
         let finalFrequency = frequency * globalPitch.combinedFactor
         
+        // In monophonic mode, add key to note stack
+        if currentPolyphony == 1 {
+            // Remove key if it's already in the stack (shouldn't happen, but be safe)
+            monoNoteStack.removeAll { $0.keyIndex == keyIndex }
+            // Add key to top of stack with its frequency
+            let entry = MonoNoteStackEntry(keyIndex: keyIndex, frequency: frequency, globalPitch: globalPitch)
+            monoNoteStack.append(entry)
+            print("🎵 Mono note stack: \(monoNoteStack.map { $0.keyIndex }) (added \(keyIndex) @ \(String(format: "%.2f", frequency)) Hz)")
+        }
+        
         // Check for legato conditions: monophonic mode + active voice + legato enabled
         let isLegatoRetrigger = currentPolyphony == 1 && voices[0].isPlaying && legatoMode
         
@@ -252,22 +274,69 @@ final class VoicePool {
     }
     
     /// Releases the voice associated with a specific key
+    /// In monophonic mode with note stack, may retrigger a previously held note
     /// - Parameter keyIndex: The key index (0-17) to release
     func releaseVoice(forKey keyIndex: Int) {
         guard let voice = keyToVoiceMap[keyIndex] else {
-            print("⚠️ Key \(keyIndex): No voice found to release")
+            // Key not in map - might have already been released or replaced
+            // Still need to remove from mono note stack if present
+            if currentPolyphony == 1 {
+                monoNoteStack.removeAll { $0.keyIndex == keyIndex }
+                print("🎵 Key \(keyIndex): Removed from note stack (no voice mapped)")
+            }
             return
         }
         
-        // In monophonic mode, only release if this key is the current owner
+        // In monophonic mode, handle note stack for retriggering
         if currentPolyphony == 1 {
+            // Remove this key from the note stack
+            monoNoteStack.removeAll { $0.keyIndex == keyIndex }
+            print("🎵 Mono note stack: \(monoNoteStack.map { $0.keyIndex }) (removed \(keyIndex))")
+            
+            // Check if this key was the owner (top of stack)
             if monoVoiceOwner == keyIndex {
-                // This is the owning key - release the voice
-                voice.release()
-                print("🎵 Key \(keyIndex): Released (mono owner)")
-                monoVoiceOwner = nil
+                // Check if there are other keys still held
+                if let previousEntry = monoNoteStack.last {
+                    // Retrigger the previous note (most recent still-held key)
+                    let previousKeyIndex = previousEntry.keyIndex
+                    let previousFrequency = previousEntry.frequency
+                    let previousGlobalPitch = previousEntry.globalPitch
+                    
+                    print("🎵 Key \(keyIndex): Released, retriggering previous key \(previousKeyIndex) @ \(String(format: "%.2f", previousFrequency)) Hz")
+                    
+                    // Calculate final frequency with global pitch
+                    let finalFrequency = previousFrequency * previousGlobalPitch.combinedFactor
+                    
+                    // Retrigger in legato mode (no envelope restart)
+                    if legatoMode && voice.isPlaying {
+                        // Smooth transition to previous note
+                        voice.retrigger(
+                            frequency: finalFrequency,
+                            initialTouchX: 0.5,  // Default touch position (middle)
+                            templateFilterCutoff: currentTemplate.filter.clampedCutoff
+                        )
+                    } else {
+                        // Non-legato: set frequency directly
+                        voice.setFrequency(finalFrequency)
+                    }
+                    
+                    // Update ownership and mapping
+                    monoVoiceOwner = previousKeyIndex
+                    keyToVoiceMap.removeValue(forKey: keyIndex)
+                    keyToVoiceMap[previousKeyIndex] = voice
+                    
+                    // Don't call voice.release() - keep the note playing!
+                    print("🎵 Key \(keyIndex): Voice remains active, now playing key \(previousKeyIndex)")
+                    
+                    return  // Early return - voice stays active
+                } else {
+                    // No more keys held - release normally
+                    voice.release()
+                    print("🎵 Key \(keyIndex): Released (last mono key)")
+                    monoVoiceOwner = nil
+                }
             } else {
-                // This is not the owning key - just remove from map without releasing
+                // This key was not the owner - just remove from map without releasing
                 print("🎵 Key \(keyIndex): Removed from map (not mono owner)")
             }
         } else {
@@ -317,6 +386,7 @@ final class VoicePool {
         // Clear all key mappings
         keyToVoiceMap.removeAll()
         monoVoiceOwner = nil
+        monoNoteStack.removeAll()
         
         print("🎵 All voices silenced and reset to available state")
     }
@@ -364,6 +434,9 @@ final class VoicePool {
         
         // Clear mono voice owner when switching modes
         monoVoiceOwner = nil
+        
+        // Clear mono note stack when switching modes
+        monoNoteStack.removeAll()
         
         // Update global currentPolyphony
         currentPolyphony = count
