@@ -46,6 +46,7 @@ final class VoicePool {
         let keyIndex: Int
         let frequency: Double
         let globalPitch: GlobalPitchParameters
+        var currentTouchX: Double  // Made mutable so we can update it during touch moves
     }
     
     /// Note stack for monophonic mode - tracks held keys in order pressed
@@ -227,10 +228,15 @@ final class VoicePool {
         if currentPolyphony == 1 {
             // Remove key if it's already in the stack (shouldn't happen, but be safe)
             monoNoteStack.removeAll { $0.keyIndex == keyIndex }
-            // Add key to top of stack with its frequency
-            let entry = MonoNoteStackEntry(keyIndex: keyIndex, frequency: frequency, globalPitch: globalPitch)
+            // Add key to top of stack with its frequency and initial touch position
+            let entry = MonoNoteStackEntry(
+                keyIndex: keyIndex, 
+                frequency: frequency, 
+                globalPitch: globalPitch,
+                currentTouchX: initialTouchX  // Store initial touch position
+            )
             monoNoteStack.append(entry)
-            print("🎵 Mono note stack: \(monoNoteStack.map { $0.keyIndex }) (added \(keyIndex) @ \(String(format: "%.2f", frequency)) Hz)")
+            print("🎵 Mono note stack: \(monoNoteStack.map { $0.keyIndex }) (added \(keyIndex) @ \(String(format: "%.2f", frequency)) Hz, touchX \(String(format: "%.2f", initialTouchX)))")
         }
         
         // Check for legato conditions: monophonic mode + active voice + legato enabled
@@ -312,6 +318,23 @@ final class VoicePool {
         return voice
     }
     
+    
+    /// Updates the current touch position for a key in the mono note stack
+    /// This is called during touch move events to keep track of aftertouch for each held key
+    /// When we return to a previously held key, we'll use this updated position
+    /// - Parameters:
+    ///   - keyIndex: The key index (0-17) to update
+    ///   - touchX: The current normalized touch X position (0.0 to 1.0)
+    func updateMonoNoteStackTouchPosition(forKey keyIndex: Int, touchX: Double) {
+        // Only relevant in monophonic mode
+        guard currentPolyphony == 1 else { return }
+        
+        // Find the entry for this key and update its touch position
+        if let index = monoNoteStack.firstIndex(where: { $0.keyIndex == keyIndex }) {
+            monoNoteStack[index].currentTouchX = touchX
+        }
+    }
+    
     /// Releases the voice associated with a specific key
     /// In monophonic mode with note stack, may retrigger a previously held note
     /// - Parameter keyIndex: The key index (0-17) to release
@@ -340,22 +363,25 @@ final class VoicePool {
                     let previousKeyIndex = previousEntry.keyIndex
                     let previousFrequency = previousEntry.frequency
                     let previousGlobalPitch = previousEntry.globalPitch
+                    let previousTouchX = previousEntry.currentTouchX  // Use stored touch position!
                     
-                    print("🎵 Key \(keyIndex): Released, retriggering previous key \(previousKeyIndex) @ \(String(format: "%.2f", previousFrequency)) Hz")
+                    print("🎵 Key \(keyIndex): Released, retriggering previous key \(previousKeyIndex) @ \(String(format: "%.2f", previousFrequency)) Hz with touchX \(String(format: "%.2f", previousTouchX))")
                     
                     // Calculate final frequency with global pitch
                     let finalFrequency = previousFrequency * previousGlobalPitch.combinedFactor
                     
                     // Retrigger in legato mode (no envelope restart)
                     if legatoMode && voice.isPlaying {
-                        // Smooth transition to previous note
+                        // Smooth transition to previous note WITH correct touch position
                         voice.retrigger(
                             frequency: finalFrequency,
-                            initialTouchX: 0.5,  // Default touch position (middle)
+                            initialTouchX: previousTouchX,  // Use the stored touch position
                             templateFilterCutoff: currentTemplate.filter.clampedCutoff
                         )
                     } else {
-                        // Non-legato: set frequency directly
+                        // Non-legato: set frequency directly (also update touch position)
+                        voice.modulationState.initialTouchX = previousTouchX
+                        voice.modulationState.currentTouchX = previousTouchX
                         voice.setFrequency(finalFrequency)
                     }
                     
