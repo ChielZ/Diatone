@@ -36,6 +36,7 @@ final class VoicePool {
     
     /// In monophonic mode, tracks which key currently "owns" the active voice
     /// Only the owning key can release the voice (last-note priority)
+    /// Also used to filter touch moves - only the owning key's touches affect the sound
     private var monoVoiceOwner: Int? = nil
     
     /// Legato mode: in monophonic mode, retriggers without restarting envelopes
@@ -333,6 +334,18 @@ final class VoicePool {
         if let index = monoNoteStack.firstIndex(where: { $0.keyIndex == keyIndex }) {
             monoNoteStack[index].currentTouchX = touchX
         }
+    }
+    
+    /// Checks if a key is the current owner in monophonic mode
+    /// Only the owner key's touch movements should affect the sound
+    /// - Parameter keyIndex: The key index to check
+    /// - Returns: true if this key owns the active voice, false otherwise
+    func isMonoVoiceOwner(_ keyIndex: Int) -> Bool {
+        guard currentPolyphony == 1 else {
+            // In polyphonic mode, each key owns its own voice
+            return true
+        }
+        return monoVoiceOwner == keyIndex
     }
     
     /// Releases the voice associated with a specific key

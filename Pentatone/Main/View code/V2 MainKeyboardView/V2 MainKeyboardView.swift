@@ -509,13 +509,18 @@ private struct KeyTouchHandler: UIViewRepresentable {
             let currentX = isLeftSide ? location.x : viewWidth - location.x
             let normalizedCurrentX = max(0.0, min(1.0, currentX / viewWidth))
             
-            // Update modulation state - the control-rate timer will apply aftertouch
-            // Aftertouch is calculated relative to initialTouchX (already stored)
-            allocatedVoice?.modulationState.currentTouchX = normalizedCurrentX
-            
-            // In monophonic mode, also update the mono note stack so when we return to this key
-            // after releasing another key, we'll have the correct touch position
+            // Always update the mono note stack to track this key's position
+            // This ensures we have the correct position when returning to this key
             voicePool.updateMonoNoteStackTouchPosition(forKey: keyIndex, touchX: normalizedCurrentX)
+            
+            // IMPORTANT: Only apply touch moves to the voice if this key is the owner
+            // In monophonic mode, only the currently playing key should control the sound
+            // In polyphonic mode, isMonoVoiceOwner always returns true
+            if voicePool.isMonoVoiceOwner(keyIndex) {
+                // Update modulation state - the control-rate timer will apply aftertouch
+                // Aftertouch is calculated relative to initialTouchX (already stored)
+                allocatedVoice?.modulationState.currentTouchX = normalizedCurrentX
+            }
             
             // Note: Aftertouch modulation is now handled entirely at control rate (200 Hz)
             // This provides smooth, glitch-free parameter changes with 5ms latency
