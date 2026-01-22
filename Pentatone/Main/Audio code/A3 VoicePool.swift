@@ -12,7 +12,7 @@ import SoundpipeAudioKit
 import DunneAudioKit
 
 /// actual polyphony
-let nominalPolyphony = 10
+let nominalPolyphony = 5
 var currentPolyphony = nominalPolyphony
 
 /// Manages allocation and lifecycle of polyphonic voices
@@ -193,6 +193,17 @@ final class VoicePool {
         // In mono mode, don't increment (always stay at 0)
     }
     
+    /// Removes any existing key mapping that points to the given voice
+    /// Used when voice stealing occurs - we need to "forget" the old key assignment
+    /// - Parameter voice: The voice whose old key mapping should be removed
+    private func clearKeyMappingForVoice(_ voice: PolyphonicVoice) {
+        // Find any key that currently maps to this voice
+        if let oldKey = keyToVoiceMap.first(where: { $0.value === voice })?.key {
+            keyToVoiceMap.removeValue(forKey: oldKey)
+            print("🎵   Cleared old key mapping: key \(oldKey) no longer owns this voice")
+        }
+    }
+    
     // MARK: - Note Triggering
     
     /// Allocates a voice and triggers it with the specified frequency
@@ -244,33 +255,61 @@ final class VoicePool {
             print("🎵 Key \(keyIndex): Legato retrigger, frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
             
             return voice
-        } else {
-            // Normal trigger: find/allocate voice and start envelopes
-            let voice = findAvailableVoice()
-            
-            // Set frequency and trigger with initial touch value
-            voice.setFrequency(finalFrequency)
-            voice.trigger(
-                initialTouchX: initialTouchX, 
-                templateFilterCutoff: currentTemplate.filter.clampedCutoff,
-                templateFilterStatic: currentTemplate.filterStatic
-            )
-            
-            // Map this key to the voice for precise release tracking
-            keyToVoiceMap[keyIndex] = voice
-            
-            // In monophonic mode, this key becomes the new owner
-            if currentPolyphony == 1 {
-                monoVoiceOwner = keyIndex
-            }
-            
-            print("🎵 Key \(keyIndex): Allocated voice \(currentVoiceIndex), base frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
-            
-            // Move to next voice for round-robin
-            incrementVoiceIndex()
-            
-            return voice
         }
+        
+        // POLYPHONIC MODE: Key priority check
+        // If this key is already mapped to a voice (even if in release phase),
+        // retrigger that voice instead of allocating a new one
+        if currentPolyphony > 1, let existingVoice = keyToVoiceMap[keyIndex] {
+            // Check if the voice is still in use (not fully released yet)
+            if !existingVoice.isAvailable {
+                // Retrigger the existing voice for this key
+                existingVoice.setFrequency(finalFrequency)
+                existingVoice.trigger(
+                    initialTouchX: initialTouchX,
+                    templateFilterCutoff: currentTemplate.filter.clampedCutoff,
+                    templateFilterStatic: currentTemplate.filterStatic
+                )
+                
+                print("🎵 Key \(keyIndex): Retriggered existing voice \(currentVoiceIndex) (key priority), frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
+                
+                return existingVoice
+            } else {
+                // Voice has fully released and is available - remove stale mapping
+                keyToVoiceMap.removeValue(forKey: keyIndex)
+            }
+        }
+        
+        // Normal trigger: find/allocate voice and start envelopes
+        let voice = findAvailableVoice()
+        
+        // IMPORTANT: Clear any old key mapping for this voice before assigning new key
+        // This handles voice stealing - if this voice was previously owned by another key,
+        // we need to remove that old mapping
+        clearKeyMappingForVoice(voice)
+        
+        // Set frequency and trigger with initial touch value
+        voice.setFrequency(finalFrequency)
+        voice.trigger(
+            initialTouchX: initialTouchX, 
+            templateFilterCutoff: currentTemplate.filter.clampedCutoff,
+            templateFilterStatic: currentTemplate.filterStatic
+        )
+        
+        // Map this key to the voice for precise release tracking
+        keyToVoiceMap[keyIndex] = voice
+        
+        // In monophonic mode, this key becomes the new owner
+        if currentPolyphony == 1 {
+            monoVoiceOwner = keyIndex
+        }
+        
+        print("🎵 Key \(keyIndex): Allocated voice \(currentVoiceIndex), base frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
+        
+        // Move to next voice for round-robin
+        incrementVoiceIndex()
+        
+        return voice
     }
     
     /// Releases the voice associated with a specific key
@@ -345,8 +384,17 @@ final class VoicePool {
             print("🎵 Key \(keyIndex): Released")
         }
         
-        // Remove mapping - key is no longer pressed
-        keyToVoiceMap.removeValue(forKey: keyIndex)
+        // IMPORTANT: In polyphonic mode, do NOT remove the key mapping yet!
+        // Keep the mapping active during the release phase so the same key
+        // can retrigger this voice if pressed again before release completes.
+        // The mapping will be cleaned up when:
+        // 1. The voice becomes available and a new key press detects stale mapping
+        // 2. Voice stealing assigns this voice to a different key
+        
+        // Only remove mapping in monophonic mode (already handled above)
+        if currentPolyphony == 1 {
+            keyToVoiceMap.removeValue(forKey: keyIndex)
+        }
         
         // Note: Voice will mark itself available after release duration completes
     }
