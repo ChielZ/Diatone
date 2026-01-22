@@ -264,7 +264,7 @@ final class VoicePool {
                 monoVoiceOwner = keyIndex
             }
             
-            print("🎵 Key \(keyIndex): Allocated voice, base frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
+            print("🎵 Key \(keyIndex): Allocated voice \(currentVoiceIndex), base frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
             
             // Move to next voice for round-robin
             incrementVoiceIndex()
@@ -671,7 +671,7 @@ final class VoicePool {
         
         // Update all active voices with global LFO parameters
         // Note: This runs on background thread, AudioKit parameter updates are thread-safe
-        for voice in voices //where !voice.isAvailable
+        for voice in voices // where !voice.isAvailable
         {
             voice.applyModulation(
                 globalLFO: (rawValue: globalLFORawValue, parameters: globalLFO),

@@ -720,7 +720,7 @@ final class PolyphonicVoice {
         
         // Mark voice available after release completes
         isPlaying = false
-        let releaseTime = voiceModulation.loudnessEnvelope.release * 3 // 'middle ground' value for exponential envelopes
+        let releaseTime = voiceModulation.loudnessEnvelope.release * 8 // 'middle ground' value for exponential envelopes
         Task {
             try? await Task.sleep(nanoseconds: UInt64(releaseTime * 1_000_000_000))
             await MainActor.run {
