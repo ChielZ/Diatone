@@ -118,6 +118,7 @@ struct VoiceView: View {
                     Text("TEMPO \(Int(paramManager.master.tempo))")
                         .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        .minimumScaleFactor(0.5)
                         .contentShape(Rectangle())
                         .gesture(
                             DragGesture(minimumDistance: 0)
@@ -246,6 +247,7 @@ struct VoiceView: View {
                     Text("TUNE \(fineTuneCentsDisplay > 0 ? "+" : "")\(fineTuneCentsDisplay)")
                         .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        .minimumScaleFactor(0.5)
                         .contentShape(Rectangle())
                         .gesture(
                             DragGesture(minimumDistance: 0)

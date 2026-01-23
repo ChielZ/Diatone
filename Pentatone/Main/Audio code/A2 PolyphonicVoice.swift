@@ -744,10 +744,16 @@ final class PolyphonicVoice {
         // Mark voice available after release completes
         isPlaying = false
         let releaseTime = voiceModulation.loudnessEnvelope.release * 8 // 'middle ground' value for exponential envelopes
+        let releaseStartTime = Date()  // Capture when this release was initiated
         Task {
             try? await Task.sleep(nanoseconds: UInt64(releaseTime * 1_000_000_000))
             await MainActor.run {
-                self.isAvailable = true
+                // Only mark available if the voice wasn't retriggered since this release started
+                // triggerTime is updated in trigger(), so if it's newer than releaseStartTime,
+                // the voice was retriggered and should stay unavailable
+                if self.triggerTime < releaseStartTime {
+                    self.isAvailable = true
+                }
             }
         }
     }
