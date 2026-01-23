@@ -653,22 +653,45 @@ final class PolyphonicVoice {
         // Apply single smooth ramp to final target
         let clampedFilterTarget = max(12.0, min(20000.0, finalFilterTarget))
         filter.$cutoffFrequency.ramp(to: AUValue(clampedFilterTarget), duration: filterRampDuration)
-        
+
+        // Capture filter cutoff start and peak for smooth handover during attack phase
+        modulationState.auxiliaryStartFilterCutoff = Double(filter.cutoffFrequency)
+        modulationState.auxiliaryPeakFilterCutoff = clampedFilterTarget
+
+        // Capture current modulation index for smooth handover during attack phase
+        // This allows the modulation loop to interpolate from current value to peak
+        modulationState.modulatorStartModIndex = Double(oscLeft.modulationIndex)
+
+        // Calculate peak mod index (target at end of attack) for handover tracking
+        if voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0 {
+            var effectiveModEnvAmount = voiceModulation.modulatorEnvelope.amountToModulationIndex
+            if voiceModulation.touchInitial.amountToModEnvelope != 0.0 {
+                effectiveModEnvAmount = ModulationRouter.calculateTouchScaledAmount(
+                    baseAmount: effectiveModEnvAmount,
+                    initialTouchValue: initialTouchX,
+                    initialTouchAmount: voiceModulation.touchInitial.amountToModEnvelope
+                )
+            }
+            modulationState.modulatorPeakModIndex = max(0.0, min(10.0, modulationState.baseModulationIndex + effectiveModEnvAmount))
+        } else {
+            modulationState.modulatorPeakModIndex = modulationState.baseModulationIndex
+        }
+
         // CRITICAL: Apply envelope modulation values immediately with ramp time = attack time
         // This eliminates 0-5ms timing jitter between trigger and first control rate update
         // Pass the key-tracked base cutoff so envelope modulation applies on top of it
         applyInitialEnvelopeModulation(keyTrackedBaseCutoff: keyTrackedBaseCutoff)
-        
+
         // CRITICAL: Apply initial loudness envelope ramp (replaces envelope.openGate())
         // Start from current fader level (for voice stealing) and ramp to 1.0 over attack time
         let currentFaderLevel = Double(fader.leftGain)
         let loudnessAttack = voiceModulation.loudnessEnvelope.attack
-        
+
         // Apply immediate attack ramp with duration = attack time
         // This IS the attack phase - no separate envelope node needed
         fader.$leftGain.ramp(to: 1.0, duration: Float(loudnessAttack))
         fader.$rightGain.ramp(to: 1.0, duration: Float(loudnessAttack))
-        
+
         // Store the start level for envelope calculation (needed for voice stealing)
         modulationState.loudnessStartLevel = currentFaderLevel
         
@@ -1037,33 +1060,51 @@ final class PolyphonicVoice {
         voiceLFORawValue: Double,
         aftertouchDelta: Double
     ) {
-        
-        // Apply initial touch meta-modulation to mod envelope amount
-        var effectiveModEnvAmount = voiceModulation.modulatorEnvelope.amountToModulationIndex
-        if voiceModulation.touchInitial.amountToModEnvelope != 0.0 {
-            effectiveModEnvAmount = ModulationRouter.calculateTouchScaledAmount(
-                baseAmount: effectiveModEnvAmount,
-                initialTouchValue: modulationState.initialTouchX,
-                initialTouchAmount: voiceModulation.touchInitial.amountToModEnvelope
-            )
+        let modEnvAttack = voiceModulation.modulatorEnvelope.attack
+        let isInAttackPhase = modulationState.isGateOpen && modulationState.modulatorEnvelopeTime < modEnvAttack
+
+        // Calculate envelope contribution to mod index
+        let envelopeModIndex: Double
+        if isInAttackPhase && modEnvAttack > 0 {
+            // During attack phase, use linear interpolation from start to peak
+            // This matches the ramp set up by trigger() for smooth handover
+            let progress = modulationState.modulatorEnvelopeTime / modEnvAttack
+            envelopeModIndex = modulationState.modulatorStartModIndex +
+                (modulationState.modulatorPeakModIndex - modulationState.modulatorStartModIndex) * progress
+        } else {
+            // After attack (decay/sustain/release), use normal calculation
+            var effectiveModEnvAmount = voiceModulation.modulatorEnvelope.amountToModulationIndex
+            if voiceModulation.touchInitial.amountToModEnvelope != 0.0 {
+                effectiveModEnvAmount = ModulationRouter.calculateTouchScaledAmount(
+                    baseAmount: effectiveModEnvAmount,
+                    initialTouchValue: modulationState.initialTouchX,
+                    initialTouchAmount: voiceModulation.touchInitial.amountToModEnvelope
+                )
+            }
+            envelopeModIndex = modulationState.baseModulationIndex + modulatorEnvValue * effectiveModEnvAmount
         }
-        
-        // Use the ModulationRouter to properly combine all sources
-        let finalModIndex = ModulationRouter.calculateModulationIndex(
-            baseModIndex: modulationState.baseModulationIndex,
-            modEnvValue: modulatorEnvValue,
-            modEnvAmount: effectiveModEnvAmount,
-            voiceLFOValue: voiceLFORawValue,
-            voiceLFOAmount: voiceModulation.voiceLFO.amountToModulatorLevel,
-            voiceLFORampFactor: modulationState.voiceLFORampFactor,
-            aftertouchDelta: aftertouchDelta,
-            aftertouchAmount: voiceModulation.touchAftertouch.amountToModulatorLevel
-        )
-        
-        oscLeft.$modulationIndex.ramp(to: AUValue(finalModIndex), duration: 0.005)
-        oscRight.$modulationIndex.ramp(to: AUValue(finalModIndex), duration: 0.005)
+
+        // Add LFO and aftertouch modulation on top of envelope
+        var finalModIndex = envelopeModIndex
+
+        // Voice LFO contribution (with delay ramp)
+        if voiceModulation.voiceLFO.amountToModulatorLevel != 0.0 {
+            let lfoContribution = voiceLFORawValue * voiceModulation.voiceLFO.amountToModulatorLevel * modulationState.voiceLFORampFactor
+            finalModIndex += lfoContribution
+        }
+
+        // Aftertouch contribution
+        if voiceModulation.touchAftertouch.amountToModulatorLevel != 0.0 {
+            let aftertouchContribution = aftertouchDelta * voiceModulation.touchAftertouch.amountToModulatorLevel
+            finalModIndex += aftertouchContribution
+        }
+
+        // Clamp and apply
+        finalModIndex = max(0.0, min(10.0, finalModIndex))
+        oscLeft.$modulationIndex.ramp(to: AUValue(finalModIndex), duration: ControlRateConfig.modulationRampDuration)
+        oscRight.$modulationIndex.ramp(to: AUValue(finalModIndex), duration: ControlRateConfig.modulationRampDuration)
     }
-    
+
     /// Applies combined pitch modulation from all sources
     /// Sources: Auxiliary envelope, Voice LFO (with meta-modulation from aux env and aftertouch), Aftertouch
     private func applyCombinedPitch(
@@ -1140,44 +1181,68 @@ final class PolyphonicVoice {
         let hasGlobalLFO = globalLFOParameters.amountToFilterFrequency != 0.0
         let hasAftertouch = voiceModulation.touchAftertouch.amountToFilterFrequency != 0.0
         let hasInitialTouchToFilter = voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0
-        //let hasKeyTrackToFilter = voiceModulation.keyTracking.amountToFilterFrequency != 0.0
-        
+
         guard hasAuxEnv || hasVoiceLFO || hasGlobalLFO || hasAftertouch || hasInitialTouchToFilter else { return }
-        
-        // Apply initial touch meta-modulation to aux envelope filter amount
-        var effectiveAuxEnvFilterAmount = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency
-        if voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0 {
-            effectiveAuxEnvFilterAmount = ModulationRouter.calculateTouchScaledAmount(
-                baseAmount: effectiveAuxEnvFilterAmount,
-                initialTouchValue: modulationState.initialTouchX,
-                initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvCutoff
-            )
-        }
-        
-        // Calculate the base cutoff with key tracking already applied
-        // Key tracking was applied once at note-on and becomes part of the base
-        let keyTrackedBaseCutoff: Double
-        if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
-            let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
-            keyTrackedBaseCutoff = modulationState.baseFilterCutoff * pow(2.0, keyTrackOctaves)
+
+        let auxEnvAttack = voiceModulation.auxiliaryEnvelope.attack
+        let isInAttackPhase = modulationState.isGateOpen && modulationState.auxiliaryEnvelopeTime < auxEnvAttack
+
+        // Calculate envelope contribution to filter cutoff
+        let envelopeCutoff: Double
+        if isInAttackPhase && auxEnvAttack > 0 && hasAuxEnv {
+            // During attack phase, use linear interpolation from start to peak
+            // This matches the ramp set up by trigger() for smooth handover
+            let progress = modulationState.auxiliaryEnvelopeTime / auxEnvAttack
+            envelopeCutoff = modulationState.auxiliaryStartFilterCutoff +
+                (modulationState.auxiliaryPeakFilterCutoff - modulationState.auxiliaryStartFilterCutoff) * progress
         } else {
-            keyTrackedBaseCutoff = modulationState.baseFilterCutoff
+            // After attack (decay/sustain/release), use normal calculation
+            var effectiveAuxEnvFilterAmount = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency
+            if voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0 {
+                effectiveAuxEnvFilterAmount = ModulationRouter.calculateTouchScaledAmount(
+                    baseAmount: effectiveAuxEnvFilterAmount,
+                    initialTouchValue: modulationState.initialTouchX,
+                    initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvCutoff
+                )
+            }
+
+            // Calculate the base cutoff with key tracking already applied
+            let keyTrackedBaseCutoff: Double
+            if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
+                let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
+                keyTrackedBaseCutoff = modulationState.baseFilterCutoff * pow(2.0, keyTrackOctaves)
+            } else {
+                keyTrackedBaseCutoff = modulationState.baseFilterCutoff
+            }
+
+            // Apply envelope modulation (octave-based)
+            let octaveOffset = auxiliaryEnvValue * effectiveAuxEnvFilterAmount
+            envelopeCutoff = keyTrackedBaseCutoff * pow(2.0, octaveOffset)
         }
-        
-        // Apply CONTINUOUS modulation sources relative to the key-tracked base
-        // Note: Key tracking is NO LONGER passed to ModulationRouter - it's already in the base
-        let finalCutoff = ModulationRouter.calculateFilterFrequencyContinuous(
-            baseCutoff: keyTrackedBaseCutoff,  // Base already includes key tracking
-            auxEnvValue: auxiliaryEnvValue,
-            auxEnvAmount: effectiveAuxEnvFilterAmount,
-            aftertouchDelta: aftertouchDelta,
-            aftertouchAmount: voiceModulation.touchAftertouch.amountToFilterFrequency,
-            voiceLFOValue: voiceLFORawValue,
-            voiceLFOAmount: voiceModulation.voiceLFO.amountToFilterFrequency,
-            voiceLFORampFactor: modulationState.voiceLFORampFactor,
-            globalLFOValue: globalLFORawValue,
-            globalLFOAmount: globalLFOParameters.amountToFilterFrequency
-        )
+
+        // Add LFO and aftertouch modulation on top of envelope (in octaves)
+        var finalCutoff = envelopeCutoff
+
+        // Voice LFO contribution
+        if hasVoiceLFO {
+            let lfoOctaves = voiceLFORawValue * voiceModulation.voiceLFO.amountToFilterFrequency * modulationState.voiceLFORampFactor
+            finalCutoff *= pow(2.0, lfoOctaves)
+        }
+
+        // Global LFO contribution
+        if hasGlobalLFO {
+            let globalLfoOctaves = globalLFORawValue * globalLFOParameters.amountToFilterFrequency
+            finalCutoff *= pow(2.0, globalLfoOctaves)
+        }
+
+        // Aftertouch contribution
+        if hasAftertouch {
+            let aftertouchOctaves = aftertouchDelta * voiceModulation.touchAftertouch.amountToFilterFrequency
+            finalCutoff *= pow(2.0, aftertouchOctaves)
+        }
+
+        // Clamp to valid range
+        finalCutoff = max(12.0, min(20000.0, finalCutoff))
         
         // Apply smoothing for aftertouch if active
         let smoothedCutoff: Double
@@ -1194,8 +1259,8 @@ final class PolyphonicVoice {
             }
         }
         
-        // Use 5ms ramp for smooth modulation (works with 200 Hz control rate)
-        filter.$cutoffFrequency.ramp(to: AUValue(smoothedCutoff), duration: 0.005)
+        // Use ramp duration matching control rate for smooth modulation
+        filter.$cutoffFrequency.ramp(to: AUValue(smoothedCutoff), duration: ControlRateConfig.modulationRampDuration)
     }
     
  
@@ -1213,10 +1278,10 @@ final class PolyphonicVoice {
                 globalLFOValue: rawValue,
                 globalLFOAmount: parameters.amountToModulatorMultiplier
             )
-            oscLeft.$modulatingMultiplier.ramp(to: AUValue(finalMultiplier), duration: 0.005)
-            oscRight.$modulatingMultiplier.ramp(to: AUValue(finalMultiplier), duration: 0.005)
+            oscLeft.$modulatingMultiplier.ramp(to: AUValue(finalMultiplier), duration: ControlRateConfig.modulationRampDuration)
+            oscRight.$modulatingMultiplier.ramp(to: AUValue(finalMultiplier), duration: ControlRateConfig.modulationRampDuration)
         }
-        
+
         // Note: Filter frequency modulation is handled in applyCombinedFilterFrequency()
         // Note: Delay time and mixer volume (tremolo) modulation are handled at VoicePool level
     }
@@ -1237,9 +1302,9 @@ final class PolyphonicVoice {
             startLevel: modulationState.loudnessStartLevel
         )
         
-        // Apply to fader with 5ms ramp for smooth modulation (works with 200 Hz control rate)
-        fader.$leftGain.ramp(to: AUValue(loudnessValue), duration: 0.005)
-        fader.$rightGain.ramp(to: AUValue(loudnessValue), duration: 0.005)
+        // Apply to fader with ramp duration matching control rate for smooth modulation
+        fader.$leftGain.ramp(to: AUValue(loudnessValue), duration: ControlRateConfig.modulationRampDuration)
+        fader.$rightGain.ramp(to: AUValue(loudnessValue), duration: ControlRateConfig.modulationRampDuration)
     }
 }
 

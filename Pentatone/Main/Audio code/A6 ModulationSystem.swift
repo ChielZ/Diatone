@@ -603,7 +603,17 @@ struct ModulationState {
     
     // Loudness envelope state
     var loudnessStartLevel: Double = 0.0   // Starting level for loudness envelope attack (for voice stealing)
-    
+
+    // Modulator envelope start values (for smooth trigger/modulation handover)
+    // These capture the parameter values at trigger so the modulation loop can
+    // interpolate smoothly from the starting value to the peak during attack phase
+    var modulatorStartModIndex: Double = 0.0   // Mod index value at trigger
+    var modulatorPeakModIndex: Double = 0.0    // Target mod index at end of attack
+
+    // Auxiliary envelope start values (for filter cutoff handover)
+    var auxiliaryStartFilterCutoff: Double = 1200.0  // Filter cutoff at trigger
+    var auxiliaryPeakFilterCutoff: Double = 1200.0   // Target filter cutoff at end of attack
+
     // Smoothing state for filter modulation
     var lastSmoothedFilterCutoff: Double? = nil  // Last smoothed filter value (for aftertouch smoothing)
     var filterSmoothingFactor: Double = 0.85     // 0.0 = no smoothing, 1.0 = maximum smoothing (0.85 = smooth 60Hz updates)
@@ -1433,12 +1443,16 @@ struct ModulationRouter {
 /// Phase 5B will implement the actual timer
 struct ControlRateConfig {
     /// Update rate for modulation calculations in Hz
-    /// 200 Hz = 5ms updates = smooth LFOs and snappy envelopes
-    static let updateRate: Double = 200.0
-    
+    /// 50 Hz = 20ms updates = lower CPU, still smooth for most modulation
+    static let updateRate: Double = 50.0
+
     /// Update interval in seconds
     static let updateInterval: Double = 1.0 / updateRate
-    
+
     /// Update interval in nanoseconds (for Timer use)
     static let updateIntervalNanoseconds: UInt64 = UInt64(updateInterval * 1_000_000_000)
+
+    /// Ramp duration for modulation parameter updates
+    /// Should match updateInterval for smooth transitions between cycles
+    static let modulationRampDuration: Float = Float(updateInterval)
 }
