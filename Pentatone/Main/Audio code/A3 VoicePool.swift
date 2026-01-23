@@ -278,7 +278,9 @@ final class VoicePool {
                     templateFilterStatic: currentTemplate.filterStatic
                 )
                 
-                print("🎵 Key \(keyIndex): Retriggered existing voice \(currentVoiceIndex) (key priority), frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
+                // Find the actual voice index for logging
+                let voiceIndex = voices.firstIndex(where: { $0 === existingVoice }) ?? -1
+                print("🎵 Key \(keyIndex): Retriggered existing voice \(voiceIndex) (key priority), frequency \(frequency) Hz → final \(finalFrequency) Hz (×\(globalPitch.combinedFactor)), touchX \(String(format: "%.2f", initialTouchX))")
                 
                 return existingVoice
             } else {
