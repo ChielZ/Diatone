@@ -34,8 +34,12 @@ enum AudioSessionManager {
             let desiredSampleRate: Double
             if #available(iOS 18.0, *) {
                 desiredSampleRate = 48_000
+                Settings.bufferLength = .veryShort
+                print("48 KHz / 64 sample buffer")
             } else {
                 desiredSampleRate = 44_100
+                Settings.bufferLength = .short
+                print("44.1 KHz / 128 sample buffer")
             }
             
             try session.setPreferredSampleRate(desiredSampleRate)

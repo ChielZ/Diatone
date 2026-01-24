@@ -469,13 +469,19 @@ final class PolyphonicVoice {
                     initialTouchAmount: voiceModulation.touchInitial.amountToModEnvelope
                 )
             }
-            
+
             // Calculate target modulation index (base + peak envelope offset)
             let targetModIndex = modulationState.baseModulationIndex + (modEnvPeakValue * effectiveModEnvAmount)
             let clampedModIndex = max(0.0, min(10.0, targetModIndex))
-            
-            // IMPROVED: Use minimum smoothing duration to avoid pops on voice stealing
-            // Even with zero attack, ramp smoothly from current value
+
+            // Start value for the ramp (base value, or current value for voice stealing)
+            let startModIndex = modulationState.baseModulationIndex
+
+            // EXPERIMENTAL: Force the start value before ramping for consistent behavior
+            oscLeft.$modulationIndex.ramp(to: AUValue(startModIndex), duration: 0)
+            oscRight.$modulationIndex.ramp(to: AUValue(startModIndex), duration: 0)
+
+            // Now apply the attack ramp from the known start value
             let smoothingDuration = max(Float(modEnvAttack), 0.000)
             oscLeft.$modulationIndex.ramp(to: AUValue(clampedModIndex), duration: smoothingDuration)
             oscRight.$modulationIndex.ramp(to: AUValue(clampedModIndex), duration: smoothingDuration)
@@ -492,34 +498,44 @@ final class PolyphonicVoice {
                     initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvPitch
                 )
             }
-            
+
             // Calculate target frequency (base + peak envelope offset in semitones)
             let semitoneOffset = auxEnvPeakValue * effectiveAuxEnvPitchAmount
             let targetFrequency = modulationState.baseFrequency * pow(2.0, semitoneOffset / 12.0)
             let clampedFrequency = max(20.0, min(20000.0, targetFrequency))
-            
+
             // Apply with ramp duration = attack time
             // Note: We apply to baseFrequency directly, then update oscillators
             // The ramp is applied at the oscillator level via updateOscillatorFrequencies
             currentFrequency = clampedFrequency
-            
-            // Calculate left/right frequencies with stereo offset
-            let leftFreq: Double
-            let rightFreq: Double
-            
+
+            // Calculate start and target left/right frequencies with stereo offset
+            let startLeftFreq: Double
+            let startRightFreq: Double
+            let targetLeftFreq: Double
+            let targetRightFreq: Double
+
             switch detuneMode {
             case .proportional:
                 let ratio = pow(2.0, frequencyOffsetCents / 1200.0)
-                leftFreq = clampedFrequency * ratio
-                rightFreq = clampedFrequency / ratio
+                startLeftFreq = modulationState.baseFrequency * ratio
+                startRightFreq = modulationState.baseFrequency / ratio
+                targetLeftFreq = clampedFrequency * ratio
+                targetRightFreq = clampedFrequency / ratio
             case .constant:
-                leftFreq = clampedFrequency + frequencyOffsetHz
-                rightFreq = clampedFrequency - frequencyOffsetHz
+                startLeftFreq = modulationState.baseFrequency + frequencyOffsetHz
+                startRightFreq = modulationState.baseFrequency - frequencyOffsetHz
+                targetLeftFreq = clampedFrequency + frequencyOffsetHz
+                targetRightFreq = clampedFrequency - frequencyOffsetHz
             }
-            
-            // Apply with ramp duration = attack time
-            oscLeft.$baseFrequency.ramp(to: Float(leftFreq), duration: Float(auxEnvAttack))
-            oscRight.$baseFrequency.ramp(to: Float(rightFreq), duration: Float(auxEnvAttack))
+
+            // EXPERIMENTAL: Force the start value before ramping for consistent behavior
+            oscLeft.$baseFrequency.ramp(to: Float(startLeftFreq), duration: 0)
+            oscRight.$baseFrequency.ramp(to: Float(startRightFreq), duration: 0)
+
+            // Now apply the attack ramp from the known start value
+            oscLeft.$baseFrequency.ramp(to: Float(targetLeftFreq), duration: Float(auxEnvAttack))
+            oscRight.$baseFrequency.ramp(to: Float(targetRightFreq), duration: Float(auxEnvAttack))
         }
         
         // NOTE: Filter frequency modulation is now handled directly in trigger()
@@ -692,10 +708,16 @@ final class PolyphonicVoice {
         
         // Apply single smooth ramp to final target
         let clampedFilterTarget = max(12.0, min(20000.0, finalFilterTarget))
+        let clampedFilterStart = max(12.0, min(20000.0, keyTrackedBaseCutoff))
+
+        // EXPERIMENTAL: Force the start value before ramping for consistent behavior
+        filter.$cutoffFrequency.ramp(to: AUValue(clampedFilterStart), duration: 0)
+
+        // Now apply the attack ramp from the known start value
         filter.$cutoffFrequency.ramp(to: AUValue(clampedFilterTarget), duration: filterRampDuration)
 
         // Capture filter cutoff start and peak for smooth handover during attack phase
-        modulationState.auxiliaryStartFilterCutoff = Double(filter.cutoffFrequency)
+        modulationState.auxiliaryStartFilterCutoff = clampedFilterStart
         modulationState.auxiliaryPeakFilterCutoff = clampedFilterTarget
 
         // Capture current modulation index for smooth handover during attack phase
@@ -727,10 +749,18 @@ final class PolyphonicVoice {
         // NOTE: currentFaderLevel was calculated at the top of trigger(), BEFORE reset() was called
         let loudnessAttack = voiceModulation.loudnessEnvelope.attack
 
-        print("🎹 TRIGGER: attack=\(String(format: "%.1f", loudnessAttack * 1000))ms, faderStart=\(String(format: "%.3f", currentFaderLevel))")
+        // DEBUG: Log the actual fader value from AudioKit vs our calculated value
+        let actualFaderLeft = fader.leftGain
+        let actualFaderRight = fader.rightGain
+        print("🎹 TRIGGER: attack=\(String(format: "%.1f", loudnessAttack * 1000))ms, calculated=\(String(format: "%.3f", currentFaderLevel)), actualL=\(String(format: "%.3f", actualFaderLeft)), actualR=\(String(format: "%.3f", actualFaderRight))")
 
-        // Apply attack ramp - this may sometimes be dropped by AudioKit due to timing issues
-        // The mod loop will also try to apply the ramp as a backup
+        // EXPERIMENTAL: Force the start value before ramping
+        // AudioKit's ramp() starts from "current value", which might be unpredictable.
+        // By explicitly setting to the start value first, we ensure a consistent ramp.
+        fader.$leftGain.ramp(to: AUValue(currentFaderLevel), duration: 0)
+        fader.$rightGain.ramp(to: AUValue(currentFaderLevel), duration: 0)
+
+        // Now apply the attack ramp from the known start value
         fader.$leftGain.ramp(to: 1.0, duration: Float(loudnessAttack))
         fader.$rightGain.ramp(to: 1.0, duration: Float(loudnessAttack))
 
