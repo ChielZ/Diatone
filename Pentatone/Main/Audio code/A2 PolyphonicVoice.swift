@@ -549,7 +549,44 @@ final class PolyphonicVoice {
             assertionFailure("Voice must be initialized before triggering")
             return
         }
-        
+
+        // CRITICAL: Calculate current fader level BEFORE reset() changes the modulation state
+        // This captures the previous note's envelope value for smooth voice stealing.
+        //
+        // NOTE: We cannot use fader.leftGain here because AudioKit's gain property
+        // always reports either the start or target value of a ramp, never the
+        // intermediate interpolated value. Instead, we calculate the current
+        // envelope value directly using the stored timing information.
+        let currentFaderLevel: Double
+        if modulationState.isGateOpen {
+            // Voice was in attack/decay/sustain phase - calculate current level
+            currentFaderLevel = ModulationRouter.calculateLoudnessEnvelopeValue(
+                time: modulationState.loudnessEnvelopeTime,
+                isGateOpen: true,
+                attack: voiceModulation.loudnessEnvelope.attack,
+                decay: voiceModulation.loudnessEnvelope.decay,
+                sustain: voiceModulation.loudnessEnvelope.sustain,
+                release: voiceModulation.loudnessEnvelope.release,
+                capturedLevel: modulationState.loudnessSustainLevel,
+                startLevel: modulationState.loudnessStartLevel
+            )
+        } else if modulationState.loudnessSustainLevel > 0.001 {
+            // Voice was in release phase - calculate current level
+            currentFaderLevel = ModulationRouter.calculateLoudnessEnvelopeValue(
+                time: modulationState.loudnessEnvelopeTime,
+                isGateOpen: false,
+                attack: voiceModulation.loudnessEnvelope.attack,
+                decay: voiceModulation.loudnessEnvelope.decay,
+                sustain: voiceModulation.loudnessEnvelope.sustain,
+                release: voiceModulation.loudnessEnvelope.release,
+                capturedLevel: modulationState.loudnessSustainLevel,
+                startLevel: modulationState.loudnessStartLevel
+            )
+        } else {
+            // Voice was idle or fully released - start from zero
+            currentFaderLevel = 0.0
+        }
+
         // CRITICAL: Update base filter cutoff from template if provided
         // This ensures we always use the latest UI setting, not a stale value
         if let cutoff = templateFilterCutoff {
@@ -687,8 +724,10 @@ final class PolyphonicVoice {
 
         // CRITICAL: Apply initial loudness envelope ramp (replaces envelope.openGate())
         // Start from current fader level (for voice stealing) and ramp to 1.0 over attack time
-        let currentFaderLevel = Double(fader.leftGain)
+        // NOTE: currentFaderLevel was calculated at the top of trigger(), BEFORE reset() was called
         let loudnessAttack = voiceModulation.loudnessEnvelope.attack
+
+        print("🎹 TRIGGER: attack=\(String(format: "%.1f", loudnessAttack * 1000))ms, faderStart=\(String(format: "%.3f", currentFaderLevel))")
 
         // Apply attack ramp - this may sometimes be dropped by AudioKit due to timing issues
         // The mod loop will also try to apply the ramp as a backup
@@ -701,7 +740,7 @@ final class PolyphonicVoice {
         modulationState.loudnessAttackDuration = loudnessAttack
         modulationState.loudnessAttackStartTime = attackStartTime
 
-        print("🎹 TRIGGER: attack=\(String(format: "%.1f", loudnessAttack * 1000))ms, faderStart=\(String(format: "%.3f", currentFaderLevel))")
+
 
         // Store the start level for envelope calculation (needed for voice stealing)
         modulationState.loudnessStartLevel = currentFaderLevel
@@ -1353,40 +1392,23 @@ final class PolyphonicVoice {
     /// This provides manual control over the voice output level with support for
     /// starting from non-zero levels (critical for voice stealing and legato)
     private func applyLoudnessEnvelope() {
-        let currentTime = CACurrentMediaTime()
-
-        // ATTACK PHASE: Backup ramp in case trigger()'s ramp was dropped
-        if modulationState.isGateOpen && currentTime < modulationState.loudnessAttackEndTime {
-            let remainingAttack = modulationState.loudnessAttackEndTime - currentTime
-            let currentFaderValue = fader.leftGain
-
-            // Apply ramp to 1.0 with remaining attack time
-            let rampDuration = Float(max(0.001, remainingAttack))
-            print("🔊 ATTACK: remaining=\(String(format: "%.1f", remainingAttack * 1000))ms, fader=\(String(format: "%.3f", currentFaderValue)), rampDur=\(String(format: "%.1f", rampDuration * 1000))ms")
-
-            fader.$leftGain.ramp(to: 1.0, duration: rampDuration)
-            fader.$rightGain.ramp(to: 1.0, duration: rampDuration)
-            return
-        }
-
-        // FALLBACK: If we're just past attack and fader is still near 0, trigger()'s ramp failed
-        // Apply an immediate corrective ramp to reach the expected value
-        let currentFaderValue = fader.leftGain
-        let timeSinceAttackEnd = currentTime - modulationState.loudnessAttackEndTime
-        if modulationState.isGateOpen && timeSinceAttackEnd >= 0 && timeSinceAttackEnd < 0.05 && currentFaderValue < 0.5 {
-            // Fader should be at 1.0 by now (attack done, sustain=1.0) but it's not
-            // Apply a quick corrective ramp
-            print("🔊 FALLBACK: fader=\(String(format: "%.3f", currentFaderValue)) should be ~1.0, applying correction")
-            fader.$leftGain.ramp(to: 1.0, duration: 0.005)  // 5ms quick ramp to avoid click
-            fader.$rightGain.ramp(to: 1.0, duration: 0.005)
-            return
-        }
-
         let time = modulationState.loudnessEnvelopeTime
         let attack = voiceModulation.loudnessEnvelope.attack
 
-        // DECAY/SUSTAIN/RELEASE: Calculate envelope value and apply with standard ramp
-        let loudnessValue = ModulationRouter.calculateLoudnessEnvelopeValue(
+        // ATTACK PHASE: Stay completely passive and let trigger()'s ramp run undisturbed
+        // Using envelope time (not wall clock) for reliable attack phase detection
+        let isInAttackPhase = modulationState.isGateOpen && time < attack
+
+        if isInAttackPhase {
+            // Log but don't apply any ramps - let trigger() handle the attack
+            print("🔊 ATTACK: time=\(String(format: "%.1f", time * 1000))ms, attack=\(String(format: "%.1f", attack * 1000))ms (passive)")
+            return
+        }
+
+        // Calculate the current expected envelope value for decay/sustain/release phases
+        // NOTE: We cannot use fader.leftGain because AudioKit's gain property always reports
+        // either the start or target value of a ramp, never the intermediate interpolated value.
+        let calculatedEnvelopeValue = ModulationRouter.calculateLoudnessEnvelopeValue(
             time: time,
             isGateOpen: modulationState.isGateOpen,
             attack: attack,
@@ -1399,13 +1421,12 @@ final class PolyphonicVoice {
 
         // Log first post-attack update to see transition
         if modulationState.isGateOpen && time < attack + 0.05 {
-            let currentFaderValue = fader.leftGain
-            print("🔊 POST-ATTACK: time=\(String(format: "%.1f", time * 1000))ms, attack=\(String(format: "%.1f", attack * 1000))ms, fader=\(String(format: "%.3f", currentFaderValue)), target=\(String(format: "%.3f", loudnessValue))")
+            print("🔊 POST-ATTACK: time=\(String(format: "%.1f", time * 1000))ms, attack=\(String(format: "%.1f", attack * 1000))ms, envelope=\(String(format: "%.3f", calculatedEnvelopeValue))")
         }
 
-        // Apply to fader with ramp duration matching control rate for smooth modulation
-        fader.$leftGain.ramp(to: AUValue(loudnessValue), duration: ControlRateConfig.modulationRampDuration)
-        fader.$rightGain.ramp(to: AUValue(loudnessValue), duration: ControlRateConfig.modulationRampDuration)
+        // DECAY/SUSTAIN/RELEASE: Apply calculated envelope value with standard ramp
+        fader.$leftGain.ramp(to: AUValue(calculatedEnvelopeValue), duration: ControlRateConfig.modulationRampDuration)
+        fader.$rightGain.ramp(to: AUValue(calculatedEnvelopeValue), duration: ControlRateConfig.modulationRampDuration)
     }
 }
 
