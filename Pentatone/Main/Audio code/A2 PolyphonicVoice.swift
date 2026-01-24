@@ -569,10 +569,6 @@ final class PolyphonicVoice {
         modulationState.initialTouchX = initialTouchX
         modulationState.currentTouchX = initialTouchX
         
-        // CRITICAL: Start envelope time tracking IMMEDIATELY at trigger
-        // Record precise trigger timestamp so control rate can calculate exact elapsed time
-        modulationState.triggerTimestamp = CACurrentMediaTime()
-        
         // Apply base values (unmodulated) at note trigger
         // EXCEPT amplitude - that gets immediate initial touch modulation to avoid attack transients
         
@@ -599,6 +595,13 @@ final class PolyphonicVoice {
         // This must happen BEFORE the envelope opens to avoid transients
         // First, reset modulation state to get the key tracking value
         let shouldResetLFO = voiceModulation.voiceLFO.resetMode != .free
+
+        // CRITICAL: Set trigger timestamp and increment sequence BEFORE reset() sets isGateOpen = true
+        // The sequence number allows the modulation loop to detect a new trigger and capture
+        // its own timing, avoiding race conditions between main thread and modulation thread
+        modulationState.triggerTimestamp = CACurrentMediaTime()
+        modulationState.triggerSequence &+= 1  // Wrapping increment
+
         modulationState.reset(
             frequency: currentFrequency,
             touchX: initialTouchX,
@@ -687,10 +690,18 @@ final class PolyphonicVoice {
         let currentFaderLevel = Double(fader.leftGain)
         let loudnessAttack = voiceModulation.loudnessEnvelope.attack
 
-        // Apply immediate attack ramp with duration = attack time
-        // This IS the attack phase - no separate envelope node needed
+        // Apply attack ramp - this may sometimes be dropped by AudioKit due to timing issues
+        // The mod loop will also try to apply the ramp as a backup
         fader.$leftGain.ramp(to: 1.0, duration: Float(loudnessAttack))
         fader.$rightGain.ramp(to: 1.0, duration: Float(loudnessAttack))
+
+        // Store attack timing for mod loop backup
+        let attackStartTime = CACurrentMediaTime()
+        modulationState.loudnessAttackEndTime = attackStartTime + loudnessAttack
+        modulationState.loudnessAttackDuration = loudnessAttack
+        modulationState.loudnessAttackStartTime = attackStartTime
+
+        print("🎹 TRIGGER: attack=\(String(format: "%.1f", loudnessAttack * 1000))ms, faderStart=\(String(format: "%.3f", currentFaderLevel))")
 
         // Store the start level for envelope calculation (needed for voice stealing)
         modulationState.loudnessStartLevel = currentFaderLevel
@@ -913,13 +924,41 @@ final class PolyphonicVoice {
     ) {
         // Update envelope times based on gate state
         if modulationState.isGateOpen {
-            // Gate open (Attack/Decay/Sustain): use precise timestamp-based timing
-            // This ensures perfect alignment with the initial trigger ramps (eliminates jitter)
+            // THREAD-SAFE TRIGGER DETECTION:
+            // Check if we've seen a new trigger since last update.
+            // This solves race conditions where main thread sets isGateOpen=true but
+            // we read a stale triggerTimestamp due to memory ordering issues.
             let currentTime = CACurrentMediaTime()
-            let preciseElapsedTime = currentTime - modulationState.triggerTimestamp
-            modulationState.modulatorEnvelopeTime = preciseElapsedTime
-            modulationState.auxiliaryEnvelopeTime = preciseElapsedTime
-            modulationState.loudnessEnvelopeTime = preciseElapsedTime  // NEW: Track loudness envelope time
+
+            if modulationState.triggerSequence != modulationState.lastSeenTriggerSequence {
+                // New trigger detected! This is the first modulation update for this new note.
+                modulationState.lastSeenTriggerSequence = modulationState.triggerSequence
+
+                // Calculate elapsed time with sanity check for thread race conditions.
+                // The first mod update after trigger should be within ~50ms (a few control cycles).
+                // If we see invalid values, the timestamp is likely stale due to memory ordering.
+                let rawElapsed = currentTime - modulationState.triggerTimestamp
+                let preciseElapsedTime: Double
+                if rawElapsed >= 0 && rawElapsed < 0.05 {
+                    // Reasonable elapsed time - use it
+                    preciseElapsedTime = rawElapsed
+                } else {
+                    // Timestamp seems stale - treat as just triggered (time = 0)
+                    // This ensures we enter the attack phase and apply proper handover
+                    // CRITICAL: Using 0.0 instead of updateInterval so we don't skip short attacks
+                    preciseElapsedTime = 0.0
+                }
+
+                modulationState.modulatorEnvelopeTime = preciseElapsedTime
+                modulationState.auxiliaryEnvelopeTime = preciseElapsedTime
+                modulationState.loudnessEnvelopeTime = preciseElapsedTime
+            } else {
+                // Same note as before - use timestamp-based timing
+                let preciseElapsedTime = currentTime - modulationState.triggerTimestamp
+                modulationState.modulatorEnvelopeTime = preciseElapsedTime
+                modulationState.auxiliaryEnvelopeTime = preciseElapsedTime
+                modulationState.loudnessEnvelopeTime = preciseElapsedTime
+            }
         } else {
             // Gate closed (Release): use incremental deltaTime
             // Release starts at time=0.0 (set by closeGate) and increments from there
@@ -1107,8 +1146,18 @@ final class PolyphonicVoice {
 
         // Clamp and apply
         finalModIndex = max(0.0, min(10.0, finalModIndex))
-        oscLeft.$modulationIndex.ramp(to: AUValue(finalModIndex), duration: ControlRateConfig.modulationRampDuration)
-        oscRight.$modulationIndex.ramp(to: AUValue(finalModIndex), duration: ControlRateConfig.modulationRampDuration)
+
+        // During attack phase, use remaining attack time as ramp duration for smooth handover
+        let rampDuration: Float
+        if isInAttackPhase && modEnvAttack > 0 {
+            let remainingAttack = modEnvAttack - modulationState.modulatorEnvelopeTime
+            rampDuration = Float(max(0.001, remainingAttack))  // Minimum 1ms
+        } else {
+            rampDuration = ControlRateConfig.modulationRampDuration
+        }
+
+        oscLeft.$modulationIndex.ramp(to: AUValue(finalModIndex), duration: rampDuration)
+        oscRight.$modulationIndex.ramp(to: AUValue(finalModIndex), duration: rampDuration)
     }
 
     /// Applies combined pitch modulation from all sources
@@ -1265,8 +1314,16 @@ final class PolyphonicVoice {
             }
         }
         
-        // Use ramp duration matching control rate for smooth modulation
-        filter.$cutoffFrequency.ramp(to: AUValue(smoothedCutoff), duration: ControlRateConfig.modulationRampDuration)
+        // During attack phase, use remaining attack time as ramp duration for smooth handover
+        let rampDuration: Float
+        if isInAttackPhase && auxEnvAttack > 0 && hasAuxEnv {
+            let remainingAttack = auxEnvAttack - modulationState.auxiliaryEnvelopeTime
+            rampDuration = Float(max(0.001, remainingAttack))  // Minimum 1ms
+        } else {
+            rampDuration = ControlRateConfig.modulationRampDuration
+        }
+
+        filter.$cutoffFrequency.ramp(to: AUValue(smoothedCutoff), duration: rampDuration)
     }
     
  
@@ -1296,18 +1353,56 @@ final class PolyphonicVoice {
     /// This provides manual control over the voice output level with support for
     /// starting from non-zero levels (critical for voice stealing and legato)
     private func applyLoudnessEnvelope() {
-        // Calculate current loudness envelope value using ModulationRouter
+        let currentTime = CACurrentMediaTime()
+
+        // ATTACK PHASE: Backup ramp in case trigger()'s ramp was dropped
+        if modulationState.isGateOpen && currentTime < modulationState.loudnessAttackEndTime {
+            let remainingAttack = modulationState.loudnessAttackEndTime - currentTime
+            let currentFaderValue = fader.leftGain
+
+            // Apply ramp to 1.0 with remaining attack time
+            let rampDuration = Float(max(0.001, remainingAttack))
+            print("🔊 ATTACK: remaining=\(String(format: "%.1f", remainingAttack * 1000))ms, fader=\(String(format: "%.3f", currentFaderValue)), rampDur=\(String(format: "%.1f", rampDuration * 1000))ms")
+
+            fader.$leftGain.ramp(to: 1.0, duration: rampDuration)
+            fader.$rightGain.ramp(to: 1.0, duration: rampDuration)
+            return
+        }
+
+        // FALLBACK: If we're just past attack and fader is still near 0, trigger()'s ramp failed
+        // Apply an immediate corrective ramp to reach the expected value
+        let currentFaderValue = fader.leftGain
+        let timeSinceAttackEnd = currentTime - modulationState.loudnessAttackEndTime
+        if modulationState.isGateOpen && timeSinceAttackEnd >= 0 && timeSinceAttackEnd < 0.05 && currentFaderValue < 0.5 {
+            // Fader should be at 1.0 by now (attack done, sustain=1.0) but it's not
+            // Apply a quick corrective ramp
+            print("🔊 FALLBACK: fader=\(String(format: "%.3f", currentFaderValue)) should be ~1.0, applying correction")
+            fader.$leftGain.ramp(to: 1.0, duration: 0.005)  // 5ms quick ramp to avoid click
+            fader.$rightGain.ramp(to: 1.0, duration: 0.005)
+            return
+        }
+
+        let time = modulationState.loudnessEnvelopeTime
+        let attack = voiceModulation.loudnessEnvelope.attack
+
+        // DECAY/SUSTAIN/RELEASE: Calculate envelope value and apply with standard ramp
         let loudnessValue = ModulationRouter.calculateLoudnessEnvelopeValue(
-            time: modulationState.loudnessEnvelopeTime,
+            time: time,
             isGateOpen: modulationState.isGateOpen,
-            attack: voiceModulation.loudnessEnvelope.attack,
+            attack: attack,
             decay: voiceModulation.loudnessEnvelope.decay,
             sustain: voiceModulation.loudnessEnvelope.sustain,
             release: voiceModulation.loudnessEnvelope.release,
             capturedLevel: modulationState.loudnessSustainLevel,
             startLevel: modulationState.loudnessStartLevel
         )
-        
+
+        // Log first post-attack update to see transition
+        if modulationState.isGateOpen && time < attack + 0.05 {
+            let currentFaderValue = fader.leftGain
+            print("🔊 POST-ATTACK: time=\(String(format: "%.1f", time * 1000))ms, attack=\(String(format: "%.1f", attack * 1000))ms, fader=\(String(format: "%.3f", currentFaderValue)), target=\(String(format: "%.3f", loudnessValue))")
+        }
+
         // Apply to fader with ramp duration matching control rate for smooth modulation
         fader.$leftGain.ramp(to: AUValue(loudnessValue), duration: ControlRateConfig.modulationRampDuration)
         fader.$rightGain.ramp(to: AUValue(loudnessValue), duration: ControlRateConfig.modulationRampDuration)

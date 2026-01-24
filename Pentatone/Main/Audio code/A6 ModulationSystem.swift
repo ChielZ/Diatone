@@ -346,10 +346,10 @@ struct LoudnessEnvelopeParameters: Codable, Equatable {
     var isEnabled: Bool
     
     static let `default` = LoudnessEnvelopeParameters(
-        attack: 0.01,
-        decay: 0.1,
-        sustain: 0.7,
-        release: 0.2,
+        attack: 0.001,
+        decay: 0.0,
+        sustain: 1.0,
+        release: 0.0,
         isEnabled: true
     )
 }
@@ -568,6 +568,17 @@ struct ModulationState {
     
     // Precise trigger timing for envelope synchronization
     var triggerTimestamp: TimeInterval = 0.0
+
+    // Trigger sequence for thread-safe detection of new notes
+    // Incremented by trigger(), detected by modulation loop to capture fresh timing
+    var triggerSequence: UInt64 = 0
+    var lastSeenTriggerSequence: UInt64 = 0
+
+    // Attack phase timing - avoids timestamp sync issues between threads
+    // Set by trigger(), checked by mod loop using its own clock
+    var loudnessAttackEndTime: TimeInterval = 0.0
+    var loudnessAttackDuration: Double = 0.0
+    var loudnessAttackStartTime: TimeInterval = 0.0  // When attack began (for mod loop to calculate progress)
     
     // Track sustain level at gate close for proper release
     var modulatorSustainLevel: Double = 0.0

@@ -139,10 +139,10 @@ struct EnvelopeParameters: Codable, Equatable {
     var releaseDuration: Double
     
     static let `default` = EnvelopeParameters(
-        attackDuration: 0.005,
-        decayDuration: 0.5,
+        attackDuration: 0.001,
+        decayDuration: 0.0,
         sustainLevel: 1.0,
-        releaseDuration: 0.1
+        releaseDuration: 0.0
     )
     
     /// Convert to new LoudnessEnvelopeParameters for migration
