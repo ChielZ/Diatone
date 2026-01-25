@@ -169,7 +169,7 @@ struct EditView: View {
                 
                 ZStack { // Row 11
                     RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("HighlightColour"))
+                        .fill(Color("SupportColour"))
                     GeometryReader { geometry in
                         Text("･CLOSE EDITOR･")
                             .foregroundColor(Color("BackgroundColour"))

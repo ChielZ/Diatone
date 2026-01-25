@@ -223,6 +223,7 @@ struct MainKeyboardView: View {
                             
                             case .manual:
                                 ManualView(
+                                    showingOptions: $showingOptions,
                                     onSwitchToOptions: {
                                         currentMainView = .options
                                     }

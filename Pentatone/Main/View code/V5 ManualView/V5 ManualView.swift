@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ManualView: View {
+    @Binding var showingOptions: Bool
     var onSwitchToOptions: (() -> Void)? = nil
     
     var body: some View {
@@ -32,7 +33,7 @@ struct ManualView: View {
                         .padding(.horizontal, 10)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            onSwitchToOptions?()
+                            showingOptions = false
                         }
                 }
                 .frame(maxHeight: .infinity)
@@ -66,9 +67,9 @@ struct ManualView: View {
                 
                 ZStack { // Row 11 - Close Manual Button
                     RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("HighlightColour"))
+                        .fill(Color("SupportColour"))
                     GeometryReader { geometry in
-                        Text("･CLOSE MANUAL･")
+                        Text("･CLOSE GUIDE･")
                             .foregroundColor(Color("BackgroundColour"))
                             .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
@@ -147,5 +148,7 @@ struct ManualView: View {
 }
 
 #Preview {
-    ManualView()
+    ManualView(
+        showingOptions: .constant(true)
+    )
 }
