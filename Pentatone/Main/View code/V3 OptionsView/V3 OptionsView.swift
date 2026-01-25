@@ -67,6 +67,7 @@ struct OptionsView: View {
     
     // View switching
     var onSwitchToEdit: (() -> Void)? = nil
+    var onSwitchToManual: (() -> Void)? = nil
     
     // Computed property for note names - safer for preview compilation
     private var noteNamesArray: [NoteName] {
@@ -160,7 +161,10 @@ struct OptionsView: View {
                     case .sound:
                         SoundView()
                     case .voice:
-                        VoiceView(onSwitchToEdit: onSwitchToEdit)
+                        VoiceView(
+                            onSwitchToEdit: onSwitchToEdit,
+                            onSwitchToManual: onSwitchToManual
+                        )
                     }
                 }
                 .frame(maxHeight: .infinity)
@@ -298,6 +302,7 @@ struct OptionsView: View {
         onCycleTerrestrial: { _ in },
         onCycleRotation: { _ in },
         onCycleKey: { _ in },
-        onSwitchToEdit: {}
+        onSwitchToEdit: {},
+        onSwitchToManual: {}
     )
 }

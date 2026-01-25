@@ -106,6 +106,7 @@ struct CenterStripConfig {
 enum MainViewMode {
     case options
     case edit
+    case manual
 }
 
 struct MainKeyboardView: View {
@@ -197,6 +198,9 @@ struct MainKeyboardView: View {
                                     onCycleKey: onCycleKey,
                                     onSwitchToEdit: {
                                         currentMainView = .edit
+                                    },
+                                    onSwitchToManual: {
+                                        currentMainView = .manual
                                     }
                                 )
                                 .transition(
@@ -216,6 +220,17 @@ struct MainKeyboardView: View {
                                     .scale
                                     .combined(with: .opacity)
                                     )
+                            
+                            case .manual:
+                                ManualView(
+                                    onSwitchToOptions: {
+                                        currentMainView = .options
+                                    }
+                                )
+                                .transition(
+                                    .scale
+                                    .combined(with: .opacity)
+                                )
                             }
                         } else {
                             NavigationStrip(

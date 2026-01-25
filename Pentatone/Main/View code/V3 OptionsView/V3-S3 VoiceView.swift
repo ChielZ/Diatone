@@ -9,6 +9,7 @@ import SwiftUI
 
 struct VoiceView: View {
     var onSwitchToEdit: (() -> Void)? = nil
+    var onSwitchToManual: (() -> Void)? = nil
     
     @ObservedObject private var paramManager = AudioParameterManager.shared
     
@@ -321,6 +322,9 @@ struct VoiceView: View {
                         .contentShape(Rectangle())
                         //.offset(y: -(geometry.size.height/2 + 11))
                         .padding(0)
+                        .onTapGesture {
+                            onSwitchToManual?()
+                        }
                 }
             }
             
