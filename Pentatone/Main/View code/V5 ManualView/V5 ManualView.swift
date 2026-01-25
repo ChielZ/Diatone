@@ -175,12 +175,22 @@ struct ManualView: View {
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                     
-                                    Text("II: THE MAIN FUNCTIONS")
+                                    Text("II: THE OPTION VIEW")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 24)
                                         .padding(.top, 25)
                                     
-                                    Text("Coming soon...")
+                                    Text("Scales")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("Sounds")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("Settings")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 20)
                                         .padding(.top, 10)
@@ -189,8 +199,28 @@ struct ManualView: View {
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 24)
                                         .padding(.top, 25)
+                                
+                                    Text("What is just intonation?")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
                                     
-                                    Text("Coming soon...")
+                                    Text("What is equal temperament?")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("The arithmophone pentatonic scale system")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("Scale diagrams")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("FM and Sound synthesis")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 20)
                                         .padding(.top, 10)
@@ -200,12 +230,62 @@ struct ManualView: View {
                                         .adaptiveFont("MontserratAlternates-Medium", size: 24)
                                         .padding(.top, 25)
                                     
-                                    Text("Coming soon...")
+                                    Text("Page 1 - Oscillators")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 20)
                                         .padding(.top, 10)
                                     
+                                    Text("Page 2 - Amp + Filter")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
                                     
+                                    Text("Page 3 - Mod + Track")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("Page 4 - Aux Env")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("Page 5 - Voice LFO")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("Page 6 - Global LFO")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("Page 7 - Touch")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("Page 8 - Effects")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("Page 9 - Master")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("Page 10 - Macro")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+                                    Text("Page 11 - Preset")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                    
+
                                     
                                     // Add more content as needed
                                 }
