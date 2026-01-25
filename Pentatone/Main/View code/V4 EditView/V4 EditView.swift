@@ -113,7 +113,7 @@ struct EditView: View {
                 }
                 .frame(maxHeight: .infinity)
                 
-                ZStack { // Row 4
+                ZStack { // Row 3
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("BackgroundColour"))
                     GeometryReader { geometry in
@@ -167,7 +167,7 @@ struct EditView: View {
                 
                 
                 
-                ZStack { // Row 9
+                ZStack { // Row 11
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("HighlightColour"))
                     GeometryReader { geometry in
