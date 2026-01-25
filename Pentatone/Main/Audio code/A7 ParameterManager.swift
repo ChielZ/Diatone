@@ -1020,8 +1020,25 @@ final class AudioParameterManager: ObservableObject {
         // Apply tempo (this will update tempo-synced effects)
         updateTempo(masterParams.tempo)
         
-        // Note: Voice mode and global pitch are handled by the voice pool internally
-        // Voice mode changes require special handling via updateVoiceMode() if needed
+        // Apply voice mode from preset
+        // Calculate voice count based on preset's voice mode
+        let newVoiceCount: Int
+        switch masterParams.voiceMode {
+        case .monophonic:
+            newVoiceCount = 1
+        case .polyphonic:
+            newVoiceCount = nominalPolyphony
+        }
+        
+        // Apply voice mode to voice pool (only if it's different from current)
+        if (currentPolyphony == 1 && masterParams.voiceMode != .monophonic) ||
+           (currentPolyphony != 1 && masterParams.voiceMode != .polyphonic) {
+            voicePool?.setPolyphony(newVoiceCount) {
+                print("🎵 Preset voice mode applied: \(masterParams.voiceMode.displayName)")
+            }
+        }
+        
+        // Note: Global pitch is handled by the voice pool internally
     }
     
     /// Load a complete preset with smooth transition (fade-out/fade-in)
