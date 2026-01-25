@@ -64,7 +64,7 @@ struct VoiceLFOView: View {
                 quantization: 0.01,
                 buttonStep: 0.01,
                 displayFormatter: { value in
-                    return String(format: "%.2f Hz", value)
+                    return String(format: "%.2f hz", value)
                 }
             )
             
@@ -95,11 +95,16 @@ struct VoiceLFOView: View {
                     }
                 ),
                 range: -6...6,
-                step: 0.005,
+                step: 0.025,
                 displayFormatter: { value in
-                    // Convert semitones to cents (1 semitone = 100 cents)
                     let cents = value * 200
-                    return cents > 0 ? String(format: "%.0f ct", cents) : String(format: "%.0f ct", cents)
+                    if abs(value) < 0.01 {  // Use epsilon for floating-point comparison
+                        return "0 ct"
+                    } else if value > 0 {
+                        return String(format: "+%.0f ct", cents)
+                    } else {
+                        return String(format: "%.0f ct", cents)
+                    }
                 }
             )
             
@@ -113,10 +118,16 @@ struct VoiceLFOView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: -2...2,
-                step: 0.01,
+                range: -5...5,
+                step: 0.05,
                 displayFormatter: { value in
-                    return value > 0 ? String(format: "%.2f oct", value) : String(format: "%.2f oct", value)
+                    if abs(value) < 0.001 {  // Use epsilon for floating-point comparison
+                        return "0.00 oct"
+                    } else if value > 0 {
+                        return String(format: "+%.2f oct", value)
+                    } else {
+                        return String(format: "%.2f oct", value)
+                    }
                 }
             )
             
@@ -134,13 +145,24 @@ struct VoiceLFOView: View {
                 step: 0.05,
                 displayFormatter: { value in
                     let normalizedValue = value / 5
-                    return String(format: "%.2f", normalizedValue)
+                    if abs(normalizedValue) < 0.002 {  // Use epsilon for floating-point comparison
+                        return "0.00"
+                    } else if value > 0 {
+                        return String(format: "+%.2f", normalizedValue)
+                    } else {
+                        return String(format: "%.2f", normalizedValue)
+                    }
                 }
             )
             
             
         }
     }
+    
+    
+    
+    
+    
     
     // MARK: - Helper Functions
     
@@ -228,9 +250,9 @@ private struct VoiceLFOModeRow: View {
     
     private func displayText(_ mode: LFOResetMode) -> String {
         switch mode {
-        case .free: return "Free"
-        case .trigger: return "Trigger"
-        case .sync: return "Sync"  // Should never be displayed
+        case .free: return "free"
+        case .trigger: return "trigger"
+        case .sync: return "sync"  // Should never be displayed
         }
     }
     
@@ -321,11 +343,11 @@ private struct VoiceLFOWaveformRow: View {
     
     private func displayText(_ waveform: LFOWaveform) -> String {
         switch waveform {
-        case .sine: return "Sine"
-        case .triangle: return "Triangle"
-        case .square: return "Square"
-        case .sawtooth: return "Sawtooth"
-        case .reverseSawtooth: return "Reverse Saw"  // Should never be displayed
+        case .sine: return "sine"
+        case .triangle: return "triangle"
+        case .square: return "square"
+        case .sawtooth: return "sawtooth"
+        case .reverseSawtooth: return "reverse saw"  // Should never be displayed
         }
     }
     

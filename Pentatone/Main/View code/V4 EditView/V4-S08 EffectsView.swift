@@ -86,11 +86,12 @@ struct EffectsView: View {
                                     paramManager.updateDelayToneCutoff(newValue)
                                 }
                             ),
-                            range: 50...15000,
-                            quantization: 5.0,
-                            buttonStep: 5.0,
+                            range: 100...20000,
+                            quantization: 100.0,
+                            buttonStep: 100.0,
                             displayFormatter: { value in
-                                return String(format: "%.0f Hz", value)
+                                let kilo = value/1000
+                                return String(format: "%.1f khz", kilo)
                             }
                         )
             
@@ -187,11 +188,12 @@ struct EffectsView: View {
                                     paramManager.updateReverbCutoff(newValue)
                                 }
                             ),
-                            range: 50...20000,
-                            quantization: 5.0,
-                            buttonStep: 5.0,
+                            range: 100...20000,
+                            quantization: 100.0,
+                            buttonStep: 100.0,
                             displayFormatter: { value in
-                                return String(format: "%.0f Hz", value)
+                                let kilo = value/1000
+                                return String(format: "%.1f khz", kilo)
                             }
                         )
             

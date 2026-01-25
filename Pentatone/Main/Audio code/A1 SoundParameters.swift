@@ -37,9 +37,9 @@ enum OscillatorWaveform: String, Codable, Equatable, CaseIterable {
     /// User-friendly display name
     var displayName: String {
         switch self {
-        case .sine: return "Sine"
-        case .triangle: return "Triangle"
-        case .square: return "Square"
+        case .sine: return "sine"
+        case .triangle: return "triangle"
+        case .square: return "square"
         }
     }
     

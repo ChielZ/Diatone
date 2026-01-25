@@ -292,23 +292,7 @@ struct VoiceView: View {
                 
             }
             
-            ZStack { // Row 9
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("SupportColour"))
-                GeometryReader { geometry in
-                    Text("･GUIDE･")
-                        .foregroundColor(Color("BackgroundColour"))
-                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        .minimumScaleFactor(0.5)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .contentShape(Rectangle())
-                        //.offset(y: -(geometry.size.height/2 + 11))
-                        .padding(0)
-                        .onTapGesture {
-                            onSwitchToManual?()
-                        }
-                }
-            }
+            
             
             ZStack { // Row 8
                 RoundedRectangle(cornerRadius: radius)
@@ -324,6 +308,24 @@ struct VoiceView: View {
                         .padding(0)
                         .onTapGesture {
                             onSwitchToEdit?()
+                        }
+                }
+            }
+            
+            ZStack { // Row 9
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                GeometryReader { geometry in
+                    Text("･GUIDE･")
+                        .foregroundColor(Color("BackgroundColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        .minimumScaleFactor(0.5)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .contentShape(Rectangle())
+                        //.offset(y: -(geometry.size.height/2 + 11))
+                        .padding(0)
+                        .onTapGesture {
+                            onSwitchToManual?()
                         }
                 }
             }

@@ -35,11 +35,11 @@ struct GlobLFOView: View {
                 ),
                 displayText: { waveform in
                     switch waveform {
-                    case .sine: return "Sine"
-                    case .triangle: return "Triangle"
-                    case .square: return "Square"
-                    case .sawtooth: return "Sawtooth"
-                    case .reverseSawtooth: return "Reverse saw"
+                    case .sine: return "sine"
+                    case .triangle: return "triangle"
+                    case .square: return "square"
+                    case .sawtooth: return "sawtooth"
+                    case .reverseSawtooth: return "reverse saw"
                     }
                 }
             )
@@ -82,7 +82,7 @@ struct GlobLFOView: View {
                     quantization: 0.01,
                     buttonStep: 0.01,
                     displayFormatter: { value in
-                        return String(format: "%.2f Hz", value) }
+                        return String(format: "%.2f hz", value) }
                 )
             }
             
@@ -229,9 +229,9 @@ private struct GlobalLFOModeRow: View {
     
     private func displayText(_ mode: LFOResetMode) -> String {
         switch mode {
-        case .free: return "Free"
-        case .trigger: return "Trigger"  // Should never be displayed
-        case .sync: return "Sync"
+        case .free: return "free"
+        case .trigger: return "trigger"  // Should never be displayed
+        case .sync: return "sync"
         }
     }
     

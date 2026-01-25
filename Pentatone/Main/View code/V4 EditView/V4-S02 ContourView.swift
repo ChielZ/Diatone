@@ -37,7 +37,7 @@ struct ContourView: View {
                         applyEnvelopeToAllVoices()
                     }
                 ),
-                range: 0.001...2.5,  // 1ms to 2500ms (zero accessible via button)
+                range: 0.001...5,  // 1ms to 5000ms (zero accessible via button)
                 buttonStep: 0.001,  // Fixed 1 ms steps for buttons
                 displayFormatter: { value in
                     if value == 0.0 {
@@ -58,7 +58,7 @@ struct ContourView: View {
                         applyEnvelopeToAllVoices()
                     }
                 ),
-                range: 0.001...2.5,  // 1ms to 2500ms (zero accessible via button)
+                range: 0.001...5,  // 1ms to 2500ms (zero accessible via button)
                 buttonStep: 0.001,  // Fixed 1 ms steps for buttons
                 displayFormatter: { value in
                     if value == 0.0 {
@@ -94,7 +94,7 @@ struct ContourView: View {
                         applyEnvelopeToAllVoices()
                     }
                 ),
-                range: 0.001...0.5,  // 1ms to 500ms (zero accessible via button)
+                range: 0.001...1,  // 1ms to 1000ms (zero accessible via button)
                 buttonStep: 0.001,  // Fixed 1 ms steps for buttons
                 displayFormatter: { value in
                     if value == 0.0 {
@@ -118,7 +118,7 @@ struct ContourView: View {
                 range: 15...18795,
                 buttonStep: 1.0,  // Precise 1 Hz steps for fine-tuning
                 displayFormatter: { value in
-                    return String(format: "%.0f Hz", value)
+                    return String(format: "%.0f hz", value)
                 }
             )
             

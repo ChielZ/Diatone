@@ -47,8 +47,8 @@ struct GlobalView: View {
                 ),
                 displayText: { mode in
                     switch mode {
-                    case .monophonic: return "Mono"
-                    case .polyphonic: return "Poly"
+                    case .monophonic: return "mono"
+                    case .polyphonic: return "poly"
                     }
                 }
             )

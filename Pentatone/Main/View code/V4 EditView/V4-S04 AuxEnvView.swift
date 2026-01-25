@@ -33,7 +33,7 @@ struct AuxEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0.001...10,  // 1ms to 10000ms (zero accessible via button)
+                range: 0.001...5,  // 1ms to 5000ms (zero accessible via button)
                 buttonStep: 0.001,  // Fixed 1 ms steps for buttons
                 displayFormatter: { value in
                     if value == 0.0 {
@@ -54,7 +54,7 @@ struct AuxEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0.001...2.5,  // 1ms to 5000ms (zero accessible via button)
+                range: 0.001...5,  // 1ms to 5000ms (zero accessible via button)
                 buttonStep: 0.001,  // Fixed 1 ms steps for buttons
                 displayFormatter: { value in
                     if value == 0.0 {
@@ -90,7 +90,7 @@ struct AuxEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0.001...0.5,  // 1ms to 500ms (zero accessible via button)
+                range: 0.001...1,  // 1ms to 1000ms (zero accessible via button)
                 buttonStep: 0.001,  // Fixed 1 ms steps for buttons
                 displayFormatter: { value in
                     if value == 0.0 {
@@ -112,7 +112,7 @@ struct AuxEnvView: View {
                     }
                 ),
                 range: -12...12,
-                step: 0.01,
+                step: 0.05,
                 displayFormatter: { value in
                     // Convert semitones to cents (1 semitone = 100 cents)
                     let cents = value * 100
@@ -137,7 +137,7 @@ struct AuxEnvView: View {
                     }
                 ),
                 range: -5...5,
-                step: 0.01,
+                step: 0.05,
                 displayFormatter: { value in
                     if abs(value) < 0.005 {  // Use epsilon for floating-point comparison
                         return "0.00 oct"

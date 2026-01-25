@@ -885,23 +885,23 @@ final class AudioParameterManager: ObservableObject {
             // Step 3: CRITICAL - Clear delay and reverb buffers
             // This prevents any lingering audio from the previous preset from playing back
             // through the FX when the new preset loads
-            //self.clearFXBuffers()
+            self.clearFXBuffers()
             
             // Small delay to ensure voices are fully stopped and FX buffers cleared
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                 print("🎵 Preset transition: Applying new parameters...")
                 
                 // Step 4: Apply the new preset parameters
-                voicePool?.silenceAndResetAllVoices()
+                //voicePool?.silenceAndResetAllVoices()
                 self.applyVoiceParameters(voiceParams)
                 self.clearFXBuffers()
                 // Step 5: Wait for oscillator recreation to complete, then fade back in
                 // The applyVoiceParameters completion handler is called after oscillators are ready
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.21) {
                     print("🎵 Preset transition: Fading back in...")
                     
                     // Fade back to the new preset's output volume (100ms)
-                    self.fadeOutputVolume(to: currentOutputVolume, duration: 0.1) {
+                    self.fadeOutputVolume(to: currentOutputVolume, duration: 0.01) {
                         print("✅ Preset transition complete")
                         completion?()
                     }

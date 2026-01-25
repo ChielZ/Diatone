@@ -111,8 +111,8 @@ struct OscillatorView: View {
                 ),
                 displayText: { mode in
                     switch mode {
-                    case .proportional: return "Proportional"
-                    case .constant: return "Constant"
+                    case .proportional: return "proportional"
+                    case .constant: return "constant"
                     }
                 }
             )
