@@ -754,13 +754,21 @@ final class PolyphonicVoice {
         let actualFaderRight = fader.rightGain
         print("🎹 TRIGGER: attack=\(String(format: "%.1f", loudnessAttack * 1000))ms, calculated=\(String(format: "%.3f", currentFaderLevel)), actualL=\(String(format: "%.3f", actualFaderLeft)), actualR=\(String(format: "%.3f", actualFaderRight))")
 
-        // EXPERIMENTAL: Force the start value before ramping
-        // AudioKit's ramp() starts from "current value", which might be unpredictable.
-        // By explicitly setting to the start value first, we ensure a consistent ramp.
-        fader.$leftGain.ramp(to: AUValue(currentFaderLevel), duration: 0)
-        fader.$rightGain.ramp(to: AUValue(currentFaderLevel), duration: 0)
+        // For voice stealing: use actual fader value if significantly different from calculated
+        // With smaller audio buffers, fader.leftGain now reports more accurate values
+        // This prevents clicks from mismatched start values during voice stealing
+        let effectiveStartLevel: Double
+        let discrepancy = abs(Double(actualFaderLeft) - currentFaderLevel)
+        if discrepancy > 0.05 {
+            // Significant discrepancy - use actual value to prevent click
+            effectiveStartLevel = Double(actualFaderLeft)
+            print("🎹 VOICE STEAL: Using actual fader value \(String(format: "%.3f", effectiveStartLevel)) instead of calculated \(String(format: "%.3f", currentFaderLevel))")
+        } else {
+            effectiveStartLevel = currentFaderLevel
+        }
 
-        // Now apply the attack ramp from the known start value
+        // Apply attack ramp - AudioKit will ramp from current value to target
+        // No need to "force" start value since we're now accounting for actual fader state
         fader.$leftGain.ramp(to: 1.0, duration: Float(loudnessAttack))
         fader.$rightGain.ramp(to: 1.0, duration: Float(loudnessAttack))
 
@@ -773,7 +781,8 @@ final class PolyphonicVoice {
 
 
         // Store the start level for envelope calculation (needed for voice stealing)
-        modulationState.loudnessStartLevel = currentFaderLevel
+        // Use effectiveStartLevel which accounts for any discrepancy with actual fader value
+        modulationState.loudnessStartLevel = effectiveStartLevel
         
         // Reset filter and mark voice as active
         //filter.reset()
