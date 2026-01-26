@@ -753,7 +753,7 @@ final class PolyphonicVoice {
         let actualFaderLeft = fader.leftGain
         let actualFaderRight = fader.rightGain
         print("🎹 TRIGGER: attack=\(String(format: "%.1f", loudnessAttack * 1000))ms, calculated=\(String(format: "%.3f", currentFaderLevel)), actualL=\(String(format: "%.3f", actualFaderLeft)), actualR=\(String(format: "%.3f", actualFaderRight))")
-
+        
         // For voice stealing: use actual fader value if significantly different from calculated
         // With smaller audio buffers, fader.leftGain now reports more accurate values
         // This prevents clicks from mismatched start values during voice stealing
