@@ -493,7 +493,7 @@ struct GlobalLFOParameters: Codable, Equatable {
     var syncValue: LFOSyncValue             // Musical division when in sync mode
     
     // Fixed destinations with individual amounts (Page 8, items 4-7)
-    var amountToVoiceMixerVolume: Double    // ±volume (tremolo effect, applied to voice mixer)
+    var amountToVoiceMixerVolume: Double    // ±gain (stereo panning tremolo, applied to post-mixer fader L/R in opposite directions)
     var amountToModulatorMultiplier: Double // ±modulator ratio (fine tuning of FM ratio)
     var amountToFilterFrequency: Double     // ±octaves
     var amountToDelayTime: Double           // ±seconds
@@ -506,7 +506,7 @@ struct GlobalLFOParameters: Codable, Equatable {
         frequencyMode: .hertz,
         frequency: 1.0,
         syncValue: .whole,                  // Default to 1 bar
-        amountToVoiceMixerVolume: 0.0,      // No tremolo by default
+        amountToVoiceMixerVolume: 0.0,      // No stereo panning tremolo by default
         amountToModulatorMultiplier: 0.0,   // No FM ratio modulation by default
         amountToFilterFrequency: 0.0,       // No global filter modulation by default
         amountToDelayTime: 0.0,             // No delay time modulation by default
@@ -1191,12 +1191,46 @@ struct ModulationRouter {
         return max(0.0, min(1.0, touchScaledBase))
     }
     
-    // MARK: - 2B) Voice Mixer Volume [MULTIPLICATIVE]
+    // MARK: - 2B) Post-Mixer Fader Stereo Gains [MULTIPLICATIVE + OPPOSING]
+    
+    /// Calculate post-mixer fader stereo gains (stereo panning tremolo from global LFO)
+    /// Sources: Global LFO (bipolar, multiplicative, opposing L/R)
+    /// Formula: 
+    ///   leftGain = baseFaderGain × (1.0 + (lfoValue × amount))
+    ///   rightGain = baseFaderGain × (1.0 - (lfoValue × amount))
+    /// This applies stereo panning tremolo effect - when LFO is positive, left is louder; when negative, right is louder
+    /// - Parameters:
+    ///   - baseFaderGain: Base fader gain (typically 0.5)
+    ///   - globalLFOValue: Raw global LFO value (-1.0 to +1.0)
+    ///   - globalLFOAmount: Modulation amount (0.0 to 1.0)
+    /// - Returns: Tuple of (leftGain, rightGain)
+    static func calculateFaderStereoGains(
+        baseFaderGain: Double,
+        globalLFOValue: Double,
+        globalLFOAmount: Double
+    ) -> (leftGain: Double, rightGain: Double) {
+        // Global LFO modulates L/R gains in opposite directions (stereo panning)
+        // lfoValue ranges from -1 to +1, so this creates opposing modulation
+        let lfoFactorLeft = 1.0 + (globalLFOValue * globalLFOAmount)
+        let lfoFactorRight = 1.0 - (globalLFOValue * globalLFOAmount)
+        
+        let leftGain = baseFaderGain * lfoFactorLeft
+        let rightGain = baseFaderGain * lfoFactorRight
+        
+        return (
+            leftGain: max(0.0, min(2.0, leftGain)),   // Allow up to 2x gain for compensation
+            rightGain: max(0.0, min(2.0, rightGain))
+        )
+    }
+    
+    // MARK: - 2C) Voice Mixer Volume [DEPRECATED - Use Fader Stereo Gains]
     
     /// Calculate voice mixer volume (tremolo from global LFO)
+    /// **DEPRECATED**: Use calculateFaderStereoGains() instead for stereo panning tremolo
     /// Sources: Global LFO (bipolar, multiplicative)
     /// Formula: finalVolume = baseVolume × (1.0 + (lfoValue × amount))
     /// This applies tremolo globally to all voices at once, cleaner than per-voice modulation
+    @available(*, deprecated, message: "Use calculateFaderStereoGains() for stereo panning tremolo")
     static func calculateVoiceMixerVolume(
         baseVolume: Double,
         globalLFOValue: Double,

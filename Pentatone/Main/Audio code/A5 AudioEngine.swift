@@ -78,8 +78,9 @@ enum EngineManager {
         // Create voice pool with current polyphony
         voicePool = VoicePool(voiceCount: currentPolyphony)
         
-        // Set initial voice mixer volume (pre-FX)
-        voicePool.voiceMixer.volume = AUValue(masterParams.output.preVolume)
+        // Note: Voice mixer volume is no longer used for global LFO modulation
+        // Global LFO now modulates postMixerFader for stereo panning tremolo
+        voicePool.voiceMixer.volume = 1.0  // Keep at unity
         
         // Apply global LFO parameters from master defaults
         voicePool.updateGlobalLFO(masterParams.globalLFO)
@@ -88,13 +89,13 @@ enum EngineManager {
         voicePool.updateAllVoiceModulation(voiceParams.modulation)
         
         // NEW SIGNAL CHAIN:
-        // VoicePool → Delay (100% wet) → Butterworth Lowpass → DryWetMixer → Reverb → Output
-        //                                                           ↑
-        //                                                     VoicePool (dry)
+        // VoicePool → PostMixerFader → Delay (100% wet) → Butterworth Lowpass → DryWetMixer → Reverb → Output
+        //                                                                            ↑
+        //                                                                      PostMixerFader (dry)
         
-        // Delay processes the voice pool output - now 100% wet (dryWetMix = 0)
+        // Delay processes the fader output - now 100% wet (dryWetMix = 0)
         fxDelay = StereoDelay(
-                                voicePool.voiceMixer,
+                                voicePool.postMixerFader,  // Use postMixerFader instead of voiceMixer
                                 time: AUValue(masterParams.delay.timeInSeconds(tempo: masterParams.tempo)),
                                 feedback: AUValue(masterParams.delay.feedback),
                                 dryWetMix: 0.0,  // 100% wet - dry/wet now handled by external mixer
@@ -109,10 +110,10 @@ enum EngineManager {
                                 //resonance: 0.0  // Butterworth filter does not have resonance
                                 )
         
-        // DryWetMixer blends dry signal (voice pool) with wet signal (delay → filter)
+        // DryWetMixer blends dry signal (post-mixer fader) with wet signal (delay → filter)
         delayDryWetMixer = DryWetMixer(
-                                voicePool.voiceMixer,  // Input (dry)
-                                delayLowpass,           // Effect (wet)
+                                voicePool.postMixerFader,   // Input (dry) - use postMixerFader
+                                delayLowpass,                // Effect (wet)
                                 balance: AUValue(masterParams.delay.dryWetMix)
                                 )
         

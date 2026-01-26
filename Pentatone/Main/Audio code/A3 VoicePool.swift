@@ -27,6 +27,10 @@ final class VoicePool {
     /// Mixer to combine all voice outputs
     let voiceMixer: Mixer
     
+    /// Post-mixer fader for stereo panning tremolo (inserted after voice mixer, before delay)
+    /// Base gain: 0.5 (L/R), modulated by global LFO in opposite directions for stereo effect
+    let postMixerFader: Fader
+    
     /// Round-robin allocation pointer
     private var currentVoiceIndex: Int = 0
     
@@ -80,9 +84,9 @@ final class VoicePool {
     /// Base delay time (from tempo-synced value, before LFO modulation)
     private var baseDelayTime: Double = 0.5  // Default: 1/4 note at 120 BPM
     
-    /// Base voice mixer volume (preVolume, before global LFO tremolo modulation)
-    /// This should be kept in sync with master.output.preVolume
-    private var basePreVolume: Double = 0.5  // Default matches OutputParameters.default
+    /// Base fader gain for post-mixer stereo panning tremolo (before global LFO modulation)
+    /// This is the neutral level applied to both L/R channels when no modulation is active
+    private var baseFaderGain: Double = 0.5  // Default: unity-ish gain
     
     // MARK: - Initialization
     
@@ -92,6 +96,10 @@ final class VoicePool {
     init(voiceCount: Int = currentPolyphony) {
         // Create mixer first
         self.voiceMixer = Mixer()
+        
+        // Create post-mixer fader for stereo panning tremolo
+        // Base gain: 0.5 for both L/R channels
+        self.postMixerFader = Fader(self.voiceMixer, gain: 0.5)
         
         // Always create nominalPolyphony voices (don't change voice count at runtime)
         // In mono mode, we just use the first voice only
@@ -654,22 +662,24 @@ final class VoicePool {
         delay?.$time.ramp(to: AUValue(baseDelayTime), duration: 0.005)
     }
     
-    /// Resets the voice mixer volume to its base (unmodulated) value
+    /// Resets the post-mixer fader gains to their base (unmodulated) values
     /// Called when global LFO modulation amount is set to zero
-    func resetMixerVolumeToBase() {
-        voiceMixer.volume = AUValue(basePreVolume)
+    func resetFaderGainsToBase() {
+        postMixerFader.$leftGain.ramp(to: AUValue(baseFaderGain), duration: 0.02)
+        postMixerFader.$rightGain.ramp(to: AUValue(baseFaderGain), duration: 0.02)
     }
     
-    /// Updates the base mixer volume (preVolume, before global LFO tremolo modulation)
-    /// Should be called whenever preVolume changes in the UI
-    /// - Parameter preVolume: The base pre-volume (0.0 - 1.0)
-    func updateBasePreVolume(_ preVolume: Double) {
-        basePreVolume = preVolume
-        // If no global LFO modulation is active, apply directly to mixer
+    /// Updates the base fader gain (before global LFO modulation)
+    /// Should be called when the fader gain parameter changes in the UI
+    /// - Parameter faderGain: The base fader gain (0.0 - 1.0)
+    func updateBaseFaderGain(_ faderGain: Double) {
+        baseFaderGain = faderGain
+        // If no global LFO modulation is active, apply directly to fader
         if globalLFO.amountToVoiceMixerVolume <= 0.0001 {
-            voiceMixer.volume = AUValue(preVolume)
+            postMixerFader.$leftGain.ramp(to: AUValue(faderGain), duration: 0.02)
+            postMixerFader.$rightGain.ramp(to: AUValue(faderGain), duration: 0.02)
         }
-        print("🎵 VoicePool: Base preVolume updated to \(preVolume)")
+        print("🎵 VoicePool: Base fader gain updated to \(faderGain)")
     }
     
     /// Resets modulator multiplier to base for all voices
@@ -795,22 +805,23 @@ final class VoicePool {
         return globalLFO.rawValue(at: globalModulationState.globalLFOPhase)
     }
     
-    /// Applies global LFO modulation to global-level parameters (delay time, mixer volume)
+    /// Applies global LFO modulation to global-level parameters (delay time, post-mixer fader)
     /// - Parameter rawValue: Raw global LFO value (-1.0 to +1.0, unscaled)
     private func applyGlobalLFOToGlobalParameters(rawValue: Double) {
         guard globalLFO.isEnabled else { return }
         
-        // Global LFO Destination 1: Voice Mixer Volume (tremolo)
-        // Apply global tremolo effect to voice mixer (affects all voices at once)
-        // Uses basePreVolume (which should match master.output.preVolume) as the baseline
+        // Global LFO Destination 1: Post-Mixer Fader (stereo panning tremolo)
+        // Apply global stereo tremolo/panning effect by modulating L/R gains in opposite directions
+        // Uses baseFaderGain as the baseline, L/R gains move in opposite directions
         if globalLFO.amountToVoiceMixerVolume != 0.0 {
-            let finalVolume = ModulationRouter.calculateVoiceMixerVolume(
-                baseVolume: basePreVolume,
+            let (leftGain, rightGain) = ModulationRouter.calculateFaderStereoGains(
+                baseFaderGain: baseFaderGain,
                 globalLFOValue: rawValue,
                 globalLFOAmount: globalLFO.amountToVoiceMixerVolume
             )
-            // Direct assignment (Mixer.volume doesn't support ramping)
-            voiceMixer.volume = AUValue(finalVolume)
+            // Use 20ms ramp for smooth interpolation between control-rate updates
+            postMixerFader.$leftGain.ramp(to: AUValue(leftGain), duration: 0.02)
+            postMixerFader.$rightGain.ramp(to: AUValue(rightGain), duration: 0.02)
         }
         
         // Global LFO Destination 2: Delay Time

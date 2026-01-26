@@ -128,10 +128,10 @@ final class AudioParameterManager: ObservableObject {
     
     func updatePreVolume(_ preVolume: Double) {
         master.output.preVolume = preVolume
-        // Update voice pool's base preVolume for global LFO tremolo
-        voicePool?.updateBasePreVolume(preVolume)
-        // Note: If global LFO tremolo is active, it will modulate from this new base
-        // If not active, updateBasePreVolume will apply it directly to the mixer
+        // Note: preVolume is no longer used for global LFO modulation
+        // Global LFO now modulates postMixerFader instead
+        // Voice mixer stays at unity gain (1.0)
+        // Post-mixer fader is not affected by preVolume - it has its own base gain
     }
     
     func updateTempo(_ tempo: Double) {
@@ -501,15 +501,15 @@ final class AudioParameterManager: ObservableObject {
         voicePool?.updateGlobalLFO(master.globalLFO)
     }
     
-    /// Update global LFO amount to voice mixer volume (tremolo)
+    /// Update global LFO amount to post-mixer fader (stereo panning tremolo)
     func updateGlobalLFOAmountToMixerVolume(_ value: Double) {
         let wasZero = abs(master.globalLFO.amountToVoiceMixerVolume) <= 0.0001
         master.globalLFO.amountToVoiceMixerVolume = value
         voicePool?.updateGlobalLFO(master.globalLFO)
         
-        // If amount is now zero, reset mixer volume to base
+        // If amount is now zero, reset fader gains to base
         if abs(value) <= 0.0001 && !wasZero {
-            voicePool?.resetMixerVolumeToBase()
+            voicePool?.resetFaderGainsToBase()
         }
     }
     
@@ -657,9 +657,8 @@ final class AudioParameterManager: ObservableObject {
         
         // Apply directly to preVolume and update master parameter
         master.output.preVolume = clampedPosition
-        // Update voice pool's base preVolume for global LFO tremolo
-        voicePool?.updateBasePreVolume(clampedPosition)
-        // Note: If global LFO tremolo is active, it will modulate from this new base
+        // Note: preVolume is no longer used for global LFO modulation
+        // Global LFO now modulates postMixerFader instead
     }
     
     
