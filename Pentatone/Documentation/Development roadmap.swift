@@ -22,6 +22,23 @@ MAIN
  √ add macro control
  √ sanity check code structure
  √ create preset management
+ 
+ 
+ AUDIO ENGINE POLISHING
+ - track/fix issue with inconsistent preset loading (volume/stereo detune)
+ - refactor tremolo to global fader panner
+ - Tidy preset structure
+ - Tidy stored values (clip to UI resolution)
+ - Optimize trigger function
+ - Clean up comments
+ - Sanity check everything (eg voice mode for global audio engine)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  - create presets
  ? add drone note toggles to central note buttons?
  - make engine portable for other Arithmophone apps
