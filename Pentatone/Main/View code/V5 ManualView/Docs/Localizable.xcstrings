@@ -102,7 +102,7 @@
     "I: INTRODUCTION" : {
 
     },
-    "II: THE OPTION VIEW" : {
+    "II: USER MANUAL" : {
 
     },
     "III: BACKGROUND" : {
@@ -383,7 +383,7 @@
     "Pentatone has its own built-in synthesizer and there are 25 preset sounds to choose from. The keyboard responds to initial touch (where on the key you first place your finger) and aftertouch (how you move your finger on the key while holding it down). Different preset sounds respond to your touch in different ways: on some sounds, moving your finger may change the brightness of the tone, on others it may change the pitch, allowing you to 'bend' the notes. There are three sliders that allow you to quickly adjust the volume, tone and ambience of each preset sound." : {
 
     },
-    "Pentatone is an iOS music app featuring an expressive keyboard, a unique selection of pentatonic scales and a custom sound engine." : {
+    "Pentatone is an iOS music app featuring an expressive keyboard, a unique selection of pentatonic scales and a custom sound engine:" : {
 
     },
     "Pentatone's music keyboard is designed from the ground up for the form factor of handheld touchscreen devices. It turns your iPhone or iPad into an instrument with exactly the right ergonomics for playing music. Rather than emulating a piano or a guitar fretboard (which are both very well designed interfaces, but with a very different form factor), the Pentatone features an original design that takes inspiration from traditional African instruments like the Kora, on which melodies are played by alternating between the left and right hand, and the Mbira (also known as Kalimba or Karimba), which is played with the thumbs. The alternating thumb approach makes it natural and intuitive to play flowing melodies on a touchscreen." : {
@@ -410,15 +410,6 @@
     "Scale diagrams" : {
 
     },
-    "Scales" : {
-
-    },
-    "Settings" : {
-
-    },
-    "Sounds" : {
-
-    },
     "TEMPO %lld" : {
 
     },
@@ -431,13 +422,22 @@
     "The name Pentatone comes from the Greek words πεντᾰ (pentă; five) and τόνος (tónos; note) and the keyboard uses pentatonic scales: scales with 5 notes per octave. There are 9 unique scales to choose from, and each of these can be played in any musical key and in two different tuning modes: just intonation (rational harmonic intervals, where the notes sound perfectly in tune with each other) or equal temperament (standard Western tuning, suitable for playing along with guitars, pianos et cetera)." : {
 
     },
-    "The Pentatone is a musical instrument designed specifically for your iPhone or iPad. Whether you're picking up your first instrument or you're an experienced musician exploring new sounds and scales, Pentatone offers an immediate and expressive way to learn and make music. This guide will explain all the functions of the app, and also includes background sections on music theory and sound synthesis." : {
-
-    },
     "The scales" : {
 
     },
+    "The Scales View" : {
+
+    },
+    "The Settings View" : {
+
+    },
     "The sound engine" : {
+
+    },
+    "The Sounds View" : {
+
+    },
+    "This guide will explain all the functions of the app, and also includes background sections on music theory and sound synthesis." : {
 
     },
     "TONE" : {
@@ -475,7 +475,7 @@
     "Welcome to the Arithmophone Pentatone!" : {
 
     },
-    "What is an Arithmophone?" : {
+    "WHAT IS AN ARITHMOPHONE?" : {
 
     },
     "What is equal temperament?" : {
@@ -484,7 +484,7 @@
     "What is just intonation?" : {
 
     },
-    "What is Pentatone?" : {
+    "WHAT IS PENTATONE?" : {
 
     },
     "You can rename the preset or keep the same name." : {
