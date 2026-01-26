@@ -504,12 +504,8 @@ final class PolyphonicVoice {
             let targetFrequency = modulationState.baseFrequency * pow(2.0, semitoneOffset / 12.0)
             let clampedFrequency = max(20.0, min(20000.0, targetFrequency))
 
-            // Apply with ramp duration = attack time
-            // Note: We apply to baseFrequency directly, then update oscillators
-            // The ramp is applied at the oscillator level via updateOscillatorFrequencies
-            currentFrequency = clampedFrequency
-
             // Calculate start and target left/right frequencies with stereo offset
+            // IMPORTANT: Do NOT modify currentFrequency here - it should stay at the base (unmodulated) value
             let startLeftFreq: Double
             let startRightFreq: Double
             let targetLeftFreq: Double
@@ -1292,8 +1288,28 @@ final class PolyphonicVoice {
             aftertouchAmount: voiceModulation.touchAftertouch.amountToOscillatorPitch
         )
         
-        currentFrequency = finalFreq
-        updateOscillatorFrequencies()
+        // CRITICAL: Apply stereo detune to the modulated frequency, not currentFrequency
+        // currentFrequency should remain the unmodulated base frequency
+        // This ensures consistent stereo spread regardless of modulation state
+        let leftFreq: Double
+        let rightFreq: Double
+        
+        switch detuneMode {
+        case .proportional:
+            // Constant cents: apply ratio to modulated frequency
+            let ratio = pow(2.0, frequencyOffsetCents / 1200.0)
+            leftFreq = finalFreq * ratio
+            rightFreq = finalFreq / ratio
+            
+        case .constant:
+            // Constant Hz: apply offset to modulated frequency
+            leftFreq = finalFreq + frequencyOffsetHz
+            rightFreq = finalFreq - frequencyOffsetHz
+        }
+        
+        // Apply modulated + detuned frequencies directly to oscillators
+        oscLeft.$baseFrequency.ramp(to: Float(leftFreq), duration: ControlRateConfig.modulationRampDuration)
+        oscRight.$baseFrequency.ramp(to: Float(rightFreq), duration: ControlRateConfig.modulationRampDuration)
     }
     
     /// Applies combined filter frequency modulation from all sources
