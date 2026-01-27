@@ -128,6 +128,7 @@ final class AudioParameterManager: ObservableObject {
     
     func updatePreVolume(_ preVolume: Double) {
         master.output.preVolume = preVolume
+        //voiceMixer?.volume = AUValue(preVolume)
         // Note: preVolume is no longer used for global LFO modulation
         // Global LFO now modulates postMixerFader instead
         // Voice mixer stays at unity gain (1.0)
@@ -876,9 +877,9 @@ final class AudioParameterManager: ObservableObject {
         fadeOutputVolume(to: 0.0, duration: 0.1) {
             print("🎵 Preset transition: Silenced, stopping all voices...")
             
-            // Step 2: CRITICAL - Immediately silence all voices and reset to available state
-            // This sets all faders to zero, marks voices as available, and clears key mappings
-            // Provides a completely clean slate with no sound carried over from previous preset
+            // Step 2: CRITICAL - Silence and reset all voices
+            // This resets ALL state: voice parameters, modulation state, and global modulation state
+            // The modulation loop continues running, but with completely clean state
             voicePool?.silenceAndResetAllVoices()
             
             // Step 3: CRITICAL - Clear delay and reverb buffers
@@ -891,9 +892,9 @@ final class AudioParameterManager: ObservableObject {
                 print("🎵 Preset transition: Applying new parameters...")
                 
                 // Step 4: Apply the new preset parameters
-                //voicePool?.silenceAndResetAllVoices()
                 self.applyVoiceParameters(voiceParams)
                 self.clearFXBuffers()
+                
                 // Step 5: Wait for oscillator recreation to complete, then fade back in
                 // The applyVoiceParameters completion handler is called after oscillators are ready
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.21) {
@@ -980,20 +981,19 @@ final class AudioParameterManager: ObservableObject {
         let waveform = voiceParams.oscillator.waveform
         print("🎵 Preset loading: Recreating oscillators with waveform \(waveform.displayName)...")
         
-        // Update voice template first so the waveform is reflected in the template
+        // CRITICAL: Update voice template AND base values in all voices BEFORE recreating oscillators
+        // This ensures recreateOscillators() reads the correct NEW base values, not the old ones
         voiceTemplate = voiceParams
         
-        // Always recreate oscillators when loading a preset to ensure waveform is correct
-        // This is necessary because waveform changes require physical recreation of oscillators
+        // Update base values in all voices immediately
+        voicePool?.updateAllVoiceOscillators(voiceParams.oscillator)
+        voicePool?.updateAllVoiceFilters(voiceParams.filter)
+        voicePool?.updateAllVoiceFilterStatic(voiceParams.filterStatic)
+        voicePool?.updateAllVoiceLoudnessEnvelopes(voiceParams.loudnessEnvelope)
+        voicePool?.updateAllVoiceModulation(voiceParams.modulation)
+        
+        // NOW recreate oscillators - they will read the correct NEW base values
         voicePool?.recreateOscillators(waveform: waveform) {
-            // After oscillators are recreated, apply all other parameters
-            // Note: voicePool is a global variable from A5 AudioEngine.swift
-            voicePool?.updateAllVoiceOscillators(voiceParams.oscillator)
-            voicePool?.updateAllVoiceFilters(voiceParams.filter)
-            voicePool?.updateAllVoiceFilterStatic(voiceParams.filterStatic)
-            voicePool?.updateAllVoiceLoudnessEnvelopes(voiceParams.loudnessEnvelope)
-            voicePool?.updateAllVoiceModulation(voiceParams.modulation)
-            
             print("✅ Preset loading: All voice parameters applied after oscillator recreation")
         }
     }

@@ -74,8 +74,8 @@ struct OscillatorView: View {
                 label: "MODULATOR FINE",
                 value: $modulatorFine,
                 range: 0...1,
-                step: 0.01,
-                displayFormatter: { String(format: "%.2f", $0) }
+                step: 0.001,
+                displayFormatter: { String(format: "%.3f", $0) }
             )
             .onChange(of: modulatorFine) { newFine in
                 updateModulatingMultiplier(coarse: Int(modulatorCoarse), fine: newFine)

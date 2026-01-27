@@ -172,6 +172,7 @@ final class PolyphonicVoice {
         modulationState.baseAmplitude = parameters.oscillator.amplitude
         modulationState.baseFilterCutoff = parameters.filter.clampedCutoff
         modulationState.baseModulationIndex = parameters.oscillator.modulationIndex
+        modulationState.baseModulatorMultiplier = parameters.oscillator.modulatingMultiplier  // CRITICAL: Must be initialized!
     }
     
     // MARK: - Initialization
@@ -217,12 +218,20 @@ final class PolyphonicVoice {
         print("🎵 Recreating oscillators for voice with new waveform: \(waveform)")
         
         // Store current state before recreation
+        // CRITICAL: Use base values from modulation state, NOT current oscillator values
+        // During preset switching, oscillators may have stale modulated values
+        // Base values are always correct and reflect the user's intended settings
         let wasInitialized = isInitialized
         let currentBaseFreq = currentFrequency
-        let currentAmplitude = oscLeft.amplitude
+        let currentAmplitude = modulationState.baseAmplitude  // Use base value
         let currentCarrierMult = oscLeft.carrierMultiplier
-        let currentModulatingMult = oscLeft.modulatingMultiplier
-        let currentModIndex = oscLeft.modulationIndex
+        let currentModulatingMult = modulationState.baseModulatorMultiplier  // Use base value
+        let currentModIndex = modulationState.baseModulationIndex  // Use base value
+        
+        // DEBUG: Print what we're about to use
+        print("🎵   DEBUG: Creating oscillators with modulatingMult=\(currentModulatingMult), modIndex=\(currentModIndex)")
+        print("🎵   DEBUG: Base values in state: mult=\(modulationState.baseModulatorMultiplier), idx=\(modulationState.baseModulationIndex)")
+        print("🎵   DEBUG: Current oscillator values: mult=\(oscLeft.modulatingMultiplier), idx=\(oscLeft.modulationIndex)")
         
         // Stop and disconnect old oscillators
         if isInitialized {
@@ -246,19 +255,21 @@ final class PolyphonicVoice {
             waveform: waveform.makeTable(),
             baseFrequency: AUValue(currentBaseFreq),
             carrierMultiplier: currentCarrierMult,
-            modulatingMultiplier: currentModulatingMult,
-            modulationIndex: currentModIndex,
-            amplitude: currentAmplitude
+            modulatingMultiplier: Float(currentModulatingMult),
+            modulationIndex: Float(currentModIndex),
+            amplitude: Float(currentAmplitude)
         )
         
         let newOscRight = FMOscillator(
             waveform: waveform.makeTable(),
             baseFrequency: AUValue(currentBaseFreq),
             carrierMultiplier: currentCarrierMult,
-            modulatingMultiplier: currentModulatingMult,
-            modulationIndex: currentModIndex,
-            amplitude: currentAmplitude
+            modulatingMultiplier: Float(currentModulatingMult),
+            modulationIndex: Float(currentModIndex),
+            amplitude: Float(currentAmplitude)
         )
+        
+        print("🎵   DEBUG: New oscillators created. Left mult=\(newOscLeft.modulatingMultiplier), Right mult=\(newOscRight.modulatingMultiplier)")
         
         // Create new panners with the new oscillators
         let newPanLeft = Panner(newOscLeft, pan: -1.0)  // Hard left
@@ -279,8 +290,8 @@ final class PolyphonicVoice {
             // Set ramp duration for smooth parameter changes
             oscLeft.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0.005)
             oscRight.$baseFrequency.ramp(to: Float(currentFrequency), duration: 0.005)
-            oscLeft.$amplitude.ramp(to: currentAmplitude, duration: 0.005)
-            oscRight.$amplitude.ramp(to: currentAmplitude, duration: 0.005)
+            oscLeft.$amplitude.ramp(to: Float(currentAmplitude), duration: 0.005)
+            oscRight.$amplitude.ramp(to: Float(currentAmplitude), duration: 0.005)
             
             // Start new oscillators
             oscLeft.start()
@@ -293,6 +304,7 @@ final class PolyphonicVoice {
             updateOscillatorFrequencies()
             
             print("🎵   Oscillators recreated and restarted")
+            print("🎵   DEBUG: After restart - Left mult=\(oscLeft.modulatingMultiplier), Right mult=\(oscRight.modulatingMultiplier)")
         } else {
             print("🎵   Oscillators recreated (not yet initialized)")
         }
@@ -890,6 +902,8 @@ final class PolyphonicVoice {
         // else: modulation system will pick up the new base value at its next update cycle
         
         // Update stereo spread parameters
+        // These trigger updateOscillatorFrequencies() via didSet observers
+        // This is safe because silenceAndResetAllVoices() ensures currentFrequency == baseFrequency
         detuneMode = parameters.detuneMode
         frequencyOffsetCents = parameters.stereoOffsetProportional
         frequencyOffsetHz = parameters.stereoOffsetConstant

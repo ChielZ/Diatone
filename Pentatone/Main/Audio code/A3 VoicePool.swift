@@ -473,19 +473,53 @@ final class VoicePool {
             voice.isAvailable = true
             voice.isPlaying = false
             
-            // Reset modulation state so envelope tracking stops
+            // CRITICAL: Reset ALL envelope timing, not just loudness
+            // This prevents modulation state from previous presets affecting new presets
             voice.modulationState.isGateOpen = false
+            voice.modulationState.modulatorEnvelopeTime = 0.0
+            voice.modulationState.auxiliaryEnvelopeTime = 0.0
             voice.modulationState.loudnessEnvelopeTime = 0.0
+            voice.modulationState.modulatorSustainLevel = 0.0
+            voice.modulationState.auxiliarySustainLevel = 0.0
             voice.modulationState.loudnessStartLevel = 0.0
             voice.modulationState.loudnessSustainLevel = 0.0
+            
+            // CRITICAL: Reset voice LFO phase and ramp to eliminate leftover modulation
+            voice.modulationState.voiceLFOPhase = 0.0
+            voice.modulationState.voiceLFORampFactor = 0.0
+            voice.modulationState.voiceLFODelayTimer = 0.0
+            
+            // CRITICAL: Reset frequency tracking to eliminate pitch modulation artifacts
+            // currentFrequency is used by updateOscillatorFrequencies() when applying stereo detune
+            // If it contains a modulated value from the previous preset, detune will be applied incorrectly
+            voice.modulationState.currentFrequency = voice.modulationState.baseFrequency
+            
+            // CRITICAL: Reset modulated parameters to their base (unmodulated) values
+            // This eliminates leftover modulation from global LFO and other sources
+            // Even tiny offsets in modulatingMultiplier create audible tremolo/beating effects
+            voice.oscLeft.$modulatingMultiplier.ramp(to: AUValue(voice.modulationState.baseModulatorMultiplier), duration: 0)
+            voice.oscRight.$modulatingMultiplier.ramp(to: AUValue(voice.modulationState.baseModulatorMultiplier), duration: 0)
+            
+            // Also reset modulation index to base value
+            voice.oscLeft.$modulationIndex.ramp(to: AUValue(voice.modulationState.baseModulationIndex), duration: 0)
+            voice.oscRight.$modulationIndex.ramp(to: AUValue(voice.modulationState.baseModulationIndex), duration: 0)
+            
+            // Reset filter cutoff to base value (with key tracking if active)
+            // Key tracking should be at neutral (0.0) since no note is playing
+            voice.filter.$cutoffFrequency.ramp(to: AUValue(voice.modulationState.baseFilterCutoff), duration: 0)
         }
+        
+        // CRITICAL: Reset global modulation state (LFO phase, etc.)
+        // This ensures the modulation system starts fresh with the new preset
+        globalModulationState = GlobalModulationState()
+        globalModulationState.currentTempo = currentTempo  // Preserve current tempo
         
         // Clear all key mappings
         keyToVoiceMap.removeAll()
         monoVoiceOwner = nil
         monoNoteStack.removeAll()
         
-        print("🎵 All voices silenced and reset to available state")
+        print("🎵 All voices silenced and reset to available state (full modulation state cleared)")
     }
     
     // MARK: - Voice Recreation (for waveform changes)
@@ -727,9 +761,11 @@ final class VoicePool {
     
     /// Starts the modulation update loop (Phase 5B)
     /// Control rate: 200 Hz (5ms intervals) for smooth envelopes
+    /// Safe to call multiple times - will not create duplicate timers
     func startModulation() {
-        guard modulationTimer == nil else {
-            print("🎵 Modulation timer already running")
+        // If timer is already running, don't create a new one
+        if modulationTimer != nil {
+            print("🎵 Modulation timer already running, not creating duplicate")
             return
         }
         
@@ -751,8 +787,14 @@ final class VoicePool {
     }
     
     /// Stops the modulation update loop
+    /// Safe to call multiple times - will not crash if already stopped
     func stopModulation() {
-        modulationTimer?.cancel()
+        guard let timer = modulationTimer else {
+            print("🎵 Modulation timer not running, nothing to stop")
+            return
+        }
+        
+        timer.cancel()
         modulationTimer = nil
         print("🎵 Modulation system stopped")
     }
@@ -769,8 +811,10 @@ final class VoicePool {
         applyGlobalLFOToGlobalParameters(rawValue: globalLFORawValue)
         
         // Update all active voices with global LFO parameters
+        // CRITICAL: Only process voices that are actually playing (not available)
+        // This prevents modulation from affecting voices during preset switching
         // Note: This runs on background thread, AudioKit parameter updates are thread-safe
-        for voice in voices // where !voice.isAvailable
+        for voice in voices //where !voice.isAvailable
         {
             voice.applyModulation(
                 globalLFO: (rawValue: globalLFORawValue, parameters: globalLFO),
