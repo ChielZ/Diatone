@@ -80,7 +80,7 @@ enum EngineManager {
         
         // Note: Voice mixer volume is no longer used for global LFO modulation
         // Global LFO now modulates postMixerFader for stereo panning tremolo
-        voicePool.voiceMixer.volume = 1.0  // Keep at unity
+        voicePool.voiceMixer.volume = 0.5
         
         // Apply global LFO parameters from master defaults
         voicePool.updateGlobalLFO(masterParams.globalLFO)

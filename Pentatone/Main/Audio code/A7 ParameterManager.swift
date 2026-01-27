@@ -128,6 +128,7 @@ final class AudioParameterManager: ObservableObject {
     
     func updatePreVolume(_ preVolume: Double) {
         master.output.preVolume = preVolume
+        voicePool?.voiceMixer.volume = AUValue(preVolume)
         //voiceMixer?.volume = AUValue(preVolume)
         // Note: preVolume is no longer used for global LFO modulation
         // Global LFO now modulates postMixerFader instead
@@ -657,7 +658,7 @@ final class AudioParameterManager: ObservableObject {
         macroState.volumePosition = clampedPosition
         
         // Apply directly to preVolume and update master parameter
-        master.output.preVolume = clampedPosition
+        voicePool.voiceMixer.volume = Float(clampedPosition)
         // Note: preVolume is no longer used for global LFO modulation
         // Global LFO now modulates postMixerFader instead
     }
@@ -703,11 +704,11 @@ final class AudioParameterManager: ObservableObject {
         macroState.baseDelayMix = master.delay.dryWetMix
         macroState.baseReverbFeedback = master.reverb.feedback
         macroState.baseReverbMix = master.reverb.balance
-        macroState.basePreVolume = master.output.preVolume
+        macroState.basePreVolume = Double(voicePool.voiceMixer.volume)
         
         // Reset all macro positions to neutral
         // Volume is absolute (0-1), so reset to current preVolume
-        macroState.volumePosition = master.output.preVolume
+        macroState.volumePosition = Double(voicePool.voiceMixer.volume)
         // Tone and Ambience are relative (-1 to +1), so reset to center (0.0)
         macroState.tonePosition = 0.0
         macroState.ambiencePosition = 0.0
@@ -723,7 +724,7 @@ final class AudioParameterManager: ObservableObject {
         macroState.baseDelayMix = master.delay.dryWetMix
         macroState.baseReverbFeedback = master.reverb.feedback
         macroState.baseReverbMix = master.reverb.balance
-        macroState.basePreVolume = master.output.preVolume
+        macroState.basePreVolume = Double(voicePool.voiceMixer.volume)
         // Note: positions are NOT reset
     }
     
