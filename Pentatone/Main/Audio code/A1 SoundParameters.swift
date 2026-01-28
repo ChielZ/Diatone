@@ -322,7 +322,7 @@ struct OutputParameters: Codable, Equatable {
     
     static let `default` = OutputParameters(
         preVolume: 0.5,
-        volume: 0.5
+        volume: 0.75
     )
 }
 

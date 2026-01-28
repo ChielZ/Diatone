@@ -128,10 +128,10 @@ struct MainKeyboardView: View {
     /// Keyboard state providing frequency calculations
     var keyboardState: KeyboardState
     
-    @State private var showingOptions: Bool = false
+    @State private var showingOptions: Bool = true
     @State private var currentMainView: MainViewMode = .options
     @State private var currentOptionsSubView: OptionsSubView = .scale
-    @State private var currentEditSubView: EditSubView = .oscillators
+    @State private var currentEditSubView: EditSubView = .preset
     
     // Animation timing configurations
     private let unfoldCenterDuration: Double = 0.75      // Center strip unfolds

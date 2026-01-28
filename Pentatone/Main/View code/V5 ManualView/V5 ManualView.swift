@@ -109,7 +109,7 @@ struct ManualView: View {
                                         .multilineTextAlignment(.center)
                                         .padding(.bottom, 5)
                                     
-                                    Text("This guide will explain all the functions of the app, and also includes background sections on music theory and sound synthesis.")
+                                    Text("This guide explains all the functions of the app, and also includes background sections on music theory and sound synthesis.")
                                         .foregroundColor(Color("HighlightColour"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                         .multilineTextAlignment(.center)
