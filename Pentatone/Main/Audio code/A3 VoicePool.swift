@@ -88,6 +88,11 @@ final class VoicePool {
     /// This is the neutral level applied to both L/R channels when no modulation is active
     private var baseFaderGain: Double = 0.5  // Default: unity-ish gain
     
+    
+    // Inserted quiesce flag here as instructed:
+    /// Quiesce flag: when set, the next modulation tick skips per-voice writes
+    private var quiesceModulationNextTick: Bool = false
+    
     // MARK: - Initialization
     
     /// Creates a voice pool with the specified polyphony
@@ -740,6 +745,17 @@ final class VoicePool {
         }
     }
     
+    /// Quiesce per-voice modulation writes for one control-rate tick and pin bases
+    /// Use during preset handover to prevent late writes from the old preset
+    func quiesceModulationForOneTick() {
+        // Set flag for the next modulation update cycle
+        quiesceModulationNextTick = true
+        // Immediately pin modulated destinations to base with zero ramp
+        resetModulationIndexToBase()
+        resetFilterCutoffToBase()
+        resetModulatorMultiplierToBase()
+    }
+    
     /// Updates the base delay time (tempo-synced value before LFO modulation)
     /// Should be called whenever tempo or delay time value changes
     /// - Parameter delayTime: The delay time in seconds (already calculated from tempo and time value)
@@ -809,6 +825,12 @@ final class VoicePool {
         
         // Apply global LFO to global-level destinations (delay time only)
         applyGlobalLFOToGlobalParameters(rawValue: globalLFORawValue)
+        
+        // If quiescing, skip per-voice modulation writes for this tick
+        if quiesceModulationNextTick {
+            quiesceModulationNextTick = false
+            return
+        }
         
         // Update all active voices with global LFO parameters
         // CRITICAL: Only process voices that are actually playing (not available)
@@ -902,3 +924,4 @@ final class VoicePool {
         print("   Modulation timer: \(modulationTimer != nil ? "running" : "stopped")")
     }
 }
+

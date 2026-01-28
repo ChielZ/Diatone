@@ -883,6 +883,21 @@ final class AudioParameterManager: ObservableObject {
             // The modulation loop continues running, but with completely clean state
             voicePool?.silenceAndResetAllVoices()
             
+            // Quiesce modulation for one tick to avoid late writes from old preset
+            voicePool?.quiesceModulationForOneTick()
+            
+            // Pin previously modulated destinations back to base to avoid spillover
+            // Ensures no late writes from old preset land after reset
+            voicePool?.resetModulationIndexToBase()
+            
+            // Temporarily neutralize Global LFO → modulator multiplier during handover
+            // Prevent a last write from the previous preset from landing during this window
+            var neutralLFO = self.master.globalLFO
+            neutralLFO.amountToModulatorMultiplier = 0.0
+            voicePool?.updateGlobalLFO(neutralLFO)
+            // Ensure FM ratio is at base before applying new voice parameters
+            voicePool?.resetModulatorMultiplierToBase()
+            
             // Step 3: CRITICAL - Clear delay and reverb buffers
             // This prevents any lingering audio from the previous preset from playing back
             // through the FX when the new preset loads
@@ -895,6 +910,17 @@ final class AudioParameterManager: ObservableObject {
                 // Step 4: Apply the new preset parameters
                 self.applyVoiceParameters(voiceParams)
                 self.clearFXBuffers()
+                
+                // Quiesce again so the first post-switch control frame starts exactly at base
+                voicePool?.quiesceModulationForOneTick()
+                
+                // FINALIZE: Explicitly re-apply oscillator params as if from UI to pin exact values
+                voicePool?.updateAllVoiceOscillators(self.voiceTemplate.oscillator)
+                voicePool?.resetModulationIndexToBase()
+                
+                // After applying new parameters, pin mod index to base once more
+                // This guarantees the first control frame after the change starts at base
+                voicePool?.resetModulationIndexToBase()
                 
                 // Step 5: Wait for oscillator recreation to complete, then fade back in
                 // The applyVoiceParameters completion handler is called after oscillators are ready
@@ -975,7 +1001,6 @@ final class AudioParameterManager: ObservableObject {
     
     
     
-    
     /// Apply voice parameters from a preset to all voices (without fade)
     /// Use applyVoiceParametersWithFade() for preset switching to avoid noise
     func applyVoiceParameters(_ voiceParams: VoiceParameters) {
@@ -987,20 +1012,32 @@ final class AudioParameterManager: ObservableObject {
         voiceTemplate = voiceParams
         
         // Update base values in all voices immediately
+        voicePool?.updateAllVoiceModulation(voiceParams.modulation)
         voicePool?.updateAllVoiceOscillators(voiceParams.oscillator)
         voicePool?.updateAllVoiceFilters(voiceParams.filter)
         voicePool?.updateAllVoiceFilterStatic(voiceParams.filterStatic)
         voicePool?.updateAllVoiceLoudnessEnvelopes(voiceParams.loudnessEnvelope)
-        voicePool?.updateAllVoiceModulation(voiceParams.modulation)
+        
         
         // NOW recreate oscillators - they will read the correct NEW base values
         voicePool?.recreateOscillators(waveform: waveform) {
             print("✅ Preset loading: All voice parameters applied after oscillator recreation")
+            
+            // FINALIZE (non-fade path): Re-apply oscillator params to pin exact values
+            voicePool?.updateAllVoiceOscillators(self.voiceTemplate.oscillator)
+            voicePool?.resetModulationIndexToBase()
         }
+
+        // Safety: ensure mod index is pinned to base immediately after applying params
+        // This prevents any residual modulation from the previous preset
+        voicePool?.resetModulationIndexToBase()
     }
     
     /// Apply master parameters from a preset
     func applyMasterParameters(_ masterParams: MasterParameters) {
+        // Capture prior Global LFO amount to modulator multiplier to detect non-zero → zero transitions
+        let priorAmountToModMult = master.globalLFO.amountToModulatorMultiplier
+
         // Update master parameters
         master = masterParams
         
@@ -1011,6 +1048,11 @@ final class AudioParameterManager: ObservableObject {
         // Apply global LFO FIRST (before output levels)
         // This ensures the correct LFO state is checked when applying preVolume
         voicePool?.updateGlobalLFO(masterParams.globalLFO)
+        
+        // If the new preset disables Global LFO → modulator multiplier, restore base FM ratio now
+        if abs(priorAmountToModMult) > 0.0001 && abs(masterParams.globalLFO.amountToModulatorMultiplier) <= 0.0001 {
+            voicePool?.resetModulatorMultiplierToBase()
+        }
         
         // Apply output levels AFTER global LFO is updated
         // This ensures that if LFO modulation is disabled, the base volume is applied correctly

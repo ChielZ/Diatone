@@ -228,6 +228,9 @@ final class PolyphonicVoice {
         let currentModulatingMult = modulationState.baseModulatorMultiplier  // Use base value
         let currentModIndex = modulationState.baseModulationIndex  // Use base value
         
+        
+         
+        
         // DEBUG: Print what we're about to use
         print("🎵   DEBUG: Creating oscillators with modulatingMult=\(currentModulatingMult), modIndex=\(currentModIndex)")
         print("🎵   DEBUG: Base values in state: mult=\(modulationState.baseModulatorMultiplier), idx=\(modulationState.baseModulationIndex)")
@@ -490,8 +493,8 @@ final class PolyphonicVoice {
             let startModIndex = modulationState.baseModulationIndex
 
             // EXPERIMENTAL: Force the start value before ramping for consistent behavior
-            oscLeft.$modulationIndex.ramp(to: AUValue(startModIndex), duration: 0)
-            oscRight.$modulationIndex.ramp(to: AUValue(startModIndex), duration: 0)
+            //oscLeft.$modulationIndex.ramp(to: AUValue(startModIndex), duration: 0)
+            //oscRight.$modulationIndex.ramp(to: AUValue(startModIndex), duration: 0)
 
             // Now apply the attack ramp from the known start value
             let smoothingDuration = max(Float(modEnvAttack), 0.000)
@@ -538,8 +541,8 @@ final class PolyphonicVoice {
             }
 
             // EXPERIMENTAL: Force the start value before ramping for consistent behavior
-            oscLeft.$baseFrequency.ramp(to: Float(startLeftFreq), duration: 0)
-            oscRight.$baseFrequency.ramp(to: Float(startRightFreq), duration: 0)
+            //oscLeft.$baseFrequency.ramp(to: Float(startLeftFreq), duration: 0)
+            //oscRight.$baseFrequency.ramp(to: Float(startRightFreq), duration: 0)
 
             // Now apply the attack ramp from the known start value
             oscLeft.$baseFrequency.ramp(to: Float(targetLeftFreq), duration: Float(auxEnvAttack))
@@ -719,7 +722,7 @@ final class PolyphonicVoice {
         let clampedFilterStart = max(12.0, min(20000.0, keyTrackedBaseCutoff))
 
         // EXPERIMENTAL: Force the start value before ramping for consistent behavior
-        filter.$cutoffFrequency.ramp(to: AUValue(clampedFilterStart), duration: 0)
+        //filter.$cutoffFrequency.ramp(to: AUValue(clampedFilterStart), duration: 0)
 
         // Now apply the attack ramp from the known start value
         filter.$cutoffFrequency.ramp(to: AUValue(clampedFilterTarget), duration: filterRampDuration)

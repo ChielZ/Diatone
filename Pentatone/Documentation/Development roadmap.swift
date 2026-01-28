@@ -25,8 +25,8 @@ MAIN
  
  
  AUDIO ENGINE POLISHING
- - track/fix issue with inconsistent preset loading (volume/stereo detune)
- - refactor tremolo to global fader panner
+ √ track/fix issue with inconsistent preset loading (volume/stereo detune)
+ √ refactor tremolo to global fader panner
  - Tidy preset structure
  - Tidy stored values (clip to UI resolution)
  - Optimize trigger function

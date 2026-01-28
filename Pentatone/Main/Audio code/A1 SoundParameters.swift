@@ -69,7 +69,7 @@ struct OscillatorParameters: Codable, Equatable {
         modulatingMultiplier: 2.00,
         modulationIndex: 1.0,
         amplitude: 0.5,
-        waveform: .triangle,
+        waveform: .sine,
         detuneMode: .proportional,
         stereoOffsetProportional: 5.0,        // 5 cents (clean default)
         stereoOffsetConstant: 2.0

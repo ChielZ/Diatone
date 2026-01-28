@@ -140,7 +140,7 @@ struct OscillatorView: View {
                     }
                 ),
                 range: paramManager.voiceTemplate.oscillator.detuneMode == .proportional ? 0...20 : 0...4,
-                step: paramManager.voiceTemplate.oscillator.detuneMode == .proportional ? 0.01 : 0.01,
+                step: paramManager.voiceTemplate.oscillator.detuneMode == .proportional ? 0.05 : 0.01,
                 displayFormatter: { value in
                     if paramManager.voiceTemplate.oscillator.detuneMode == .proportional {
                         return String(format: "%.2f ct", value)
