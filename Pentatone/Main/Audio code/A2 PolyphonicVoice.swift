@@ -490,7 +490,7 @@ final class PolyphonicVoice {
             let clampedModIndex = max(0.0, min(10.0, targetModIndex))
 
             // Start value for the ramp (base value, or current value for voice stealing)
-            let startModIndex = modulationState.baseModulationIndex
+            //let startModIndex = modulationState.baseModulationIndex
 
             // EXPERIMENTAL: Force the start value before ramping for consistent behavior
             //oscLeft.$modulationIndex.ramp(to: AUValue(startModIndex), duration: 0)
@@ -521,21 +521,21 @@ final class PolyphonicVoice {
 
             // Calculate start and target left/right frequencies with stereo offset
             // IMPORTANT: Do NOT modify currentFrequency here - it should stay at the base (unmodulated) value
-            let startLeftFreq: Double
-            let startRightFreq: Double
+            //let startLeftFreq: Double
+            //let startRightFreq: Double
             let targetLeftFreq: Double
             let targetRightFreq: Double
 
             switch detuneMode {
             case .proportional:
                 let ratio = pow(2.0, frequencyOffsetCents / 1200.0)
-                startLeftFreq = modulationState.baseFrequency * ratio
-                startRightFreq = modulationState.baseFrequency / ratio
+                //startLeftFreq = modulationState.baseFrequency * ratio
+                //startRightFreq = modulationState.baseFrequency / ratio
                 targetLeftFreq = clampedFrequency * ratio
                 targetRightFreq = clampedFrequency / ratio
             case .constant:
-                startLeftFreq = modulationState.baseFrequency + frequencyOffsetHz
-                startRightFreq = modulationState.baseFrequency - frequencyOffsetHz
+                //startLeftFreq = modulationState.baseFrequency + frequencyOffsetHz
+                //startRightFreq = modulationState.baseFrequency - frequencyOffsetHz
                 targetLeftFreq = clampedFrequency + frequencyOffsetHz
                 targetRightFreq = clampedFrequency - frequencyOffsetHz
             }
