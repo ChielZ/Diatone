@@ -58,10 +58,11 @@ struct ModEnvView: View {
                 range: 0.01...5,  // 1ms to 5000ms (zero accessible via button)
                 buttonStep: 0.01,  // Fixed 1 ms steps for buttons
                 displayFormatter: { value in
+                    let round = (value * 100).rounded() * 10
                     if value == 0.0 {
                         return "0 ms"
                     } else {
-                        return String(format: "%.0f ms", value * 1000)
+                        return String(format: "%.0f ms", round)
                     }
                 }
             )
@@ -94,10 +95,11 @@ struct ModEnvView: View {
                 range: 0.01...1,  // 1ms to 1000ms (zero accessible via button)
                 buttonStep: 0.01,  // Fixed 1 ms steps for buttons
                 displayFormatter: { value in
+                    let round = (value * 100).rounded() * 10
                     if value == 0.0 {
                         return "0 ms"
                     } else {
-                        return String(format: "%.0f ms", value * 1000)
+                        return String(format: "%.0f ms", round)
                     }
                 }
             )
