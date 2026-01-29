@@ -1489,7 +1489,7 @@ struct ModulationRouter {
 struct ControlRateConfig {
     /// Update rate for modulation calculations in Hz
     /// 50 Hz = 20ms updates = lower CPU, still smooth for most modulation
-    static let updateRate: Double = 50.0
+    static let updateRate: Double = 100.0
 
     /// Update interval in seconds
     static let updateInterval: Double = 1.0 / updateRate
@@ -1500,4 +1500,5 @@ struct ControlRateConfig {
     /// Ramp duration for modulation parameter updates
     /// Should match updateInterval for smooth transitions between cycles
     static let modulationRampDuration: Float = Float(updateInterval)
+    static let modulationRampMinDuration: Float = 0
 }

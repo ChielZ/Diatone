@@ -54,8 +54,8 @@ struct AuxEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0.001...5,  // 1ms to 5000ms (zero accessible via button)
-                buttonStep: 0.001,  // Fixed 1 ms steps for buttons
+                range: 0.01...5,  // 1ms to 5000ms (zero accessible via button)
+                buttonStep: 0.01,  // Fixed 1 ms steps for buttons
                 displayFormatter: { value in
                     if value == 0.0 {
                         return "0 ms"
@@ -90,8 +90,8 @@ struct AuxEnvView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0.001...1,  // 1ms to 1000ms (zero accessible via button)
-                buttonStep: 0.001,  // Fixed 1 ms steps for buttons
+                range: 0.01...1,  // 1ms to 1000ms (zero accessible via button)
+                buttonStep: 0.01,  // Fixed 1 ms steps for buttons
                 displayFormatter: { value in
                     if value == 0.0 {
                         return "0 ms"
