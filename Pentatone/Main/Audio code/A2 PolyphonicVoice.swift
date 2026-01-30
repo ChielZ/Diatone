@@ -1197,7 +1197,15 @@ final class PolyphonicVoice {
         aftertouchDelta: Double
     ) {
         let modEnvAttack = voiceModulation.modulatorEnvelope.attack
+        let modEnvDecay = voiceModulation.modulatorEnvelope.decay
+        let modEnvRelease = voiceModulation.modulatorEnvelope.release
         let isInAttackPhase = modulationState.isGateOpen && modulationState.modulatorEnvelopeTime < modEnvAttack
+        
+        // Check if we're in decay or release phase with very short time
+        let isInDecayPhase = modulationState.isGateOpen && 
+                            modulationState.modulatorEnvelopeTime >= modEnvAttack &&
+                            modulationState.modulatorEnvelopeTime < (modEnvAttack + modEnvDecay)
+        let isInReleasePhase = !modulationState.isGateOpen
 
         // Calculate envelope contribution to mod index
         let envelopeModIndex: Double
@@ -1238,12 +1246,20 @@ final class PolyphonicVoice {
         // Clamp and apply
         finalModIndex = max(0.0, min(10.0, finalModIndex))
 
-        // During attack phase, use remaining attack time as ramp duration for smooth handover
+        // Calculate ramp duration based on envelope stage and timing
         let rampDuration: Float
         if isInAttackPhase && modEnvAttack > 0 {
+            // During attack phase, use remaining attack time as ramp duration for smooth handover
             let remainingAttack = modEnvAttack - modulationState.modulatorEnvelopeTime
             rampDuration = Float(max(0.001, remainingAttack))  // Minimum 1ms
+        } else if isInDecayPhase && modEnvDecay < 0.001 && voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0 {
+            // INSTANT DECAY: decay < 1ms AND envelope is modulating this destination
+            rampDuration = 0.0
+        } else if isInReleasePhase && modEnvRelease < 0.001 && voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0 {
+            // INSTANT RELEASE: release < 1ms AND envelope is modulating this destination
+            rampDuration = 0.0
         } else {
+            // Normal modulation updates
             rampDuration = ControlRateConfig.modulationRampDuration
         }
 
@@ -1267,6 +1283,15 @@ final class PolyphonicVoice {
         let hasAftertouchToPitch = voiceModulation.touchAftertouch.amountToOscillatorPitch != 0.0
         
         guard hasAuxEnv || hasVoiceLFO || hasVibratoMetaMod || hasInitialTouchToPitch || hasAftertouchToPitch else { return }
+        
+        // Calculate envelope stage for instant transition detection
+        let auxEnvAttack = voiceModulation.auxiliaryEnvelope.attack
+        let auxEnvDecay = voiceModulation.auxiliaryEnvelope.decay
+        let auxEnvRelease = voiceModulation.auxiliaryEnvelope.release
+        let isInDecayPhase = modulationState.isGateOpen && 
+                            modulationState.auxiliaryEnvelopeTime >= auxEnvAttack &&
+                            modulationState.auxiliaryEnvelopeTime < (auxEnvAttack + auxEnvDecay)
+        let isInReleasePhase = !modulationState.isGateOpen
         
         // Apply initial touch meta-modulation to aux envelope pitch amount
         var effectiveAuxEnvPitchAmount = voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch
@@ -1324,9 +1349,22 @@ final class PolyphonicVoice {
             rightFreq = finalFreq - frequencyOffsetHz
         }
         
+        // Calculate ramp duration based on envelope stage and timing
+        let rampDuration: Float
+        if isInDecayPhase && auxEnvDecay < 0.001 && hasAuxEnv {
+            // INSTANT DECAY: decay < 1ms AND aux envelope is modulating pitch
+            rampDuration = 0.0
+        } else if isInReleasePhase && auxEnvRelease < 0.001 && hasAuxEnv {
+            // INSTANT RELEASE: release < 1ms AND aux envelope is modulating pitch
+            rampDuration = 0.0
+        } else {
+            // Normal modulation updates
+            rampDuration = ControlRateConfig.modulationRampDuration
+        }
+        
         // Apply modulated + detuned frequencies directly to oscillators
-        oscLeft.$baseFrequency.ramp(to: Float(leftFreq), duration: ControlRateConfig.modulationRampDuration)
-        oscRight.$baseFrequency.ramp(to: Float(rightFreq), duration: ControlRateConfig.modulationRampDuration)
+        oscLeft.$baseFrequency.ramp(to: Float(leftFreq), duration: rampDuration)
+        oscRight.$baseFrequency.ramp(to: Float(rightFreq), duration: rampDuration)
     }
     
     /// Applies combined filter frequency modulation from all sources
@@ -1425,13 +1463,31 @@ final class PolyphonicVoice {
             }
         }
         
-        // During attack phase, use remaining attack time as ramp duration for smooth handover
+        // Calculate ramp duration based on envelope stage and timing
         let rampDuration: Float
         if isInAttackPhase && auxEnvAttack > 0 && hasAuxEnv {
+            // During attack phase, use remaining attack time as ramp duration for smooth handover
             let remainingAttack = auxEnvAttack - modulationState.auxiliaryEnvelopeTime
             rampDuration = Float(max(0.001, remainingAttack))  // Minimum 1ms
         } else {
-            rampDuration = ControlRateConfig.modulationRampDuration
+            // Check if we're in decay or release phase with very short time
+            let auxEnvDecay = voiceModulation.auxiliaryEnvelope.decay
+            let auxEnvRelease = voiceModulation.auxiliaryEnvelope.release
+            let isInDecayPhase = modulationState.isGateOpen && 
+                                modulationState.auxiliaryEnvelopeTime >= auxEnvAttack &&
+                                modulationState.auxiliaryEnvelopeTime < (auxEnvAttack + auxEnvDecay)
+            let isInReleasePhase = !modulationState.isGateOpen
+            
+            if isInDecayPhase && auxEnvDecay < 0.001 && hasAuxEnv {
+                // INSTANT DECAY: decay < 1ms AND aux envelope is modulating filter
+                rampDuration = 0.0
+            } else if isInReleasePhase && auxEnvRelease < 0.001 && hasAuxEnv {
+                // INSTANT RELEASE: release < 1ms AND aux envelope is modulating filter
+                rampDuration = 0.0
+            } else {
+                // Normal modulation updates
+                rampDuration = ControlRateConfig.modulationRampDuration
+            }
         }
 
         filter.$cutoffFrequency.ramp(to: AUValue(smoothedCutoff), duration: rampDuration)
@@ -1466,6 +1522,8 @@ final class PolyphonicVoice {
     private func applyLoudnessEnvelope() {
         let time = modulationState.loudnessEnvelopeTime
         let attack = voiceModulation.loudnessEnvelope.attack
+        let decay = voiceModulation.loudnessEnvelope.decay
+        let release = voiceModulation.loudnessEnvelope.release
 
         /*
         // ATTACK PHASE: Stay completely passive and let trigger()'s ramp run undisturbed
@@ -1486,9 +1544,9 @@ final class PolyphonicVoice {
             time: time,
             isGateOpen: modulationState.isGateOpen,
             attack: attack,
-            decay: voiceModulation.loudnessEnvelope.decay,
+            decay: decay,
             sustain: voiceModulation.loudnessEnvelope.sustain,
-            release: voiceModulation.loudnessEnvelope.release,
+            release: release,
             capturedLevel: modulationState.loudnessSustainLevel,
             startLevel: modulationState.loudnessStartLevel
         )
@@ -1501,9 +1559,28 @@ final class PolyphonicVoice {
         }
         */
         
-        // DECAY/SUSTAIN/RELEASE: Apply calculated envelope value with standard ramp
-        fader.$leftGain.ramp(to: AUValue(calculatedEnvelopeValue), duration: ControlRateConfig.modulationRampDuration)
-        fader.$rightGain.ramp(to: AUValue(calculatedEnvelopeValue), duration: ControlRateConfig.modulationRampDuration)
+        // Calculate ramp duration based on envelope stage and timing
+        // Check if we're in decay or release phase with very short time
+        let isInDecayPhase = modulationState.isGateOpen && 
+                            time >= attack &&
+                            time < (attack + decay)
+        let isInReleasePhase = !modulationState.isGateOpen
+        
+        let rampDuration: Float
+        if isInDecayPhase && decay < 0.001 {
+            // INSTANT DECAY: decay < 1ms (loudness envelope is always active)
+            rampDuration = 0.0
+        } else if isInReleasePhase && release < 0.001 {
+            // INSTANT RELEASE: release < 1ms (loudness envelope is always active)
+            rampDuration = 0.0
+        } else {
+            // Normal modulation updates
+            rampDuration = ControlRateConfig.modulationRampDuration
+        }
+        
+        // DECAY/SUSTAIN/RELEASE: Apply calculated envelope value with calculated ramp duration
+        fader.$leftGain.ramp(to: AUValue(calculatedEnvelopeValue), duration: rampDuration)
+        fader.$rightGain.ramp(to: AUValue(calculatedEnvelopeValue), duration: rampDuration)
     }
 }
 
