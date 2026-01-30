@@ -18,9 +18,10 @@ struct PresetView: View {
     @AppStorage("presetView.selectedRow") private var selectedRow: Int = 1 // 1-5
     @AppStorage("presetView.selectedColumn") private var selectedColumn: Int = 1 // 1-5
     
-    // SoundView's @AppStorage properties - update these when loading a preset
-    @AppStorage("soundView.selectedRow") private var soundViewSelectedRow: Int = 1
-    @AppStorage("soundView.selectedColumn") private var soundViewSelectedColumn: Int = 1
+    // Track the actually loaded preset (for color computation)
+    @AppStorage("activePreset.bankType") private var activePresetBankType: String = PentatoneBankType.factory.rawValue
+    @AppStorage("activePreset.row") private var activePresetRow: Int = 1
+    @AppStorage("activePreset.column") private var activePresetColumn: Int = 1
     
     // Computed property for selectedBankType
     private var selectedBankType: PentatoneBankType {
@@ -281,9 +282,9 @@ struct PresetView: View {
     private var bankDisplayColor: Color {
         // Check if we're showing the currently active preset
         let isShowingActivePreset = (
-            soundViewSelectedRow == selectedRow &&
-            soundViewSelectedColumn == selectedColumn &&
-            selectedBankTypeRawValue == PentatoneBankType(rawValue: selectedBankTypeRawValue)?.rawValue
+            activePresetBankType == selectedBankTypeRawValue &&
+            activePresetRow == selectedRow &&
+            activePresetColumn == selectedColumn
         )
         
         if isShowingActivePreset {
@@ -317,9 +318,9 @@ struct PresetView: View {
     private var positionDisplayColor: Color {
         // Check if we're showing the currently active preset
         let isShowingActivePreset = (
-            soundViewSelectedRow == selectedRow &&
-            soundViewSelectedColumn == selectedColumn &&
-            selectedBankTypeRawValue == PentatoneBankType(rawValue: selectedBankTypeRawValue)?.rawValue
+            activePresetBankType == selectedBankTypeRawValue &&
+            activePresetRow == selectedRow &&
+            activePresetColumn == selectedColumn
         )
         
         if isShowingActivePreset {
@@ -411,9 +412,10 @@ struct PresetView: View {
             // Slot has preset - Load it
             presetManager.loadPreset(preset)
             
-            // Sync SoundView's selection to match what we just loaded
-            soundViewSelectedRow = selectedRow
-            soundViewSelectedColumn = selectedColumn
+            // Update active preset tracking - this is now the loaded preset
+            activePresetBankType = selectedBankTypeRawValue
+            activePresetRow = selectedRow
+            activePresetColumn = selectedColumn
             
             showAlert("Loaded preset '\(preset.name)'")
         } else {
@@ -438,6 +440,11 @@ struct PresetView: View {
             
             // Assign to current slot
             try presetManager.assignPresetToSlot(preset: newPreset, bankType: selectedBankType, row: selectedRow, column: selectedColumn)
+            
+            // Update active preset tracking - this saved preset is now active
+            activePresetBankType = selectedBankTypeRawValue
+            activePresetRow = selectedRow
+            activePresetColumn = selectedColumn
             
             showAlert("Saved preset '\(newPresetName)' to \(selectedBankType.displayName) \(selectedRow).\(selectedColumn)")
             newPresetName = ""
@@ -510,6 +517,11 @@ struct PresetView: View {
         do {
             // Update the existing preset with current parameters and new name
             let updatedPreset = try presetManager.updatePreset(preset, newName: newPresetName)
+            
+            // Update active preset tracking - this overwritten preset is now active
+            activePresetBankType = selectedBankTypeRawValue
+            activePresetRow = selectedRow
+            activePresetColumn = selectedColumn
             
             showAlert("Updated preset '\(updatedPreset.name)'")
             newPresetName = ""

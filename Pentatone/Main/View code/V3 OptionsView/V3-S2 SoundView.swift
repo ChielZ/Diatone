@@ -24,6 +24,11 @@ struct SoundView: View {
     @AppStorage("presetView.selectedRow") private var presetViewSelectedRow: Int = 1
     @AppStorage("presetView.selectedColumn") private var presetViewSelectedColumn: Int = 1
     
+    // Track the actually loaded preset (shared with PresetView for color computation)
+    @AppStorage("activePreset.bankType") private var activePresetBankType: String = PentatoneBankType.factory.rawValue
+    @AppStorage("activePreset.row") private var activePresetRow: Int = 1
+    @AppStorage("activePreset.column") private var activePresetColumn: Int = 1
+    
     // Computed property for selectedBankType
     private var selectedBankType: PentatoneBankType {
         PentatoneBankType(rawValue: selectedBankTypeRawValue) ?? .factory
@@ -242,9 +247,10 @@ struct SoundView: View {
     
     /// Synchronize PresetView to show the currently active preset
     private func syncPresetViewToCurrentPreset() {
-        // Update PresetView's selection to match SoundView's current selection
-        presetViewSelectedRow = selectedRow
-        presetViewSelectedColumn = selectedColumn
+        // Update PresetView's selection to match the currently active preset
+        // Use the active preset tracking that's shared between views
+        presetViewSelectedRow = activePresetRow
+        presetViewSelectedColumn = activePresetColumn
         // Note: selectedBankTypeRawValue is already shared between both views
     }
     
@@ -268,6 +274,11 @@ struct SoundView: View {
         // Load preset if it exists at current row/column
         if let preset = presetManager.preset(forBankType: selectedBankType, row: selectedRow, column: selectedColumn) {
             presetManager.loadPreset(preset)
+            
+            // Update active preset tracking - this is now the loaded preset
+            activePresetBankType = selectedBankTypeRawValue
+            activePresetRow = selectedRow
+            activePresetColumn = selectedColumn
         }
         // If slot is empty, just update the display (no sound change)
     }

@@ -826,6 +826,10 @@ final class AudioParameterManager: ObservableObject {
         // Tone and Ambience are relative (-1 to +1), so reset to center (0.0)
         macroState.tonePosition = 0.0
         macroState.ambiencePosition = 0.0
+        
+        // Clear modification flag since we're treating this as a new clean state
+        // This is called when saving a preset, so the saved state is now the baseline
+        clearModificationFlag()
     }
     
     /// Update macro state to match current parameters without resetting positions
