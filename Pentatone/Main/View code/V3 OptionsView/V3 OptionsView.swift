@@ -45,9 +45,9 @@ enum OptionsSubView: CaseIterable {
     
     var displayName: String {
         switch self {
-        case .scale: return "SCALES"
-        case .sound: return "SOUNDS"
-        case .voice: return "SETTINGS"
+        case .scale: return "SCALE"
+        case .sound: return "SOUND"
+        case .voice: return "SETUP"
         }
     }
 }
@@ -159,10 +159,11 @@ struct OptionsView: View {
                             onCycleKey: onCycleKey
                         )
                     case .sound:
-                        SoundView()
+                        SoundView(
+                            onSwitchToEdit: onSwitchToEdit
+                        )
                     case .voice:
                         VoiceView(
-                            onSwitchToEdit: onSwitchToEdit,
                             onSwitchToManual: onSwitchToManual
                         )
                     }

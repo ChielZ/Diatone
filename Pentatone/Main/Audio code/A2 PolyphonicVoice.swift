@@ -1467,6 +1467,7 @@ final class PolyphonicVoice {
         let time = modulationState.loudnessEnvelopeTime
         let attack = voiceModulation.loudnessEnvelope.attack
 
+        /*
         // ATTACK PHASE: Stay completely passive and let trigger()'s ramp run undisturbed
         // Using envelope time (not wall clock) for reliable attack phase detection
         let isInAttackPhase = modulationState.isGateOpen && time < attack
@@ -1476,7 +1477,8 @@ final class PolyphonicVoice {
             print("🔊 ATTACK: time=\(String(format: "%.1f", time * 1000))ms, attack=\(String(format: "%.1f", attack * 1000))ms (passive)")
             return
         }
-
+*/
+        
         // Calculate the current expected envelope value for decay/sustain/release phases
         // NOTE: We cannot use fader.leftGain because AudioKit's gain property always reports
         // either the start or target value of a ramp, never the intermediate interpolated value.
@@ -1491,11 +1493,14 @@ final class PolyphonicVoice {
             startLevel: modulationState.loudnessStartLevel
         )
 
+        
+        /*
         // Log first post-attack update to see transition
         if modulationState.isGateOpen && time < attack + 0.05 {
             print("🔊 POST-ATTACK: time=\(String(format: "%.1f", time * 1000))ms, attack=\(String(format: "%.1f", attack * 1000))ms, envelope=\(String(format: "%.3f", calculatedEnvelopeValue))")
         }
-
+        */
+        
         // DECAY/SUSTAIN/RELEASE: Apply calculated envelope value with standard ramp
         fader.$leftGain.ramp(to: AUValue(calculatedEnvelopeValue), duration: ControlRateConfig.modulationRampDuration)
         fader.$rightGain.ramp(to: AUValue(calculatedEnvelopeValue), duration: ControlRateConfig.modulationRampDuration)

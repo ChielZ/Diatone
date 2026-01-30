@@ -11,6 +11,7 @@ struct SoundView: View {
     // Connect to the global parameter manager
     @ObservedObject private var paramManager = AudioParameterManager.shared
     @ObservedObject private var presetManager = PresetManager.shared
+    var onSwitchToEdit: (() -> Void)? = nil
     
     // Get the currently selected bank from PresetView (persisted)
     @AppStorage("presetView.selectedBankTypeRawValue") private var selectedBankTypeRawValue: String = PentatoneBankType.factory.rawValue
@@ -53,7 +54,7 @@ struct SoundView: View {
                     .fill(Color("BackgroundColour"))
                 GeometryReader { geometry in
                     Text(presetDisplayText)
-                        .foregroundColor(Color("HighlightColour"))
+                        .foregroundColor(Color("KeyColour1"))
                         .adaptiveFont("LobsterTwo", size: 55)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .contentShape(Rectangle())
@@ -61,6 +62,9 @@ struct SoundView: View {
                         .padding(0)
                         .lineLimit(1)
                         //.minimumScaleFactor(0.5)
+                        .onTapGesture {
+                            onSwitchToEdit?()
+                        }
                 }
                 
             }

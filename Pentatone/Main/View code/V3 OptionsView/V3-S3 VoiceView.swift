@@ -17,6 +17,7 @@ struct VoiceView: View {
     @State private var tempoDragStart: Double = 0
     @State private var octaveDragStart: Int = 0
     @State private var tuneDragStart: Double = 0
+    @State private var BendDragStart: Double = 0
     @State private var dragStartValue: CGFloat = 0
     
     // Computed property to force view updates
@@ -293,7 +294,95 @@ struct VoiceView: View {
             }
             
             
+            ZStack { // Row 8
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("BackgroundColour"))
+                HStack {
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(Color("SupportColour"))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay(
+                            Text("<")
+                                .foregroundColor(Color("BackgroundColour"))
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        )
+                        .onTapGesture {
+                            let current = paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
+                            if current > 0 {
+                                paramManager.updateAftertouchAmountToPitch(current - 1)
+                                applyModulationToAllVoices()
+                            }
+                        }
+                    Spacer()
+                    Text("BEND \(50 * Int(paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch))")
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        .minimumScaleFactor(0.5)
+                        .contentShape(Rectangle())
+                        .gesture(
+                            DragGesture(minimumDistance: 0)
+                                .onChanged { value in
+                                    if dragStartValue == 0 {
+                                        dragStartValue = value.startLocation.x
+                                        BendDragStart = paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
+                                    }
+                                    
+                                    let delta = value.location.x - dragStartValue
+                                    let steps = Int(delta / 10) // 30 points per step (larger for fewer octaves)
+                                    let newValue = octaveDragStart + steps
+                                    let clampedValue = max(0, min(15, newValue))
+                                    
+                                    if clampedValue != Int(paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch) {
+                                        paramManager.updateAftertouchAmountToPitch(Double(clampedValue))
+                                        applyModulationToAllVoices()
+                                    }
+                                }
+                                .onEnded { _ in
+                                    dragStartValue = 0
+                                }
+                        )
+                    Spacer()
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(Color("SupportColour"))
+                        .aspectRatio(1.0, contentMode: .fit)
+                        .overlay(
+                            Text(">")
+                                .foregroundColor(Color("BackgroundColour"))
+                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        )
+                        .onTapGesture {
+                            let current = paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
+                            if current < 15 {
+                                paramManager.updateAftertouchAmountToPitch(current + 1)
+                                applyModulationToAllVoices()
+                            }
+                        }
+                }
+            }
+            /*
             
+            // Row 6 - Aftertouch to Oscillator Pitch (replaces Initial to Pitch Env temporarily)
+            SliderRow(
+                label: "XMOVE TO PITCH",
+                value: Binding(
+                    get: { paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch },
+                    set: { newValue in
+                        paramManager.updateAftertouchAmountToPitch(newValue)
+                        applyModulationToAllVoices()
+                    }
+                ),
+                range: 0...24,
+                step: 1.0,
+                displayFormatter: { value in
+                    let cents = Int(value * 50)  // Half the semitones, convert to cents (1 semitone = 100 cents)
+                    return "\(cents) ct"
+                }
+            )
+            */
+            
+            
+            
+            /*
             ZStack { // Row 8
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
@@ -311,6 +400,8 @@ struct VoiceView: View {
                         }
                 }
             }
+            */
+            
             
             ZStack { // Row 9
                 RoundedRectangle(cornerRadius: radius)
@@ -331,6 +422,15 @@ struct VoiceView: View {
             }
             
             
+        }
+    }
+    /// Applies current modulation parameters to all active voices
+    private func applyModulationToAllVoices() {
+        let modulationParams = paramManager.voiceTemplate.modulation
+        
+        // Apply to all voices in the pool
+        for voice in voicePool.voices {
+            voice.updateModulationParameters(modulationParams)
         }
     }
 }

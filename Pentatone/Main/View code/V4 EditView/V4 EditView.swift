@@ -124,10 +124,10 @@ struct EditView: View {
                             .contentShape(Rectangle())
                             .offset(y: -(geometry.size.height/10))
                             .padding(0)
-                            //.onTapGesture {
-                            //    onSwitchToEdit?()
+                            .onTapGesture {
+                                onSwitchToOptions?()
                             }
-                    
+                    }
                 }
 
 

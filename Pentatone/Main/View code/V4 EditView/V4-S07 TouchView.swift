@@ -114,7 +114,7 @@ struct TouchView: View {
             
 
             
-            // Row 6 - Aftertouch to Oscillator Pitch (replaces Initial to Pitch Env temporarily)
+            // Row 6 - Aftertouch to Oscillator Pitch (replaces Initial to Pitch Env)
             SliderRow(
                 label: "XMOVE TO PITCH",
                 value: Binding(
@@ -124,7 +124,7 @@ struct TouchView: View {
                         applyModulationToAllVoices()
                     }
                 ),
-                range: 0...24,
+                range: 0...15,
                 step: 1.0,
                 displayFormatter: { value in
                     let cents = Int(value * 50)  // Half the semitones, convert to cents (1 semitone = 100 cents)
