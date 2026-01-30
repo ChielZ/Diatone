@@ -284,10 +284,10 @@ struct ModulatorEnvelopeParameters: Codable, Equatable {
     var isEnabled: Bool
     
     static let `default` = ModulatorEnvelopeParameters(
-        attack: 0.01,
-        decay: 0.2,
-        sustain: 0.3,
-        release: 0.1,
+        attack: 0.0,
+        decay: 0.5,
+        sustain: 0.0,
+        release: 0.25,
         amountToModulationIndex: 0.0,          // No modulation by default
         isEnabled: true
     )
@@ -315,10 +315,10 @@ struct AuxiliaryEnvelopeParameters: Codable, Equatable {
     var isEnabled: Bool
     
     static let `default` = AuxiliaryEnvelopeParameters(
-        attack: 0.1,
-        decay: 0.2,
-        sustain: 0.5,
-        release: 0.3,
+        attack: 0.0,
+        decay: 0.5,
+        sustain: 0.0,
+        release: 0.25,
         amountToOscillatorPitch: 0.0,          // No pitch sweep by default
         amountToFilterFrequency: 0.0,          // No filter sweep by default
         amountToVibrato: 0.0,                  // No vibrato modulation by default
@@ -349,7 +349,7 @@ struct LoudnessEnvelopeParameters: Codable, Equatable {
         attack: 0.001,
         decay: 0.0,
         sustain: 1.0,
-        release: 0.0,
+        release: 0.01,
         isEnabled: true
     )
 }
