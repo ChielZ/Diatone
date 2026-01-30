@@ -18,6 +18,10 @@ struct PresetView: View {
     @AppStorage("presetView.selectedRow") private var selectedRow: Int = 1 // 1-5
     @AppStorage("presetView.selectedColumn") private var selectedColumn: Int = 1 // 1-5
     
+    // SoundView's @AppStorage properties - update these when loading/saving a preset
+    @AppStorage("soundView.selectedRow") private var soundViewSelectedRow: Int = 1
+    @AppStorage("soundView.selectedColumn") private var soundViewSelectedColumn: Int = 1
+    
     // Track the actually loaded preset (for color computation)
     @AppStorage("activePreset.bankType") private var activePresetBankType: String = PentatoneBankType.factory.rawValue
     @AppStorage("activePreset.row") private var activePresetRow: Int = 1
@@ -417,6 +421,10 @@ struct PresetView: View {
             activePresetRow = selectedRow
             activePresetColumn = selectedColumn
             
+            // Sync SoundView's selection to match what we just loaded
+            soundViewSelectedRow = selectedRow
+            soundViewSelectedColumn = selectedColumn
+            
             showAlert("Loaded preset '\(preset.name)'")
         } else {
             // Slot is empty - Save current parameters
@@ -445,6 +453,10 @@ struct PresetView: View {
             activePresetBankType = selectedBankTypeRawValue
             activePresetRow = selectedRow
             activePresetColumn = selectedColumn
+            
+            // Sync SoundView's selection to match what we just saved
+            soundViewSelectedRow = selectedRow
+            soundViewSelectedColumn = selectedColumn
             
             showAlert("Saved preset '\(newPresetName)' to \(selectedBankType.displayName) \(selectedRow).\(selectedColumn)")
             newPresetName = ""
@@ -523,6 +535,10 @@ struct PresetView: View {
             activePresetRow = selectedRow
             activePresetColumn = selectedColumn
             
+            // Sync SoundView's selection to match what we just overwrote
+            soundViewSelectedRow = selectedRow
+            soundViewSelectedColumn = selectedColumn
+            
             showAlert("Updated preset '\(updatedPreset.name)'")
             newPresetName = ""
             showingOverwriteDialog = false
@@ -594,9 +610,16 @@ struct PresetView: View {
             .navigationTitle("Update Preset")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
-                // Ensure the text field is recognized as non-empty on first appearance
-                // This fixes the issue where "Update" button is greyed out initially
-                if let preset = currentSlotPreset {
+                // Pre-fill with the name of the currently active preset
+                // (the one being edited), not the preset in the slot being overwritten
+                if let activePreset = presetManager.preset(
+                    forBankType: PentatoneBankType(rawValue: activePresetBankType) ?? .factory,
+                    row: activePresetRow,
+                    column: activePresetColumn
+                ) {
+                    newPresetName = activePreset.name
+                } else if let preset = currentSlotPreset {
+                    // Fallback: if no active preset found, use the slot's preset name
                     newPresetName = preset.name
                 }
             }
