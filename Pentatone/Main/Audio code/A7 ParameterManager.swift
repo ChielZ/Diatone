@@ -51,6 +51,22 @@ final class AudioParameterManager: ObservableObject {
     /// Current macro control state
     @Published var macroState: MacroControlState = .default
     
+    // MARK: - Preset Change Tracking
+    
+    /// Indicates whether parameters have been modified since the last preset load
+    /// This excludes modulation/envelope changes, only tracks direct UI adjustments
+    @Published var parametersModifiedSinceLoad: Bool = false
+    
+    /// Marks parameters as modified (called by parameter update methods)
+    private func markAsModified() {
+        parametersModifiedSinceLoad = true
+    }
+    
+    /// Resets the modification flag (called when loading a preset)
+    private func clearModificationFlag() {
+        parametersModifiedSinceLoad = false
+    }
+    
     // MARK: - Initialization
     
     private init() {
@@ -62,6 +78,7 @@ final class AudioParameterManager: ObservableObject {
     func updateDelay(_ parameters: DelayParameters) {
         master.delay = parameters
         applyDelayParameters()
+        markAsModified()
     }
     /* deprecated, now uses separate drywetmixer
     func updateDelayMix(_ mix: Double) {
@@ -76,6 +93,7 @@ final class AudioParameterManager: ObservableObject {
         fxDelay?.time = AUValue(timeInSeconds)
         // Update base delay time in voice pool for LFO modulation
         voicePool?.updateBaseDelayTime(timeInSeconds)
+        markAsModified()
     }
     
     func updateDelayFeedback(_ feedback: Double) {
@@ -83,11 +101,13 @@ final class AudioParameterManager: ObservableObject {
         // Update macro base value so ambience slider operates around the new value
         macroState.baseDelayFeedback = feedback
         fxDelay?.feedback = AUValue(feedback)
+        markAsModified()
     }
     
     func updateDelayToneCutoff(_ cutoff: Double) {
         master.delay.toneCutoff = cutoff
         delayLowpass?.cutoffFrequency = AUValue(cutoff)
+        markAsModified()
     }
     
     func updateDelayMix(_ mix: Double) {
@@ -95,11 +115,13 @@ final class AudioParameterManager: ObservableObject {
         // Update macro base value so ambience slider operates around the new value
         macroState.baseDelayMix = mix
         delayDryWetMixer?.balance = AUValue(mix)
+        markAsModified()
     }
     
     func updateReverb(_ parameters: ReverbParameters) {
         master.reverb = parameters
         applyReverbParameters()
+        markAsModified()
     }
     
     func updateReverbMix(_ balance: Double) {
@@ -107,6 +129,7 @@ final class AudioParameterManager: ObservableObject {
         // Update macro base value so ambience slider operates around the new value
         macroState.baseReverbMix = balance
         fxReverb?.balance = AUValue(balance)
+        markAsModified()
     }
     
     func updateReverbFeedback(_ feedback: Double) {
@@ -114,16 +137,19 @@ final class AudioParameterManager: ObservableObject {
         // Update macro base value so ambience slider operates around the new value
         macroState.baseReverbFeedback = feedback
         fxReverb?.feedback = AUValue(feedback)
+        markAsModified()
     }
     
     func updateReverbCutoff(_ cutoff: Double) {
         master.reverb.cutoffFrequency = cutoff
         fxReverb?.cutoffFrequency = AUValue(cutoff)
+        markAsModified()
     }
     
     func updateOutputVolume(_ volume: Double) {
         master.output.volume = volume
         outputMixer?.volume = AUValue(volume)
+        markAsModified()
     }
     
     func updatePreVolume(_ preVolume: Double) {
@@ -134,6 +160,7 @@ final class AudioParameterManager: ObservableObject {
         // Global LFO now modulates postMixerFader instead
         // Voice mixer stays at unity gain (1.0)
         // Post-mixer fader is not affected by preVolume - it has its own base gain
+        markAsModified()
     }
     
     func updateTempo(_ tempo: Double) {
@@ -180,36 +207,43 @@ final class AudioParameterManager: ObservableObject {
     
     func updateGlobalPitch(_ parameters: GlobalPitchParameters) {
         master.globalPitch = parameters
+        markAsModified()
     }
     
     func updateTranspose(_ transpose: Double) {
         master.globalPitch.transpose = transpose
+        markAsModified()
     }
     
     func updateTransposeSemitones(_ semitones: Int) {
         var pitch = master.globalPitch
         pitch.setTransposeSemitones(semitones)
         master.globalPitch = pitch
+        markAsModified()
     }
     
     func updateOctave(_ octave: Double) {
         master.globalPitch.octave = octave
+        markAsModified()
     }
     
     func updateOctaveOffset(_ offset: Int) {
         var pitch = master.globalPitch
         pitch.setOctaveOffset(offset)
         master.globalPitch = pitch
+        markAsModified()
     }
     
     func updateFineTune(_ fineTune: Double) {
         master.globalPitch.fineTune = fineTune
+        markAsModified()
     }
     
     func updateFineTuneCents(_ cents: Double) {
          var pitch = master.globalPitch
         pitch.setFineTuneCents(cents)
         master.globalPitch = pitch
+        markAsModified()
      }
     
     // MARK: - Voice Template Updates
@@ -218,23 +252,28 @@ final class AudioParameterManager: ObservableObject {
     /// Note: Does not affect currently playing voices - only new voice allocations
     func updateVoiceTemplate(_ parameters: VoiceParameters) {
         voiceTemplate = parameters
+        markAsModified()
     }
     
     func updateTemplateFilter(_ parameters: FilterParameters) {
         voiceTemplate.filter = parameters
+        markAsModified()
     }
     
     func updateTemplateFilterStatic(_ parameters: FilterStaticParameters) {
         voiceTemplate.filterStatic = parameters
+        markAsModified()
     }
     
     func updateTemplateOscillator(_ parameters: OscillatorParameters) {
         voiceTemplate.oscillator = parameters
+        markAsModified()
     }
     
     func updateTemplateEnvelope(_ parameters: EnvelopeParameters) {
         // Convert old parameters to new loudness envelope
         voiceTemplate.loudnessEnvelope = parameters.toLoudnessEnvelope()
+        markAsModified()
     }
     
     // MARK: - Loudness Envelope Parameter Updates (NEW)
@@ -242,21 +281,25 @@ final class AudioParameterManager: ObservableObject {
     /// Update loudness envelope attack duration
     func updateEnvelopeAttack(_ value: Double) {
         voiceTemplate.loudnessEnvelope.attack = value
+        markAsModified()
     }
     
     /// Update loudness envelope decay duration
     func updateEnvelopeDecay(_ value: Double) {
         voiceTemplate.loudnessEnvelope.decay = value
+        markAsModified()
     }
     
     /// Update loudness envelope sustain level
     func updateEnvelopeSustain(_ value: Double) {
         voiceTemplate.loudnessEnvelope.sustain = value
+        markAsModified()
     }
     
     /// Update loudness envelope release duration
     func updateEnvelopeRelease(_ value: Double) {
         voiceTemplate.loudnessEnvelope.release = value
+        markAsModified()
     }
     
     // MARK: - Individual Oscillator Parameter Updates
@@ -264,16 +307,19 @@ final class AudioParameterManager: ObservableObject {
     /// Update oscillator waveform
     func updateOscillatorWaveform(_ waveform: OscillatorWaveform) {
         voiceTemplate.oscillator.waveform = waveform
+        markAsModified()
     }
     
     /// Update carrier multiplier
     func updateCarrierMultiplier(_ value: Double) {
         voiceTemplate.oscillator.carrierMultiplier = value
+        markAsModified()
     }
     
     /// Update modulating multiplier
     func updateModulatingMultiplier(_ value: Double) {
         voiceTemplate.oscillator.modulatingMultiplier = value
+        markAsModified()
     }
     
     /// Update modulation index (base level)
@@ -282,21 +328,25 @@ final class AudioParameterManager: ObservableObject {
         voiceTemplate.oscillator.modulationIndex = value
         // Update macro base value so tone slider operates around the new value
         macroState.baseModulationIndex = value
+        markAsModified()
     }
     
     /// Update detune mode
     func updateDetuneMode(_ mode: DetuneMode) {
         voiceTemplate.oscillator.detuneMode = mode
+        markAsModified()
     }
     
     /// Update stereo offset (proportional)
     func updateStereoOffsetProportional(_ value: Double) {
         voiceTemplate.oscillator.stereoOffsetProportional = value
+        markAsModified()
     }
     
     /// Update stereo offset (constant)
     func updateStereoOffsetConstant(_ value: Double) {
         voiceTemplate.oscillator.stereoOffsetConstant = value
+        markAsModified()
     }
     
     // MARK: - Individual Filter Parameter Updates
@@ -309,12 +359,14 @@ final class AudioParameterManager: ObservableObject {
         macroState.baseFilterCutoff = value
         // VoicePool updates all voices immediately to ensure consistent state
         voicePool?.updateAllVoiceFilters(voiceTemplate.filter)
+        markAsModified()
     }
     
     /// Update filter resonance (NON-MODULATABLE, NOTE-ON parameter)
     func updateFilterResonance(_ value: Double) {
         voiceTemplate.filterStatic.resonance = value
         voicePool?.updateAllVoiceFilterStatic(voiceTemplate.filterStatic)
+        markAsModified()
     }
     
     /// Update filter saturation (NON-MODULATABLE, NOTE-ON parameter)
@@ -324,6 +376,7 @@ final class AudioParameterManager: ObservableObject {
         // Update macro base value so tone slider operates around the new value
         macroState.baseFilterSaturation = value
         voicePool?.updateAllVoiceFilterStatic(voiceTemplate.filterStatic)
+        markAsModified()
     }
     
     // MARK: - Individual Modulation Parameter Updates
@@ -331,104 +384,124 @@ final class AudioParameterManager: ObservableObject {
     /// Update modulator envelope attack
     func updateModulatorEnvelopeAttack(_ value: Double) {
         voiceTemplate.modulation.modulatorEnvelope.attack = value
+        markAsModified()
     }
     
     /// Update modulator envelope decay
     func updateModulatorEnvelopeDecay(_ value: Double) {
         voiceTemplate.modulation.modulatorEnvelope.decay = value
+        markAsModified()
     }
     
     /// Update modulator envelope sustain
     func updateModulatorEnvelopeSustain(_ value: Double) {
         voiceTemplate.modulation.modulatorEnvelope.sustain = value
+        markAsModified()
     }
     
     /// Update modulator envelope release
     func updateModulatorEnvelopeRelease(_ value: Double) {
         voiceTemplate.modulation.modulatorEnvelope.release = value
+        markAsModified()
     }
     
     /// Update modulator envelope amount to modulation index
     func updateModulatorEnvelopeAmountToModulationIndex(_ value: Double) {
         voiceTemplate.modulation.modulatorEnvelope.amountToModulationIndex = value
+        markAsModified()
     }
     
     
     /// Update key tracking amount to filter frequency
     func updateKeyTrackingAmountToFilterFrequency(_ value: Double) {
         voiceTemplate.modulation.keyTracking.amountToFilterFrequency = value
+        markAsModified()
     }
     
     /// Update key tracking amount to voice LFO frequency
     func updateKeyTrackingAmountToVoiceLFOFrequency(_ value: Double) {
         voiceTemplate.modulation.keyTracking.amountToVoiceLFOFrequency = value
+        markAsModified()
     }
   
     
     /// Update key tracking enabled state
     func updateKeyTrackingEnabled(_ enabled: Bool) {
         voiceTemplate.modulation.keyTracking.isEnabled = enabled
+        markAsModified()
     }
     
     /// Update auxiliary envelope attack
     func updateAuxiliaryEnvelopeAttack(_ value: Double) {
         voiceTemplate.modulation.auxiliaryEnvelope.attack = value
+        markAsModified()
     }
     
     /// Update auxiliary envelope decay
     func updateAuxiliaryEnvelopeDecay(_ value: Double) {
         voiceTemplate.modulation.auxiliaryEnvelope.decay = value
+        markAsModified()
     }
     
     /// Update auxiliary envelope sustain
     func updateAuxiliaryEnvelopeSustain(_ value: Double) {
         voiceTemplate.modulation.auxiliaryEnvelope.sustain = value
+        markAsModified()
     }
     
     /// Update auxiliary envelope release
     func updateAuxiliaryEnvelopeRelease(_ value: Double) {
         voiceTemplate.modulation.auxiliaryEnvelope.release = value
+        markAsModified()
     }
     
     /// Update auxiliary envelope amount to oscillator pitch
     func updateAuxiliaryEnvelopeAmountToPitch(_ value: Double) {
         voiceTemplate.modulation.auxiliaryEnvelope.amountToOscillatorPitch = value
+        markAsModified()
     }
     
     /// Update auxiliary envelope amount to filter frequency
     func updateAuxiliaryEnvelopeAmountToFilter(_ value: Double) {
         voiceTemplate.modulation.auxiliaryEnvelope.amountToFilterFrequency = value
+        markAsModified()
     }
     
     /// Update auxiliary envelope amount to vibrato (voice LFO pitch amount)
     func updateAuxiliaryEnvelopeAmountToVibrato(_ value: Double) {
         voiceTemplate.modulation.auxiliaryEnvelope.amountToVibrato = value
+        markAsModified()
     }
     
     
     /// Update voice LFO waveform
     func updateVoiceLFOWaveform(_ waveform: LFOWaveform) {
         voiceTemplate.modulation.voiceLFO.waveform = waveform
+        markAsModified()
     }
     
     /// Update voice LFO reset mode
     func updateVoiceLFOResetMode(_ mode: LFOResetMode) {
         voiceTemplate.modulation.voiceLFO.resetMode = mode
+        markAsModified()
     }
     
     /// Update voice LFO frequency (always in Hz, no tempo sync)
     func updateVoiceLFOFrequency(_ value: Double) {
         voiceTemplate.modulation.voiceLFO.frequency = value
+        markAsModified()
     }
     
     /// Update voice LFO delay time (ramp time)
     func updateVoiceLFODelayTime(_ value: Double) {
         voiceTemplate.modulation.voiceLFO.delayTime = value
+        markAsModified()
     }
     
     /// Update voice LFO amount to oscillator pitch
     func updateVoiceLFOAmountToPitch(_ value: Double) {
         voiceTemplate.modulation.voiceLFO.amountToOscillatorPitch = value
+        markAsModified()
     }
     
     /// Update voice LFO amount to filter frequency
@@ -439,6 +512,7 @@ final class AudioParameterManager: ObservableObject {
         if !wasZero && abs(value) <= 0.0001 {
             voicePool?.resetFilterCutoffToBase()
         }
+        markAsModified()
     }
     
     /// Update voice LFO amount to modulator level
@@ -449,11 +523,13 @@ final class AudioParameterManager: ObservableObject {
         if !wasZero && abs(value) <= 0.0001 {
             voicePool?.resetModulationIndexToBase()
         }
+        markAsModified()
     }
      
     /// Update voice LFO enabled state
     func updateVoiceLFOEnabled(_ enabled: Bool) {
         voiceTemplate.modulation.voiceLFO.isEnabled = enabled
+        markAsModified()
     }
     
     // MARK: - Global LFO Parameter Updates
@@ -462,6 +538,7 @@ final class AudioParameterManager: ObservableObject {
     func updateGlobalLFOWaveform(_ waveform: LFOWaveform) {
         master.globalLFO.waveform = waveform
         voicePool?.updateGlobalLFO(master.globalLFO)
+        markAsModified()
     }
     
     /// Update global LFO reset mode
@@ -475,12 +552,14 @@ final class AudioParameterManager: ObservableObject {
             voicePool?.updateGlobalLFOFrequency(lfoFrequency)
         }
         voicePool?.updateGlobalLFO(master.globalLFO)
+        markAsModified()
     }
     
     /// Update global LFO frequency mode
     func updateGlobalLFOFrequencyMode(_ mode: LFOFrequencyMode) {
         master.globalLFO.frequencyMode = mode
         voicePool?.updateGlobalLFO(master.globalLFO)
+        markAsModified()
     }
     
     /// Update global LFO frequency (Hz value for free mode)
@@ -491,6 +570,7 @@ final class AudioParameterManager: ObservableObject {
             voicePool?.updateGlobalLFOFrequency(value)
         }
         voicePool?.updateGlobalLFO(master.globalLFO)
+        markAsModified()
     }
     
     /// Update global LFO sync value (for sync mode)
@@ -501,6 +581,7 @@ final class AudioParameterManager: ObservableObject {
         master.globalLFO.frequency = lfoFrequency  // Update the master copy too!
         voicePool?.updateGlobalLFOFrequency(lfoFrequency)
         voicePool?.updateGlobalLFO(master.globalLFO)
+        markAsModified()
     }
     
     /// Update global LFO amount to post-mixer fader (stereo panning tremolo)
@@ -513,6 +594,7 @@ final class AudioParameterManager: ObservableObject {
         if abs(value) <= 0.0001 && !wasZero {
             voicePool?.resetFaderGainsToBase()
         }
+        markAsModified()
     }
     
     /// Update global LFO amount to modulator multiplier
@@ -525,12 +607,14 @@ final class AudioParameterManager: ObservableObject {
         if !wasZero && abs(value) <= 0.0001 {
             voicePool?.resetModulatorMultiplierToBase()
         }
+        markAsModified()
     }
     
     /// Update global LFO amount to filter frequency
     func updateGlobalLFOAmountToFilter(_ value: Double) {
         master.globalLFO.amountToFilterFrequency = value
         voicePool?.updateGlobalLFO(master.globalLFO)
+        markAsModified()
     }
     
     /// Update global LFO amount to delay time
@@ -543,6 +627,7 @@ final class AudioParameterManager: ObservableObject {
         if !wasZero && abs(value) <= 0.0001 {
             voicePool?.resetDelayTimeToBase()
         }
+        markAsModified()
     }
     /*
     /// Update global LFO destination (deprecated - destinations are now fixed)
@@ -562,6 +647,7 @@ final class AudioParameterManager: ObservableObject {
     /// Update global LFO enabled state
     func updateGlobalLFOEnabled(_ enabled: Bool) {
         master.globalLFO.isEnabled = enabled
+        markAsModified()
     }
     
     // MARK: - Touch Response Parameter Updates
@@ -569,41 +655,49 @@ final class AudioParameterManager: ObservableObject {
     /// Update initial touch amount to oscillator amplitude
     func updateInitialTouchAmountToAmplitude(_ value: Double) {
         voiceTemplate.modulation.touchInitial.amountToOscillatorAmplitude = value
+        markAsModified()
     }
     
     /// Update initial touch amount to mod envelope
     func updateInitialTouchAmountToModEnvelope(_ value: Double) {
         voiceTemplate.modulation.touchInitial.amountToModEnvelope = value
+        markAsModified()
     }
     
     /// Update initial touch amount to aux envelope pitch
     func updateInitialTouchAmountToAuxEnvPitch(_ value: Double) {
         voiceTemplate.modulation.touchInitial.amountToAuxEnvPitch = value
+        markAsModified()
     }
     
     /// Update initial touch amount to aux envelope cutoff
     func updateInitialTouchAmountToAuxEnvCutoff(_ value: Double) {
         voiceTemplate.modulation.touchInitial.amountToAuxEnvCutoff = value
+        markAsModified()
     }
     
     /// Update aftertouch amount to oscillator pitch
     func updateAftertouchAmountToPitch(_ value: Double) {
         voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch = value
+        markAsModified()
     }
     
     /// Update aftertouch amount to filter frequency
     func updateAftertouchAmountToFilter(_ value: Double) {
         voiceTemplate.modulation.touchAftertouch.amountToFilterFrequency = value
+        markAsModified()
     }
     
     /// Update aftertouch amount to modulator level
     func updateAftertouchAmountToModulatorLevel(_ value: Double) {
         voiceTemplate.modulation.touchAftertouch.amountToModulatorLevel = value
+        markAsModified()
     }
     
     /// Update aftertouch amount to vibrato
     func updateAftertouchAmountToVibrato(_ value: Double) {
         voiceTemplate.modulation.touchAftertouch.amountToVibrato = value
+        markAsModified()
     }
 
     // MARK: - Macro Control Updates
@@ -611,47 +705,56 @@ final class AudioParameterManager: ObservableObject {
     /// Update macro control parameter ranges
     func updateMacroControlParameters(_ parameters: MacroControlParameters) {
         master.macroControl = parameters
+        markAsModified()
     }
     
     /// Update tone to modulation index range
     func updateToneToModulationIndexRange(_ value: Double) {
         master.macroControl.toneToModulationIndexRange = value
+        markAsModified()
     }
     
     /// Update tone to filter cutoff octaves
     func updateToneToFilterCutoffOctaves(_ value: Double) {
         master.macroControl.toneToFilterCutoffOctaves = value
+        markAsModified()
     }
     
     /// Update tone to filter saturation range
     func updateToneToFilterSaturationRange(_ value: Double) {
         master.macroControl.toneToFilterSaturationRange = value
+        markAsModified()
     }
     
     /// Update ambience to delay feedback range
     func updateAmbienceToDelayFeedbackRange(_ value: Double) {
         master.macroControl.ambienceToDelayFeedbackRange = value
+        markAsModified()
     }
     
     /// Update ambience to delay mix range
     func updateAmbienceToDelayMixRange(_ value: Double) {
         master.macroControl.ambienceToDelayMixRange = value
+        markAsModified()
     }
     
     /// Update ambience to reverb feedback range
     func updateAmbienceToReverbFeedbackRange(_ value: Double) {
         master.macroControl.ambienceToReverbFeedbackRange = value
+        markAsModified()
     }
     
     /// Update ambience to reverb mix range
     func updateAmbienceToReverbMixRange(_ value: Double) {
         master.macroControl.ambienceToReverbMixRange = value
+        markAsModified()
     }
     
     // MARK: - Macro Control Position Updates
     
     /// Update volume macro position and apply to parameters
     /// Position is absolute (0.0 to 1.0)
+    /// NOTE: Macro position updates do NOT mark as modified - macros are performance controls
     func updateVolumeMacro(_ position: Double) {
         // Volume is straightforward - directly maps to preVolume
         let clampedPosition = min(max(position, 0.0), 1.0)
@@ -661,27 +764,38 @@ final class AudioParameterManager: ObservableObject {
         voicePool.voiceMixer.volume = Float(clampedPosition)
         // Note: preVolume is no longer used for global LFO modulation
         // Global LFO now modulates postMixerFader instead
+        
+        // Mark as modified because macro changes affect the sound
+        markAsModified()
     }
     
     
     /// Update tone macro position and apply to parameters
     /// Position is relative (-1.0 to +1.0, where 0 is neutral)
+    /// NOTE: Macro position updates DO mark as modified - they change the underlying parameters
     func updateToneMacro(_ position: Double) {
         let clampedPosition = min(max(position, -1.0), 1.0)
         macroState.tonePosition = clampedPosition
         
         // Apply tone adjustments
         applyToneMacro()
+        
+        // Mark as modified because macro changes affect the sound
+        markAsModified()
     }
     
     /// Update ambience macro position and apply to parameters
     /// Position is relative (-1.0 to +1.0, where 0 is neutral)
+    /// NOTE: Macro position updates DO mark as modified - they change the underlying parameters
     func updateAmbienceMacro(_ position: Double) {
         let clampedPosition = min(max(position, -1.0), 1.0)
         macroState.ambiencePosition = clampedPosition
         
         // Apply ambience adjustments
         applyAmbienceMacro()
+        
+        // Mark as modified because macro changes affect the sound
+        markAsModified()
     }
     
     /// Capture current parameter values as base values for macro controls
@@ -1099,6 +1213,9 @@ final class AudioParameterManager: ObservableObject {
             
             // Update macro state
             self.macroState = preset.macroState
+            
+            // Clear modification flag - preset is now loaded and unmodified
+            self.clearModificationFlag()
             
             print("✅ Preset loaded successfully: \(preset.name)")
             completion?()

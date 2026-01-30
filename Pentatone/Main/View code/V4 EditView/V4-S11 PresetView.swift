@@ -66,7 +66,7 @@ struct PresetView: View {
                     
                     // Bank Display
                     Text(bankDisplayText)
-                        .foregroundColor(Color("HighlightColour"))
+                        .foregroundColor(bankDisplayColor)
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                     
                     Spacer()
@@ -110,7 +110,7 @@ struct PresetView: View {
                     
                     // Position Display (shows preset name if loaded)
                     Text(positionDisplayText)
-                        .foregroundColor(Color("HighlightColour"))
+                        .foregroundColor(positionDisplayColor)
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
@@ -277,6 +277,32 @@ struct PresetView: View {
         return selectedBankType.displayName.uppercased()
     }
     
+    /// Color for bank display text based on state
+    private var bankDisplayColor: Color {
+        // Check if we're showing the currently active preset
+        let isShowingActivePreset = (
+            soundViewSelectedRow == selectedRow &&
+            soundViewSelectedColumn == selectedColumn &&
+            selectedBankTypeRawValue == PentatoneBankType(rawValue: selectedBankTypeRawValue)?.rawValue
+        )
+        
+        if isShowingActivePreset {
+            // Active preset - check if modified
+            if paramManager.parametersModifiedSinceLoad {
+                return Color("KeyColour4") // Modified
+            } else {
+                return Color("HighlightColour") // Unmodified
+            }
+        } else {
+            // Not the active preset - check if slot has preset
+            if currentSlotPreset != nil {
+                return Color("KeyColour3") // Different preset, slot filled
+            } else {
+                return Color("KeyColour1") // Different preset, slot empty
+            }
+        }
+    }
+    
     private var positionDisplayText: String {
         let slotName = "\(selectedRow).\(selectedColumn)"
         
@@ -284,6 +310,32 @@ struct PresetView: View {
             return "\(slotName) \(preset.name)"
         } else {
             return "\(slotName) - Empty"
+        }
+    }
+    
+    /// Color for position display text based on state
+    private var positionDisplayColor: Color {
+        // Check if we're showing the currently active preset
+        let isShowingActivePreset = (
+            soundViewSelectedRow == selectedRow &&
+            soundViewSelectedColumn == selectedColumn &&
+            selectedBankTypeRawValue == PentatoneBankType(rawValue: selectedBankTypeRawValue)?.rawValue
+        )
+        
+        if isShowingActivePreset {
+            // Active preset - check if modified
+            if paramManager.parametersModifiedSinceLoad {
+                return Color("KeyColour4") // Modified
+            } else {
+                return Color("HighlightColour") // Unmodified
+            }
+        } else {
+            // Not the active preset - check if slot has preset
+            if currentSlotPreset != nil {
+                return Color("KeyColour3") // Different preset, slot filled
+            } else {
+                return Color("KeyColour1") // Different preset, slot empty
+            }
         }
     }
     
