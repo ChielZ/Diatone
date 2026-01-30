@@ -20,6 +20,10 @@ struct SoundView: View {
     @AppStorage("soundView.selectedRow") private var selectedRow: Int = 1 // 1-5
     @AppStorage("soundView.selectedColumn") private var selectedColumn: Int = 1 // 1-5
     
+    // PresetView's @AppStorage properties - update these when switching to EditView
+    @AppStorage("presetView.selectedRow") private var presetViewSelectedRow: Int = 1
+    @AppStorage("presetView.selectedColumn") private var presetViewSelectedColumn: Int = 1
+    
     // Computed property for selectedBankType
     private var selectedBankType: PentatoneBankType {
         PentatoneBankType(rawValue: selectedBankTypeRawValue) ?? .factory
@@ -63,6 +67,8 @@ struct SoundView: View {
                         .lineLimit(1)
                         //.minimumScaleFactor(0.5)
                         .onTapGesture {
+                            // Sync PresetView to show the currently active preset
+                            syncPresetViewToCurrentPreset()
                             onSwitchToEdit?()
                         }
                 }
@@ -233,6 +239,14 @@ struct SoundView: View {
     }
     
     // MARK: - Actions
+    
+    /// Synchronize PresetView to show the currently active preset
+    private func syncPresetViewToCurrentPreset() {
+        // Update PresetView's selection to match SoundView's current selection
+        presetViewSelectedRow = selectedRow
+        presetViewSelectedColumn = selectedColumn
+        // Note: selectedBankTypeRawValue is already shared between both views
+    }
     
     private func selectRow(_ row: Int) {
         // Update row selection
