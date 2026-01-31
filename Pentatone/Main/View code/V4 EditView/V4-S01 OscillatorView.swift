@@ -46,17 +46,21 @@ struct OscillatorView: View {
                 ),
                 displayText: { $0.displayName }
             )
-            // Row 4 - Carrier Multiplier (integer 1-16)
-            IntegerSliderRow(
+            // Row 4 - Carrier Multiplier (discrete enum with fractions)
+            DiscreteEnumSliderRow(
                 label: "CARRIER MULTIPLIER",
                 value: Binding(
-                    get: { paramManager.voiceTemplate.oscillator.carrierMultiplier },
+                    get: { 
+                        // Convert stored Double to UI enum
+                        CarrierMultiplier.nearest(to: paramManager.voiceTemplate.oscillator.carrierMultiplier)
+                    },
                     set: { newValue in
-                        paramManager.updateCarrierMultiplier(newValue)
+                        // Convert UI enum to Double for storage
+                        paramManager.updateCarrierMultiplier(newValue.rawValue)
                         applyToAllVoices()
                     }
                 ),
-                range: 1...8
+                displayFormatter: { $0.displayName }
             )
             
             // Row 5 - Modulator Multiplier Coarse (integer 1-16)

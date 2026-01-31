@@ -28,6 +28,56 @@ enum VoiceMode: String, Codable, Equatable, CaseIterable {
     }
 }
 
+/// Carrier multiplier values for FM synthesis (UI only)
+/// Combines integer harmonics (1-8) with subharmonic fractional values (1/2 - 1/8)
+/// This enum is used ONLY in the UI layer - storage uses Double
+enum CarrierMultiplier: Double, CaseIterable, Identifiable {
+    case oneEighth = 0.125      // 1/8
+    case oneSeventh = 0.142857  // 1/7 (approx)
+    case oneSixth = 0.166667    // 1/6 (approx)
+    case oneFifth = 0.2         // 1/5
+    case oneFourth = 0.25       // 1/4
+    case oneThird = 0.333333    // 1/3 (approx)
+    case oneHalf = 0.5          // 1/2
+    case one = 1.0
+    case two = 2.0
+    case three = 3.0
+    case four = 4.0
+    case five = 5.0
+    case six = 6.0
+    case seven = 7.0
+    case eight = 8.0
+    
+    var id: Double { rawValue }
+    
+    /// Display as fraction for values < 1, integer for values >= 1
+    var displayName: String {
+        switch self {
+        case .oneEighth: return "1/8"
+        case .oneSeventh: return "1/7"
+        case .oneSixth: return "1/6"
+        case .oneFifth: return "1/5"
+        case .oneFourth: return "1/4"
+        case .oneThird: return "1/3"
+        case .oneHalf: return "1/2"
+        case .one: return "1"
+        case .two: return "2"
+        case .three: return "3"
+        case .four: return "4"
+        case .five: return "5"
+        case .six: return "6"
+        case .seven: return "7"
+        case .eight: return "8"
+        }
+    }
+    
+    /// Find the nearest enum case to a given Double value
+    /// Used to initialize UI from stored Double values
+    static func nearest(to value: Double) -> CarrierMultiplier {
+        return allCases.min(by: { abs($0.rawValue - value) < abs($1.rawValue - value) }) ?? .one
+    }
+}
+
 /// Waveform types available for the FM oscillator
 enum OscillatorWaveform: String, Codable, Equatable, CaseIterable {
     case sine

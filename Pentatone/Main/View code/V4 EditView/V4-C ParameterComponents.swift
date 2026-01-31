@@ -303,6 +303,147 @@ struct RevTimeSyncParameterRow<T: CaseIterable & Equatable>: View where T.AllCas
 
 
 
+// MARK: - Discrete Enum Slider Row (for enums with many values)
+
+/// A row for selecting from discrete enum values using a slider
+/// Values are snapped to exact enum cases - no interpolation or approximation
+/// Ideal for parameters with many discrete options (like carrier multiplier with fractions)
+struct DiscreteEnumSliderRow<T: CaseIterable & Equatable & Identifiable>: View 
+    where T.AllCases: RandomAccessCollection, T.AllCases.Index == Int, T.ID: Hashable {
+    
+    let label: String
+    @Binding var value: T
+    let displayFormatter: (T) -> String
+    
+    @State private var isDragging: Bool = false
+    @State private var dragStartIndex: Int = 0
+    @State private var dragStartLocation: CGFloat = 0
+    
+    private let allCases: [T]
+    
+    init(
+        label: String,
+        value: Binding<T>,
+        displayFormatter: @escaping (T) -> String
+    ) {
+        self.label = label
+        self._value = value
+        self.displayFormatter = displayFormatter
+        self.allCases = Array(T.allCases)
+    }
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: radius)
+                .fill(Color("BackgroundColour"))
+            
+            HStack {
+                // Left button (<) - Decrement
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text("<")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        decrementValue()
+                    }
+                
+                // Center - Draggable area with label and value
+                VStack(spacing: 2) {
+                    Text(label)
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 18)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                    
+                    Text(displayFormatter(value))
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 24)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { gesture in
+                            if !isDragging {
+                                isDragging = true
+                                dragStartIndex = currentIndex
+                                dragStartLocation = gesture.startLocation.x
+                            }
+                            
+                            // Calculate delta from drag start
+                            let delta = gesture.location.x - dragStartLocation
+                            
+                            // Convert pixels to index change
+                            // Sensitivity: ~30 pixels per step
+                            let sensitivity: CGFloat = 30.0
+                            let indexChange = Int(delta / sensitivity)
+                            
+                            // Calculate new index
+                            let newIndex = dragStartIndex + indexChange
+                            
+                            // Clamp to valid range
+                            let clampedIndex = min(max(newIndex, 0), allCases.count - 1)
+                            
+                            // Update value to exact enum case (no approximation)
+                            value = allCases[clampedIndex]
+                        }
+                        .onEnded { _ in
+                            isDragging = false
+                        }
+                )
+                .background(
+                    RoundedRectangle(cornerRadius: radius)
+                        .fill(isDragging ? Color("HighlightColour").opacity(0.1) : Color.clear)
+                )
+                
+                // Right button (>) - Increment
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("SupportColour"))
+                    .aspectRatio(1.0, contentMode: .fit)
+                    .overlay(
+                        Text(">")
+                            .foregroundColor(Color("BackgroundColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        incrementValue()
+                    }
+            }
+            .padding(.horizontal, 0)
+        }
+    }
+    
+    private var currentIndex: Int {
+        allCases.firstIndex(where: { $0.id == value.id }) ?? 0
+    }
+    
+    private func incrementValue() {
+        let index = currentIndex
+        if index < allCases.count - 1 {
+            value = allCases[index + 1]
+        }
+    }
+    
+    private func decrementValue() {
+        let index = currentIndex
+        if index > 0 {
+            value = allCases[index - 1]
+        }
+    }
+}
+
 // MARK: - Slider Row (for continuous parameters)
 
 /// A row for adjusting continuous numeric parameters
