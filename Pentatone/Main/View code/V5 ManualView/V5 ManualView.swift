@@ -127,7 +127,7 @@ struct ManualView: View {
                                         .multilineTextAlignment(.center)
                                     
                                     
-                                    Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is even more 'arithmophonic' than that, because it uses pure and simple harmonic ratios like 3/2 and 5/4 to produce musical notes. You can use this app as a musical instrument, a source of melodic and harmonic inspiration or a tool for exploring the deep connection between music and numbers.")
+                                    Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, because it uses pure and simple harmonic ratios like 3/2 and 5/4 to produce musical notes. You can use this app as a musical instrument, a source of melodic and harmonic inspiration or a tool for learning music and exploring the deep connection it has with numbers.")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                         .multilineTextAlignment(.center)
@@ -150,12 +150,12 @@ struct ManualView: View {
                                         .padding(.top, 10)
                                         .multilineTextAlignment(.center)
                                     
-                                    Text("Pentatone's music keyboard is designed from the ground up for the form factor of handheld touchscreen devices. It turns your iPhone or iPad into an instrument with exactly the right ergonomics for playing music. Rather than emulating a piano or a guitar fretboard (which are both very well designed interfaces, but with a very different form factor), the Pentatone features an original design that takes inspiration from traditional African instruments like the Kora, on which melodies are played by alternating between the left and right hand, and the Mbira (also known as Kalimba or Karimba), which is played with the thumbs. The alternating thumb approach makes it natural and intuitive to play flowing melodies on a touchscreen.")
+                                    Text("Pentatone's music keyboard is designed from the ground up for the form factor of handheld touchscreen devices. It turns your iPhone or iPad into an instrument with exactly the right ergonomics for playing music. Rather than emulating a piano or a guitar fretboard (which are both very well designed interfaces, but with a very different form factor), the Pentatone features an original design that takes inspiration from traditional African instruments like the Kora and the Mbira (also known as Kalimba or Karimba), on which melodies are played by alternating between the left and right hand. ")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                         .multilineTextAlignment(.center)
                                     
-                                    Text("Pentatone features a keyboard with 18 keys, 9 on each side of the screen, which can be played very comfortably with both thumbs while holding your iPhone or iPad in your hands. To play the notes in scale order, alternate between left and right: start with the lowest key on the left, then play the lowest key on the right, then the second key on the left, and so on.")
+                                    Text("Pentatone features a keyboard with 18 keys, 9 on each side of the screen, which can be played very comfortably with both thumbs while holding your iPhone or iPad in your hands. To play the notes in scale order, start with the lowest key on the left, then play the lowest key on the right, then the second key on the left, and so on.")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                         .multilineTextAlignment(.center)
@@ -171,7 +171,7 @@ struct ManualView: View {
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                         .multilineTextAlignment(.center)
                                     
-                                    Text("Because pentatonic scales contain only 5 different notes, every combination of notes tends to sounds musical. There are no 'wrong notes' to worry about, making them very suitable for beginners and casual musicians, but many rich musical traditions are based on pentatonic scales, and there is lots of depth to explore here too for more advanced users.")
+                                    Text("Because pentatonic scales contain only 5 different notes, every combination of notes tends to sounds musical. There are no 'wrong notes' to worry about, making them very suitable for beginners and casual musicians. Many rich musical traditions are based on pentatonic scales though, and there is lots of depth to explore here too for more advanced users.")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                         .multilineTextAlignment(.center)
@@ -182,35 +182,41 @@ struct ManualView: View {
                                         .padding(.top, 10)
                                         .multilineTextAlignment(.center)
                                     
-                                    Text("Pentatone has its own built-in synthesizer and there are 25 preset sounds to choose from. The keyboard responds to initial touch (where on the key you first place your finger) and aftertouch (how you move your finger on the key while holding it down). Different preset sounds respond to your touch in different ways: on some sounds, moving your finger may change the brightness of the tone, on others it may change the pitch, allowing you to 'bend' the notes. There are three sliders that allow you to quickly adjust the volume, tone and ambience of each preset sound.")
+                                    Text("Pentatone has its own built-in sound engine and there are 25 preset sounds to choose from. The sounds respond to initial touch (where on the key you first place your finger) and aftertouch (how you move your finger on the key while holding it down). Different preset sounds respond to your touch in different ways: on some sounds, moving your finger may change the brightness of the tone, on others it may change the pitch, allowing you to 'bend' the notes, and so on.")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                         .multilineTextAlignment(.center)
                                     
-                                    Text("Pentatone's sound engine uses Frequency Modulation synthesis (the same technology behind classic 1980s digital synths) with spatial stereo imaging and effects. Specifically, it is a binaural 2x2 operator FM synth with a resonant lowpass filter per voice, a flexible modulation system and stereo detune, delay and reverb effects. An optional in-app purchase unlocks the full sound design experience, giving you access to all parameters of the sound engine, as well as the ability to create, store, import and export up to 100 user presets.")
+                                    Text("Pentatone's sound engine uses Frequency Modulation synthesis, and is inspired by some classic digital synthesizers and keyboards from the 1980s, but it also adds a few more modern twists like spatial stereo imaging and effects. It features a binaural 2x2 operator FM synth with a resonant lowpass filter per voice, a flexible modulation system and stereo detune, delay and reverb. An optional in-app purchase unlocks the full sound design experience, giving you access to all parameters of the sound engine, as well as the ability to create, store, import and export up to 100 user presets.")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                         .multilineTextAlignment(.center)
                                     
-                                    Text("II: USER MANUAL")
+                                    Text("II: HOW TO USE PENTATONE")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 24)
                                         .padding(.top, 25)
                                         .multilineTextAlignment(.center)
                                     
-                                    Text("The Scales View")
+                                    Text("Folding and unfolding")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 20)
                                         .padding(.top, 10)
                                         .multilineTextAlignment(.center)
                                     
-                                    Text("The Sounds View")
+                                    Text("The Scale View")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 20)
                                         .padding(.top, 10)
                                         .multilineTextAlignment(.center)
                                     
-                                    Text("The Settings View")
+                                    Text("The Sound View")
+                                        .foregroundColor(Color("KeyColour1"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 20)
+                                        .padding(.top, 10)
+                                        .multilineTextAlignment(.center)
+                                    
+                                    Text("The Setup View")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 20)
                                         .padding(.top, 10)
