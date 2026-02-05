@@ -79,6 +79,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  AUDIO ENGINE IMPROVEMENT OPPORTUNITIES
  - make preset switching faster/smoorther (especially octave parameter)
  - improve responsiveness of macro sliders
+ - auto load factory preset 1.1 on opening the app
  - voice stealing only steal from released keys (or those first, at least)
  - mark as available only after full release? (*8 instead of *3)
  - fix inconsistencies on short attacks

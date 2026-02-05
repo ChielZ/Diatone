@@ -2,7 +2,7 @@ ARITHMOPHONE APP ECOSYSTEM - GAME PLAN
 
 The Arithmophone project has been going for a few years. It is a one-person project, created and maintained by musician and amateur software developer Chiel Zwinkels.
 
-Over the pas 4 years, a number of web apps have been made under the 'Arithmophone' umbrella, both with built in sound engines and as MIDI controllers for external (software/hardware) instruments. At this point, work is under way for the next generation (gen 5) of Airthmophone apps, which will now be native iOS apps for the first time. There are plans for releasing 5 separate apps. All of these apps will have their own unique keyboard design, but they will all be sharing the same sound engine.
+Over the pas 4 years, a number of web apps have been made under the 'Arithmophone' umbrella, both with built in sound engines and as MIDI controllers for external (software/hardware) instruments. At this point, work is under way for the next generation (gen 5) of Arithmophone apps, which will now be native iOS apps for the first time. There are plans for releasing 5 separate apps. All of these apps will have their own unique keyboard design, but they will all be sharing the same sound engine.
 
 1) PENTATONE - featuring a pentatonic music keyboard (current app, in development but nearing completion of version 1)
 

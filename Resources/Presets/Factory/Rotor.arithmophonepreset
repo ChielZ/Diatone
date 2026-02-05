@@ -1,0 +1,144 @@
+{
+  "createdAt" : "2026-01-31T12:54:58Z",
+  "id" : "EE0416D5-CAE6-44A8-B9E1-F78FAFDA5FC5",
+  "macroState" : {
+    "ambiencePosition" : 0,
+    "baseDelayFeedback" : 0.502053388090349,
+    "baseDelayMix" : 0.002053388090349051,
+    "baseFilterCutoff" : 2220.4610478149766,
+    "baseFilterSaturation" : 1.002053388090349,
+    "baseModulationIndex" : 1,
+    "basePreVolume" : 0.4969199299812317,
+    "baseReverbFeedback" : 0.8020533880903491,
+    "baseReverbMix" : 0.202053388090349,
+    "tonePosition" : 0,
+    "volumePosition" : 0.4969199299812317
+  },
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0.002053388090349051,
+      "feedback" : 0.502053388090349,
+      "timeValue" : 0.125,
+      "toneCutoff" : 10000
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0,
+      "amountToFilterFrequency" : 0.7500000000000001,
+      "amountToModulatorMultiplier" : 0,
+      "amountToVoiceMixerVolume" : 0.09999999999999999,
+      "frequency" : 1,
+      "frequencyMode" : "hertz",
+      "isEnabled" : true,
+      "resetMode" : "free",
+      "syncValue" : 1,
+      "waveform" : "sine"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 0.5,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.25,
+      "ambienceToDelayMixRange" : 0.25,
+      "ambienceToReverbFeedbackRange" : 0.25,
+      "ambienceToReverbMixRange" : 0.25,
+      "toneToFilterCutoffOctaves" : 0,
+      "toneToFilterSaturationRange" : 1,
+      "toneToModulationIndexRange" : 0
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.75
+    },
+    "reverb" : {
+      "balance" : 0.202053388090349,
+      "cutoffFrequency" : 5000,
+      "feedback" : 0.8020533880903491
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Rotor",
+  "voiceTemplate" : {
+    "envelope" : {
+      "attackDuration" : 0.001,
+      "decayDuration" : 0.02000000000000001,
+      "releaseDuration" : 0.020220100736021544,
+      "sustainLevel" : 1
+    },
+    "filter" : {
+      "cutoffFrequency" : 2220.4610478149766
+    },
+    "filterStatic" : {
+      "resonance" : 0.3,
+      "saturation" : 1.002053388090349
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 0,
+        "amountToOscillatorPitch" : 6.938893903907228e-17,
+        "amountToVibrato" : 0,
+        "attack" : 0,
+        "decay" : 2.5,
+        "isEnabled" : true,
+        "release" : 0,
+        "sustain" : 0
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0,
+        "amountToVoiceLFOFrequency" : 0,
+        "isEnabled" : true
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.001,
+        "decay" : 0.02000000000000001,
+        "isEnabled" : true,
+        "release" : 0.020220100736021544,
+        "sustain" : 1
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 0,
+        "attack" : 0,
+        "decay" : 0.010049057948630598,
+        "isEnabled" : true,
+        "release" : 0.0012445146117713855,
+        "sustain" : 0
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 1.2500000000000002,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0,
+        "isEnabled" : true
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 2,
+        "amountToAuxEnvPitch" : 0,
+        "amountToModEnvelope" : 0,
+        "amountToOscillatorAmplitude" : 0.5000000000000001,
+        "isEnabled" : true
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0.5,
+        "amountToOscillatorPitch" : 0.24999999999999997,
+        "delayTime" : 0,
+        "frequency" : 5,
+        "isEnabled" : true,
+        "resetMode" : "trigger",
+        "waveform" : "sine"
+      }
+    },
+    "oscillator" : {
+      "amplitude" : 0.5,
+      "carrierMultiplier" : 1,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 3.025,
+      "modulationIndex" : 1,
+      "stereoOffsetConstant" : 2,
+      "stereoOffsetProportional" : 5,
+      "waveform" : "sine"
+    }
+  }
+}
