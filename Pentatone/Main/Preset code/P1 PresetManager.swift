@@ -109,24 +109,21 @@ final class PresetManager: ObservableObject {
     
     /// Load factory presets from app bundle
     private func loadFactoryPresets() {
-        guard let factoryURL = factoryPresetsURL else {
-            print("⚠️ PresetManager: Factory presets directory not found in bundle")
-            return
-        }
         
-        // Check if directory exists
-        guard fileManager.fileExists(atPath: factoryURL.path) else {
-            print("⚠️ PresetManager: Factory presets directory does not exist at \(factoryURL.path)")
+        // All factory preset files are expected to be located at the bundle root with the
+        // extension ".arithmophonepreset"
+        guard let resourcePath = Bundle.main.resourcePath else {
+            print("⚠️ PresetManager: Bundle resource path not found")
             return
         }
         
         do {
-            // Get all .json files in factory directory
+            // List all files in the bundle root
             let fileURLs = try fileManager.contentsOfDirectory(
-                at: factoryURL,
+                at: URL(fileURLWithPath: resourcePath),
                 includingPropertiesForKeys: nil,
                 options: [.skipsHiddenFiles]
-            ).filter { $0.pathExtension == "json" }
+            ).filter { $0.pathExtension == "arithmophonepreset" }
             
             // Load each preset file
             for fileURL in fileURLs {
@@ -150,7 +147,7 @@ final class PresetManager: ObservableObject {
             factoryPresets.sort { $0.name < $1.name }
             
         } catch {
-            print("⚠️ PresetManager: Failed to read factory presets directory: \(error)")
+            print("⚠️ PresetManager: Failed to read bundle root directory: \(error)")
         }
     }
     
