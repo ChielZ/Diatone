@@ -101,6 +101,15 @@ final class PresetManager: ObservableObject {
             loadFactoryPresets()
             loadUserPresets()
             
+            // Automatically load factory preset at slot 1.1 on app launch if it exists
+            if let slot = PentatoneFactoryLayout.slot(row: 1, column: 1),
+               let presetID = slot.presetID,
+               let preset = presetLookup[presetID] {
+                // Load this preset so the app starts with it active
+                loadPreset(preset)
+                currentPreset = preset
+            }
+            
             isLoading = false
             
             print("✅ PresetManager: Loaded \(factoryPresets.count) factory presets and \(userPresets.count) user presets")
@@ -751,4 +760,5 @@ enum PresetError: LocalizedError {
         }
     }
 }
+
 
