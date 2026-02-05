@@ -843,7 +843,7 @@ final class PolyphonicVoice {
         
         // Mark voice available after release completes
         isPlaying = false
-        let releaseTime = voiceModulation.loudnessEnvelope.release * 8 // 'middle ground' value for exponential envelopes
+        let releaseTime = voiceModulation.loudnessEnvelope.release * 3 // 'middle ground' value for exponential envelopes
         let releaseStartTime = Date()  // Capture when this release was initiated
         Task {
             try? await Task.sleep(nanoseconds: UInt64(releaseTime * 1_000_000_000))
@@ -1525,7 +1525,7 @@ final class PolyphonicVoice {
         let decay = voiceModulation.loudnessEnvelope.decay
         let release = voiceModulation.loudnessEnvelope.release
 
-        /*
+        
         // ATTACK PHASE: Stay completely passive and let trigger()'s ramp run undisturbed
         // Using envelope time (not wall clock) for reliable attack phase detection
         let isInAttackPhase = modulationState.isGateOpen && time < attack
@@ -1535,7 +1535,7 @@ final class PolyphonicVoice {
             print("🔊 ATTACK: time=\(String(format: "%.1f", time * 1000))ms, attack=\(String(format: "%.1f", attack * 1000))ms (passive)")
             return
         }
-*/
+
         
         // Calculate the current expected envelope value for decay/sustain/release phases
         // NOTE: We cannot use fader.leftGain because AudioKit's gain property always reports
@@ -1552,12 +1552,12 @@ final class PolyphonicVoice {
         )
 
         
-        /*
+        
         // Log first post-attack update to see transition
         if modulationState.isGateOpen && time < attack + 0.05 {
             print("🔊 POST-ATTACK: time=\(String(format: "%.1f", time * 1000))ms, attack=\(String(format: "%.1f", attack * 1000))ms, envelope=\(String(format: "%.3f", calculatedEnvelopeValue))")
         }
-        */
+        
         
         // Calculate ramp duration based on envelope stage and timing
         // Check if we're in decay or release phase with very short time

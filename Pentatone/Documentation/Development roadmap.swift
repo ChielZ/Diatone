@@ -76,6 +76,12 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  √ make tune control in main ui a slider
  √ reconfigure voice editing menu to start on preset view
  
+ AUDIO ENGINE IMPROVEMENT OPPORTUNITIES
+ - make preset switching faster/smoorther (especially octave parameter)
+ - improve responsiveness of macro sliders
+ - voice stealing only steal from released keys (or those first, at least)
+ - mark as available only after full release? (*8 instead of *3)
+ - fix inconsistencies on short attacks
  
  
  

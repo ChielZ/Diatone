@@ -176,7 +176,7 @@ struct ManualView: View {
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                         .multilineTextAlignment(.center)
                                     
-                                    Text("The sound engine")
+                                    Text("The sounds")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 20)
                                         .padding(.top, 10)
@@ -187,7 +187,10 @@ struct ManualView: View {
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                         .multilineTextAlignment(.center)
                                     
-                                    Text("Pentatone's sound engine uses Frequency Modulation synthesis, and is inspired by some classic digital synthesizers and keyboards from the 1980s, but it also adds a few more modern twists like spatial stereo imaging and effects. It features a binaural 2x2 operator FM synth with a resonant lowpass filter per voice, a flexible modulation system and stereo detune, delay and reverb. An optional in-app purchase unlocks the full sound design experience, giving you access to all parameters of the sound engine, as well as the ability to create, store, import and export up to 100 user presets.")
+                                    Text("Each of the preset sounds can be changed by adjusting the 'tone' and 'ambience' sliders, and the keyboard's response can be customised further on the 'setup' page. Pentatone's sound engine uses a combination of Frequency Modulation and substractive synthesis. It is inspired by some classic digital synthesizers and keyboards from the 1980s, but it also adds a few more modern twists like binaural stereo imaging and effects.")
+                                    /*
+                                     It features a binaural 2x2 operator FM synth with a resonant lowpass filter per voice, a flexible modulation system and stereo detune, delay and reverb. An optional in-app purchase unlocks the full sound design experience, giving you access to all parameters of the sound engine, as well as the ability to create, store, import and export up to 100 user presets.
+                                     */
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 16)
                                         .multilineTextAlignment(.center)
@@ -251,7 +254,7 @@ struct ManualView: View {
                                         .adaptiveFont("MontserratAlternates-Medium", size: 20)
                                         .padding(.top, 10)
                                         .multilineTextAlignment(.center)
-                                    
+                                    /*
                                     Text("FM and Sound synthesis")
                                         .foregroundColor(Color("KeyColour1"))
                                         .adaptiveFont("MontserratAlternates-Medium", size: 20)
@@ -329,7 +332,7 @@ struct ManualView: View {
                                         .adaptiveFont("MontserratAlternates-Medium", size: 20)
                                         .padding(.top, 10)
                                         .multilineTextAlignment(.center)
-                                    
+                                    */
 
                                     
                                     // Add more content as needed
