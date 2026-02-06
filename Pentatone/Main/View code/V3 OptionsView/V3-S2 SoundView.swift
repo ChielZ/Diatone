@@ -13,25 +13,24 @@ struct SoundView: View {
     @ObservedObject private var presetManager = PresetManager.shared
     var onSwitchToEdit: (() -> Void)? = nil
     
-    // Get the currently selected bank from PresetView (persisted)
-    @AppStorage("presetView.selectedBankTypeRawValue") private var selectedBankTypeRawValue: String = PentatoneBankType.factory.rawValue
-    
     // Persist the currently selected row and column (survives view reloads during app session)
     @AppStorage("soundView.selectedRow") private var selectedRow: Int = 1 // 1-5
     @AppStorage("soundView.selectedColumn") private var selectedColumn: Int = 1 // 1-5
     
     // PresetView's @AppStorage properties - update these when switching to EditView
+    @AppStorage("presetView.selectedBankTypeRawValue") private var presetViewSelectedBankTypeRawValue: String = PentatoneBankType.factory.rawValue
     @AppStorage("presetView.selectedRow") private var presetViewSelectedRow: Int = 1
     @AppStorage("presetView.selectedColumn") private var presetViewSelectedColumn: Int = 1
     
-    // Track the actually loaded preset (shared with PresetView for color computation)
+    // Track the actually loaded preset (this is the source of truth for SoundView)
     @AppStorage("activePreset.bankType") private var activePresetBankType: String = PentatoneBankType.factory.rawValue
     @AppStorage("activePreset.row") private var activePresetRow: Int = 1
     @AppStorage("activePreset.column") private var activePresetColumn: Int = 1
     
-    // Computed property for selectedBankType
+    // SoundView always shows the bank of the currently active preset
+    // (not the bank that was navigated to in PresetView)
     private var selectedBankType: PentatoneBankType {
-        PentatoneBankType(rawValue: selectedBankTypeRawValue) ?? .factory
+        PentatoneBankType(rawValue: activePresetBankType) ?? .factory
     }
     
     // Get the currently selected preset
@@ -249,9 +248,9 @@ struct SoundView: View {
     private func syncPresetViewToCurrentPreset() {
         // Update PresetView's selection to match the currently active preset
         // Use the active preset tracking that's shared between views
+        presetViewSelectedBankTypeRawValue = activePresetBankType
         presetViewSelectedRow = activePresetRow
         presetViewSelectedColumn = activePresetColumn
-        // Note: selectedBankTypeRawValue is already shared between both views
     }
     
     private func selectRow(_ row: Int) {
@@ -276,7 +275,7 @@ struct SoundView: View {
             presetManager.loadPreset(preset)
             
             // Update active preset tracking - this is now the loaded preset
-            activePresetBankType = selectedBankTypeRawValue
+            activePresetBankType = selectedBankType.rawValue
             activePresetRow = selectedRow
             activePresetColumn = selectedColumn
         }
