@@ -103,6 +103,9 @@ struct Penta_ToneApp: App {
             await MainActor.run {
                 PresetManager.shared.loadAllPresets()
                 PresetManager.shared.initializeLayouts()
+                
+                // Reset UI to show factory preset 1.1 (which is auto-loaded by PresetManager)
+                resetUIToFactoryPreset()
             }
             
             // Set up callback to update keyboard state when navigation changes
@@ -144,6 +147,27 @@ struct Penta_ToneApp: App {
                 print("⚠️ Failed to import preset from external source: \(error)")
             }
         }
+    }
+    
+    // MARK: - UI Synchronization
+    
+    /// Reset UI @AppStorage properties to show factory preset 1.1
+    /// Called during app initialization to match the preset that's auto-loaded by PresetManager
+    private func resetUIToFactoryPreset() {
+        // Reset all UI tracking to factory preset 1.1
+        // Note: Both SoundView and PresetView share the same bank selection key
+        UserDefaults.standard.set(PentatoneBankType.factory.rawValue, forKey: "presetView.selectedBankTypeRawValue")
+        UserDefaults.standard.set(1, forKey: "presetView.selectedRow")
+        UserDefaults.standard.set(1, forKey: "presetView.selectedColumn")
+        
+        UserDefaults.standard.set(1, forKey: "soundView.selectedRow")
+        UserDefaults.standard.set(1, forKey: "soundView.selectedColumn")
+        
+        UserDefaults.standard.set(PentatoneBankType.factory.rawValue, forKey: "activePreset.bankType")
+        UserDefaults.standard.set(1, forKey: "activePreset.row")
+        UserDefaults.standard.set(1, forKey: "activePreset.column")
+        
+        print("✅ PentatoneApp: Reset UI to factory preset 1.1")
     }
 }
 
