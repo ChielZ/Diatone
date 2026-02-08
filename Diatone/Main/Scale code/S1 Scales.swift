@@ -31,6 +31,7 @@ enum Celestial: String, CaseIterable, Equatable {
     //case harmonicMinor = "MINOR H."
     //case harmonicMajor = "MAJOR H."
     case double = "DOUBLE"
+    case pythagorean = "BALANCED"
 
     /*
     case outward = "OUTWARD"
@@ -359,6 +360,14 @@ struct ScalesCatalog {
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
     )
     
+    static let Pythagorean_JI_E = Scale(
+        name: "Pythagorean",
+        intonation: .ji, celestial: .pythagorean, terrestrial: .melodic,
+        notes: [1.0, 9.0/8.0, 32.0/27.0, 4.0/3.0, 3.0/2.0, 27.0/16.0, 16.0/9.0],
+        semitonePattern: [0, 2, 3, 5, 7, 9, 10],
+        letterPattern: [0, 1, 2, 3, 4, 5, 6]
+    )
+    
     static let MelodicMajor_JI_E = Scale(
         name: "Melodic Major",
         intonation: .ji, celestial: .major, terrestrial: .melodic,
@@ -375,6 +384,14 @@ struct ScalesCatalog {
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
     )
     
+    static let DoubleHarmonic_JI_E = Scale(
+        name: "Double Harmonic",
+        intonation: .ji, celestial: .double, terrestrial: .harmonic,
+        notes: [1.0, 16.0/15.0, 5.0/4.0, 4.0/3.0, 3.0/2.0, 8.0/5.0, 15.0/8.0],
+        semitonePattern: [0, 1, 4, 5, 7, 8, 11],
+        letterPattern: [0, 1, 2, 3, 4, 5, 6]
+    )
+    
     static let HarmonicMajor_JI_E = Scale(
         name: "Harmonic Major",
         intonation: .ji, celestial: .major, terrestrial: .harmonic,
@@ -383,13 +400,7 @@ struct ScalesCatalog {
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
     )
     
-    static let DoubleHarmonic_JI_E = Scale(
-        name: "Double Harmonic",
-        intonation: .ji, celestial: .double, terrestrial: .harmonic,
-        notes: [1.0, 16.0/15.0, 5.0/4.0, 4.0/3.0, 3.0/2.0, 8.0/5.0, 15.0/8.0],
-        semitonePattern: [0, 1, 4, 5, 7, 8, 11],
-        letterPattern: [0, 1, 2, 3, 4, 5, 6]
-    )
+    
     
     
     // 2. EASY ET
@@ -458,6 +469,14 @@ struct ScalesCatalog {
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
     )
     
+    static let Pythagorean_ET_E = Scale(
+        name: "Pythagorean",
+        intonation: .et, celestial: .pythagorean, terrestrial: .melodic,
+        notes: et([0, 2, 3, 5, 7, 9, 10]),
+        semitonePattern: [0, 2, 3, 5, 7, 9, 10],
+        letterPattern: [0, 1, 2, 3, 4, 5, 6]
+    )
+    
     static let MelodicMajor_ET_E = Scale(
         name: "Melodic Major",
         intonation: .et, celestial: .major, terrestrial: .melodic,
@@ -474,6 +493,14 @@ struct ScalesCatalog {
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
     )
     
+    static let DoubleHarmonic_ET_E = Scale(
+        name: "Double Harmonic",
+        intonation: .et, celestial: .double, terrestrial: .harmonic,
+        notes: et([0, 1, 4, 5, 7, 8, 11]),
+        semitonePattern: [0, 1, 4, 5, 7, 8, 11],
+        letterPattern: [0, 1, 2, 3, 4, 5, 6]
+    )
+    
     static let HarmonicMajor_ET_E = Scale(
         name: "Harmonic Major",
         intonation: .et, celestial: .major, terrestrial: .harmonic,
@@ -482,13 +509,7 @@ struct ScalesCatalog {
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
     )
     
-    static let DoubleHarmonic_ET_E = Scale(
-        name: "Double Harmonic",
-        intonation: .et, celestial: .double, terrestrial: .harmonic,
-        notes: et([0, 1, 4, 5, 7, 8, 11]),
-        semitonePattern: [0, 1, 4, 5, 7, 8, 11],
-        letterPattern: [0, 1, 2, 3, 4, 5, 6]
-    )
+    
     
     
     
@@ -664,8 +685,8 @@ struct ScalesCatalog {
         centerOrient_ET, centerMeridian_ET, centerOccident_ET,
         sunOrient_ET, sunMeridian_ET, sunOccident_ET
          */
-        Locrian_JI_E, Phrygian_JI_E, Aeolian_JI_E, Dorian_JI_E, Mixolydian_JI_E, Ionian_JI_E, Lydian_JI_E, MelodicMinor_JI_E, MelodicMajor_JI_E, HarmonicMinor_JI_E, HarmonicMajor_JI_E, DoubleHarmonic_JI_E,
-        Locrian_ET_E, Phrygian_ET_E, Aeolian_ET_E, Dorian_ET_E, Mixolydian_ET_E, Ionian_ET_E, Lydian_ET_E, MelodicMinor_ET_E, MelodicMajor_ET_E, HarmonicMinor_ET_E, HarmonicMajor_ET_E, DoubleHarmonic_ET_E, 
+        Locrian_JI_E, Phrygian_JI_E, Aeolian_JI_E, Dorian_JI_E, Mixolydian_JI_E, Ionian_JI_E, Lydian_JI_E, MelodicMinor_JI_E, Pythagorean_JI_E, MelodicMajor_JI_E, HarmonicMinor_JI_E, DoubleHarmonic_JI_E, HarmonicMajor_JI_E,
+        Locrian_ET_E, Phrygian_ET_E, Aeolian_ET_E, Dorian_ET_E, Mixolydian_ET_E, Ionian_ET_E, Lydian_ET_E, MelodicMinor_ET_E, Pythagorean_ET_E, MelodicMajor_ET_E, HarmonicMinor_ET_E, DoubleHarmonic_ET_E, HarmonicMajor_ET_E
     ]
 
     static func find(intonation: Intonation, celestial: Celestial, terrestrial: Terrestrial) -> Scale? {

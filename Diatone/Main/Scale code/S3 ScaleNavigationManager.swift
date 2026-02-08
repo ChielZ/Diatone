@@ -18,6 +18,7 @@ final class ScaleNavigationManager: ObservableObject {
     /// The current scale index in the catalog
     @Published private(set) var currentScaleIndex: Int {
         didSet {
+            updateLastSelectedInGroup()
             notifyScaleChanged()
         }
     }
@@ -33,6 +34,32 @@ final class ScaleNavigationManager: ObservableObject {
     @Published private(set) var musicalKey: MusicalKey {
         didSet {
             notifyKeyChanged()
+        }
+    }
+    
+    // MARK: - Last Selected Scale Memory
+    
+    /// Stores the last selected celestial property for each terrestrial group
+    /// Key: (Intonation, Terrestrial) -> Celestial
+    private var lastSelectedCelestial: [CombinedKey: Celestial] = [:]
+    
+    /// Stores the last selected terrestrial property for each celestial property
+    /// Key: (Intonation, Celestial) -> Terrestrial
+    private var lastSelectedTerrestrial: [CombinedKey: Terrestrial] = [:]
+    
+    /// Helper struct for dictionary keys combining intonation and property
+    private struct CombinedKey: Hashable {
+        let intonation: Intonation
+        let property: String // celestial or terrestrial raw value
+        
+        init(_ intonation: Intonation, _ celestial: Celestial) {
+            self.intonation = intonation
+            self.property = celestial.rawValue
+        }
+        
+        init(_ intonation: Intonation, _ terrestrial: Terrestrial) {
+            self.intonation = intonation
+            self.property = terrestrial.rawValue
         }
     }
     
@@ -74,6 +101,9 @@ final class ScaleNavigationManager: ObservableObject {
         }
         
         self.musicalKey = initialKey
+        
+        // Initialize memory with the initial scale
+        updateLastSelectedInGroup()
     }
     
     // MARK: - Direct Scale Navigation
@@ -126,26 +156,30 @@ final class ScaleNavigationManager: ObservableObject {
         }
     }
     
-    /// Cycles through celestial properties: Moon ↔ Center ↔ Sun
-    /// Keeps the same intonation and terrestrial properties
+    /// Cycles through celestial properties within the current terrestrial group
+    /// For Modal (7 scales): Locrian ↔ Phrygian ↔ Aeolian ↔ Dorian ↔ Mixolydian ↔ Ionian ↔ Lydian
+    /// For Melodic (2 scales): Minor ↔ Major
+    /// For Harmonic (3 scales): Minor ↔ Major ↔ Double
     /// Does NOT wrap around (stops at ends)
     /// - Parameter forward: true to move forward, false to move backward
     func cycleCelestial(forward: Bool) {
         let current = baseScale
-        let allCases = Celestial.allCases
-        guard let currentIdx = allCases.firstIndex(of: current.celestial) else { return }
+        
+        // Get valid celestial options for current terrestrial group
+        let validCelestials = getValidCelestialsFor(terrestrial: current.terrestrial)
+        guard let currentIdx = validCelestials.firstIndex(of: current.celestial) else { return }
         
         // Calculate next index without wrapping
         let nextIdx: Int
         if forward {
             nextIdx = currentIdx + 1
-            guard nextIdx < allCases.count else { return } // Stop at end
+            guard nextIdx < validCelestials.count else { return } // Stop at end
         } else {
             nextIdx = currentIdx - 1
             guard nextIdx >= 0 else { return } // Stop at beginning
         }
         
-        let targetCelestial = allCases[nextIdx]
+        let targetCelestial = validCelestials[nextIdx]
         
         if let newScale = ScalesCatalog.find(
             intonation: current.intonation,
@@ -157,13 +191,13 @@ final class ScaleNavigationManager: ObservableObject {
         }
     }
     
-    /// Cycles through terrestrial properties: Occident ↔ Meridian ↔ Orient
-    /// Keeps the same intonation and celestial properties
+    /// Cycles through terrestrial properties: Modal ↔ Melodic ↔ Harmonic
+    /// When switching groups, loads the last selected celestial property for that group
     /// Does NOT wrap around (stops at ends)
     /// - Parameter forward: true to move forward, false to move backward
     func cycleTerrestrial(forward: Bool) {
         let current = baseScale
-        let allCases = Terrestrial.allCases
+        let allCases = Terrestrial.allCases.filter { $0 == .modal || $0 == .melodic || $0 == .harmonic }
         guard let currentIdx = allCases.firstIndex(of: current.terrestrial) else { return }
         
         // Calculate next index without wrapping
@@ -178,14 +212,56 @@ final class ScaleNavigationManager: ObservableObject {
         
         let targetTerrestrial = allCases[nextIdx]
         
+        // Try to load the last selected celestial for this terrestrial group
+        let key = CombinedKey(current.intonation, targetTerrestrial)
+        let targetCelestial: Celestial
+        
+        if let remembered = lastSelectedCelestial[key] {
+            // Use remembered celestial if available
+            targetCelestial = remembered
+        } else {
+            // Otherwise, use the first valid celestial for this group
+            let validCelestials = getValidCelestialsFor(terrestrial: targetTerrestrial)
+            targetCelestial = validCelestials.first ?? .dorian
+        }
+        
         if let newScale = ScalesCatalog.find(
             intonation: current.intonation,
-            celestial: current.celestial,
+            celestial: targetCelestial,
             terrestrial: targetTerrestrial
         ),
            let newIndex = ScalesCatalog.all.firstIndex(where: { $0 == newScale }) {
             currentScaleIndex = newIndex
         }
+    }
+    
+    // MARK: - Helper Methods for Valid Options
+    
+    /// Returns the valid celestial options for a given terrestrial group
+    private func getValidCelestialsFor(terrestrial: Terrestrial) -> [Celestial] {
+        switch terrestrial {
+        case .modal:
+            return [.locrian, .phrygian, .aeolian, .dorian, .mixolydian, .ionian, .lydian]
+        case .melodic:
+            return [.minor, .pythagorean, .major]
+        case .harmonic:
+            return [.minor, .double, .major]
+        default:
+            return []
+        }
+    }
+    
+    /// Updates the memory dictionaries to remember the current selection
+    private func updateLastSelectedInGroup() {
+        let current = baseScale
+        
+        // Remember which celestial was selected for this (intonation, terrestrial) combo
+        let celestialKey = CombinedKey(current.intonation, current.terrestrial)
+        lastSelectedCelestial[celestialKey] = current.celestial
+        
+        // Remember which terrestrial was selected for this (intonation, celestial) combo
+        let terrestrialKey = CombinedKey(current.intonation, current.celestial)
+        lastSelectedTerrestrial[terrestrialKey] = current.terrestrial
     }
     
     // MARK: - Rotation Management
@@ -270,14 +346,14 @@ final class ScaleNavigationManager: ObservableObject {
         currentScaleIndex == ScalesCatalog.all.count - 1
     }
     
-    /// Returns true if rotation is at minimum (-2)
+    /// Returns true if rotation is at minimum (-3)
     var isAtMinRotation: Bool {
-        rotation == -2
+        rotation == -3
     }
     
-    /// Returns true if rotation is at maximum (+2)
+    /// Returns true if rotation is at maximum (+3)
     var isAtMaxRotation: Bool {
-        rotation == 2
+        rotation == 3
     }
     
     /// Returns true if key is at the beginning of the key list (Ab)
@@ -310,5 +386,13 @@ final class ScaleNavigationManager: ObservableObject {
         print("   Rotation: \(rotation)")
         print("   Key: \(musicalKey.rawValue)")
         print("   Properties: \(baseScale.intonation.rawValue) / \(baseScale.celestial.rawValue) / \(baseScale.terrestrial.rawValue)")
+        print("   Memory - Last Selected Celestials:")
+        for (key, value) in lastSelectedCelestial.sorted(by: { $0.key.property < $1.key.property }) {
+            print("      \(key.intonation.rawValue) + \(key.property) → \(value.rawValue)")
+        }
+        print("   Memory - Last Selected Terrestrials:")
+        for (key, value) in lastSelectedTerrestrial.sorted(by: { $0.key.property < $1.key.property }) {
+            print("      \(key.intonation.rawValue) + \(key.property) → \(value.rawValue)")
+        }
     }
 }
