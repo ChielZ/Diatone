@@ -26,22 +26,30 @@ enum Celestial: String, CaseIterable, Equatable {
     case mixolydian = "MIXOLYDIAN"
     case ionian = "IONIAN"
     case lydian = "LYDIAN"
-    case melodicMinor = "MINOR M."
-    case melodicMajor = "MAJOR M."
-    case harmonicMinor = "MINOR H."
-    case harmonicMajor = "MAJOR H."
-    case doubleHarmonic = "DOUBLE H."
+    case minor = "MINOR"
+    case major = "MAJOR"
+    //case harmonicMinor = "MINOR H."
+    //case harmonicMajor = "MAJOR H."
+    case double = "DOUBLE"
 
+    /*
     case outward = "OUTWARD"
     case balanced = "BALANCED"
     case inward = "INWARD"
     case double = "DOUBLE"
+     */
 }
 
 enum Terrestrial: String, CaseIterable, Equatable {
     case occident = "OCCIDENT"
     case meridian = "MERIDIAN"
     case orient = "ORIENT"
+    
+    case modal = "MODAL"
+    //case natural = "NATURAL"
+    case melodic = "MELODIC"
+    case harmonic = "HARMONIC"
+    /*
     case easy = "EASY"
     case melodic = "MELODIC"
     case ascent = "ASCENT"
@@ -54,6 +62,7 @@ enum Terrestrial: String, CaseIterable, Equatable {
     case melodicS3 = "MELODIC S3"
     case melodicR1 = "MELODIC R1"
     case melodicR2 = "MELODIC R2"
+     */
 }
 
 enum MusicalKey: String, CaseIterable, Equatable {
@@ -288,7 +297,7 @@ struct ScalesCatalog {
     
     static let Locrian_JI_E = Scale(
         name: "Locrian",
-        intonation: .ji, celestial: .locrian, terrestrial: .easy,
+        intonation: .ji, celestial: .locrian, terrestrial: .modal,
         notes: [1.0, 16.0/15.0, 6.0/5.0, 4.0/3.0, 64.0/45.0, 8.0/5.0, 16.0/9.0],
         semitonePattern: [0, 1, 3, 5, 6, 8, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -296,7 +305,7 @@ struct ScalesCatalog {
     
     static let Phrygian_JI_E = Scale(
         name: "Phrygian",
-        intonation: .ji, celestial: .phrygian, terrestrial: .easy,
+        intonation: .ji, celestial: .phrygian, terrestrial: .modal,
         notes: [1.0, 16.0/15.0, 6.0/5.0, 4.0/3.0, 3.0/2.0, 8.0/5.0, 16.0/9.0],
         semitonePattern: [0, 1, 3, 5, 7, 8, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -304,7 +313,7 @@ struct ScalesCatalog {
     
     static let Aeolian_JI_E = Scale(
         name: "Aeolian",
-        intonation: .ji, celestial: .aeolian, terrestrial: .easy,
+        intonation: .ji, celestial: .aeolian, terrestrial: .modal,
         notes: [1.0, 10.0/9.0, 6.0/5.0, 4.0/3.0, 3.0/2.0, 8.0/5.0, 16.0/9.0],
         semitonePattern: [0, 2, 3, 5, 7, 8, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -312,7 +321,7 @@ struct ScalesCatalog {
     
     static let Dorian_JI_E = Scale(
         name: "Dorian",
-        intonation: .ji, celestial: .dorian, terrestrial: .easy,
+        intonation: .ji, celestial: .dorian, terrestrial: .modal,
         notes: [1.0, 10.0/9.0, 6.0/5.0, 4.0/3.0, 3.0/2.0, 5.0/3.0, 9.0/5.0],
         semitonePattern: [0, 2, 3, 5, 7, 9, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -320,7 +329,7 @@ struct ScalesCatalog {
     
     static let Mixolydian_JI_E = Scale(
         name: "Mixolydian",
-        intonation: .ji, celestial: .mixolydian, terrestrial: .easy,
+        intonation: .ji, celestial: .mixolydian, terrestrial: .modal,
         notes: [1.0, 9.0/8.0, 5.0/4.0, 4.0/3.0, 3.0/2.0, 5.0/3.0, 9.0/5.0],
         semitonePattern: [0, 2, 4, 5, 7, 9, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -328,7 +337,7 @@ struct ScalesCatalog {
     
     static let Ionian_JI_E = Scale(
         name: "Ionian",
-        intonation: .ji, celestial: .ionian, terrestrial: .easy,
+        intonation: .ji, celestial: .ionian, terrestrial: .modal,
         notes: [1.0, 9.0/8.0, 5.0/4.0, 4.0/3.0, 3.0/2.0, 5.0/3.0, 15.0/8.0],
         semitonePattern: [0, 2, 4, 5, 7, 9, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -336,7 +345,7 @@ struct ScalesCatalog {
     
     static let Lydian_JI_E = Scale(
         name: "Lydian",
-        intonation: .ji, celestial: .lydian, terrestrial: .easy,
+        intonation: .ji, celestial: .lydian, terrestrial: .modal,
         notes: [1.0, 9.0/8.0, 5.0/4.0, 45.0/32.0, 3.0/2.0, 5.0/3.0, 15.0/8.0],
         semitonePattern: [0, 2, 4, 6, 7, 9, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -344,7 +353,7 @@ struct ScalesCatalog {
     
     static let MelodicMinor_JI_E = Scale(
         name: "Melodic Minor",
-        intonation: .ji, celestial: .melodicMinor, terrestrial: .easy,
+        intonation: .ji, celestial: .minor, terrestrial: .melodic,
         notes: [1.0, 9.0/8.0, 6.0/5.0, 4.0/3.0, 3.0/2.0, 27.0/16.0, 15.0/8.0],
         semitonePattern: [0, 2, 3, 5, 7, 9, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -352,7 +361,7 @@ struct ScalesCatalog {
     
     static let MelodicMajor_JI_E = Scale(
         name: "Melodic Major",
-        intonation: .ji, celestial: .melodicMajor, terrestrial: .easy,
+        intonation: .ji, celestial: .major, terrestrial: .melodic,
         notes: [1.0, 9.0/8.0, 5.0/4.0, 4.0/3.0, 3.0/2.0, 8.0/5.0, 16.0/9.0],
         semitonePattern: [0, 2, 4, 5, 7, 8, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -360,7 +369,7 @@ struct ScalesCatalog {
     
     static let HarmonicMinor_JI_E = Scale(
         name: "Harmonic Minor",
-        intonation: .ji, celestial: .harmonicMinor, terrestrial: .easy,
+        intonation: .ji, celestial: .minor, terrestrial: .harmonic,
         notes: [1.0, 9.0/8.0, 6.0/5.0, 4.0/3.0, 3.0/2.0, 8.0/5.0, 15.0/8.0],
         semitonePattern: [0, 2, 3, 5, 7, 8, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -368,7 +377,7 @@ struct ScalesCatalog {
     
     static let HarmonicMajor_JI_E = Scale(
         name: "Harmonic Major",
-        intonation: .ji, celestial: .harmonicMajor, terrestrial: .easy,
+        intonation: .ji, celestial: .major, terrestrial: .harmonic,
         notes: [1.0, 9.0/8.0, 5.0/4.0, 4.0/3.0, 3.0/2.0, 8.0/5.0, 15.0/8.0],
         semitonePattern: [0, 2, 4, 5, 7, 8, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -376,7 +385,7 @@ struct ScalesCatalog {
     
     static let DoubleHarmonic_JI_E = Scale(
         name: "Double Harmonic",
-        intonation: .ji, celestial: .doubleHarmonic, terrestrial: .easy,
+        intonation: .ji, celestial: .double, terrestrial: .harmonic,
         notes: [1.0, 16.0/15.0, 5.0/4.0, 4.0/3.0, 3.0/2.0, 8.0/5.0, 15.0/8.0],
         semitonePattern: [0, 1, 4, 5, 7, 8, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -387,7 +396,7 @@ struct ScalesCatalog {
     
     static let Locrian_ET_E = Scale(
         name: "Locrian",
-        intonation: .et, celestial: .locrian, terrestrial: .easy,
+        intonation: .et, celestial: .locrian, terrestrial: .modal,
         notes: et([0, 1, 3, 5, 6, 8, 10]),
         semitonePattern: [0, 1, 3, 5, 6, 8, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -395,7 +404,7 @@ struct ScalesCatalog {
     
     static let Phrygian_ET_E = Scale(
         name: "Phrygian",
-        intonation: .et, celestial: .phrygian, terrestrial: .easy,
+        intonation: .et, celestial: .phrygian, terrestrial: .modal,
         notes: et([0, 1, 3, 5, 7, 8, 10]),
         semitonePattern: [0, 1, 3, 5, 7, 8, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -403,7 +412,7 @@ struct ScalesCatalog {
     
     static let Aeolian_ET_E = Scale(
         name: "Aeolian",
-        intonation: .et, celestial: .aeolian, terrestrial: .easy,
+        intonation: .et, celestial: .aeolian, terrestrial: .modal,
         notes: et([0, 2, 3, 5, 7, 8, 10]),
         semitonePattern: [0, 2, 3, 5, 7, 8, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -411,7 +420,7 @@ struct ScalesCatalog {
     
     static let Dorian_ET_E = Scale(
         name: "Dorian",
-        intonation: .et, celestial: .dorian, terrestrial: .easy,
+        intonation: .et, celestial: .dorian, terrestrial: .modal,
         notes: et([0, 2, 3, 5, 7, 9, 10]),
         semitonePattern: [0, 2, 3, 5, 7, 9, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -419,7 +428,7 @@ struct ScalesCatalog {
     
     static let Mixolydian_ET_E = Scale(
         name: "Mixolydian",
-        intonation: .et, celestial: .mixolydian, terrestrial: .easy,
+        intonation: .et, celestial: .mixolydian, terrestrial: .modal,
         notes: et([0, 2, 4, 5, 7, 9, 10]),
         semitonePattern: [0, 2, 4, 5, 7, 9, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -427,7 +436,7 @@ struct ScalesCatalog {
     
     static let Ionian_ET_E = Scale(
         name: "Ionian",
-        intonation: .et, celestial: .ionian, terrestrial: .easy,
+        intonation: .et, celestial: .ionian, terrestrial: .modal,
         notes: et([0, 2, 4, 5, 7, 9, 11]),
         semitonePattern: [0, 2, 4, 5, 7, 9, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -435,7 +444,7 @@ struct ScalesCatalog {
     
     static let Lydian_ET_E = Scale(
         name: "Lydian",
-        intonation: .et, celestial: .lydian, terrestrial: .easy,
+        intonation: .et, celestial: .lydian, terrestrial: .modal,
         notes: et([0, 2, 4, 6, 7, 9, 11]),
         semitonePattern: [0, 2, 4, 6, 7, 9, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -443,7 +452,7 @@ struct ScalesCatalog {
     
     static let MelodicMinor_ET_E = Scale(
         name: "Melodic Minor",
-        intonation: .et, celestial: .melodicMinor, terrestrial: .easy,
+        intonation: .et, celestial: .minor, terrestrial: .melodic,
         notes: et([0, 2, 3, 5, 7, 9, 11]),
         semitonePattern: [0, 2, 3, 5, 7, 9, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -451,7 +460,7 @@ struct ScalesCatalog {
     
     static let MelodicMajor_ET_E = Scale(
         name: "Melodic Major",
-        intonation: .et, celestial: .melodicMajor, terrestrial: .easy,
+        intonation: .et, celestial: .major, terrestrial: .melodic,
         notes: et([0, 2, 4, 5, 7, 8, 10]),
         semitonePattern: [0, 2, 4, 5, 7, 8, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -459,7 +468,7 @@ struct ScalesCatalog {
     
     static let HarmonicMinor_ET_E = Scale(
         name: "Harmonic Minor",
-        intonation: .et, celestial: .harmonicMinor, terrestrial: .easy,
+        intonation: .et, celestial: .minor, terrestrial: .harmonic,
         notes: et([0, 2, 3, 5, 7, 8, 11]),
         semitonePattern: [0, 2, 3, 5, 7, 8, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -467,7 +476,7 @@ struct ScalesCatalog {
     
     static let HarmonicMajor_ET_E = Scale(
         name: "Harmonic Major",
-        intonation: .et, celestial: .harmonicMajor, terrestrial: .easy,
+        intonation: .et, celestial: .major, terrestrial: .harmonic,
         notes: et([0, 2, 4, 5, 7, 8, 11]),
         semitonePattern: [0, 2, 4, 5, 7, 8, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
@@ -475,7 +484,7 @@ struct ScalesCatalog {
     
     static let DoubleHarmonic_ET_E = Scale(
         name: "Double Harmonic",
-        intonation: .et, celestial: .doubleHarmonic, terrestrial: .easy,
+        intonation: .et, celestial: .double, terrestrial: .harmonic,
         notes: et([0, 1, 4, 5, 7, 8, 11]),
         semitonePattern: [0, 1, 4, 5, 7, 8, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
