@@ -89,13 +89,13 @@ struct CenterStripConfig {
         
         if isIPad {
             if isLandscape {
-                percentage = isUnfolded ? 0.441 : 0.05  // 50% or 5%
+                percentage = isUnfolded ? 0.441 : 0.05  // 44.1% or 5%
             } else {
-                percentage = isUnfolded ? 0.91 : 0.07  // 70% or 7%
+                percentage = isUnfolded ? 0.6 : 0.07  // 60% or 7%
             }
         } else {
             // iPhone (always portrait for this app)
-            percentage = isUnfolded ? 0.8 : 0.125  // 100% or 10%
+            percentage = isUnfolded ? 0.8 : 0.125  // 80% or 12.5%
         }
         
         return CenterStripConfig(width: screenWidth * percentage, isIPad: isIPad, isUnfolded: isUnfolded)

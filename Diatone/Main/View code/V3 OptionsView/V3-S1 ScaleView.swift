@@ -157,6 +157,7 @@ struct ScaleView: View {
                         }
                 }
             }
+            /*
             ZStack { // Row 8 - Terrestrial
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
@@ -193,6 +194,7 @@ struct ScaleView: View {
                         }
                 }
             }
+            */
             ZStack { // Row 9 - Rotation
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
@@ -228,6 +230,16 @@ struct ScaleView: View {
                         }
                 }
             }
+            
+            
+            ZStack { // placeholder replacing Row 8 - Terrestrial
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(Color("BackgroundColour"))
+            }
+         
+            
+            
+            
         }
     }
 }

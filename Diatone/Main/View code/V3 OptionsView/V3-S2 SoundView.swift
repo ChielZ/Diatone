@@ -82,7 +82,7 @@ struct SoundView: View {
             ZStack { // Row 5 - Top Row (Select Row 1-5)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
-
+                
                 HStack {
                     ForEach(1...7, id: \.self) { row in
                         PresetButton(
@@ -104,7 +104,7 @@ struct SoundView: View {
             ZStack { // Row 6 - Bottom Row (Select Column 1-5)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
-
+                
                 HStack {
                     ForEach(1...7, id: \.self) { column in
                         PresetButton(
@@ -122,6 +122,9 @@ struct SoundView: View {
                     }
                 }
             }
+            
+            
+            
             
             ZStack { // Row 7 - VOLUME
                 RoundedRectangle(cornerRadius: radius)
@@ -294,7 +297,7 @@ private struct PresetButton: View {
     var body: some View {
         RoundedRectangle(cornerRadius: radius)
             .fill(isSelected ? Color("HighlightColour") : Color("SupportColour"))
-            .aspectRatio(1.0, contentMode: .fit)
+            //.aspectRatio(1.0, contentMode: .fit)
             .overlay(
                 Text("\(column)")
                     .foregroundColor(Color("BackgroundColour"))

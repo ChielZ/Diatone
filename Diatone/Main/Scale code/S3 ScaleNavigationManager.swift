@@ -196,16 +196,16 @@ final class ScaleNavigationManager: ObservableObject {
     func cycleRotation(forward: Bool) {
         let newRotation = forward ? rotation + 1 : rotation - 1
         
-        // Clamp to range [-2, 2]
-        guard newRotation >= -2 && newRotation <= 2 else { return }
+        // Clamp to range [-3, 3]
+        guard newRotation >= -3 && newRotation <= 3 else { return }
         
         rotation = newRotation
     }
     
     /// Sets the rotation directly
-    /// - Parameter value: The rotation offset (-2 to +2)
+    /// - Parameter value: The rotation offset (-3 to +3)
     func setRotation(_ value: Int) {
-        let clamped = max(-2, min(2, value))
+        let clamped = max(-3, min(3, value))
         rotation = clamped
     }
     
