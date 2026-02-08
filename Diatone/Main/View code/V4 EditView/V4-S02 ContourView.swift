@@ -1,6 +1,6 @@
 //
 //  V4-S02 ContourView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
 // SUBVIEW 2 - VOICE CONTOUR

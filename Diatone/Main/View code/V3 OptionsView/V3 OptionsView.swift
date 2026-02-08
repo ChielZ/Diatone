@@ -1,6 +1,6 @@
 //
 //  V3 OptionsView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 02/12/2025.
 //

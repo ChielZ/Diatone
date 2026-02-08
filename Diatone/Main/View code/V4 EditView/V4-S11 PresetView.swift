@@ -1,6 +1,6 @@
 //
 //  V4-S11 PresetView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
 // SUBVIEW 11 - PRESET MANAGEMENT

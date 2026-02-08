@@ -1,6 +1,6 @@
 //
 //  S1 Scales.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 04/12/2025.
 //

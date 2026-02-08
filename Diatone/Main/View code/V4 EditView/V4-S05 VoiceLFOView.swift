@@ -1,6 +1,6 @@
 //
 //  V4-S05 VoiceLFOView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
 // SUBVIEW 5 - VOICE LFO

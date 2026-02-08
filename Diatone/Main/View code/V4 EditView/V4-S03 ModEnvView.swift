@@ -1,6 +1,6 @@
 //
 //  V4-S03 ModEnvView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
 // SUBVIEW 3 - MOD ENVELOPE + KEY TRACKING

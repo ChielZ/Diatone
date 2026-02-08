@@ -1,6 +1,6 @@
 //
 //  V4-S08 EffectsView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
 // SUBVIEW 8 - EFFECTS

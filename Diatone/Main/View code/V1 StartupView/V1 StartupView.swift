@@ -1,6 +1,6 @@
 //
 //  V1 StartupView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 04/12/2025.
 //

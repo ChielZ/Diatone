@@ -1,6 +1,6 @@
 //
 //  V4-S06 GlobLFOView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
 // SUBVIEW 6 - GLOBAL LFO

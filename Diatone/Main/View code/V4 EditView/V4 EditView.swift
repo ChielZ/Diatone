@@ -1,6 +1,6 @@
 //
 //  V4 EditView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
 // MAIN VIEW

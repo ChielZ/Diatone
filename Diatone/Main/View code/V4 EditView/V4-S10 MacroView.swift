@@ -1,6 +1,6 @@
 //
 //  V4-S10 MacroView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 26/12/2025.
 // SUBVIEW 10 - MACROS

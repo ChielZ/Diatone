@@ -1,6 +1,6 @@
 //
 //  V2 MainKeyboardView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 07/12/2025.
 //

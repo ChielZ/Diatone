@@ -1,6 +1,6 @@
 //
-//  PentatoneApp.swift
-//  Pentatone
+//  DiatoneApp.swift
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 30/11/2025.
 //

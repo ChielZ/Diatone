@@ -1,6 +1,6 @@
 //
 //  ScaleNavigationManager.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 05/01/2026.
 //

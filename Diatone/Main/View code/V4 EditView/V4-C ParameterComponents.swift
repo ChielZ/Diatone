@@ -1,6 +1,6 @@
 //
 //  V4-C ParameterComponents.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 27/12/2025.
 //

@@ -1,5 +1,5 @@
 //  V4-S04 AuxEnvView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 25/12/2025.
 // SUBVIEW 4 - AUX ENVELOPE

@@ -1,6 +1,6 @@
 //
 //  V3-S2 SoundView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 06/12/2025.
 //

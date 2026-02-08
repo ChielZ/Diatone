@@ -1,6 +1,6 @@
 //
 //  V3-S3 VoiceView.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 06/12/2025.
 //
