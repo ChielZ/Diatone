@@ -179,9 +179,9 @@ struct OptionsView: View {
                             .aspectRatio(1.0, contentMode: .fit)
                             .overlay(
                                 NoteNameText(
-                                    noteName: noteNamesArray[3],
+                                    noteName: noteNamesArray[4],
                                     size: 30,
-                                    color: Color("KeyColour4")
+                                    color: Color("KeyColour5")
                                 )
                                 .minimumScaleFactor(0.3)
                                 .lineLimit(1)
@@ -192,9 +192,22 @@ struct OptionsView: View {
                             .aspectRatio(1.0, contentMode: .fit)
                             .overlay(
                                 NoteNameText(
-                                    noteName: noteNamesArray[4],
+                                    noteName: noteNamesArray[5],
                                     size: 30,
-                                    color: Color("KeyColour5")
+                                    color: Color("KeyColour6")
+                                )
+                                .minimumScaleFactor(0.3)
+                                .lineLimit(1)
+                            )
+                        Spacer()
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color("BackgroundColour"))
+                            .aspectRatio(1.0, contentMode: .fit)
+                            .overlay(
+                                NoteNameText(
+                                    noteName: noteNamesArray[6],
+                                    size: 30,
+                                    color: Color("KeyColour7")
                                 )
                                 .minimumScaleFactor(0.3)
                                 .lineLimit(1)
@@ -238,6 +251,19 @@ struct OptionsView: View {
                                 .minimumScaleFactor(0.3)
                                 .lineLimit(1)
                             )
+                        Spacer()
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color("BackgroundColour"))
+                            .aspectRatio(1.0, contentMode: .fit)
+                            .overlay(
+                                NoteNameText(
+                                    noteName: noteNamesArray[3],
+                                    size: 30,
+                                    color: Color("KeyColour4")
+                                )
+                                .minimumScaleFactor(0.3)
+                                .lineLimit(1)
+                            )
                     }
                 }
                 .frame(maxHeight: .infinity)
@@ -247,11 +273,15 @@ struct OptionsView: View {
                         .fill(Color("BackgroundColour"))
                     HStack{
                         RoundedRectangle(cornerRadius: radius)
-                            .fill(Color("KeyColour4"))
+                            .fill(Color("KeyColour5"))
                             .aspectRatio(1.0, contentMode: .fit)
                         Spacer()
                         RoundedRectangle(cornerRadius: radius)
-                            .fill(Color("KeyColour5"))
+                            .fill(Color("KeyColour6"))
+                            .aspectRatio(1.0, contentMode: .fit)
+                        Spacer()
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color("KeyColour7"))
                             .aspectRatio(1.0, contentMode: .fit)
                         Spacer()
                         RoundedRectangle(cornerRadius: radius)
@@ -264,6 +294,10 @@ struct OptionsView: View {
                         Spacer()
                         RoundedRectangle(cornerRadius: radius)
                             .fill(Color("KeyColour3"))
+                            .aspectRatio(1.0, contentMode: .fit)
+                        Spacer()
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color("KeyColour4"))
                             .aspectRatio(1.0, contentMode: .fit)
                     }
                 }

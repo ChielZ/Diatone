@@ -84,7 +84,7 @@ struct SoundView: View {
                     .fill(Color("BackgroundColour"))
 
                 HStack {
-                    ForEach(1...5, id: \.self) { row in
+                    ForEach(1...7, id: \.self) { row in
                         PresetButton(
                             row: row,
                             column: row,
@@ -94,7 +94,7 @@ struct SoundView: View {
                             }
                         )
                         
-                        if row < 5 {
+                        if row < 7 {
                             Spacer()
                         }
                     }
@@ -106,7 +106,7 @@ struct SoundView: View {
                     .fill(Color("BackgroundColour"))
 
                 HStack {
-                    ForEach(1...5, id: \.self) { column in
+                    ForEach(1...7, id: \.self) { column in
                         PresetButton(
                             row: 1,
                             column: column,
@@ -116,7 +116,7 @@ struct SoundView: View {
                             }
                         )
                         
-                        if column < 5 {
+                        if column < 7 {
                             Spacer()
                         }
                     }
