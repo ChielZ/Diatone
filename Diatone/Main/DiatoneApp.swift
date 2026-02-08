@@ -43,14 +43,14 @@ struct Penta_ToneApp: App {
     
     /// Manages scale selection, rotation, and key transposition
     @StateObject private var navigationManager = ScaleNavigationManager(
-        initialScale: ScalesCatalog.centerMeridian_JI,
+        initialScale: ScalesCatalog.Dorian_JI_E,
         initialKey: .D
     )
     
     /// Keyboard state manages frequency calculations
     /// Created once and updated as scale/key changes
     @State private var keyboardState: KeyboardState = KeyboardState(
-        scale: ScalesCatalog.centerMeridian_JI,
+        scale: ScalesCatalog.Dorian_JI_E,
         key: .D
     )
     

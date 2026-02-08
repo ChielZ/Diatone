@@ -57,7 +57,7 @@ struct OptionsView: View {
     @Binding var currentSubView: OptionsSubView
     
     // Scale navigation
-    var currentScale: Scale = ScalesCatalog.centerMeridian_JI
+    var currentScale: Scale = ScalesCatalog.Dorian_JI_E
     var currentKey: MusicalKey = .D
     var onCycleIntonation: ((Bool) -> Void)? = nil
     var onCycleCelestial: ((Bool) -> Void)? = nil
@@ -296,7 +296,7 @@ struct OptionsView: View {
     OptionsView(
         showingOptions: .constant(true),
         currentSubView: .constant(.scale),
-        currentScale: ScalesCatalog.centerMeridian_JI,
+        currentScale: ScalesCatalog.Dorian_JI_E,
         currentKey: .D,
         onCycleIntonation: { _ in },
         onCycleCelestial: { _ in },

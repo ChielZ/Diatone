@@ -41,7 +41,7 @@ struct VoiceView: View {
                     .fill(Color("BackgroundColour"))
                 GeometryReader { geometry in
                     Text("Arithmophone")
-                        .foregroundColor(Color("KeyColour1"))
+                        .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("LobsterTwo-Italic", size: 50)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .contentShape(Rectangle())

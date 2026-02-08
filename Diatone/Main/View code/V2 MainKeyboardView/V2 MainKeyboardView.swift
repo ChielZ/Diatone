@@ -115,7 +115,7 @@ struct MainKeyboardView: View {
     var onNextScale: (() -> Void)? = nil
     
     // Current scale info and property-based navigation
-    var currentScale: Scale = ScalesCatalog.centerMeridian_JI
+    var currentScale: Scale = ScalesCatalog.Dorian_JI_E
     var currentKey: MusicalKey = .D
     var onCycleIntonation: ((Bool) -> Void)? = nil
     var onCycleCelestial: ((Bool) -> Void)? = nil
@@ -141,20 +141,20 @@ struct MainKeyboardView: View {
     
     // MARK: - Key Color Calculation
     
-    /// Calculates the color name for a given key index (0-17) based on current rotation
-    /// Keys cycle through 5 colors corresponding to the 5 scale degrees
+    /// Calculates the color name for a given key index (0-21) based on current rotation
+    /// Keys cycle through 7 colors corresponding to the 7 scale degrees
     /// With rotation, the color assignment shifts to match the new note mapping
     private func keyColor(for keyIndex: Int) -> String {
-        // Base color pattern (without rotation): cycles 1,2,3,4,5,1,2,3,4,5...
-        // Each key normally maps to: (keyIndex % 5) + 1
-        let baseColorIndex = keyIndex % 5
+        // Base color pattern (without rotation): cycles 1,2,3,4,5,6,7,1,2,3,4,5,6,7...
+        // Each key normally maps to: (keyIndex % 7) + 1
+        let baseColorIndex = keyIndex % 7
         
         // Apply rotation offset (sign flipped to match note rotation direction)
         // Positive rotation shifts colors to the left (earlier colors move to later keys)
         // Negative rotation shifts colors to the right (later colors move to earlier keys)
-        let rotatedColorIndex = (baseColorIndex + currentScale.rotation + 5) % 5
+        let rotatedColorIndex = (baseColorIndex + currentScale.rotation + 7) % 7
         
-        // Map to color name (1-5)
+        // Map to color name (1-7)
         return "KeyColour\(rotatedColorIndex + 1)"
     }
     
@@ -257,8 +257,10 @@ struct MainKeyboardView: View {
                     
                     // Keys layer
                     HStack(spacing: 0) {
-                        // Left column - Keys
+                        // Left column - Keys (11 keys, bottom to top: 0,2,4,6,8,10,12,14,16,18,20)
                         VStack {
+                            KeyButton(colorName: keyColor(for: 20), keyIndex: 20, isLeftSide: true, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 18), keyIndex: 18, isLeftSide: true, keyboardState: keyboardState)
                             KeyButton(colorName: keyColor(for: 16), keyIndex: 16, isLeftSide: true, keyboardState: keyboardState)
                             KeyButton(colorName: keyColor(for: 14), keyIndex: 14, isLeftSide: true, keyboardState: keyboardState)
                             KeyButton(colorName: keyColor(for: 12), keyIndex: 12, isLeftSide: true, keyboardState: keyboardState)
@@ -274,8 +276,10 @@ struct MainKeyboardView: View {
                         Spacer()
                             .frame(width: centerConfig.width)
                         
-                        // Right column - Keys
+                        // Right column - Keys (11 keys, bottom to top: 1,3,5,7,9,11,13,15,17,19,21)
                         VStack {
+                            KeyButton(colorName: keyColor(for: 21), keyIndex: 21, isLeftSide: false, keyboardState: keyboardState)
+                            KeyButton(colorName: keyColor(for: 19), keyIndex: 19, isLeftSide: false, keyboardState: keyboardState)
                             KeyButton(colorName: keyColor(for: 17), keyIndex: 17, isLeftSide: false, keyboardState: keyboardState)
                             KeyButton(colorName: keyColor(for: 15), keyIndex: 15, isLeftSide: false, keyboardState: keyboardState)
                             KeyButton(colorName: keyColor(for: 13), keyIndex: 13, isLeftSide: false, keyboardState: keyboardState)
@@ -598,14 +602,14 @@ private struct KeyTouchHandler: UIViewRepresentable {
     MainKeyboardView(
         onPrevScale: {},
         onNextScale: {},
-        currentScale: ScalesCatalog.centerMeridian_JI,
+        currentScale: ScalesCatalog.Dorian_JI_E,
         currentKey: .D,
         onCycleIntonation: { _ in },
         onCycleCelestial: { _ in },
         onCycleTerrestrial: { _ in },
         onCycleRotation: { _ in },
         onCycleKey: { _ in },
-        keyboardState: KeyboardState(scale: ScalesCatalog.centerMeridian_JI, key: .D)
+        keyboardState: KeyboardState(scale: ScalesCatalog.Dorian_JI_E, key: .D)
     )
 }
 

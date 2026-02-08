@@ -51,7 +51,7 @@ final class KeyboardState: ObservableObject {
     ///   - key: The initial musical key (default: D)
     init(scale: Scale? = nil, key: MusicalKey = .D) {
         // Use provided scale or default to Center Meridian JI
-        self.currentScale = scale ?? ScalesCatalog.centerMeridian_JI
+        self.currentScale = scale ?? ScalesCatalog.Dorian_JI_E
         self.currentKey = key
         
         // Compute initial frequencies
@@ -64,7 +64,7 @@ final class KeyboardState: ObservableObject {
     /// - Parameter index: The key index (0-17)
     /// - Returns: The frequency in Hz, or nil if index is out of range
     func frequencyForKey(at index: Int) -> Double? {
-        guard (0..<18).contains(index) else { return nil }
+        guard (0..<22).contains(index) else { return nil }
         guard index < keyFrequencies.count else { return nil }
         return keyFrequencies[index]
     }
@@ -74,7 +74,7 @@ final class KeyboardState: ObservableObject {
     /// - Parameter index: The key index (0-17)
     /// - Returns: The frequency in Hz
     func frequency(forKey index: Int) -> Double {
-        precondition((0..<18).contains(index), "Key index must be 0-17")
+        precondition((0..<22).contains(index), "Key index must be 0-17")
         precondition(index < keyFrequencies.count, "Frequencies not yet computed")
         return keyFrequencies[index]
     }

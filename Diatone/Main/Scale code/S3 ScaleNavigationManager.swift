@@ -66,7 +66,7 @@ final class ScaleNavigationManager: ObservableObject {
     ///   - initialKey: The initial musical key (defaults to D)
     init(initialScale: Scale? = nil, initialKey: MusicalKey = .D) {
         // Find the index of the initial scale
-        let targetScale = initialScale ?? ScalesCatalog.centerMeridian_JI
+        let targetScale = initialScale ?? ScalesCatalog.Dorian_JI_E
         if let index = ScalesCatalog.all.firstIndex(where: { $0 == targetScale }) {
             self.currentScaleIndex = index
         } else {
@@ -252,7 +252,7 @@ final class ScaleNavigationManager: ObservableObject {
     
     /// Resets to default state: Center Meridian JI, key D, rotation 0
     func resetToDefaults() {
-        let target = ScalesCatalog.centerMeridian_JI
+        let target = ScalesCatalog.Dorian_JI_E
         if let idx = ScalesCatalog.all.firstIndex(where: { $0 == target }) {
             currentScaleIndex = idx
         }

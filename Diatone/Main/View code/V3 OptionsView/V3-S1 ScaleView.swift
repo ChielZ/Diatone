@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ScaleView: View {
     // Current scale and navigation callbacks
-    var currentScale: Scale = ScalesCatalog.centerMeridian_JI
+    var currentScale: Scale = ScalesCatalog.Dorian_JI_E
     var currentKey: MusicalKey = .D
     var onCycleIntonation: ((Bool) -> Void)? = nil
     var onCycleCelestial: ((Bool) -> Void)? = nil
@@ -263,7 +263,7 @@ struct MusicalKeyText: View {
         Color("BackgroundColour").ignoresSafeArea()
         VStack {
             ScaleView(
-                currentScale: ScalesCatalog.centerMeridian_JI,
+                currentScale: ScalesCatalog.Dorian_JI_E,
                 currentKey: .D,
                 onCycleIntonation: { _ in },
                 onCycleCelestial: { _ in },

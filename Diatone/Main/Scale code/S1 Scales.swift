@@ -224,16 +224,16 @@ private func applyRotation(to notes: [Double], rotation: Int) -> [Double] {
     return rotatedNotes
 }
 
-// Given a scale and a base frequency (RootFreq), produce 18 key frequencies
+// Given a scale and a base frequency (RootFreq), produce 22 key frequencies
 // Mapping (1-based keys):
-// 1..5:  note1..note5
-// 6..10: note1..note5 * 2
-// 11..15: note1..note5 * 4
-// 16..18: note1..note3 * 8
+// 1..7:  note1..note7
+// 8..14: note1..note7 * 2
+// 15..21: note1..note7 * 4
+// 22: note1 * 8
 // With rotation applied, the starting note changes accordingly
 // If a musicalKey is provided, applies transposition factor
 func makeKeyFrequencies(for scale: Scale, baseFrequency: Double = MusicalKey.baseFrequency, musicalKey: MusicalKey = .D) -> [Double] {
-    precondition(scale.notes.count == 5, "Scale must be pentatonic (5 notes).")
+    precondition(scale.notes.count == 7, "Scale must be diatonic (7 notes).")
     
     // Apply rotation to get the reordered notes
     let rotatedNotes = applyRotation(to: scale.notes, rotation: scale.rotation)
@@ -249,7 +249,7 @@ func makeKeyFrequencies(for scale: Scale, baseFrequency: Double = MusicalKey.bas
     // Octave multipliers for groups
     let multipliers: [Double] = [1.0, 2.0, 4.0, 8.0]
     // Group sizes: 5, 5, 5, 3
-    let groupSizes: [Int] = [5, 5, 5, 3]
+    let groupSizes: [Int] = [7, 7, 7, 1]
 
     for (groupIndex, groupSize) in groupSizes.enumerated() {
         let mul = multipliers[groupIndex]
@@ -258,8 +258,8 @@ func makeKeyFrequencies(for scale: Scale, baseFrequency: Double = MusicalKey.bas
         }
     }
 
-    // Sanity: ensure we produced exactly 18 frequencies
-    assert(result.count == 18)
+    // Sanity: ensure we produced exactly 22 frequencies
+    assert(result.count == 22)
     return result
 }
 
@@ -482,7 +482,7 @@ struct ScalesCatalog {
     
     
     
-    
+    /*
     // OLD: PENTATONIC SCALES FOR PENTATONE APP
     // Just Intonation (ratios)
     static let moonOrient_JI = Scale(
@@ -630,14 +630,17 @@ struct ScalesCatalog {
         semitonePattern: [0, 2, 5, 7, 9],
         letterPattern: [0, 1, 3, 4, 5]
     )
-
+*/
     static let all: [Scale] = [
+        /*
         moonOrient_JI, moonMeridian_JI, moonOccident_JI,
         centerOrient_JI, centerMeridian_JI, centerOccident_JI,
         sunOrient_JI, sunMeridian_JI, sunOccident_JI,
         moonOrient_ET, moonMeridian_ET, moonOccident_ET,
         centerOrient_ET, centerMeridian_ET, centerOccident_ET,
         sunOrient_ET, sunMeridian_ET, sunOccident_ET
+         */
+        Dorian_JI_E
     ]
 
     static func find(intonation: Intonation, celestial: Celestial, terrestrial: Terrestrial) -> Scale? {
