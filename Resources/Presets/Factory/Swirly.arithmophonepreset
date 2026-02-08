@@ -59,7 +59,7 @@
     "tempo" : 100,
     "voiceMode" : "polyphonic"
   },
-  "name" : "Swirl",
+  "name" : "Swirly",
   "voiceTemplate" : {
     "envelope" : {
       "attackDuration" : 0.001,

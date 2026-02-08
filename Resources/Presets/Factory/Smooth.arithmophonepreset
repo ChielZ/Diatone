@@ -59,7 +59,7 @@
     "tempo" : 100,
     "voiceMode" : "polyphonic"
   },
-  "name" : "Smoothie",
+  "name" : "Smooth",
   "voiceTemplate" : {
     "envelope" : {
       "attackDuration" : 0.001,
