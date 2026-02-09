@@ -1,6 +1,6 @@
 //
 //  A1.5 ParameterManager.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 04/01/2026.
 //

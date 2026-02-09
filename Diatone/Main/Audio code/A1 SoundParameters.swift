@@ -1,6 +1,6 @@
 //
 //  A1 SoundParameters.swift
-//  Penta-Tone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 16/12/2025.
 //

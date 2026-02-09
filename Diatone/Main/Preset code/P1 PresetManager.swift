@@ -1,6 +1,6 @@
 //
 //  P1 PresetManager.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 07/01/2026.
 //
@@ -504,8 +504,8 @@ final class PresetManager: ObservableObject {
     /// - Parameters:
     ///   - url: URL of the preset file to import
     ///   - bankType: The bank to assign the preset to (must be a user bank)
-    ///   - row: Row position (1-5)
-    ///   - column: Column position (1-5)
+    ///   - row: Row position (1-7)
+    ///   - column: Column position (1-7)
     ///   - loadImmediately: If true, load the preset to the audio engine after importing (default: true)
     /// - Returns: The imported preset
     /// - Throws: Decoding, file system, or slot assignment errors
@@ -551,12 +551,12 @@ final class PresetManager: ObservableObject {
     
     /// Check if user preset storage is full (100 slots for Pentatone)
     var userPresetsAreFull: Bool {
-        return userPresetCount >= 100
+        return userPresetCount >= 198
     }
     
     /// Number of available user preset slots remaining
     var availableUserSlots: Int {
-        return max(0, 100 - userPresetCount)
+        return max(0, 198 - userPresetCount)
     }
     
     // MARK: - Slot Management
@@ -604,9 +604,9 @@ final class PresetManager: ObservableObject {
     
     /// Get preset for a specific slot
     /// - Parameters:
-    ///   - bankType: The bank type (Factory, User A, User B, or User C)
-    ///   - row: Row within bank (1-5)
-    ///   - column: Column within bank (1-5)
+    ///   - bankType: The bank type (Factory, User A, User B, User C or User D)
+    ///   - row: Row within bank (1-7)
+    ///   - column: Column within bank (1-7)
     /// - Returns: The preset assigned to this slot, or nil if empty/not found
     func preset(forBankType bankType: PentatoneBankType, row: Int, column: Int) -> AudioParameterSet? {
         // Get the slot
@@ -643,9 +643,9 @@ final class PresetManager: ObservableObject {
     /// Assign a preset to a user slot
     /// - Parameters:
     ///   - preset: The preset to assign (must be a user preset)
-    ///   - bankType: The user bank type (User A, User B, or User C)
-    ///   - row: Row within bank (1-5)
-    ///   - column: Column within bank (1-5)
+    ///   - bankType: The user bank type (User A, User B, User C or User D)
+    ///   - row: Row within bank (1-7)
+    ///   - column: Column within bank (1-7)
     /// - Throws: File system errors or validation errors
     func assignPresetToSlot(preset: AudioParameterSet, bankType: PentatoneBankType, row: Int, column: Int) throws {
         // Validate it's a user preset (not factory)
@@ -659,7 +659,7 @@ final class PresetManager: ObservableObject {
         }
         
         // Validate row and column
-        guard (1...5).contains(row) && (1...5).contains(column) else {
+        guard (1...7).contains(row) && (1...7).contains(column) else {
             throw PresetError.invalidSlotPosition
         }
         
@@ -674,9 +674,9 @@ final class PresetManager: ObservableObject {
     
     /// Clear a user slot (remove preset assignment)
     /// - Parameters:
-    ///   - bankType: The user bank type (User A, User B, or User C)
-    ///   - row: Row within bank (1-5)
-    ///   - column: Column within bank (1-5)
+    ///   - bankType: The user bank type (User A, User B, User C or User D)
+    ///   - row: Row within bank (1-7)
+    ///   - column: Column within bank (1-7)
     /// - Throws: File system errors or validation errors
     func clearSlot(bankType: PentatoneBankType, row: Int, column: Int) throws {
         guard bankType.isUserBank else {

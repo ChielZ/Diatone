@@ -1,6 +1,6 @@
 //
 //  A2 PolyphonicVoice.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 20/12/2025.
 //

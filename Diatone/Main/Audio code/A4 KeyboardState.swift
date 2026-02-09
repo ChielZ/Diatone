@@ -1,6 +1,6 @@
 //
 //  A4 KeyboardState.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 20/12/2025.
 //

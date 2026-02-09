@@ -1,6 +1,6 @@
 //
 //  P2 PentatonePresetStructures.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 07/01/2026.
 //
@@ -84,40 +84,69 @@ struct PentatoneFactoryLayout {
     /// These UUIDs must match the IDs inside the factory preset JSON files
     
     static var factorySlots: [PentatonePresetSlot] = [
-        // Slots 1.1 ... 1.5
-        PentatonePresetSlot(bankType: .factory, row: 1, column: 1, presetID: UUID(uuidString: "719BFDB1-0FA5-41C4-9579-0A4EBE49A06B")!), // Smoothie
-        PentatonePresetSlot(bankType: .factory, row: 1, column: 2, presetID: UUID(uuidString: "414B6602-3A5F-4A23-AECB-F7A6BBAE0243")!), // Swirl
+        // Slots 1.1 ... 1.7
+        
+        PentatonePresetSlot(bankType: .factory, row: 1, column: 1, presetID: UUID(uuidString: "414B6602-3A5F-4A23-AECB-F7A6BBAE0243")!), // Swirly
+        PentatonePresetSlot(bankType: .factory, row: 1, column: 2, presetID: UUID(uuidString: "719BFDB1-0FA5-41C4-9579-0A4EBE49A06B")!), // Smooth
         PentatonePresetSlot(bankType: .factory, row: 1, column: 3, presetID: UUID(uuidString: "EE0416D5-CAE6-44A8-B9E1-F78FAFDA5FC5")!), // Rotor
         PentatonePresetSlot(bankType: .factory, row: 1, column: 4, presetID: UUID(uuidString: "3CC21418-B3FF-4A44-9858-8DE49D15F244")!), // Belle
         PentatonePresetSlot(bankType: .factory, row: 1, column: 5, presetID: UUID(uuidString: "A5018C92-471E-4819-92F6-A6CAED674950")!), // Bow
+        PentatonePresetSlot(bankType: .factory, row: 1, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 1, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         
-        // Slots 2.1 ... 2.5
+        // Slots 2.1 ... 2.7
         PentatonePresetSlot(bankType: .factory, row: 2, column: 1, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 2, column: 2, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 2, column: 3, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 2, column: 4, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 2, column: 5, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 2, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 2, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         
-        // Slots 3.1 ... 3.5
+        // Slots 3.1 ... 3.7
         PentatonePresetSlot(bankType: .factory, row: 3, column: 1, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 3, column: 2, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 3, column: 3, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 3, column: 4, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 3, column: 5, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 3, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 3, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         
-        // Slots 4.1 ... 4.5
+        // Slots 4.1 ... 4.7
         PentatonePresetSlot(bankType: .factory, row: 4, column: 1, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 4, column: 2, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 4, column: 3, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 4, column: 4, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 4, column: 5, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 4, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 4, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         
-        // Slots 5.1 ... 5.5
+        // Slots 5.1 ... 5.7
         PentatonePresetSlot(bankType: .factory, row: 5, column: 1, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 5, column: 2, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 5, column: 3, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         PentatonePresetSlot(bankType: .factory, row: 5, column: 4, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        PentatonePresetSlot(bankType: .factory, row: 5, column: 5, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!)  // Basic
+        PentatonePresetSlot(bankType: .factory, row: 5, column: 5, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!),  // Basic
+        PentatonePresetSlot(bankType: .factory, row: 5, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 5, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        
+        // Slots 6.1 ... 6.7
+        PentatonePresetSlot(bankType: .factory, row: 6, column: 1, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 6, column: 2, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 6, column: 3, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 6, column: 4, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 6, column: 5, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!),  // Basic
+        PentatonePresetSlot(bankType: .factory, row: 6, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 6, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        
+        // Slots 7.1 ... 7.7
+        PentatonePresetSlot(bankType: .factory, row: 7, column: 1, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 7, column: 2, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 7, column: 3, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 7, column: 4, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 7, column: 5, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!),  // Basic
+        PentatonePresetSlot(bankType: .factory, row: 7, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        PentatonePresetSlot(bankType: .factory, row: 7, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
     ]
     
     /// Get factory slot by row and column
@@ -181,8 +210,8 @@ struct PentatoneUserLayout: Codable, Equatable {
     /// Create 25 empty slots for a specific bank type
     private static func createEmptyBank(for bankType: PentatoneBankType) -> [PentatonePresetSlot] {
         var slots: [PentatonePresetSlot] = []
-        for row in 1...5 {
-            for column in 1...5 {
+        for row in 1...7 {
+            for column in 1...7 {
                 let slot = PentatonePresetSlot(
                     bankType: bankType,
                     row: row,
@@ -272,7 +301,7 @@ struct PentatoneUserLayout: Codable, Equatable {
     
     /// Get count of empty slots across all user banks
     var emptyCount: Int {
-        return 100 - assignedCount // 4 banks × 25 slots = 100 total
+        return 196 - assignedCount // 4 banks × 25 slots = 100 total
     }
 }
 

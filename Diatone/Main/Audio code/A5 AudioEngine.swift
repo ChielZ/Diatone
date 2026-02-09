@@ -1,7 +1,7 @@
 //
 //
 //  A5 AudioEngine.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 02/12/2025.
 //
