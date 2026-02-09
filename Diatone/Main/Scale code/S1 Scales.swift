@@ -44,8 +44,8 @@ enum Terrestrial: String, CaseIterable, Equatable {
     case meridian = "MERIDIAN"
     case orient = "ORIENT"
     
+    case modal = "MODE"
     case melodic = "MELODIC"
-    case modal = "MODAL"
     case harmonic = "HARMONIC"
     /*
     case easy = "EASY"
@@ -682,8 +682,8 @@ struct ScalesCatalog {
         centerOrient_ET, centerMeridian_ET, centerOccident_ET,
         sunOrient_ET, sunMeridian_ET, sunOccident_ET
          */
-        Locrian_JI_E, Phrygian_JI_E, Aeolian_JI_E, Dorian_JI_E, Mixolydian_JI_E, Ionian_JI_E, Lydian_JI_E, MelodicMinor_JI_E, Pythagorean_JI_E, MelodicMajor_JI_E, HarmonicMinor_JI_E, DoubleHarmonic_JI_E, HarmonicMajor_JI_E,
-        Locrian_ET_E, Phrygian_ET_E, Aeolian_ET_E, Dorian_ET_E, Mixolydian_ET_E, Ionian_ET_E, Lydian_ET_E, MelodicMinor_ET_E, Pythagorean_ET_E, MelodicMajor_ET_E, HarmonicMinor_ET_E, DoubleHarmonic_ET_E, HarmonicMajor_ET_E
+        Locrian_JI_E, Phrygian_JI_E, Aeolian_JI_E, Dorian_JI_E, Mixolydian_JI_E, Ionian_JI_E, Lydian_JI_E, MelodicMinor_JI_E, MelodicMajor_JI_E, HarmonicMinor_JI_E, DoubleHarmonic_JI_E, HarmonicMajor_JI_E,
+        Locrian_ET_E, Phrygian_ET_E, Aeolian_ET_E, Dorian_ET_E, Mixolydian_ET_E, Ionian_ET_E, Lydian_ET_E, MelodicMinor_ET_E, MelodicMajor_ET_E, HarmonicMinor_ET_E, DoubleHarmonic_ET_E, HarmonicMajor_ET_E
     ]
 
     static func find(intonation: Intonation, celestial: Celestial, terrestrial: Terrestrial) -> Scale? {

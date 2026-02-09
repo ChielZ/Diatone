@@ -117,7 +117,7 @@ struct ManualView: View {
                 
                 ZStack { // Row 11 - Close Manual Button
                     RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
+                        .fill(Color("HighlightColour"))
                     GeometryReader { geometry in
                         Text("･CLOSE GUIDE･")
                             .foregroundColor(Color("BackgroundColour"))
@@ -182,13 +182,13 @@ struct ManualView: View {
     
     @ViewBuilder
     private var introductionContent: some View {
-        Text("Welcome to the Arithmophone Pentatone!")
+        Text("Welcome to the Arithmophone Diatone!")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .multilineTextAlignment(.center)
             .padding(.bottom, 5)
         
-        Text("This guide explains all the functions of the app, and also includes background sections on music theory and sound synthesis.")
+        Text("This guide explains all the functions of the app, and also includes background sections on musical scales and tunings")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .multilineTextAlignment(.center)
@@ -205,18 +205,18 @@ struct ManualView: View {
             .padding(.top, 20)
             .multilineTextAlignment(.center)
         
-        Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, because it uses pure and simple harmonic ratios like 3/2 and 5/4 to produce musical notes. You can use this app as a musical instrument, a source of melodic and harmonic inspiration or a tool for learning music and exploring the deep connection it has with numbers.")
+        Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, because it uses pure and simple harmonic ratios like 3/2 and 5/4 to produce musical notes.")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .multilineTextAlignment(.center)
         
-        Text("WHAT IS PENTATONE?")
+        Text("WHAT IS DIATONE?")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 20)
             .multilineTextAlignment(.center)
         
-        Text("Pentatone is an iOS music app featuring an expressive keyboard, a unique selection of pentatonic scales and a custom sound engine:")
+        Text("Diatone is an iOS music app featuring an expressive keyboard, a unique selection of pentatonic scales and a custom sound engine. You can use it as a musical instrument, a source of melodic and harmonic inspiration or a tool for learning music and exploring the deep connection it has with numbers.")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .multilineTextAlignment(.center)
@@ -227,12 +227,12 @@ struct ManualView: View {
             .padding(.top, 10)
             .multilineTextAlignment(.center)
         
-        Text("Pentatone's music keyboard is designed from the ground up for the form factor of handheld touchscreen devices. It turns your iPhone or iPad into an instrument with exactly the right ergonomics for playing music. Rather than emulating a piano or a guitar fretboard (which are both very well designed interfaces, but with a very different form factor), the Pentatone features an original design that takes inspiration from traditional African instruments like the Kora and the Mbira (also known as Kalimba or Karimba), on which melodies are played by alternating between the left and right hand. ")
+        Text("Diatone's music keyboard is designed from the ground up for the form factor of handheld touchscreen devices. It turns your iPhone or iPad into an instrument with exactly the right ergonomics for playing music. Rather than emulating a piano or a guitar fretboard (which are both very well designed interfaces, but with a very different form factor), the Diatone features an original design that takes inspiration from traditional African instruments like the Kora and the Mbira (also known as Kalimba or Karimba), on which melodies are played by alternating between the left and right hand.")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .multilineTextAlignment(.center)
         
-        Text("Pentatone features a keyboard with 18 keys, 9 on each side of the screen, which can be played very comfortably with both thumbs while holding your iPhone or iPad in your hands. To play the notes in scale order, start with the lowest key on the left, then play the lowest key on the right, then the second key on the left, and so on.")
+        Text("Diatone features a keyboard with 22 keys, 11 on each side of the screen, which can be played very comfortably with both thumbs while holding your iPhone or iPad in your hands. To play the notes in scale order, start with the lowest key on the left, then play the lowest key on the right, then the second key on the left, and so on.")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .multilineTextAlignment(.center)
@@ -243,12 +243,12 @@ struct ManualView: View {
             .padding(.top, 10)
             .multilineTextAlignment(.center)
         
-        Text("The name Pentatone comes from the Greek words πεντᾰ (pentă; five) and τόνος (tónos; note) and the keyboard uses pentatonic scales: scales with 5 notes per octave. There are 9 unique scales to choose from, and each of these can be played in any musical key and in two different tuning modes: just intonation (rational harmonic intervals, where the notes sound perfectly in tune with each other) or equal temperament (standard Western tuning, suitable for playing along with guitars, pianos et cetera).")
+        Text("The name Diatone comes from the Greek words διατονικός (diatonikos; diatonic), a term that has been used since ancient times to describe scales with 7 notes per octave. The familiar 'do re mi fa sol la ti do' is such a scale, but there are many others as well. The Arithmophone Diatone has 12 different scales to choose from, and each of these can be played in any musical key and in two different tuning modes: just intonation (rational harmonic intervals, where the notes sound perfectly in tune with each other) or equal temperament (standard Western tuning, suitable for playing along with guitars, pianos et cetera).")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .multilineTextAlignment(.center)
         
-        Text("Because pentatonic scales contain only 5 different notes, every combination of notes tends to sounds musical. There are no 'wrong notes' to worry about, making them very suitable for beginners and casual musicians. Do not underestimate their power though: many rich musical traditions are based on pentatonic scales, and there is lots of depth to explore here for more advanced users.")
+        Text("Because the keyboard of the Arithmophone Diatone has only 7 notes per octave, it is much easier to play scales and melodies on it than on a 'chromatic' instrument like a piano or a guitar: just select the scale you need and there are no 'wrong notes' to worry about anymore. But because it is also very quick and easy to change scales and keys, the Diatone still retains much of the flexibility of standard chromatic instruments, and there is lots of depth to explore here for more advanced users.")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .multilineTextAlignment(.center)
@@ -259,12 +259,12 @@ struct ManualView: View {
             .padding(.top, 10)
             .multilineTextAlignment(.center)
         
-        Text("Pentatone has its own built-in sound engine and there are 25 preset sounds to choose from. The sounds respond to initial touch (where on the key you first place your finger) and aftertouch (how you move your finger on the key while holding it down). Different preset sounds respond to your touch in different ways: on some sounds, moving your finger may change the brightness of the tone, on others it may change the pitch, allowing you to 'bend' the notes, and so on.")
+        Text("Diatone has its own built-in sound engine and there are 49 preset sounds to choose from. The sounds respond to initial touch (where on the key you first place your finger) and aftertouch (how you move your finger on the key while holding it down). Different preset sounds respond to your touch in different ways: on some sounds, moving your finger may change the brightness of the tone, on others it may change the pitch, allowing you to 'bend' the notes, and so on.")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .multilineTextAlignment(.center)
         
-        Text("Each of the preset sounds can be changed by adjusting the 'tone' and 'ambience' sliders, and the keyboard's response can be customised further on the 'setup' page. Pentatone's sound engine uses a combination of Frequency Modulation and substractive synthesis. It is inspired by some classic digital synthesizers and keyboards from the 1980s, but it also adds a few more modern twists like binaural stereo imaging and effects.")
+        Text("Each of the preset sounds can be changed by adjusting the 'volume', 'tone' and 'ambience' sliders, and the keyboard's response can be customised further on the 'setup' page. Diatone's sound engine uses a combination of Frequency Modulation and substractive synthesis. It is inspired by some classic digital synthesizers and keyboards from the 1980s, but it also adds a few more modern twists like binaural stereo imaging and effects.")
         /*
          It features a binaural 2x2 operator FM synth with a resonant lowpass filter per voice, a flexible modulation system and stereo detune, delay and reverb. An optional in-app purchase unlocks the full sound design experience, giving you access to all parameters of the sound engine, as well as the ability to create, store, import and export up to 100 user presets.
          */
@@ -275,13 +275,13 @@ struct ManualView: View {
     
     @ViewBuilder
     private var howToUseContent: some View {
-        Text("II: HOW TO USE PENTATONE")
+        Text("II: HOW TO USE DIATONE")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 24)
             .padding(.top, 10)
             .multilineTextAlignment(.center)
         
-        Text("This section will guide you through using all the features of Pentatone.")
+        Text("This section will guide you through using all the features of the Arithmophone Diatone.")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .multilineTextAlignment(.center)
@@ -343,7 +343,7 @@ struct ManualView: View {
             .padding(.top, 10)
             .multilineTextAlignment(.center)
         
-        Text("Learn about the musical and technical concepts behind Pentatone.")
+        Text("Learn about the musical concepts behind the Arithmophone Diatone.")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .multilineTextAlignment(.center)
@@ -373,7 +373,7 @@ struct ManualView: View {
             .multilineTextAlignment(.center)
             .padding(.bottom, 10)
         
-        Text("The arithmophone pentatonic scale system")
+        Text("The arithmophone diatonic scale selection")
             .foregroundColor(Color("KeyColour1"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)

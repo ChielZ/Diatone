@@ -240,10 +240,11 @@ final class ScaleNavigationManager: ObservableObject {
     /// Returns the valid celestial options for a given terrestrial group
     private func getValidCelestialsFor(terrestrial: Terrestrial) -> [Celestial] {
         switch terrestrial {
-        case .melodic:
-            return [.minor, .pythagorean, .major]
+        
         case .modal:
             return [.locrian, .phrygian, .aeolian, .dorian, .mixolydian, .ionian, .lydian]
+        case .melodic:
+            return [.minor, .major]
         case .harmonic:
             return [.minor, .double, .major]
         default:
