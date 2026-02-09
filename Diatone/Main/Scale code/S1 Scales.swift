@@ -28,8 +28,6 @@ enum Celestial: String, CaseIterable, Equatable {
     case lydian = "LYDIAN"
     case minor = "MINOR"
     case major = "MAJOR"
-    //case harmonicMinor = "MINOR H."
-    //case harmonicMajor = "MAJOR H."
     case double = "DOUBLE"
     case pythagorean = "BALANCED"
 
@@ -46,9 +44,8 @@ enum Terrestrial: String, CaseIterable, Equatable {
     case meridian = "MERIDIAN"
     case orient = "ORIENT"
     
-    case modal = "MODAL"
-    //case natural = "NATURAL"
     case melodic = "MELODIC"
+    case modal = "MODAL"
     case harmonic = "HARMONIC"
     /*
     case easy = "EASY"

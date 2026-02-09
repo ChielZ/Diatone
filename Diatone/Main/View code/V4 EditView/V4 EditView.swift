@@ -118,7 +118,7 @@ struct EditView: View {
                         .fill(Color("BackgroundColour"))
                     GeometryReader { geometry in
                         Text("Arithmophone")
-                            .foregroundColor(Color("KeyColour1"))
+                            .foregroundColor(Color("SupportColour"))
                             .adaptiveFont("LobsterTwo-Italic", size: 42)
                             .frame(width: geometry.size.width, height: geometry.size.height)
                             .contentShape(Rectangle())
