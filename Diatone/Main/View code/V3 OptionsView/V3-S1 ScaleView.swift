@@ -38,7 +38,7 @@ struct ScaleView: View {
             }
             .overlay(
                 GeometryReader { geometry in
-                    let scaleFactor: CGFloat = currentScale.intonation == .et ? 0.6 : 1.0
+                    let scaleFactor: CGFloat = currentScale.intonation == .et ? 0.9 : 0.8
                     let fullHeight: CGFloat = geometry.size.height * 2 + 11
                     let imageHeight: CGFloat = fullHeight * scaleFactor
                     
