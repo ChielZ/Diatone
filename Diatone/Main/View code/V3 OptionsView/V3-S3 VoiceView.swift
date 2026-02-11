@@ -10,6 +10,7 @@ import SwiftUI
 struct VoiceView: View {
     var onSwitchToEdit: (() -> Void)? = nil
     var onSwitchToManual: (() -> Void)? = nil
+    var buttonAnchors: ButtonAnchorData = ButtonAnchorData()
     
     @ObservedObject private var paramManager = AudioParameterManager.shared
     
@@ -41,7 +42,7 @@ struct VoiceView: View {
                     .fill(Color("BackgroundColour"))
                 GeometryReader { geometry in
                     Text("Arithmophone")
-                        .foregroundColor(Color("SupportColour"))
+                        .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("LobsterTwo-Italic", size: 50)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .contentShape(Rectangle())
@@ -98,92 +99,105 @@ struct VoiceView: View {
             }
             */
             
-            ZStack { // Row 5
+            ZStack { // Row 5 - Tempo
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
-                HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("<")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .onTapGesture {
-                            let current = paramManager.master.tempo
-                            if current > -30 {
-                                paramManager.updateTempo(Double(current - 1))
-                                }
-                        }
-                    Spacer()
-                    Text("TEMPO \(Int(paramManager.master.tempo))")
-                        .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        .minimumScaleFactor(0.5)
-                        .contentShape(Rectangle())
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { value in
-                                    if dragStartValue == 0 {
-                                        dragStartValue = value.startLocation.x
-                                        tempoDragStart = paramManager.master.tempo
-                                    }
-                                    
-                                    let delta = value.location.x - dragStartValue
-                                    let steps = Int(delta / 2) // 10 points per step
-                                    let newValue = tempoDragStart + Double(steps)
-                                    let clampedValue = max(30, min(240, newValue))
-                                    
-                                    if clampedValue != paramManager.master.tempo {
-                                        paramManager.updateTempo(clampedValue)
-                                    }
-                                }
-                                .onEnded { _ in
-                                    dragStartValue = 0
-                                }
-                        )
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text(">")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                                .minimumScaleFactor(0.5)
-                        )
-                        .onTapGesture {
-                            let current = paramManager.master.tempo
-                            if current < 240 {
-                                paramManager.updateTempo(Double(current + 1))
-                                }
-                        }
-                    
-                }
                 
+                GeometryReader { geometry in
+                    HStack(spacing: 0) {
+                        // Left button - aligned to anchor
+                        if buttonAnchors.leftFrame.width > 0 {
+                            RoundedRectangle(cornerRadius: radius)
+                                .fill(Color("SupportColour"))
+                                .frame(width: buttonAnchors.leftFrame.width)
+                                .overlay(
+                                    Text("<")
+                                        .foregroundColor(Color("BackgroundColour"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                                )
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    let current = paramManager.master.tempo
+                                    if current > 30 {
+                                        paramManager.updateTempo(Double(current - 1))
+                                    }
+                                }
+                        }
+                        
+                        Spacer()
+                        
+                        // Center text with drag gesture
+                        Text("TEMPO \(Int(paramManager.master.tempo))")
+                            .foregroundColor(Color("HighlightColour"))
+                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            .minimumScaleFactor(0.5)
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { value in
+                                        if dragStartValue == 0 {
+                                            dragStartValue = value.startLocation.x
+                                            tempoDragStart = paramManager.master.tempo
+                                        }
+                                        
+                                        let delta = value.location.x - dragStartValue
+                                        let steps = Int(delta / 2)
+                                        let newValue = tempoDragStart + Double(steps)
+                                        let clampedValue = max(30, min(240, newValue))
+                                        
+                                        if clampedValue != paramManager.master.tempo {
+                                            paramManager.updateTempo(clampedValue)
+                                        }
+                                    }
+                                    .onEnded { _ in
+                                        dragStartValue = 0
+                                    }
+                            )
+                        
+                        Spacer()
+                        
+                        // Right button - aligned to anchor
+                        if buttonAnchors.rightFrame.width > 0 {
+                            RoundedRectangle(cornerRadius: radius)
+                                .fill(Color("SupportColour"))
+                                .frame(width: buttonAnchors.rightFrame.width)
+                                .overlay(
+                                    Text(">")
+                                        .foregroundColor(Color("BackgroundColour"))
+                                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                                        .minimumScaleFactor(0.5)
+                                )
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    let current = paramManager.master.tempo
+                                    if current < 240 {
+                                        paramManager.updateTempo(Double(current + 1))
+                                    }
+                                }
+                        }
+                    }
+                }
             }
             
             
-            ZStack { // Row 6
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("<")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .onTapGesture {
-                            let current = paramManager.master.globalPitch.octaveOffset
-                            if current > -2 {
-                                paramManager.updateOctaveOffset(current - 1)
-                            }
+            ZStack { // Row 6 - Octave
+                AlignedDraggableSelectorRow(
+                    leftSymbol: "<",
+                    rightSymbol: ">",
+                    buttonAnchors: buttonAnchors,
+                    onLeftTap: {
+                        let current = paramManager.master.globalPitch.octaveOffset
+                        if current > -2 {
+                            paramManager.updateOctaveOffset(current - 1)
                         }
-                    Spacer()
+                    },
+                    onRightTap: {
+                        let current = paramManager.master.globalPitch.octaveOffset
+                        if current < 2 {
+                            paramManager.updateOctaveOffset(current + 1)
+                        }
+                    }
+                ) {
                     Text("OCTAVE \(paramManager.master.globalPitch.octaveOffset > 0 ? "+" : "")\(paramManager.master.globalPitch.octaveOffset)")
                         .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
@@ -198,7 +212,7 @@ struct VoiceView: View {
                                     }
                                     
                                     let delta = value.location.x - dragStartValue
-                                    let steps = Int(delta / 30) // 30 points per step (larger for fewer octaves)
+                                    let steps = Int(delta / 30)
                                     let newValue = octaveDragStart + steps
                                     let clampedValue = max(-2, min(2, newValue))
                                     
@@ -210,42 +224,26 @@ struct VoiceView: View {
                                     dragStartValue = 0
                                 }
                         )
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text(">")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .onTapGesture {
-                            let current = paramManager.master.globalPitch.octaveOffset
-                            if current < 2 {
-                                paramManager.updateOctaveOffset(current + 1)
-                            }
-                        }
                 }
             }
-            ZStack { // Row 7
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("<")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .onTapGesture {
-                            let current = fineTuneCentsDisplay
-                            if current > -50 {
-                                paramManager.updateFineTuneCents(Double(current - 1))
-                                }
+            ZStack { // Row 7 - Tune
+                AlignedDraggableSelectorRow(
+                    leftSymbol: "<",
+                    rightSymbol: ">",
+                    buttonAnchors: buttonAnchors,
+                    onLeftTap: {
+                        let current = fineTuneCentsDisplay
+                        if current > -50 {
+                            paramManager.updateFineTuneCents(Double(current - 1))
                         }
-                    Spacer()
+                    },
+                    onRightTap: {
+                        let current = fineTuneCentsDisplay
+                        if current < 50 {
+                            paramManager.updateFineTuneCents(Double(current + 1))
+                        }
+                    }
+                ) {
                     Text("TUNE \(fineTuneCentsDisplay > 0 ? "+" : "")\(fineTuneCentsDisplay)")
                         .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
@@ -260,7 +258,7 @@ struct VoiceView: View {
                                     }
                                     
                                     let delta = value.location.x - dragStartValue
-                                    let steps = Int(delta / 5) // 5 points per step (fine control)
+                                    let steps = Int(delta / 5)
                                     let newValue = tuneDragStart + Double(steps)
                                     let clampedValue = max(-50, min(50, newValue))
                                     
@@ -272,48 +270,30 @@ struct VoiceView: View {
                                     dragStartValue = 0
                                 }
                         )
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text(">")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                                .minimumScaleFactor(0.5)
-                        )
-                        .onTapGesture {
-                            let current = fineTuneCentsDisplay
-                             if current < 50 {
-                                paramManager.updateFineTuneCents(Double(current + 1))
-                             }
-                        }
-                    
                 }
-                
             }
             
             
-            ZStack { // Row 8
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("<")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .onTapGesture {
-                            let current = paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
-                            if current > 0 {
-                                paramManager.updateAftertouchAmountToPitch(current - 1)
-                                applyModulationToAllVoices()
-                            }
+            ZStack { // Row 8 - Bend
+                AlignedDraggableSelectorRow(
+                    leftSymbol: "<",
+                    rightSymbol: ">",
+                    buttonAnchors: buttonAnchors,
+                    onLeftTap: {
+                        let current = paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
+                        if current > 0 {
+                            paramManager.updateAftertouchAmountToPitch(current - 1)
+                            applyModulationToAllVoices()
                         }
-                    Spacer()
+                    },
+                    onRightTap: {
+                        let current = paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
+                        if current < 15 {
+                            paramManager.updateAftertouchAmountToPitch(current + 1)
+                            applyModulationToAllVoices()
+                        }
+                    }
+                ) {
                     Text("BEND \(50 * Int(paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch))")
                         .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
@@ -328,8 +308,8 @@ struct VoiceView: View {
                                     }
                                     
                                     let delta = value.location.x - dragStartValue
-                                    let steps = Int(delta / 10) // 30 points per step (larger for fewer octaves)
-                                    let newValue = octaveDragStart + steps
+                                    let steps = Int(delta / 10)
+                                    let newValue = Int(BendDragStart) + steps
                                     let clampedValue = max(0, min(15, newValue))
                                     
                                     if clampedValue != Int(paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch) {
@@ -341,22 +321,6 @@ struct VoiceView: View {
                                     dragStartValue = 0
                                 }
                         )
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text(">")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .onTapGesture {
-                            let current = paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
-                            if current < 15 {
-                                paramManager.updateAftertouchAmountToPitch(current + 1)
-                                applyModulationToAllVoices()
-                            }
-                        }
                 }
             }
             /*

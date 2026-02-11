@@ -12,6 +12,7 @@ struct SoundView: View {
     @ObservedObject private var paramManager = AudioParameterManager.shared
     @ObservedObject private var presetManager = PresetManager.shared
     var onSwitchToEdit: (() -> Void)? = nil
+    var buttonAnchors: ButtonAnchorData = ButtonAnchorData()
     
     // Persist the currently selected row and column (survives view reloads during app session)
     @AppStorage("soundView.selectedRow") private var selectedRow: Int = 1 // 1-5
@@ -122,9 +123,6 @@ struct SoundView: View {
                     }
                 }
             }
-            
-            
-            
             
             ZStack { // Row 7 - VOLUME
                 RoundedRectangle(cornerRadius: radius)

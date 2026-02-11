@@ -11,6 +11,7 @@ struct ScaleView: View {
     // Current scale and navigation callbacks
     var currentScale: Scale = ScalesCatalog.Dorian_JI_E
     var currentKey: MusicalKey = .D
+    var buttonAnchors: ButtonAnchorData = ButtonAnchorData()
     var onCycleIntonation: ((Bool) -> Void)? = nil
     var onCycleCelestial: ((Bool) -> Void)? = nil
     var onCycleTerrestrial: ((Bool) -> Void)? = nil
@@ -53,182 +54,58 @@ struct ScaleView: View {
                 }
             )
             ZStack { // Row 5 - Intonation
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("<")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onCycleIntonation?(false)
-                        }
-                    Spacer()
-                    Text(currentScale.intonation.rawValue)
-                        .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        .minimumScaleFactor(0.5)
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text(">")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onCycleIntonation?(true)
-                        }
-                }
+                AlignedSelectorRow(
+                    leftSymbol: "<",
+                    rightSymbol: ">",
+                    centerText: currentScale.intonation.rawValue,
+                    buttonAnchors: buttonAnchors,
+                    onLeftTap: { onCycleIntonation?(false) },
+                    onRightTap: { onCycleIntonation?(true) }
+                )
             }
             ZStack { // Row 6 - Musical Key
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("<")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onCycleKey?(false)
-                        }
-                    Spacer()
-                    MusicalKeyText(key: currentKey, size: 30)
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text(">")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onCycleKey?(true)
-                        }
-                }
+                AlignedSelectorRow(
+                    leftSymbol: "<",
+                    rightSymbol: ">",
+                    centerText: "", // Use custom view below
+                    buttonAnchors: buttonAnchors,
+                    onLeftTap: { onCycleKey?(false) },
+                    onRightTap: { onCycleKey?(true) }
+                )
+                // Overlay the MusicalKeyText for proper formatting
+                MusicalKeyText(key: currentKey, size: 30)
             }
             ZStack { // Row 7 - Celestial
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("<")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onCycleCelestial?(false)
-                        }
-                    Spacer()
-                    Text(currentScale.celestial.rawValue)
-                        .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        .minimumScaleFactor(0.5)
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text(">")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onCycleCelestial?(true)
-                        }
-                }
+                AlignedSelectorRow(
+                    leftSymbol: "<",
+                    rightSymbol: ">",
+                    centerText: currentScale.celestial.rawValue,
+                    buttonAnchors: buttonAnchors,
+                    onLeftTap: { onCycleCelestial?(false) },
+                    onRightTap: { onCycleCelestial?(true) }
+                )
             }
             
             ZStack { // Row 8 - Terrestrial
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("<")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onCycleTerrestrial?(false)
-                        }
-                    Spacer()
-                    Text(currentScale.terrestrial.rawValue)
-                        .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        .minimumScaleFactor(0.5)
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text(">")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onCycleTerrestrial?(true)
-                        }
-                }
+                AlignedSelectorRow(
+                    leftSymbol: "<",
+                    rightSymbol: ">",
+                    centerText: currentScale.terrestrial.rawValue,
+                    buttonAnchors: buttonAnchors,
+                    onLeftTap: { onCycleTerrestrial?(false) },
+                    onRightTap: { onCycleTerrestrial?(true) }
+                )
             }
             
             ZStack { // Row 9 - Rotation
-                RoundedRectangle(cornerRadius: radius)
-                    .fill(Color("BackgroundColour"))
-                HStack {
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text("<")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onCycleRotation?(false)
-                        }
-                    Spacer()
-                    Text(currentScale.rotation == 0 ? "0" : "\(currentScale.rotation > 0 ? "+" : "−") \(abs(currentScale.rotation))")
-                        .foregroundColor(Color("HighlightColour"))
-                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                    Spacer()
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
-                        .overlay(
-                            Text(">")
-                                .foregroundColor(Color("BackgroundColour"))
-                                .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                        )
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            onCycleRotation?(true)
-                        }
-                }
+                AlignedSelectorRow(
+                    leftSymbol: "<",
+                    rightSymbol: ">",
+                    centerText: currentScale.rotation == 0 ? "0" : "\(currentScale.rotation > 0 ? "+" : "−") \(abs(currentScale.rotation))",
+                    buttonAnchors: buttonAnchors,
+                    onLeftTap: { onCycleRotation?(false) },
+                    onRightTap: { onCycleRotation?(true) }
+                )
             }
             
             

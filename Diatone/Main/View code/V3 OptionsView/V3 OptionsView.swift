@@ -40,6 +40,212 @@ extension View {
     }
 }
 
+// MARK: - Button Alignment System
+
+/// Stores the frame information for alignment anchors
+struct ButtonAnchorData: Equatable {
+    var leftFrame: CGRect = .zero
+    var rightFrame: CGRect = .zero
+}
+
+/// PreferenceKey for passing button anchor positions up the view hierarchy
+struct ButtonAnchorPreferenceKey: PreferenceKey {
+    static var defaultValue: ButtonAnchorData = ButtonAnchorData()
+    
+    static func reduce(value: inout ButtonAnchorData, nextValue: () -> ButtonAnchorData) {
+        let next = nextValue()
+        // Merge the frames - keep whichever one is not zero
+        if next.leftFrame != .zero {
+            value.leftFrame = next.leftFrame
+        }
+        if next.rightFrame != .zero {
+            value.rightFrame = next.rightFrame
+        }
+    }
+}
+
+/// View modifier to capture and report button frame positions
+struct ButtonAnchorModifier: ViewModifier {
+    let isLeft: Bool
+    
+    func body(content: Content) -> some View {
+        content
+            .background(
+                GeometryReader { geometry in
+                    Color.clear.preference(
+                        key: ButtonAnchorPreferenceKey.self,
+                        value: {
+                            var data = ButtonAnchorData()
+                            let frame = geometry.frame(in: .named("OptionsViewCoordinateSpace"))
+                            if isLeft {
+                                data.leftFrame = frame
+                            } else {
+                                data.rightFrame = frame
+                            }
+                            return data
+                        }()
+                    )
+                }
+            )
+    }
+}
+
+extension View {
+    /// Marks this view as a left or right button anchor
+    func buttonAnchor(isLeft: Bool) -> some View {
+        modifier(ButtonAnchorModifier(isLeft: isLeft))
+    }
+}
+
+// MARK: - Aligned Selector Row Component
+
+/// A row with left/right buttons aligned to the bottom row, with centered text
+struct AlignedSelectorRow: View {
+    let leftSymbol: String
+    let rightSymbol: String
+    let centerText: String
+    let buttonAnchors: ButtonAnchorData
+    let onLeftTap: () -> Void
+    let onRightTap: () -> Void
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: radius)
+                .fill(Color("BackgroundColour"))
+            
+            GeometryReader { geometry in
+                HStack(spacing: 0) {
+                    // Left button - aligned to anchor
+                    if buttonAnchors.leftFrame.width > 0 {
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color("SupportColour"))
+                            .frame(width: buttonAnchors.leftFrame.width)
+                            .overlay(
+                                Text(leftSymbol)
+                                    .foregroundColor(Color("BackgroundColour"))
+                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
+                            )
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                onLeftTap()
+                            }
+                    }
+                    
+                    Spacer()
+                    
+                    // Center text
+                    Text(centerText)
+                        .foregroundColor(Color("HighlightColour"))
+                        .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                        .padding(.horizontal, 10)
+                    
+                    Spacer()
+                    
+                    // Right button - aligned to anchor
+                    if buttonAnchors.rightFrame.width > 0 {
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color("SupportColour"))
+                            .frame(width: buttonAnchors.rightFrame.width)
+                            .overlay(
+                                Text(rightSymbol)
+                                    .foregroundColor(Color("BackgroundColour"))
+                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
+                            )
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                onRightTap()
+                            }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// A row with left/right buttons and a draggable center text for value adjustment
+struct AlignedDraggableSelectorRow<Content: View>: View {
+    let leftSymbol: String
+    let rightSymbol: String
+    let centerContent: Content
+    let buttonAnchors: ButtonAnchorData
+    let onLeftTap: () -> Void
+    let onRightTap: () -> Void
+    
+    init(
+        leftSymbol: String,
+        rightSymbol: String,
+        buttonAnchors: ButtonAnchorData,
+        onLeftTap: @escaping () -> Void,
+        onRightTap: @escaping () -> Void,
+        @ViewBuilder centerContent: () -> Content
+    ) {
+        self.leftSymbol = leftSymbol
+        self.rightSymbol = rightSymbol
+        self.buttonAnchors = buttonAnchors
+        self.onLeftTap = onLeftTap
+        self.onRightTap = onRightTap
+        self.centerContent = centerContent()
+    }
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: radius)
+                .fill(Color("BackgroundColour"))
+            
+            GeometryReader { geometry in
+                HStack(spacing: 0) {
+                    // Left button - aligned to anchor
+                    if buttonAnchors.leftFrame.width > 0 {
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color("SupportColour"))
+                            .frame(width: buttonAnchors.leftFrame.width)
+                            .overlay(
+                                Text(leftSymbol)
+                                    .foregroundColor(Color("BackgroundColour"))
+                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                            )
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                onLeftTap()
+                            }
+                    }
+                    
+                    Spacer()
+                    
+                    // Center content with drag gesture support
+                    centerContent
+                        .frame(maxWidth: .infinity)
+                    
+                    Spacer()
+                    
+                    // Right button - aligned to anchor
+                    if buttonAnchors.rightFrame.width > 0 {
+                        RoundedRectangle(cornerRadius: radius)
+                            .fill(Color("SupportColour"))
+                            .frame(width: buttonAnchors.rightFrame.width)
+                            .overlay(
+                                Text(rightSymbol)
+                                    .foregroundColor(Color("BackgroundColour"))
+                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
+                                    .minimumScaleFactor(0.5)
+                            )
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                onRightTap()
+                            }
+                    }
+                }
+            }
+        }
+    }
+}
+
 enum OptionsSubView: CaseIterable {
     case scale, sound, voice
     
@@ -68,6 +274,9 @@ struct OptionsView: View {
     // View switching
     var onSwitchToEdit: (() -> Void)? = nil
     var onSwitchToManual: (() -> Void)? = nil
+    
+    // Store the button anchor positions from the bottom row
+    @State private var buttonAnchors = ButtonAnchorData()
     
     // Computed property for note names - safer for preview compilation
     private var noteNamesArray: [NoteName] {
@@ -101,48 +310,15 @@ struct OptionsView: View {
                 }
                 .frame(maxHeight: .infinity)
                 
-                ZStack{ // Row 2
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("BackgroundColour"))
-                    HStack{
-                        RoundedRectangle(cornerRadius: radius)
-                            .fill(Color("SupportColour"))
-                            .aspectRatio(1.0, contentMode: .fit)
-                            .overlay(
-                                Text("<")
-                                    .foregroundColor(Color("BackgroundColour"))
-                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                                    .minimumScaleFactor(0.5)
-                                    .lineLimit(1)
-                            )
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                previousSubView()
-                            }
-                        Spacer()
-                        Text(currentSubView.displayName)
-                            .foregroundColor(Color("HighlightColour"))
-                            .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                            .minimumScaleFactor(0.5)
-                            .lineLimit(1)
-                            .padding(.horizontal, 10)
-                        Spacer()
-                        RoundedRectangle(cornerRadius: radius)
-                            .fill(Color("SupportColour"))
-                            .aspectRatio(1.0, contentMode: .fit)
-                            .overlay(
-                                Text(">")
-                                    .foregroundColor(Color("BackgroundColour"))
-                                    .adaptiveFont("MontserratAlternates-Medium", size: 30)
-                                    .minimumScaleFactor(0.5)
-                                    .lineLimit(1)
-                            )
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                nextSubView()
-                            }
-                    }
-                }
+                // Row 2 - Now with aligned buttons
+                AlignedSelectorRow(
+                    leftSymbol: "<",
+                    rightSymbol: ">",
+                    centerText: currentSubView.displayName,
+                    buttonAnchors: buttonAnchors,
+                    onLeftTap: { previousSubView() },
+                    onRightTap: { nextSubView() }
+                )
                 .frame(maxHeight: .infinity)
                 
                 // Rows 3-9: Show the current subview
@@ -152,6 +328,7 @@ struct OptionsView: View {
                         ScaleView(
                             currentScale: currentScale,
                             currentKey: currentKey,
+                            buttonAnchors: buttonAnchors,
                             onCycleIntonation: onCycleIntonation,
                             onCycleCelestial: onCycleCelestial,
                             onCycleTerrestrial: onCycleTerrestrial,
@@ -160,11 +337,15 @@ struct OptionsView: View {
                         )
                     case .sound:
                         SoundView(
-                            onSwitchToEdit: onSwitchToEdit
+                            
+                            onSwitchToEdit: onSwitchToEdit,
+                            buttonAnchors: buttonAnchors
                         )
                     case .voice:
                         VoiceView(
-                            onSwitchToManual: onSwitchToManual
+                            
+                            onSwitchToManual: onSwitchToManual,
+                            buttonAnchors: buttonAnchors
                         )
                     }
                 }
@@ -268,42 +449,41 @@ struct OptionsView: View {
                 }
                 .frame(maxHeight: .infinity)
                 
-                ZStack{ // Row 11
+                ZStack{ // Row 11 - This is the reference row for alignment
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("BackgroundColour"))
                     HStack{
                         RoundedRectangle(cornerRadius: radius)
                             .fill(Color("KeyColour5"))
-                            //.aspectRatio(1.0, contentMode: .fit)
+                            .buttonAnchor(isLeft: true)
                         Spacer()
                         RoundedRectangle(cornerRadius: radius)
                             .fill(Color("KeyColour6"))
-                            //.aspectRatio(1.0, contentMode: .fit)
                         Spacer()
                         RoundedRectangle(cornerRadius: radius)
                             .fill(Color("KeyColour7"))
-                            //.aspectRatio(1.0, contentMode: .fit)
                         Spacer()
                         RoundedRectangle(cornerRadius: radius)
                             .fill(Color("KeyColour1"))
-                            //.aspectRatio(1.0, contentMode: .fit)
                         Spacer()
                         RoundedRectangle(cornerRadius: radius)
                             .fill(Color("KeyColour2"))
-                            //.aspectRatio(1.0, contentMode: .fit)
                         Spacer()
                         RoundedRectangle(cornerRadius: radius)
                             .fill(Color("KeyColour3"))
-                            //.aspectRatio(1.0, contentMode: .fit)
                         Spacer()
                         RoundedRectangle(cornerRadius: radius)
                             .fill(Color("KeyColour4"))
-                            //.aspectRatio(1.0, contentMode: .fit)
+                            .buttonAnchor(isLeft: false)
                     }
                 }
                 .frame(maxHeight: .infinity)
             }.padding(19)
             
+        }
+        .coordinateSpace(name: "OptionsViewCoordinateSpace")
+        .onPreferenceChange(ButtonAnchorPreferenceKey.self) { value in
+            buttonAnchors = value
         }
     }
     
