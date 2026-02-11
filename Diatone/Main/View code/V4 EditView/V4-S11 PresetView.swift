@@ -300,16 +300,16 @@ struct PresetView: View {
         if isShowingActivePreset {
             // Active preset - check if modified
             if paramManager.parametersModifiedSinceLoad {
-                return Color("KeyColour4") // Modified
+                return Color("KeyColour7") // Modified
             } else {
-                return Color("HighlightColour") // Unmodified
+                return Color("KeyColour3") // Unmodified
             }
         } else {
             // Not the active preset - check if slot has preset
             if currentSlotPreset != nil {
-                return Color("KeyColour3") // Different preset, slot filled
+                return Color("HighlightColour") // Different preset, slot filled
             } else {
-                return Color("KeyColour1") // Different preset, slot empty
+                return Color("SupportColour") // Different preset, slot empty
             }
         }
     }
@@ -336,16 +336,16 @@ struct PresetView: View {
         if isShowingActivePreset {
             // Active preset - check if modified
             if paramManager.parametersModifiedSinceLoad {
-                return Color("KeyColour4") // Modified
+                return Color("KeyColour7") // Modified
             } else {
-                return Color("HighlightColour") // Unmodified
+                return Color("KeyColour3") // Unmodified
             }
         } else {
             // Not the active preset - check if slot has preset
             if currentSlotPreset != nil {
-                return Color("KeyColour3") // Different preset, slot filled
+                return Color("HighlightColour") // Different preset, slot filled
             } else {
-                return Color("KeyColour1") // Different preset, slot empty
+                return Color("SupportColour") // Different preset, slot empty
             }
         }
     }
