@@ -38,6 +38,9 @@ struct EditView: View {
     
     // View switching
     var onSwitchToOptions: (() -> Void)? = nil
+    
+    // Observe the shared button width from OptionsView
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
 
     var body: some View {
         
@@ -69,13 +72,18 @@ struct EditView: View {
                 }
                 .frame(maxHeight: .infinity)
                 
-                ZStack{ // Row 2
+                // Row 2 - Buttons with width matching OptionsView
+                ZStack{
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("BackgroundColour"))
-                    HStack{
+                    
+                    HStack(spacing: 0) {
+                        // Use the exact same width as OptionsView buttons
+                        let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60 // fallback
+                        
                         RoundedRectangle(cornerRadius: radius)
                             .fill(Color("SupportColour"))
-                            .aspectRatio(1.0, contentMode: .fit)
+                            .frame(width: buttonWidth)
                             .overlay(
                                 Text("<")
                                     .foregroundColor(Color("BackgroundColour"))
@@ -87,17 +95,21 @@ struct EditView: View {
                             .onTapGesture {
                                 previousSubView()
                             }
+                        
                         Spacer()
+                        
                         Text(currentSubView.displayName)
                             .foregroundColor(Color("HighlightColour"))
                             .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
                             .padding(.horizontal, 10)
+                        
                         Spacer()
+                        
                         RoundedRectangle(cornerRadius: radius)
                             .fill(Color("SupportColour"))
-                            .aspectRatio(1.0, contentMode: .fit)
+                            .frame(width: buttonWidth)
                             .overlay(
                                 Text(">")
                                     .foregroundColor(Color("BackgroundColour"))
@@ -160,14 +172,7 @@ struct EditView: View {
                 }
                 .frame(maxHeight: .infinity)
                 
-   
-                
-                
-
-                
-                
-                
-                ZStack { // Row 11
+                ZStack { // Row 10 - Close Editor button
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
                     GeometryReader { geometry in
@@ -176,40 +181,12 @@ struct EditView: View {
                             .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .frame(width: geometry.size.width, height: geometry.size.height)
                             .contentShape(Rectangle())
-                            //.offset(y: -(geometry.size.height/2 + 11))
                             .padding(0)
                             .onTapGesture {
                                 onSwitchToOptions?()
                             }
                     }
                 }
-                /*
-                ZStack{ // Row 11
-                    RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("BackgroundColour"))
-                    HStack{
-                        RoundedRectangle(cornerRadius: radius)
-                            .fill(Color("KeyColour4"))
-                            .aspectRatio(1.0, contentMode: .fit)
-                        Spacer()
-                        RoundedRectangle(cornerRadius: radius)
-                            .fill(Color("KeyColour5"))
-                            .aspectRatio(1.0, contentMode: .fit)
-                        Spacer()
-                        RoundedRectangle(cornerRadius: radius)
-                            .fill(Color("KeyColour1"))
-                            .aspectRatio(1.0, contentMode: .fit)
-                        Spacer()
-                        RoundedRectangle(cornerRadius: radius)
-                            .fill(Color("KeyColour2"))
-                            .aspectRatio(1.0, contentMode: .fit)
-                        Spacer()
-                        RoundedRectangle(cornerRadius: radius)
-                            .fill(Color("KeyColour3"))
-                            .aspectRatio(1.0, contentMode: .fit)
-                    }
-                }
-                */
                 .frame(maxHeight: .infinity)
             }.padding(19)
             

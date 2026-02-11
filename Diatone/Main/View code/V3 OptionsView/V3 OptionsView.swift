@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 // MARK: - Adaptive Font Modifier (Shared across all option views)
 struct AdaptiveFont: ViewModifier {
@@ -46,6 +47,20 @@ extension View {
 struct ButtonAnchorData: Equatable {
     var leftFrame: CGRect = .zero
     var rightFrame: CGRect = .zero
+    
+    /// Computed property for button width
+    var buttonWidth: CGFloat {
+        leftFrame.width > 0 ? leftFrame.width : rightFrame.width
+    }
+}
+
+/// Shared button width manager - allows EditView to use the same button width as OptionsView
+@MainActor
+class SharedButtonWidth: ObservableObject {
+    static let shared = SharedButtonWidth()
+    @Published var width: CGFloat = 0
+    
+    private init() {}
 }
 
 /// PreferenceKey for passing button anchor positions up the view hierarchy
@@ -67,6 +82,12 @@ struct ButtonAnchorPreferenceKey: PreferenceKey {
 /// View modifier to capture and report button frame positions
 struct ButtonAnchorModifier: ViewModifier {
     let isLeft: Bool
+    let coordinateSpaceName: String
+    
+    init(isLeft: Bool, coordinateSpaceName: String = "OptionsViewCoordinateSpace") {
+        self.isLeft = isLeft
+        self.coordinateSpaceName = coordinateSpaceName
+    }
     
     func body(content: Content) -> some View {
         content
@@ -76,7 +97,7 @@ struct ButtonAnchorModifier: ViewModifier {
                         key: ButtonAnchorPreferenceKey.self,
                         value: {
                             var data = ButtonAnchorData()
-                            let frame = geometry.frame(in: .named("OptionsViewCoordinateSpace"))
+                            let frame = geometry.frame(in: .named(coordinateSpaceName))
                             if isLeft {
                                 data.leftFrame = frame
                             } else {
@@ -87,6 +108,13 @@ struct ButtonAnchorModifier: ViewModifier {
                     )
                 }
             )
+    }
+}
+
+extension View {
+    /// Marks this view as a left or right button anchor
+    func buttonAnchor(isLeft: Bool, coordinateSpaceName: String = "OptionsViewCoordinateSpace") -> some View {
+        modifier(ButtonAnchorModifier(isLeft: isLeft, coordinateSpaceName: coordinateSpaceName))
     }
 }
 
@@ -484,6 +512,10 @@ struct OptionsView: View {
         .coordinateSpace(name: "OptionsViewCoordinateSpace")
         .onPreferenceChange(ButtonAnchorPreferenceKey.self) { value in
             buttonAnchors = value
+            // Share the button width globally for EditView
+            if value.buttonWidth > 0 {
+                SharedButtonWidth.shared.width = value.buttonWidth
+            }
         }
     }
     
