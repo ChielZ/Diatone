@@ -17,6 +17,8 @@ struct ParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.Index ==
     @Binding var value: T
     let displayText: (T) -> String
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     init(label: String, value: Binding<T>, displayText: @escaping (T) -> String) {
         self.label = label
         self._value = value
@@ -28,11 +30,13 @@ struct ParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.Index ==
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -67,7 +71,7 @@ struct ParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.Index ==
                 // Right button (>)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -80,7 +84,6 @@ struct ParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.Index ==
                         cycleNext()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     
@@ -112,6 +115,8 @@ struct TimeSyncParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.
     @Binding var value: T
     let displayText: (T) -> String
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     init(label: String, value: Binding<T>, displayText: @escaping (T) -> String) {
         self.label = label
         self._value = value
@@ -123,11 +128,13 @@ struct TimeSyncParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -162,7 +169,7 @@ struct TimeSyncParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.
                 // Right button (>)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -175,7 +182,6 @@ struct TimeSyncParameterRow<T: CaseIterable & Equatable>: View where T.AllCases.
                         cyclePrevious()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     
@@ -212,6 +218,8 @@ struct RevTimeSyncParameterRow<T: CaseIterable & Equatable>: View where T.AllCas
     @Binding var value: T
     let displayText: (T) -> String
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     init(label: String, value: Binding<T>, displayText: @escaping (T) -> String) {
         self.label = label
         self._value = value
@@ -223,11 +231,13 @@ struct RevTimeSyncParameterRow<T: CaseIterable & Equatable>: View where T.AllCas
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -262,7 +272,7 @@ struct RevTimeSyncParameterRow<T: CaseIterable & Equatable>: View where T.AllCas
                 // Right button (>)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -275,7 +285,6 @@ struct RevTimeSyncParameterRow<T: CaseIterable & Equatable>: View where T.AllCas
                         cycleNext()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     
@@ -319,6 +328,8 @@ struct DiscreteEnumSliderRow<T: CaseIterable & Equatable & Identifiable>: View
     @State private var dragStartIndex: Int = 0
     @State private var dragStartLocation: CGFloat = 0
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     private let allCases: [T]
     
     init(
@@ -337,11 +348,13 @@ struct DiscreteEnumSliderRow<T: CaseIterable & Equatable & Identifiable>: View
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<) - Decrement
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -408,7 +421,7 @@ struct DiscreteEnumSliderRow<T: CaseIterable & Equatable & Identifiable>: View
                 // Right button (>) - Increment
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -421,7 +434,6 @@ struct DiscreteEnumSliderRow<T: CaseIterable & Equatable & Identifiable>: View
                         incrementValue()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     
@@ -460,6 +472,8 @@ struct SliderRow: View {
     @State private var dragStartValue: Double = 0
     @State private var dragStartLocation: CGFloat = 0
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     init(
         label: String,
         value: Binding<Double>,
@@ -479,11 +493,13 @@ struct SliderRow: View {
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<) - Decrease value
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -550,7 +566,7 @@ struct SliderRow: View {
                 // Right button (>) - Increase value
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -563,7 +579,6 @@ struct SliderRow: View {
                         incrementValue()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     
@@ -594,6 +609,8 @@ struct LogarithmicSliderRow: View {
     @State private var dragStartValue: Double = 0
     @State private var dragStartLocation: CGFloat = 0
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     init(
         label: String,
         value: Binding<Double>,
@@ -611,11 +628,13 @@ struct LogarithmicSliderRow: View {
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<) - Decrease value
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -690,7 +709,7 @@ struct LogarithmicSliderRow: View {
                 // Right button (>) - Increase value
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -703,7 +722,6 @@ struct LogarithmicSliderRow: View {
                         incrementValue()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     
@@ -739,6 +757,8 @@ struct MusicalFrequencySliderRow: View {
     @State private var dragStartValue: Double = 0
     @State private var dragStartLocation: CGFloat = 0
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     init(
         label: String,
         value: Binding<Double>,
@@ -758,11 +778,13 @@ struct MusicalFrequencySliderRow: View {
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<) - Decrease by fixed linear step
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -832,7 +854,7 @@ struct MusicalFrequencySliderRow: View {
                 // Right button (>) - Increase by fixed linear step
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -845,7 +867,6 @@ struct MusicalFrequencySliderRow: View {
                         incrementValue()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     
@@ -889,6 +910,8 @@ struct QuantizedLogarithmicSliderRow: View {
     @State private var dragStartValue: Double = 0
     @State private var dragStartLocation: CGFloat = 0
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     init(
         label: String,
         value: Binding<Double>,
@@ -910,11 +933,13 @@ struct QuantizedLogarithmicSliderRow: View {
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<) - Decrease by button step
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -987,7 +1012,7 @@ struct QuantizedLogarithmicSliderRow: View {
                 // Right button (>) - Increase by button step
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -1000,7 +1025,6 @@ struct QuantizedLogarithmicSliderRow: View {
                         incrementValue()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     
@@ -1034,6 +1058,8 @@ struct LogarithmicSliderRowWithLinearButtons: View {
     @State private var dragStartValue: Double = 0
     @State private var dragStartLocation: CGFloat = 0
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     init(
         label: String,
         value: Binding<Double>,
@@ -1053,11 +1079,13 @@ struct LogarithmicSliderRowWithLinearButtons: View {
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<) - Decrease value by fixed step
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -1135,7 +1163,7 @@ struct LogarithmicSliderRowWithLinearButtons: View {
                 // Right button (>) - Increase value by fixed step
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -1148,7 +1176,6 @@ struct LogarithmicSliderRowWithLinearButtons: View {
                         incrementValue()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     
