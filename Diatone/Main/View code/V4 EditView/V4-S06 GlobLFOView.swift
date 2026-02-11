@@ -163,6 +163,8 @@ private struct GlobalLFOModeRow: View {
     let label: String
     @Binding var value: LFOResetMode
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     // Only Free and Sync are valid for global LFO
     private let validModes: [LFOResetMode] = [.free, .sync]
     
@@ -171,11 +173,13 @@ private struct GlobalLFOModeRow: View {
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -210,7 +214,7 @@ private struct GlobalLFOModeRow: View {
                 // Right button (>)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -223,7 +227,6 @@ private struct GlobalLFOModeRow: View {
                         cycleNext()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     

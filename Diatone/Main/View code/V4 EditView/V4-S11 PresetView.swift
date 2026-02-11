@@ -13,6 +13,8 @@ struct PresetView: View {
     @ObservedObject private var presetManager = PresetManager.shared
     @ObservedObject private var paramManager = AudioParameterManager.shared
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     // UI State - Using @AppStorage to persist across view changes
     @AppStorage("presetView.selectedBankTypeRawValue") private var selectedBankTypeRawValue: String = PentatoneBankType.factory.rawValue
     @AppStorage("presetView.selectedRow") private var selectedRow: Int = 1 // 1-5
@@ -52,11 +54,13 @@ struct PresetView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
-                HStack {
+                HStack(spacing: 0) {
+                    let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                    
                     // Previous Bank
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
+                        .frame(width: buttonWidth)
                         .overlay(
                             Text("<")
                                 .foregroundColor(Color("BackgroundColour"))
@@ -79,7 +83,7 @@ struct PresetView: View {
                     // Next Bank
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
+                        .frame(width: buttonWidth)
                         .overlay(
                             Text(">")
                                 .foregroundColor(Color("BackgroundColour"))
@@ -96,11 +100,13 @@ struct PresetView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
-                HStack {
+                HStack(spacing: 0) {
+                    let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                    
                     // Previous Position
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
+                        .frame(width: buttonWidth)
                         .overlay(
                             Text("<")
                                 .foregroundColor(Color("BackgroundColour"))
@@ -125,7 +131,7 @@ struct PresetView: View {
                     // Next Position
                     RoundedRectangle(cornerRadius: radius)
                         .fill(Color("SupportColour"))
-                        .aspectRatio(1.0, contentMode: .fit)
+                        .frame(width: buttonWidth)
                         .overlay(
                             Text(">")
                                 .foregroundColor(Color("BackgroundColour"))

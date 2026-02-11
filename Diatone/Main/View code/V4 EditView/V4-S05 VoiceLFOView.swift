@@ -184,6 +184,8 @@ private struct VoiceLFOModeRow: View {
     let label: String
     @Binding var value: LFOResetMode
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     // Only Free and Trigger are valid for voice LFO
     private let validModes: [LFOResetMode] = [.free, .trigger]
     
@@ -192,11 +194,13 @@ private struct VoiceLFOModeRow: View {
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -231,7 +235,7 @@ private struct VoiceLFOModeRow: View {
                 // Right button (>)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -244,7 +248,6 @@ private struct VoiceLFOModeRow: View {
                         cycleNext()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     
@@ -277,6 +280,8 @@ private struct VoiceLFOWaveformRow: View {
     let label: String
     @Binding var value: LFOWaveform
     
+    @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
     // Valid waveforms for Voice LFO (excludes reverse sawtooth)
     private let validWaveforms: [LFOWaveform] = [.sine, .triangle, .square, .sawtooth]
     
@@ -285,11 +290,13 @@ private struct VoiceLFOWaveformRow: View {
             RoundedRectangle(cornerRadius: radius)
                 .fill(Color("BackgroundColour"))
             
-            HStack {
+            HStack(spacing: 0) {
+                let buttonWidth = sharedButtonWidth.width > 0 ? sharedButtonWidth.width : 60
+                
                 // Left button (<)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text("<")
                             .foregroundColor(Color("BackgroundColour"))
@@ -324,7 +331,7 @@ private struct VoiceLFOWaveformRow: View {
                 // Right button (>)
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("SupportColour"))
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .frame(width: buttonWidth)
                     .overlay(
                         Text(">")
                             .foregroundColor(Color("BackgroundColour"))
@@ -337,7 +344,6 @@ private struct VoiceLFOWaveformRow: View {
                         cycleNext()
                     }
             }
-            .padding(.horizontal, 0)
         }
     }
     
