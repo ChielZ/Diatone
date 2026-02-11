@@ -392,20 +392,20 @@ struct PresetView: View {
         if selectedColumn > 1 {
             selectedColumn -= 1
         } else if selectedRow > 1 {
-            selectedColumn = 5
+            selectedColumn = 7
             selectedRow -= 1
         } else {
             // Wrap to last position
-            selectedRow = 5
-            selectedColumn = 5
+            selectedRow = 7
+            selectedColumn = 7
         }
     }
     
     private func nextPosition() {
         // Navigate through the 5×5 grid (increment column, then row)
-        if selectedColumn < 5 {
+        if selectedColumn < 7 {
             selectedColumn += 1
-        } else if selectedRow < 5 {
+        } else if selectedRow < 7 {
             selectedColumn = 1
             selectedRow += 1
         } else {
