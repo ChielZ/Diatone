@@ -7,6 +7,33 @@
 
 import SwiftUI
 
+// MARK: - Image Downsampling Helper
+
+/// Loads and downsamples an image from assets to prevent excessive memory usage.
+/// This is critical for large vector PDFs that would otherwise be rasterized at full resolution.
+private func downsampledImage(named: String, targetHeight: CGFloat) -> UIImage? {
+    guard let image = UIImage(named: named) else { return nil }
+    
+    // Calculate the scale to fit the target height
+    let scale = targetHeight / image.size.height
+    let targetSize = CGSize(
+        width: image.size.width * scale,
+        height: targetHeight
+    )
+    
+    // Use a graphics renderer to create a downsampled version
+    let format = UIGraphicsImageRendererFormat()
+    format.scale = UIScreen.main.scale // Maintain screen resolution quality
+    format.opaque = false
+    
+    let renderer = UIGraphicsImageRenderer(size: targetSize, format: format)
+    let downsampled = renderer.image { context in
+        image.draw(in: CGRect(origin: .zero, size: targetSize))
+    }
+    
+    return downsampled
+}
+
 struct ScaleView: View {
     // Current scale and navigation callbacks
     var currentScale: Scale = ScalesCatalog.Dorian_JI_E
@@ -43,14 +70,28 @@ struct ScaleView: View {
                     let fullHeight: CGFloat = geometry.size.height * 2 + 11
                     let imageHeight: CGFloat = fullHeight * scaleFactor
                     
-                    Image(scaleImageName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: imageHeight)
-                        .frame(width: geometry.size.width, height: fullHeight)
-                        .offset(y: -(geometry.size.height + 11))
-                        .padding(0)
-                        
+                    // Downsample the image to the actual display size to prevent excessive memory usage
+                    // The target height accounts for screen scale, so a @3x device gets 3x the points
+                    let targetHeight = imageHeight * UIScreen.main.scale
+                    
+                    if let downsampledUIImage = downsampledImage(named: scaleImageName, targetHeight: targetHeight) {
+                        Image(uiImage: downsampledUIImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: imageHeight)
+                            .frame(width: geometry.size.width, height: fullHeight)
+                            .offset(y: -(geometry.size.height + 11))
+                            .padding(0)
+                    } else {
+                        // Fallback to original method if downsampling fails
+                        Image(scaleImageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: imageHeight)
+                            .frame(width: geometry.size.width, height: fullHeight)
+                            .offset(y: -(geometry.size.height + 11))
+                            .padding(0)
+                    }
                 }
             )
             ZStack { // Row 5 - Intonation
