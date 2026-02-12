@@ -83,6 +83,7 @@ enum OscillatorWaveform: String, Codable, Equatable, CaseIterable {
     case sine
     case triangle
     case square
+    case unsquare
     
     /// User-friendly display name
     var displayName: String {
@@ -90,6 +91,7 @@ enum OscillatorWaveform: String, Codable, Equatable, CaseIterable {
         case .sine: return "sine"
         case .triangle: return "triangle"
         case .square: return "square"
+        case .unsquare: return "unsquare"
         }
     }
     
@@ -98,7 +100,8 @@ enum OscillatorWaveform: String, Codable, Equatable, CaseIterable {
         switch self {
         case .sine: return Table(.sine)
         case .triangle: return Table(.triangle)
-        case .square: return Self.makeBandLimitedSquareWave(maxHarmonic: 12)
+        case .square: return Self.makeBandLimitedSquareWave(maxHarmonic: 15)
+        case .unsquare: return Table(.square)
         }
     }
     
