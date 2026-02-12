@@ -98,8 +98,99 @@ enum OscillatorWaveform: String, Codable, Equatable, CaseIterable {
         switch self {
         case .sine: return Table(.sine)
         case .triangle: return Table(.triangle)
-        case .square: return Table(.square)
+        case .square: return Self.makeBandLimitedSquareWave(maxHarmonic: 12)
         }
+    }
+    
+    /// Creates a band-limited square wave using additive synthesis
+    /// Only includes harmonics up to a safe frequency to prevent aliasing
+    /// 
+    /// - Parameters:
+    ///   - tableSize: Size of the wavetable (default: 4096)
+    ///   - maxHarmonic: Maximum harmonic number to include (default: 15)
+    /// - Returns: A Table containing the band-limited square wave
+    ///
+    /// Technical notes:
+    /// - Square waves contain only odd harmonics (1, 3, 5, 7, ...)
+    /// - Each harmonic has amplitude 1/n (where n is the harmonic number)
+    /// - Limiting to ~15 harmonics keeps content below 7kHz for most musical notes
+    /// - This prevents the harsh aliasing artifacts while maintaining square wave character
+    ///
+    /// Tuning guide:
+    /// - maxHarmonic = 7:  Very soft, minimal brightness
+    /// - maxHarmonic = 11: Gentle square character
+    /// - maxHarmonic = 15: Balanced (recommended default)
+    /// - maxHarmonic = 21: Brighter, more aggressive
+    /// - maxHarmonic = 31: Maximum brightness (may alias on high notes)
+    private static func makeBandLimitedSquareWave(tableSize: Int = 4096, maxHarmonic: Int = 15) -> Table {
+        var waveform = [Float](repeating: 0.0, count: tableSize)
+        
+        // Generate square wave using additive synthesis
+        // Square wave = sum of odd harmonics with amplitude 1/n
+        for i in 0..<tableSize {
+            let phase = (Float(i) / Float(tableSize)) * 2.0 * .pi
+            var sample: Float = 0.0
+            
+            // Add odd harmonics (1, 3, 5, 7, ...)
+            for harmonic in stride(from: 1, through: maxHarmonic, by: 2) {
+                let amplitude = 1.0 / Float(harmonic)
+                sample += amplitude * sin(Float(harmonic) * phase)
+            }
+            
+            // Normalize to approximate square wave amplitude
+            // Pure square wave would be 4/π ≈ 1.273, but we're missing high harmonics
+            waveform[i] = sample * (4.0 / .pi)
+        }
+        
+        return Table(waveform)
+    }
+    
+    /// Creates a dynamically band-limited square wave that adjusts harmonics based on frequency
+    /// This is more sophisticated but requires knowing the playback frequency
+    /// >>>> This is not currently implemented in the sound engine and probably won't be, but kept here for reference; static bandlimited squarewave is working well and using this would require complex refactoring and increase CPU load
+    ///
+    /// - Parameters:
+    ///   - frequency: The fundamental frequency in Hz (used to calculate safe harmonic limit)
+    ///   - sampleRate: The audio sample rate (default: 44100 Hz)
+    ///   - safetyMargin: How much below Nyquist to stay (default: 0.8 = 80% of Nyquist)
+    ///   - tableSize: Size of the wavetable (default: 4096)
+    /// - Returns: A Table containing the frequency-dependent band-limited square wave
+    ///
+    /// Example: At 440 Hz with 44.1kHz sample rate:
+    /// - Nyquist = 22,050 Hz
+    /// - Safe limit = 17,640 Hz (80% of Nyquist)
+    /// - Max harmonic = 17,640 / 440 = 40 harmonics
+    static func makeDynamicBandLimitedSquareWave(
+        frequency: Double = 440.0,
+        sampleRate: Double = 44100.0,
+        safetyMargin: Double = 0.8,
+        tableSize: Int = 4096
+    ) -> Table {
+        // Calculate Nyquist frequency
+        let nyquist = sampleRate / 2.0
+        
+        // Calculate safe upper frequency limit
+        let safeLimit = nyquist * safetyMargin
+        
+        // Calculate maximum harmonic number
+        let maxHarmonic = max(1, Int(floor(safeLimit / frequency)))
+        
+        var waveform = [Float](repeating: 0.0, count: tableSize)
+        
+        for i in 0..<tableSize {
+            let phase = (Float(i) / Float(tableSize)) * 2.0 * .pi
+            var sample: Float = 0.0
+            
+            // Add odd harmonics up to the calculated limit
+            for harmonic in stride(from: 1, through: maxHarmonic, by: 2) {
+                let amplitude = 1.0 / Float(harmonic)
+                sample += amplitude * sin(Float(harmonic) * phase)
+            }
+            
+            waveform[i] = sample * (4.0 / .pi)
+        }
+        
+        return Table(waveform)
     }
 }
 
