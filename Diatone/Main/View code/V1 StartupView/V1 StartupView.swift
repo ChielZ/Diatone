@@ -11,8 +11,8 @@ struct StartupView: View {
     var body: some View {
         ZStack{
             Color("BackgroundColour").ignoresSafeArea()            
-            Image("Penta-Tone icon dark")
-                .resizable().aspectRatio(contentMode: .fit)
+            //Image("Penta-Tone icon dark")
+              //  .resizable().aspectRatio(contentMode: .fit)
         }.statusBar(hidden: true)
     }
 }

@@ -82,16 +82,25 @@ enum CarrierMultiplier: Double, CaseIterable, Identifiable {
 enum OscillatorWaveform: String, Codable, Equatable, CaseIterable {
     case sine
     case triangle
+    case square3
+    case square5
+    case square7
     case square
     case unsquare
+
     
     /// User-friendly display name
     var displayName: String {
         switch self {
         case .sine: return "sine"
         case .triangle: return "triangle"
+        case .square3: return "odd 3"
+        case .square5: return "odd 5"
+        case .square7: return "odd 7"
         case .square: return "square"
         case .unsquare: return "unsquare"
+        
+        
         }
     }
     
@@ -100,8 +109,12 @@ enum OscillatorWaveform: String, Codable, Equatable, CaseIterable {
         switch self {
         case .sine: return Table(.sine)
         case .triangle: return Table(.triangle)
+        case .square3: return Self.makeBandLimitedSquareWave(maxHarmonic: 3)
+        case .square5: return Self.makeBandLimitedSquareWave(maxHarmonic: 5)
+        case .square7: return Self.makeBandLimitedSquareWave(maxHarmonic: 7)
         case .square: return Self.makeBandLimitedSquareWave(maxHarmonic: 15)
         case .unsquare: return Table(.square)
+        
         }
     }
     
