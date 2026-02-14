@@ -7,6 +7,33 @@
 
 import SwiftUI
 
+// MARK: - Image Downsampling Helper
+
+/// Loads and downsamples an image from assets to prevent excessive memory usage.
+/// This is critical for large vector PDFs that would otherwise be rasterized at full resolution.
+private func downsampledImage(named: String, targetHeight: CGFloat) -> UIImage? {
+    guard let image = UIImage(named: named) else { return nil }
+    
+    // Calculate the scale to fit the target height
+    let scale = targetHeight / image.size.height
+    let targetSize = CGSize(
+        width: image.size.width * scale,
+        height: targetHeight
+    )
+    
+    // Use a graphics renderer to create a downsampled version
+    let format = UIGraphicsImageRendererFormat()
+    format.scale = UIScreen.main.scale // Maintain screen resolution quality
+    format.opaque = false
+    
+    let renderer = UIGraphicsImageRenderer(size: targetSize, format: format)
+    let downsampled = renderer.image { context in
+        image.draw(in: CGRect(origin: .zero, size: targetSize))
+    }
+    
+    return downsampled
+}
+
 struct ManualView: View {
     @Binding var showingOptions: Bool
     var onSwitchToOptions: (() -> Void)? = nil
@@ -407,60 +434,42 @@ struct ManualView: View {
             .foregroundColor(Color("SupportColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
-        Image("Guide JI ratios")
-            .resizable()
-            .scaledToFit()
-            .frame(maxWidth: .infinity)
+        DownsampledImageView(imageName: "Guide JI ratios", maxHeight: 200)
             .padding(.vertical, 5)
         
         Text("3-5 grid note names")
             .foregroundColor(Color("SupportColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
-        Image("Guide JI note names")
-            .resizable()
-            .scaledToFit()
-            .frame(maxWidth: .infinity)
+        DownsampledImageView(imageName: "Guide JI note names", maxHeight: 200)
             .padding(.vertical, 5)
         
         Text("Equal temperament note names")
             .foregroundColor(Color("SupportColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
-        Image("Guide ET note names")
-            .resizable()
-            .scaledToFit()
-            .frame(maxWidth: .infinity)
+        DownsampledImageView(imageName: "Guide ET note names", maxHeight: 200)
             .padding(.vertical, 5)
         
         Text("All JI scales ratios")
             .foregroundColor(Color("SupportColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
-        Image("Guide JI scales ratios")
-            .resizable()
-            .scaledToFit()
-            .frame(maxWidth: .infinity)
+        ZoomableDownsampledImageView(imageName: "Guide JI scales ratios", maxHeight: 300)
             .padding(.vertical, 5)
         
         Text("All JI scales note names")
             .foregroundColor(Color("SupportColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
-        Image("Guide JI scales notes")
-            .resizable()
-            .scaledToFit()
-            .frame(maxWidth: .infinity)
+        ZoomableDownsampledImageView(imageName: "Guide JI scales notes", maxHeight: 300)
             .padding(.vertical, 5)
         
         Text("All ET scales note names")
             .foregroundColor(Color("SupportColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
-        Image("Guide ET scales")
-            .resizable()
-            .scaledToFit()
-            .frame(maxWidth: .infinity)
+        ZoomableDownsampledImageView(imageName: "Guide ET scales", maxHeight: 300)
             .padding(.vertical, 5)
          
     }
@@ -472,6 +481,161 @@ extension View {
         self
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
+    }
+}
+
+// MARK: - Downsampled Image View (Non-Zoomable)
+struct DownsampledImageView: View {
+    let imageName: String
+    let maxHeight: CGFloat
+    
+    var body: some View {
+        // Target height accounts for screen scale for high quality on Retina displays
+        let targetHeight = maxHeight * UIScreen.main.scale
+        
+        if let downsampledUIImage = downsampledImage(named: imageName, targetHeight: targetHeight) {
+            Image(uiImage: downsampledUIImage)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity)
+        } else {
+            // Fallback if downsampling fails
+            Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity)
+        }
+    }
+}
+
+// MARK: - Zoomable Downsampled Image View
+struct ZoomableDownsampledImageView: View {
+    let imageName: String
+    let maxHeight: CGFloat
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+    
+    var body: some View {
+        GeometryReader { geometry in
+            // Target height accounts for screen scale AND potential zoom for high quality
+            // We multiply by 3 to ensure quality even when zoomed in
+            let targetHeight = maxHeight * UIScreen.main.scale * 3
+            
+            if let downsampledUIImage = downsampledImage(named: imageName, targetHeight: targetHeight) {
+                Image(uiImage: downsampledUIImage)
+                    .resizable()
+                    .scaledToFit()
+                    .scaleEffect(scale)
+                    .offset(offset)
+                    .gesture(
+                        MagnificationGesture()
+                            .onChanged { value in
+                                let delta = value / lastScale
+                                lastScale = value
+                                scale = min(max(scale * delta, 1.0), 5.0)
+                            }
+                            .onEnded { _ in
+                                lastScale = 1.0
+                                if scale < 1.0 {
+                                    withAnimation(.spring()) {
+                                        scale = 1.0
+                                        offset = .zero
+                                    }
+                                }
+                            }
+                    )
+                    .simultaneousGesture(
+                        DragGesture()
+                            .onChanged { value in
+                                offset = CGSize(
+                                    width: lastOffset.width + value.translation.width,
+                                    height: lastOffset.height + value.translation.height
+                                )
+                            }
+                            .onEnded { _ in
+                                lastOffset = offset
+                                
+                                // Reset if zoomed out
+                                if scale <= 1.0 {
+                                    withAnimation(.spring()) {
+                                        offset = .zero
+                                        lastOffset = .zero
+                                    }
+                                }
+                            }
+                    )
+                    .onTapGesture(count: 2) {
+                        withAnimation(.spring()) {
+                            if scale > 1.0 {
+                                scale = 1.0
+                                offset = .zero
+                                lastOffset = .zero
+                            } else {
+                                scale = 2.0
+                            }
+                        }
+                    }
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+            } else {
+                // Fallback if downsampling fails
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .scaleEffect(scale)
+                    .offset(offset)
+                    .gesture(
+                        MagnificationGesture()
+                            .onChanged { value in
+                                let delta = value / lastScale
+                                lastScale = value
+                                scale = min(max(scale * delta, 1.0), 5.0)
+                            }
+                            .onEnded { _ in
+                                lastScale = 1.0
+                                if scale < 1.0 {
+                                    withAnimation(.spring()) {
+                                        scale = 1.0
+                                        offset = .zero
+                                    }
+                                }
+                            }
+                    )
+                    .simultaneousGesture(
+                        DragGesture()
+                            .onChanged { value in
+                                offset = CGSize(
+                                    width: lastOffset.width + value.translation.width,
+                                    height: lastOffset.height + value.translation.height
+                                )
+                            }
+                            .onEnded { _ in
+                                lastOffset = offset
+                                
+                                if scale <= 1.0 {
+                                    withAnimation(.spring()) {
+                                        offset = .zero
+                                        lastOffset = .zero
+                                    }
+                                }
+                            }
+                    )
+                    .onTapGesture(count: 2) {
+                        withAnimation(.spring()) {
+                            if scale > 1.0 {
+                                scale = 1.0
+                                offset = .zero
+                                lastOffset = .zero
+                            } else {
+                                scale = 2.0
+                            }
+                        }
+                    }
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+        }
+        .frame(height: maxHeight)
     }
 }
 
