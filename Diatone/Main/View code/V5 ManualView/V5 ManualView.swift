@@ -516,126 +516,96 @@ struct ZoomableDownsampledImageView: View {
     @State private var lastScale: CGFloat = 1.0
     @State private var offset: CGSize = .zero
     @State private var lastOffset: CGSize = .zero
+    @State private var downsampledUIImage: UIImage?
+    @State private var isVisible = false
     
     var body: some View {
         GeometryReader { geometry in
-            // Target height accounts for screen scale AND potential zoom for high quality
-            // We multiply by 3 to ensure quality even when zoomed in
-            let targetHeight = maxHeight * UIScreen.main.scale * 3
-            
-            if let downsampledUIImage = downsampledImage(named: imageName, targetHeight: targetHeight) {
-                Image(uiImage: downsampledUIImage)
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(scale)
-                    .offset(offset)
-                    .gesture(
-                        MagnificationGesture()
-                            .onChanged { value in
-                                let delta = value / lastScale
-                                lastScale = value
-                                scale = min(max(scale * delta, 1.0), 5.0)
-                            }
-                            .onEnded { _ in
-                                lastScale = 1.0
-                                if scale < 1.0 {
-                                    withAnimation(.spring()) {
-                                        scale = 1.0
-                                        offset = .zero
+            Group {
+                if let image = downsampledUIImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .scaleEffect(scale)
+                        .offset(offset)
+                        .gesture(
+                            MagnificationGesture()
+                                .onChanged { value in
+                                    let delta = value / lastScale
+                                    lastScale = value
+                                    scale = min(max(scale * delta, 1.0), 5.0)
+                                }
+                                .onEnded { _ in
+                                    lastScale = 1.0
+                                    if scale < 1.0 {
+                                        withAnimation(.spring()) {
+                                            scale = 1.0
+                                            offset = .zero
+                                        }
                                     }
                                 }
-                            }
-                    )
-                    .simultaneousGesture(
-                        DragGesture()
-                            .onChanged { value in
-                                offset = CGSize(
-                                    width: lastOffset.width + value.translation.width,
-                                    height: lastOffset.height + value.translation.height
-                                )
-                            }
-                            .onEnded { _ in
-                                lastOffset = offset
-                                
-                                // Reset if zoomed out
-                                if scale <= 1.0 {
-                                    withAnimation(.spring()) {
-                                        offset = .zero
-                                        lastOffset = .zero
+                        )
+                        .simultaneousGesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    offset = CGSize(
+                                        width: lastOffset.width + value.translation.width,
+                                        height: lastOffset.height + value.translation.height
+                                    )
+                                }
+                                .onEnded { _ in
+                                    lastOffset = offset
+                                    
+                                    // Reset if zoomed out
+                                    if scale <= 1.0 {
+                                        withAnimation(.spring()) {
+                                            offset = .zero
+                                            lastOffset = .zero
+                                        }
                                     }
                                 }
-                            }
-                    )
-                    .onTapGesture(count: 2) {
-                        withAnimation(.spring()) {
-                            if scale > 1.0 {
-                                scale = 1.0
-                                offset = .zero
-                                lastOffset = .zero
-                            } else {
-                                scale = 2.0
+                        )
+                        .onTapGesture(count: 2) {
+                            withAnimation(.spring()) {
+                                if scale > 1.0 {
+                                    scale = 1.0
+                                    offset = .zero
+                                    lastOffset = .zero
+                                } else {
+                                    scale = 2.0
+                                }
                             }
                         }
-                    }
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-            } else {
-                // Fallback if downsampling fails
-                Image(imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(scale)
-                    .offset(offset)
-                    .gesture(
-                        MagnificationGesture()
-                            .onChanged { value in
-                                let delta = value / lastScale
-                                lastScale = value
-                                scale = min(max(scale * delta, 1.0), 5.0)
-                            }
-                            .onEnded { _ in
-                                lastScale = 1.0
-                                if scale < 1.0 {
-                                    withAnimation(.spring()) {
-                                        scale = 1.0
-                                        offset = .zero
-                                    }
-                                }
-                            }
-                    )
-                    .simultaneousGesture(
-                        DragGesture()
-                            .onChanged { value in
-                                offset = CGSize(
-                                    width: lastOffset.width + value.translation.width,
-                                    height: lastOffset.height + value.translation.height
-                                )
-                            }
-                            .onEnded { _ in
-                                lastOffset = offset
-                                
-                                if scale <= 1.0 {
-                                    withAnimation(.spring()) {
-                                        offset = .zero
-                                        lastOffset = .zero
-                                    }
-                                }
-                            }
-                    )
-                    .onTapGesture(count: 2) {
-                        withAnimation(.spring()) {
-                            if scale > 1.0 {
-                                scale = 1.0
-                                offset = .zero
-                                lastOffset = .zero
-                            } else {
-                                scale = 2.0
-                            }
-                        }
-                    }
-                    .frame(width: geometry.size.width, height: geometry.size.height)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                } else {
+                    // Loading placeholder
+                    Color.clear
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                }
+            }
+            .onAppear {
+                if !isVisible {
+                    isVisible = true
+                    loadImage()
+                }
             }
         }
         .frame(height: maxHeight)
+    }
+    
+    private func loadImage() {
+        // Load image on background thread to avoid blocking UI
+        DispatchQueue.global(qos: .userInitiated).async {
+            // Use a moderate multiplier (1.5x instead of 3x) to balance quality and memory
+            // This gives good quality when zoomed to 2x-3x while keeping memory reasonable
+            let targetHeight = maxHeight * UIScreen.main.scale * 1.5
+            
+            if let image = downsampledImage(named: imageName, targetHeight: targetHeight) {
+                DispatchQueue.main.async {
+                    self.downsampledUIImage = image
+                }
+            }
+        }
     }
 }
 
