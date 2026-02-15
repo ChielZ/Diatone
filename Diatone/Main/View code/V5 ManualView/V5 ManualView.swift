@@ -254,7 +254,7 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         
-        Text("Diatone features a keyboard with 22 keys, 11 on each side of the screen, which can be played very comfortably with both thumbs while holding your iPhone or iPad in your hands. If you rest your device on your lap or some other suitable surface, you can also use your other fingers to play chords and arpeggios. To play the notes in scale order, start with the lowest key on the left, then play the lowest key on the right, then the second key on the left, and so on.")
+        Text("Diatone features a keyboard with 22 keys, 11 on each side of the screen, which can be played very comfortably with both thumbs while holding your iPhone or iPad in your hands. If you rest your device on your lap or some other suitable surface, you can also use your other fingers to play chords and arpeggios as well. To play the notes in scale order, start with the lowest key on the left, then play the lowest key on the right, then the second key on the left, and so on.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -316,59 +316,197 @@ struct ManualView: View {
             .padding(.top, 10)
             .centeredText()
         
-        Text("This section will guide you through using all the features of the Arithmophone Diatone.")
+        Text("This section will guide you through using all the features of the Arithmophone Diatone. Scroll down to read on or click on one of the subsection names below to jump there directly.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 20)
         
-        Text("Folding and unfolding")
+        Text("II A: The Keyboard")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+        
+        Text("II B: The Scale View")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+        
+        Text("II C: The sound View")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+
+        Text("II D: The Setup View")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+        
+        
+        Text("* * * * * * *")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+            .padding(.bottom, 20)
+        
+ 
+        Text("THE KEYBOARD")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
         
-        Text("[Content to be added]")
-            .foregroundColor(Color("SupportColour"))
+        Text("When you first open the Arithmophone Diatone app, you will see the keyboard, divided into a right and a left section divided by a small vertical bar. The left and right sections combine to form one keyboard together: to play a scale, alternate between playing the left and right keys as you move up or down the keyboard. The keyboard responds to both initial touch and aftertouch: try hitting the keys on different places and moving your finger around while you hold down a key to hear the effect this has on the sound.")
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The Scale View")
+        Text("Touching the 'UNFOLD' text in the central bar will unfold the option view, which has three different pages for adjusting the scale, sound and keyboard setup. When you're done adjusting the settings, you can always touch the 'FOLD' button at the top of the screen to close the option view, maximizing the playable area of the keys.")
             .foregroundColor(Color("HighlightColour"))
-            .adaptiveFont("MontserratAlternates-Medium", size: 20)
-            .padding(.top, 10)
-            .centeredText()
-        
-        Text("[Content to be added]")
-            .foregroundColor(Color("SupportColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The Sound View")
+        Text("The bottom of the option view always shows the note display, that lets you know which notes are currently mapped to the keyboard by corresponding colours (this changes as you switch do different scales and/or keys).")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+
+        
+        Text("THE SCALE VIEW")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
         
-        Text("[Content to be added]")
-            .foregroundColor(Color("SupportColour"))
+        Text("The scale view lets you switch between different scales, keys and and tunings. At the top of the view (just below the main page selector) there is an image that represents the currently selected scale and tuning. What these images mean exactly is explained at the end of section III of this guide, but mainly this just serves as a quick visual indication of the active scale. Beneath this are 5 options for changing the the notes of the keyboard:")
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The Setup View")
+        Text("Tuning: here you can switch between just intonation and equal temperament tuning. Just intonation uses rational harmonic intervals, where the notes sound perfectly in tune with each other, while equal temperament is the standard tuning of Western musical instruments like guitars and pianos. Both of these tuning modes have their own distinct character. The differences are fairly subtle but in general, with just intonation some note combinations sound perfect together while other combinations sound quite out of tune, whereas in equal temperament, no note combinations are perfect, but all combinations are pretty good. If you'd like to learn more about this, please read the background information in section III of this guide, but you don't need to worry about this if you don't want to: in general, you can simply leave this on 'just' when you're playing by yourself, or switch to 'equal' when you're playing together with other instruments.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("Key: this lets you select the musical key that the keyboard is in: changing this transposes the entire keyboard up or down. In combination with the scale selection, this determines which musical note is mapped to each of the keys.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("Scale: this lets you select which musical scale is mapped to the keyboard. Each scale has its own selection of 7 notes and provides its own unique mood. There is more detailed information about the available scales in section III of this guide. To get started without delving in to all of that, just try out the Ionian mode for typical 'major' melodies, the Aeolian mode for typical 'minor' melodies, or the double harmonic scale for a more exotic flavour.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("Scale group: the 12 available scales are arranged in 3 groups: modal, melodic and harmonic. The modal scales will probably sound most familiar to most users, as they are essentially all permutations of the familiar 'do re mi fa sol la ti do' scale. The melodic and harmonic scales offer a few more 'spicy' alternatives: melodic scales are often used in jazz while harmonic scales are common in Eastern European and Arabic music.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("Rotation: this keeps the mapping from scale note to key colour intact, but shifts the screen keyboard up or down by up to 3 steps, allowing you more control over the lowest and highest notes available for playing.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        
+        
+        Text("THE SOUND VIEW")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
         
-        Text("[Content to be added]")
-            .foregroundColor(Color("SupportColour"))
+        Text("The sound view lets you select one of the 49 available synthesizer presets. These are arranged in 7 groups of 7. After selecting a preset, you can change its sound by using the control sliders.")
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("At the top of the view (just below the main page selector) you will see the name of the currently selected preset. The first row of buttons nelow that lets you switch between one of the 7 preset groups. The second row lets you switch between the 7 presets within each group.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("Below the preset selection buttons there are three sliders that let you adjust the sound to your liking. These are automatically reset to their default (centered) positions when a new preset is selected. The 'Volume' slider simply makes the sound softer or louder. Tip: set the volume to the desired level with the main volume controls of your device while the Diatone's volume slider is in its center position, then use the slider for quick 'on the fly' adjustments or expressive control.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("The 'Tone' slider affects different preset sounds in different ways, but it will generally make the sound brighter as you move to the slider to the right, and sometimes also a bit louder and/or more overdriven.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("The 'Ambience' slider also has a different effect depending on the selected preset, but it generally provides a more spaceous sound when moved to the right and a drier, more direct sound when moved to the left.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        
+        Text("THE SETUP VIEW")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 20)
+            .padding(.top, 10)
+            .centeredText()
+        
+        Text("The setup view lets you adjust some further settings that determine how Diatone sounds and how the keyboard responds to your playing. Like the sliders in the sound view, these are also reset when a new preset is loaded.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("The tempo control lets you adjust the rate of synchronized modulations and delays, this is particularly useful when you want to play along with existing songs or with other synthesizers/sequencers.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("The octave control transposes the keyboard up or down in full octaves and let's you adjust for bass, chord or lead playing.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("The tune control allows you to fine tune the keyboard in steps of 1 cent (a cent is 1/100 of an equal temperament semitone). This is particularly useful when you want to play together with an acoustic instrument like a guitar or piano, that may not be tuned to standard pitch.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("Finally, the bend control lets you adjust how much the pitch of the notes change as you move your fingers from left to right (or from right to left of course) while holding down keys. A setting of 0 means no pitch bend, this is the easiest to play and ensures that your notes are always perfectly in tune. Settings between 100 and 250 will allow you to bend the notes in a reasonably controlled manner, giving you access to all the 'notes in between the notes'. This will let you play guitar solo-like note bends and - with some practice and depending on the sound you've selected - you can even play full chromatic scales on the keyboard. It does require more careful playing though, as you'll need to avoid unintentional finger motion. Higher settings of 500 to 750 will allow for very wide pitch slides, great for theremin-like sounds and special effects, but difficult to control. Some of the presets have this pitch bending 'built in' and these also feature sounds that are particularly suited for it. Tip: when trying this out, make sure the keys are displayed with enough size to give you maximum control over the effect - so try folding the option view to increase the key size, or if you're using an iPad, switch to landscape orientation.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("* * * * * * *")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+        
+        Text("Use the buttons below to turn to the next section and read on about musical scales and tunings, or close this guide and use what you've learned here to make some music.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
             .centeredText()
     }
+    
+
+    
     
     @ViewBuilder
     private var backgroundContent: some View {
