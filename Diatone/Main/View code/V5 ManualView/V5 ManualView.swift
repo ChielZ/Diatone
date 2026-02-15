@@ -46,6 +46,7 @@ struct ManualView: View {
     var onSwitchToOptions: (() -> Void)? = nil
     
     @State private var selectedSection: Int = 0 // 0 = Introduction, 1 = How to Use, 2 = Background
+    @State private var scrollToTopTrigger: Int = 0 // Used to trigger scroll to top
     
     var body: some View {
         ZStack {
@@ -112,6 +113,7 @@ struct ManualView: View {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         selectedSection = 0
+                        scrollToTopTrigger += 1
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     
@@ -128,6 +130,7 @@ struct ManualView: View {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         selectedSection = 1
+                        scrollToTopTrigger += 1
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     
@@ -144,6 +147,7 @@ struct ManualView: View {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         selectedSection = 2
+                        scrollToTopTrigger += 1
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
@@ -188,19 +192,27 @@ struct ManualView: View {
                             ScrollViewReader { proxy in
                                 ScrollView {
                                     VStack(alignment: .center, spacing: 15) {
+                                        // Invisible anchor at the top for scrolling
+                                        Color.clear
+                                            .frame(height: 0)
+                                            .id("scrollTop")
+                                        
                                         switch selectedSection {
                                         case 0:
                                             introductionContent
                                         case 1:
                                             howToUseContent(scrollProxy: proxy)
                                         case 2:
-                                            backgroundContent
+                                            backgroundContent(scrollProxy: proxy)
                                         default:
                                             introductionContent
                                         }
                                     }
                                     .padding()
                                     .frame(maxWidth: .infinity)
+                                }
+                                .onChange(of: scrollToTopTrigger) { _ in
+                                    proxy.scrollTo("scrollTop", anchor: .top)
                                 }
                             }
                         }
@@ -542,7 +554,7 @@ struct ManualView: View {
     
     
     @ViewBuilder
-    private var backgroundContent: some View {
+    private func backgroundContent(scrollProxy: ScrollViewProxy) -> some View {
         Text("III: BACKGROUND")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 24)
@@ -555,11 +567,76 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 20)
         
+        
+        Text(underlinedText("III A: What is a diatonic scale?"))
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+            .onTapGesture {
+                withAnimation {
+                    scrollProxy.scrollTo("diatonicScale", anchor: .top)
+                }
+            }
+        
+        Text(underlinedText("III B: What is just intonation"))
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+            .onTapGesture {
+                withAnimation {
+                    scrollProxy.scrollTo("justIntonation", anchor: .top)
+                }
+            }
+        
+        Text(underlinedText("III C: What is equal temperament"))
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+            .onTapGesture {
+                withAnimation {
+                    scrollProxy.scrollTo("equalTemperament", anchor: .top)
+                }
+            }
+
+        Text(underlinedText("III D: The Diatone scale selection"))
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+            .onTapGesture {
+                withAnimation {
+                    scrollProxy.scrollTo("scaleSelection", anchor: .top)
+                }
+            }
+        
+        Text(underlinedText("III E: Diatone scale diagrams"))
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+            .onTapGesture {
+                withAnimation {
+                    scrollProxy.scrollTo("scaleDiagrams", anchor: .top)
+                }
+            }
+        
+        
+        Text("* * * * * * *")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+            .padding(.bottom, 20)
+        
         Text("What is a diatonic scale?")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
+            .id("diatonicScale")
         
         Text("[Content to be added]")
             .foregroundColor(Color("SupportColour"))
@@ -572,6 +649,7 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
+            .id("justIntonation")
         
         Text("[Content to be added]")
             .foregroundColor(Color("SupportColour"))
@@ -584,6 +662,7 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
+            .id("equalTemperament")
         
         Text("[Content to be added]")
             .foregroundColor(Color("SupportColour"))
@@ -591,11 +670,12 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The arithmophone diatonic scale selection")
+        Text("The Diatone scale selection")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
+            .id("scaleSelection")
         
         Text("[Content to be added]")
             .foregroundColor(Color("SupportColour"))
@@ -603,11 +683,12 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Scale diagrams")
+        Text("Diatone scale diagrams")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
+            .id("scaleDiagrams")
         
         Text("3-5 grid ratios")
             .foregroundColor(Color("SupportColour"))
