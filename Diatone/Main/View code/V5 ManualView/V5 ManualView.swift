@@ -34,6 +34,13 @@ private func downsampledImage(named: String, targetHeight: CGFloat) -> UIImage? 
     return downsampled
 }
 
+/// Creates an AttributedString with underline styling (iOS 15 compatible)
+private func underlinedText(_ text: String) -> AttributedString {
+    var attributedString = AttributedString(text)
+    attributedString.underlineStyle = .single
+    return attributedString
+}
+
 struct ManualView: View {
     @Binding var showingOptions: Bool
     var onSwitchToOptions: (() -> Void)? = nil
@@ -178,21 +185,23 @@ struct ManualView: View {
                             RoundedRectangle(cornerRadius: radius)
                                 .fill(Color("BackgroundColour"))
                             
-                            ScrollView {
-                                VStack(alignment: .center, spacing: 15) {
-                                    switch selectedSection {
-                                    case 0:
-                                        introductionContent
-                                    case 1:
-                                        howToUseContent
-                                    case 2:
-                                        backgroundContent
-                                    default:
-                                        introductionContent
+                            ScrollViewReader { proxy in
+                                ScrollView {
+                                    VStack(alignment: .center, spacing: 15) {
+                                        switch selectedSection {
+                                        case 0:
+                                            introductionContent
+                                        case 1:
+                                            howToUseContent(scrollProxy: proxy)
+                                        case 2:
+                                            backgroundContent
+                                        default:
+                                            introductionContent
+                                        }
                                     }
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
                                 }
-                                .padding()
-                                .frame(maxWidth: .infinity)
                             }
                         }
                         .frame(height: contentHeight)
@@ -309,7 +318,7 @@ struct ManualView: View {
     }
     
     @ViewBuilder
-    private var howToUseContent: some View {
+    private func howToUseContent(scrollProxy: ScrollViewProxy) -> some View {
         Text("II: HOW TO USE DIATONE")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 24)
@@ -322,29 +331,49 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 20)
         
-        Text("II A: The Keyboard")
+        Text(underlinedText("II A: The Keyboard"))
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .padding(.top, 10)
             .centeredText()
+            .onTapGesture {
+                withAnimation {
+                    scrollProxy.scrollTo("keyboard", anchor: .top)
+                }
+            }
         
-        Text("II B: The Scale View")
+        Text(underlinedText("II B: The Scale View"))
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .padding(.top, 10)
             .centeredText()
+            .onTapGesture {
+                withAnimation {
+                    scrollProxy.scrollTo("scaleView", anchor: .top)
+                }
+            }
         
-        Text("II C: The sound View")
+        Text(underlinedText("II C: The sound View"))
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .padding(.top, 10)
             .centeredText()
+            .onTapGesture {
+                withAnimation {
+                    scrollProxy.scrollTo("soundView", anchor: .top)
+                }
+            }
 
-        Text("II D: The Setup View")
+        Text(underlinedText("II D: The Setup View"))
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .padding(.top, 10)
             .centeredText()
+            .onTapGesture {
+                withAnimation {
+                    scrollProxy.scrollTo("setupView", anchor: .top)
+                }
+            }
         
         
         Text("* * * * * * *")
@@ -360,6 +389,7 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
+            .id("keyboard")
         
         Text("When you first open the Arithmophone Diatone app, you will see the keyboard, divided into a right and a left section divided by a small vertical bar. The left and right sections combine to form one keyboard together: to play a scale, alternate between playing the left and right keys as you move up or down the keyboard. The keyboard responds to both initial touch and aftertouch: try hitting the keys on different places and moving your finger around while you hold down a key to hear the effect this has on the sound.")
             .foregroundColor(Color("HighlightColour"))
@@ -385,6 +415,7 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
+            .id("scaleView")
         
         Text("The scale view lets you switch between different scales, keys and and tunings. At the top of the view (just below the main page selector) there is an image that represents the currently selected scale and tuning. What these images mean exactly is explained at the end of section III of this guide, but mainly this just serves as a quick visual indication of the active scale. Beneath this are 5 options for changing the the notes of the keyboard:")
             .foregroundColor(Color("HighlightColour"))
@@ -429,6 +460,7 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
+            .id("soundView")
         
         Text("The sound view lets you select one of the 49 available synthesizer presets. These are arranged in 7 groups of 7. After selecting a preset, you can change its sound by using the control sliders.")
             .foregroundColor(Color("HighlightColour"))
@@ -466,6 +498,7 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
+            .id("setupView")
         
         Text("The setup view lets you adjust some further settings that determine how Diatone sounds and how the keyboard responds to your playing. Like the sliders in the sound view, these are also reset when a new preset is loaded.")
             .foregroundColor(Color("HighlightColour"))
