@@ -209,21 +209,16 @@ struct ManualView: View {
     
     @ViewBuilder
     private var introductionContent: some View {
-        Text("Welcome to the Arithmophone Diatone!")
-            .foregroundColor(Color("HighlightColour"))
-            .adaptiveFont("MontserratAlternates-Medium", size: 20)
-            .centeredText()
-            .padding(.bottom, 5)
-        
-        Text("This guide explains all the functions of the app, and also includes background sections on musical scales and tunings")
-            .foregroundColor(Color("HighlightColour"))
-            .adaptiveFont("MontserratAlternates-Medium", size: 16)
-            .centeredText()
         
         Text("I: INTRODUCTION")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 24)
-            .padding(.top, 25)
+            .padding(.top, 10)
+            .centeredText()
+        
+        Text("Welcome to the Arithmophone Diatone! This guide explains all the functions of the app, and also includes background sections on musical scales and tunings")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         
         Text("WHAT IS AN ARITHMOPHONE?")
@@ -243,7 +238,7 @@ struct ManualView: View {
             .padding(.top, 20)
             .centeredText()
         
-        Text("Diatone is an iOS music app featuring an expressive keyboard, a unique selection of pentatonic scales and a custom sound engine. You can use it as a musical instrument, a source of melodic and harmonic inspiration or a tool for learning music and exploring the deep connection it has with numbers.")
+        Text("Diatone is an iOS music app featuring an expressive keyboard, a wide selection of diatonic scales and a built in synthesizer with a custom sound engine. You can use it as a musical instrument, a source of melodic and harmonic inspiration or a tool for learning music and exploring the deep connection it has with numbers.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -259,7 +254,7 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         
-        Text("Diatone features a keyboard with 22 keys, 11 on each side of the screen, which can be played very comfortably with both thumbs while holding your iPhone or iPad in your hands. To play the notes in scale order, start with the lowest key on the left, then play the lowest key on the right, then the second key on the left, and so on.")
+        Text("Diatone features a keyboard with 22 keys, 11 on each side of the screen, which can be played very comfortably with both thumbs while holding your iPhone or iPad in your hands. If you rest your device on your lap or some other suitable surface, you can also use your other fingers to play chords and arpeggios. To play the notes in scale order, start with the lowest key on the left, then play the lowest key on the right, then the second key on the left, and so on.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -298,6 +293,19 @@ struct ManualView: View {
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
+        
+        Text("* * * * * * *")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+        
+        Text("Use the buttons below to turn to the next sections and learn how to use the Arithmophone Diatone (section II) or read about musical scales and tunings (section III).")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+        
     }
     
     @ViewBuilder
