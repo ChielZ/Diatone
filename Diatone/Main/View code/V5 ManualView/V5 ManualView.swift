@@ -249,7 +249,7 @@ struct ManualView: View {
             .padding(.top, 10)
             .centeredText()
         
-        Text("Diatone's music keyboard is designed from the ground up for the form factor of handheld touchscreen devices. It turns your iPhone or iPad into an instrument with exactly the right ergonomics for playing music. Rather than emulating a piano or a guitar fretboard (which are both very well designed interfaces, but with a very different form factor), the Diatone features an original design that takes inspiration from traditional African instruments like the Kora and the Mbira (also known as Kalimba or Karimba), on which melodies are played by alternating between the left and right hand.")
+        Text("Diatone's music keyboard is purpose-built for the form factor of handheld touchscreen devices. It turns your iPhone or iPad into an instrument with exactly the right ergonomics for playing music. Rather than emulating a piano or a guitar fretboard (which are both very well designed interfaces, but with a very different form factor), the Diatone features an original design that takes inspiration from traditional African instruments like the Kora and the Mbira (also known as Kalimba or Karimba), on which melodies are played by alternating between the left and right hand.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -373,7 +373,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The bottom of the option view always shows the note display, that lets you know which notes are currently mapped to the keyboard by corresponding colours (this changes as you switch do different scales and/or keys).")
+        Text("The bottom of the option view always shows the note display, that lets you know which notes are currently mapped to the keyboard by corresponding colours (this changes as you switch to different scales and/or keys).")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -392,7 +392,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Tuning: here you can switch between just intonation and equal temperament tuning. Just intonation uses rational harmonic intervals, where the notes sound perfectly in tune with each other, while equal temperament is the standard tuning of Western musical instruments like guitars and pianos. Both of these tuning modes have their own distinct character. The differences are fairly subtle but in general, with just intonation some note combinations sound perfect together while other combinations sound quite out of tune, whereas in equal temperament, no note combinations are perfect, but all combinations are pretty good. If you'd like to learn more about this, please read the background information in section III of this guide, but you don't need to worry about this if you don't want to: in general, you can simply leave this on 'just' when you're playing by yourself, or switch to 'equal' when you're playing together with other instruments.")
+        Text("Tuning: here you can switch between just intonation and equal temperament tuning. Just intonation uses rational harmonic intervals, where the notes sound perfectly in tune with each other, while equal temperament is the standard tuning of Western musical instruments like guitars and pianos. Both of these tuning modes have their own distinct character. The differences are fairly subtle but in general, with just intonation some note combinations sound perfect together while other combinations sound quite out of tune, whereas in equal temperament, no note combinations are perfect, but all combinations are quite acceptable. If you'd like to learn more about this, please read the background information in section III of this guide, but you don't need to worry about this if you don't want to. In general, you can simply leave this on 'just' when you're playing by yourself, or switch to 'equal' when you're playing together with other instruments.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -416,7 +416,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Rotation: this keeps the mapping from scale note to key colour intact, but shifts the screen keyboard up or down by up to 3 steps, allowing you more control over the lowest and highest notes available for playing.")
+        Text("Rotation: this keeps the mapping from scale note to key colour intact, but shifts the screen keyboard up or down by up to 3 steps. This gives you control over the lowest and highest notes available for playing.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -436,7 +436,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("At the top of the view (just below the main page selector) you will see the name of the currently selected preset. The first row of buttons nelow that lets you switch between one of the 7 preset groups. The second row lets you switch between the 7 presets within each group.")
+        Text("At the top of the view (just below the main page selector) you will see the name of the currently selected preset. The first row of buttons below that lets you switch between one of the 7 preset groups. The second row lets you switch between the 7 presets within each group.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -454,7 +454,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The 'Ambience' slider also has a different effect depending on the selected preset, but it generally provides a more spaceous sound when moved to the right and a drier, more direct sound when moved to the left.")
+        Text("The 'Ambience' slider also has a different effect depending on the selected preset, but it generally provides a more spacious sound when moved to the right and a drier, more direct sound when moved to the left.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -477,7 +477,7 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         
-        Text("The octave control transposes the keyboard up or down in full octaves and let's you adjust for bass, chord or lead playing.")
+        Text("The octave control transposes the keyboard up or down in full octaves and lets you adjust for bass, chord or lead playing.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
