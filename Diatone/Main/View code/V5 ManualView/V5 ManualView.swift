@@ -561,7 +561,7 @@ struct ManualView: View {
             .padding(.top, 10)
             .centeredText()
         
-        Text("Learn about the musical concepts behind the Arithmophone Diatone.")
+        Text("In this section, you can learn about the musical concepts behind the Arithmophone Diatone. Scroll down to read on or click on one of the subsection names below to jump there directly.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -579,7 +579,7 @@ struct ManualView: View {
                 }
             }
         
-        Text(underlinedText("III B: What is just intonation"))
+        Text(underlinedText("III B: What is just intonation?"))
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .padding(.top, 10)
@@ -590,7 +590,7 @@ struct ManualView: View {
                 }
             }
         
-        Text(underlinedText("III C: What is equal temperament"))
+        Text(underlinedText("III C: What is equal temperament?"))
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .padding(.top, 10)
@@ -601,7 +601,7 @@ struct ManualView: View {
                 }
             }
 
-        Text(underlinedText("III D: Scales & Modes"))
+        Text(underlinedText("III D: Scales and modes"))
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .padding(.top, 10)
@@ -649,8 +649,50 @@ struct ManualView: View {
             .centeredText()
             .id("diatonicScale")
         
-        Text("[Content to be added]")
-            .foregroundColor(Color("SupportColour"))
+        Text("Historically, the term diatonic refers to a particular family of musical scales with 7 notes per octave, that are built out of whole steps (tones) and half steps (semitones) in such a way that the steps are distributed across the octave as evenly as possible.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+
+        Text("Informally, the term 'diatonic' is also used to describe any musical scale with 7 notes per octave. This contrasts it with, for example, pentatonic scales (which have only 5 notes per octave) and with the chromatic scale (which contains all of the available notes in 12 tone equal temperament).")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("A whole step / half step note system divides the octave in to 12 steps, so you can think of the process of making a diatonic scale as picking 7 out of 12 notes. If you have ever played a piano-style keyboard, you may have noticed that there are 7 white keys and 5 black keys for each octave. This is no coincidence. The piano keyboard is essentially a diatonic design, with its 'natural' notes being the white keys. The black keys 'fill the gaps' between the notes that are a whole tone apart, and because there are only five such gaps, there are only five black keys. Some of the white keys (B and C, E and F) are just a semitone apart, and these don't have a black key in between them.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("On the piano, the white keys are called A, B, C, D, E, F and G. The black keys don't get their own letter, instead they are 'raised' or 'lowered' versions of the natural notes, that are called things like Eb ('E flat' - the lowered version of E, which is the black key in between D and E) or C# ('C sharp' - the raised version of C, which is the black key in between C and D).")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("What all musically useful 7 note scales have in common, is that they have 'one of each note'. Playing all the white keys on a piano creates a scale with 7 different letters, which works perfectly, but if you were to start on the note A and then play every next note up until you reached the seventh, you would get a sequence like this: A, Bb, B, C, C#, D, Eb. While this is a 7 note scale in some sense, it isn't a very musically useful scale, and this is because it doesn't have 'one of each note'. Instead, there are two versions of 'B' and two version of 'C', while the letters F and G are missing from the scale altogether. On the other hand, as long as you make sure that your scale includes a note for each of the 7 letters, you're very likely to produce a musical sounding scale, even if the sequence is something complicated like A, Bb, C#, D, Eb, F#, G.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("The keyboard of the Arithmophone only has seven notes per octave, so it works a little different than a piano. You don't have 12 notes at your fingertips at all times, but you choose which notes you want to map to the keyboard by selecting a key and scale instead. This is more similar to instruments like the harp or the harmonica, that are tuned to a specific scale - except that retuning to a different scale or key is instant and effortless on the Diatone.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("All common musical keys are available on the Diatone, from the central D (the natural center point because it is in the middle of the sequence a-b-c-D-e-f-g) all the way up to G# or down to Ab.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("The scales that are available on the Diatone keyboard are divided in to three groups: in the first group are the 7 modes of the strictly diatonic scales, labeled with their traditional names from Locrian to Lydian. In the second and third group are some melodic and harmonic scales that are not 'strictly' diatonic, but nonetheless satisfy the 'one of each note' requirement. All of these are scales that are commonly used across different musical traditions.")
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
@@ -663,7 +705,15 @@ struct ManualView: View {
             .id("justIntonation")
         
         Text("[Content to be added]")
-            .foregroundColor(Color("SupportColour"))
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        DownsampledImageView(imageName: "Guide JI grid", maxHeight: 200)
+            .padding(.vertical, 5)
+        
+        Text("[Content to be added]")
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
@@ -671,7 +721,7 @@ struct ManualView: View {
             .padding(.vertical, 5)
         
         Text("[Content to be added]")
-            .foregroundColor(Color("SupportColour"))
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
@@ -686,22 +736,28 @@ struct ManualView: View {
             .id("equalTemperament")
         
         Text("[Content to be added]")
-            .foregroundColor(Color("SupportColour"))
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         DownsampledImageView(imageName: "Guide ET note names", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("Scales & modes")
+        Text("Scales and modes")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
             .padding(.top, 10)
             .centeredText()
             .id("modes")
         
+        Text("Using only the white keys, you can play 7 diatonic scales on a piano: one for each note you start on. Of course in some sense, these are all the same scale: they contain exactly the same notes, the only difference between them is what key is used as the starting note or 'root'. This makes a big difference though: these scales are called the 7 diatonic 'modes' and each of these modes contains its own distinct mood or flavour. However, the possibilities don't end there: you can also make scales using a combination of black and white keys. Some of these are just shifted versions of the 7 'natural' modes: they create the same pattern of whole steps and half steps, just starting from a different key. Some other scales use a different pattern altogether, and can only be played with a combination of black and white keys.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
         Text("[Content to be added]")
-            .foregroundColor(Color("SupportColour"))
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
@@ -709,7 +765,7 @@ struct ManualView: View {
             .padding(.vertical, 5)
         
         Text("[Content to be added]")
-            .foregroundColor(Color("SupportColour"))
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
@@ -724,7 +780,7 @@ struct ManualView: View {
             .id("scaleSelection")
         
         Text("[Content to be added]")
-            .foregroundColor(Color("SupportColour"))
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
@@ -737,21 +793,21 @@ struct ManualView: View {
             .id("scaleDiagrams")
         
         Text("All JI scales ratios")
-            .foregroundColor(Color("SupportColour"))
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         ZoomableDownsampledImageView(imageName: "Guide JI scales ratios", maxHeight: 800)
             .padding(.vertical, 5)
         
         Text("All JI scales note names")
-            .foregroundColor(Color("SupportColour"))
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         ZoomableDownsampledImageView(imageName: "Guide JI scales notes", maxHeight: 800)
             .padding(.vertical, 5)
         
         Text("All ET scales note names")
-            .foregroundColor(Color("SupportColour"))
+            .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         ZoomableDownsampledImageView(imageName: "Guide ET scales", maxHeight: 800)
