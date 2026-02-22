@@ -704,29 +704,44 @@ struct ManualView: View {
             .centeredText()
             .id("justIntonation")
         
-        Text("[Content to be added]")
+        Text("Just intonation is a tuning system where musical intervals are based on simple whole number ratios. For example, when you play two notes an octave apart, the higher note vibrates exactly twice as fast as the lower note - a ratio of 2/1. A perfect fifth uses a ratio of 3/2, and a major third uses 5/4. These simple mathematical relationships create harmonies that sound pure and perfectly in tune, because the sound waves align with each other in very natural ways.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
+        
+        Text("The name 'just intonation' comes from the idea that these intervals are 'just right' - they are the tuning that produces the most consonant, beatless harmonies possible. When you hear two notes played in just intonation forming a simple ratio like 3/2 or 5/4, there is a special quality to the sound: it locks together perfectly, without the subtle wavering or 'beating' that you get with other tuning systems.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
         DownsampledImageView(imageName: "Guide JI grid", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("[Content to be added]")
+        Text("The diagram above shows how just intonation works: you start with a fundamental note (the ratio 1/1) and then build other notes by multiplying or dividing by simple numbers. Moving horizontally multiplies by 3 (going up a perfect fifth), while moving vertically multiplies by 5 (going up a major third). You can also divide to go in the opposite direction. To keep all the notes within a single octave, you multiply or divide by 2 as needed. This creates a lattice of musical notes, all related to each other through pure harmonic ratios.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
+        
         DownsampledImageView(imageName: "Guide JI ratios", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("[Content to be added]")
+        Text("Just intonation has one significant limitation: because the intervals are defined by their relationship to a root note, some note combinations work perfectly while others don't. If you change the root note or modulate to a different key, the ratios change and some intervals that were pure may no longer be. This is why just intonation works beautifully for music that stays centered around one key, but can be challenging for music that moves between different keys frequently.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
+        
         DownsampledImageView(imageName: "Guide JI note names", maxHeight: 200)
             .padding(.vertical, 5)
+        
+        Text("On the Arithmophone Diatone, each of the 12 available scales has its own carefully chosen set of just intonation ratios, optimized to make the most important harmonies in that particular scale sound as pure as possible. This means you get the benefits of perfect tuning without having to think about the mathematics behind it - just select 'just' as your tuning mode and play.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
         
         Text("What is equal temperament?")
             .foregroundColor(Color("HighlightColour"))
@@ -735,13 +750,32 @@ struct ManualView: View {
             .centeredText()
             .id("equalTemperament")
         
-        Text("[Content to be added]")
+        Text("Equal temperament is the tuning system used by most Western musical instruments, including guitars, pianos and synthesizers. In this system, the octave is divided into 12 exactly equal steps called semitones. Each semitone has the same size: it multiplies the frequency by the twelfth root of 2, which is approximately 1.05946. This means that going up 12 semitones multiplies the frequency by exactly 2, giving you an octave.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
+        
+        Text("The beauty of equal temperament is that every key sounds the same relative to itself. A major third in the key of C sounds exactly the same size as a major third in the key of F# or any other key. This makes it possible to freely modulate between different keys, transpose melodies up or down, and play with other instruments without running into tuning problems. This flexibility is why equal temperament became the standard tuning for Western music.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("The trade-off is that equal temperament intervals are based on irrational numbers (roots and powers of 2) rather than simple ratios. This means that most intervals are slightly 'out of tune' compared to their just intonation equivalents. A major third in equal temperament is about 14 cents (14 hundredths of a semitone) sharper than the pure 5/4 ratio, and a perfect fifth is about 2 cents flatter than the pure 3/2 ratio. These differences are small enough that the intervals still sound good, but you can hear a subtle 'beating' or wavering quality that isn't present in pure just intonation intervals.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
         DownsampledImageView(imageName: "Guide ET note names", maxHeight: 200)
             .padding(.vertical, 5)
+        
+        Text("For most musical purposes, equal temperament is an excellent compromise: the intervals are close enough to just intonation that they sound consonant and musical, while the consistent tuning across all keys provides the freedom to modulate and transpose without limitation. When you select 'equal' as the tuning mode on the Arithmophone Diatone, you'll get the standard equal temperament tuning that will match perfectly with other instruments and recorded music.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
         
         Text("Scales and modes")
             .foregroundColor(Color("HighlightColour"))
@@ -750,27 +784,53 @@ struct ManualView: View {
             .centeredText()
             .id("modes")
         
-        Text("Using only the white keys, you can play 7 diatonic scales on a piano: one for each note you start on. Of course in some sense, these are all the same scale: they contain exactly the same notes, the only difference between them is what key is used as the starting note or 'root'. This makes a big difference though: these scales are called the 7 diatonic 'modes' and each of these modes contains its own distinct mood or flavour. However, the possibilities don't end there: you can also make scales using a combination of black and white keys. Some of these are just shifted versions of the 7 'natural' modes: they create the same pattern of whole steps and half steps, just starting from a different key. Some other scales use a different pattern altogether, and can only be played with a combination of black and white keys.")
+        Text("The terms 'scale' and 'mode' are closely related but describe slightly different concepts. A scale is simply a collection of notes arranged in ascending order, while a mode is a scale with a particular starting note that serves as the tonal center or 'root'. The distinction becomes clear when you understand that the same collection of notes can create different modes depending on which note you treat as home.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("[Content to be added]")
+        Text("The seven diatonic modes - Locrian, Phrygian, Aeolian, Dorian, Mixolydian, Ionian and Lydian - have names that come from ancient Greek music theory, but their current forms originated in medieval European liturgical music. Because of this historical connection to church music, they are also sometimes called 'church modes' or 'church scales'. Each mode has its own distinctive character and emotional quality, which is why composers throughout history have used them to create different moods and atmospheres.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
+        
+        Text("Using only the white keys on a piano, you can play all seven modes simply by starting on a different note each time. If you play from C to C, you get the Ionian mode (the familiar major scale). If you play from D to D, you get Dorian. From E to E gives you Phrygian, and so on. These seven modes all contain exactly the same notes - just the white keys - but each one sounds completely different because of which note serves as the root.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
         ZoomableDownsampledImageView(imageName: "Modes Natural", maxHeight: 800)
             .padding(.vertical, 5)
         
-        Text("[Content to be added]")
+        Text("The diagram above shows all seven modes using only the natural notes (the white keys on a piano). Notice how each mode starts on a different note, but they all share the same collection of pitches. This is one way to understand modes: same notes, different roots.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
+        
+        Text("However, modes become even more useful when you transpose them to different keys. You can play any of the seven modes starting from any note, not just the white keys. For example, you can play Dorian in the key of D, or in the key of G, or in any other key. When you do this, each mode requires its own unique combination of natural notes (white keys) and accidentals (black keys) to maintain its characteristic pattern of whole steps and half steps.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
         ZoomableDownsampledImageView(imageName: "Modes D", maxHeight: 800)
             .padding(.vertical, 5)
+        
+        Text("The diagram above shows all seven modes in the key of D. Here, each mode starts on the same root note (D), but uses a different selection of pitches to create its characteristic sound. This is the complementary way to understand modes: same root, different notes. Both perspectives are useful: the first helps you see the relationship between modes, while the second is more practical for actually playing music in a specific key.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("On the Arithmophone Diatone, you can explore all seven modal scales by selecting them from the 'modal' scale group, and you can play each one in any key you choose. This makes it easy to experiment with the unique flavor of each mode and discover which ones work best for the music you want to create.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
         
         Text("The Diatone scale selection")
             .foregroundColor(Color("HighlightColour"))
