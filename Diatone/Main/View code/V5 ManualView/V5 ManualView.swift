@@ -601,7 +601,18 @@ struct ManualView: View {
                 }
             }
 
-        Text(underlinedText("III D: The Diatone scale selection"))
+        Text(underlinedText("III D: Scales & Modes"))
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .padding(.top, 10)
+            .centeredText()
+            .onTapGesture {
+                withAnimation {
+                    scrollProxy.scrollTo("modes", anchor: .top)
+                }
+            }
+        
+        Text(underlinedText("III E: The Diatone scale selection"))
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .padding(.top, 10)
@@ -612,7 +623,7 @@ struct ManualView: View {
                 }
             }
         
-        Text(underlinedText("III E: Diatone scale diagrams"))
+        Text(underlinedText("III F: Diatone scale diagrams"))
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .padding(.top, 10)
@@ -656,6 +667,16 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
+        DownsampledImageView(imageName: "Guide JI ratios", maxHeight: 200)
+            .padding(.vertical, 5)
+        
+        Text("[Content to be added]")
+            .foregroundColor(Color("SupportColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        DownsampledImageView(imageName: "Guide JI note names", maxHeight: 200)
+            .padding(.vertical, 5)
         
         Text("What is equal temperament?")
             .foregroundColor(Color("HighlightColour"))
@@ -669,6 +690,31 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
+        DownsampledImageView(imageName: "Guide ET note names", maxHeight: 200)
+            .padding(.vertical, 5)
+        
+        Text("Scales & modes")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 20)
+            .padding(.top, 10)
+            .centeredText()
+            .id("modes")
+        
+        Text("[Content to be added]")
+            .foregroundColor(Color("SupportColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        ZoomableDownsampledImageView(imageName: "Modes Natural", maxHeight: 800)
+            .padding(.vertical, 5)
+        
+        Text("[Content to be added]")
+            .foregroundColor(Color("SupportColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        ZoomableDownsampledImageView(imageName: "Modes D", maxHeight: 800)
+            .padding(.vertical, 5)
         
         Text("The Diatone scale selection")
             .foregroundColor(Color("HighlightColour"))
@@ -689,27 +735,6 @@ struct ManualView: View {
             .padding(.top, 10)
             .centeredText()
             .id("scaleDiagrams")
-        
-        Text("3-5 grid ratios")
-            .foregroundColor(Color("SupportColour"))
-            .adaptiveFont("MontserratAlternates-Medium", size: 16)
-            .centeredText()
-        DownsampledImageView(imageName: "Guide JI ratios", maxHeight: 200)
-            .padding(.vertical, 5)
-        
-        Text("3-5 grid note names")
-            .foregroundColor(Color("SupportColour"))
-            .adaptiveFont("MontserratAlternates-Medium", size: 16)
-            .centeredText()
-        DownsampledImageView(imageName: "Guide JI note names", maxHeight: 200)
-            .padding(.vertical, 5)
-        
-        Text("Equal temperament note names")
-            .foregroundColor(Color("SupportColour"))
-            .adaptiveFont("MontserratAlternates-Medium", size: 16)
-            .centeredText()
-        DownsampledImageView(imageName: "Guide ET note names", maxHeight: 200)
-            .padding(.vertical, 5)
         
         Text("All JI scales ratios")
             .foregroundColor(Color("SupportColour"))
