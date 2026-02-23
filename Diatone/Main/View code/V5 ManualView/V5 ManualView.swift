@@ -697,6 +697,12 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
+        
+        
+        
+        
+        
+        
         Text("What is just intonation?")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
@@ -704,13 +710,13 @@ struct ManualView: View {
             .centeredText()
             .id("justIntonation")
         
-        Text("Just intonation is a tuning system where musical intervals are based on simple whole number ratios. For example, when you play two notes an octave apart, the higher note vibrates exactly twice as fast as the lower note - a ratio of 2/1. A perfect fifth uses a ratio of 3/2, and a major third uses 5/4. These simple mathematical relationships create harmonies that sound pure and perfectly in tune, because the sound waves align with each other in very natural ways.")
+        Text("Just intonation is a a way of tuning that is based on the natural harmonics of musical notes. This is most easily explained by using a stringed instrument like a violin as an example, but it applies just as much to any other musical instrument, from saxophones to synthesizers, and also to the human voice.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The name 'just intonation' comes from the idea that these intervals are 'just right' - they are the tuning that produces the most consonant, beatless harmonies possible. When you hear two notes played in just intonation forming a simple ratio like 3/2 or 5/4, there is a special quality to the sound: it locks together perfectly, without the subtle wavering or 'beating' that you get with other tuning systems.")
+        Text("When you play an open A string on a violin, the string vibrates at a rate of 440 times per second (assuming the violin is in standard tuning). But the sound you're hearing is not just a single frequency, because the string also vibrates at multiples of its root frequency.440 but instead a complex sound containing many overtones. ")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -743,6 +749,11 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
+        
+        
+        
+        
+        
         Text("What is equal temperament?")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
@@ -750,7 +761,7 @@ struct ManualView: View {
             .centeredText()
             .id("equalTemperament")
         
-        Text("Equal temperament is the tuning system used by most Western musical instruments, including guitars, pianos and synthesizers. In this system, the octave is divided into 12 exactly equal steps called semitones. Each semitone has the same size: it multiplies the frequency by the twelfth root of 2, which is approximately 1.05946. This means that going up 12 semitones multiplies the frequency by exactly 2, giving you an octave.")
+        Text("Equal temperament is the tuning system used by most Western musical instruments, including guitars, pianos and synthesizers. In this system, the octave is divided into 12 exactly equal semitone steps.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -777,6 +788,12 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
+        
+        
+        
+        
+        
+        
         Text("Scales and modes")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 20)
@@ -796,41 +813,46 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Using only the white keys on a piano, you can play all seven modes simply by starting on a different note each time. If you play from C to C, you get the Ionian mode (the familiar major scale). If you play from D to D, you get Dorian. From E to E gives you Phrygian, and so on. These seven modes all contain exactly the same notes - just the white keys - but each one sounds completely different because of which note serves as the root.")
+        Text("Using only the white keys on a piano, you can play all seven modes simply by starting on a different note each time. If you play from C to C, you get the Ionian mode (the familiar major scale). If you play from D to D, you get Dorian. From E to E gives you Phrygian, and so on. These seven modes all contain exactly the same notes - just the white keys - but each mode takes a different note as its center, and this is what creates its specific character.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        ZoomableDownsampledImageView(imageName: "Modes Natural", maxHeight: 800)
+        ZoomableDownsampledImageView(imageName: "Guide modes natural", maxHeight: 800)
             .padding(.vertical, 5)
         
-        Text("The diagram above shows all seven modes using only the natural notes (the white keys on a piano). Notice how each mode starts on a different note, but they all share the same collection of pitches. This is one way to understand modes: same notes, different roots.")
+        Text("The diagram above shows all seven modes using only the natural notes (the white keys on a piano). This represents one way to understand how the modes relate to each other: same notes, different roots.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("However, modes become even more useful when you transpose them to different keys. You can play any of the seven modes starting from any note, not just the white keys. For example, you can play Dorian in the key of D, or in the key of G, or in any other key. When you do this, each mode requires its own unique combination of natural notes (white keys) and accidentals (black keys) to maintain its characteristic pattern of whole steps and half steps.")
+        Text("However, all of the seven modes can also be played in any other key, using a combination of natural notes and accidentals (raised/lowered notes) to maintain their characteristic pattern of whole steps and half steps.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        ZoomableDownsampledImageView(imageName: "Modes D", maxHeight: 800)
+        ZoomableDownsampledImageView(imageName: "Guide modes D", maxHeight: 800)
             .padding(.vertical, 5)
         
-        Text("The diagram above shows all seven modes in the key of D. Here, each mode starts on the same root note (D), but uses a different selection of pitches to create its characteristic sound. This is the complementary way to understand modes: same root, different notes. Both perspectives are useful: the first helps you see the relationship between modes, while the second is more practical for actually playing music in a specific key.")
+        Text("The diagram above shows all seven modes in the key of D. This is the complementary way to understand modes: same root, different notes.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("On the Arithmophone Diatone, you can explore all seven modal scales by selecting them from the 'modal' scale group, and you can play each one in any key you choose. This makes it easy to experiment with the unique flavor of each mode and discover which ones work best for the music you want to create.")
+        Text("On the Arithmophone Diatone, you can explore all seven modes by selecting them from the 'modal' scale group, and you can play each one in any key you choose. This makes it easy to experiment with the unique flavor of each mode.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
+        
+        
+        
+        
+        
         
         Text("The Diatone scale selection")
             .foregroundColor(Color("HighlightColour"))

@@ -115,7 +115,7 @@
     "Each of the preset sounds can be changed by adjusting the 'volume', 'tone' and 'ambience' sliders, and the keyboard's response can be customised further on the 'setup' page. Diatone's sound engine uses a combination of Frequency Modulation and substractive synthesis. It is inspired by some classic digital synthesizers and keyboards from the 1980s, but it also adds a few more modern twists like binaural stereo imaging and effects." : {
 
     },
-    "Equal temperament is the tuning system used by most Western musical instruments, including guitars, pianos and synthesizers. In this system, the octave is divided into 12 exactly equal steps called semitones. Each semitone has the same size: it multiplies the frequency by the twelfth root of 2, which is approximately 1.05946. This means that going up 12 semitones multiplies the frequency by exactly 2, giving you an octave." : {
+    "Equal temperament is the tuning system used by most Western musical instruments, including guitars, pianos and synthesizers. In this system, the octave is divided into 12 exactly equal semitone steps." : {
 
     },
     "Finally, the bend control lets you adjust how much the pitch of the notes change as you move your fingers from left to right (or from right to left of course) while holding down keys. A setting of 0 means no pitch bend, this is the easiest to play and ensures that your notes are always perfectly in tune. Settings between 100 and 250 will allow you to bend the notes in a reasonably controlled manner, giving you access to all the 'notes in between the notes'. This will let you play guitar solo-like note bends and - with some practice and depending on the sound you've selected - you can even play full chromatic scales on the keyboard. It does require more careful playing though, as you'll need to avoid unintentional finger motion. Higher settings of 500 to 750 will allow for very wide pitch slides, great for theremin-like sounds and special effects, but difficult to control. Some of the presets have this pitch bending 'built in' and these also feature sounds that are particularly suited for it. Tip: when trying this out, make sure the keys are displayed with enough size to give you maximum control over the effect - so try folding the option view to increase the key size, or if you're using an iPad, switch to landscape orientation." : {
@@ -139,7 +139,7 @@
     "Historically, the term diatonic refers to a particular family of musical scales with 7 notes per octave, that are built out of whole steps (tones) and half steps (semitones) in such a way that the steps are distributed across the octave as evenly as possible." : {
 
     },
-    "However, modes become even more useful when you transpose them to different keys. You can play any of the seven modes starting from any note, not just the white keys. For example, you can play Dorian in the key of D, or in the key of G, or in any other key. When you do this, each mode requires its own unique combination of natural notes (white keys) and accidentals (black keys) to maintain its characteristic pattern of whole steps and half steps." : {
+    "However, all of the seven modes can also be played in any other key, using a combination of natural notes and accidentals (raised/lowered notes) to maintain their characteristic pattern of whole steps and half steps." : {
 
     },
     "Hybrid: MIDI Snap (Drag) + 1 Hz Steps (Buttons)" : {
@@ -174,7 +174,7 @@
     "Just intonation has one significant limitation: because the intervals are defined by their relationship to a root note, some note combinations work perfectly while others don't. If you change the root note or modulate to a different key, the ratios change and some intervals that were pure may no longer be. This is why just intonation works beautifully for music that stays centered around one key, but can be challenging for music that moves between different keys frequently." : {
 
     },
-    "Just intonation is a tuning system where musical intervals are based on simple whole number ratios. For example, when you play two notes an octave apart, the higher note vibrates exactly twice as fast as the lower note - a ratio of 2/1. A perfect fifth uses a ratio of 3/2, and a major third uses 5/4. These simple mathematical relationships create harmonies that sound pure and perfectly in tune, because the sound waves align with each other in very natural ways." : {
+    "Just intonation is a a way of tuning that is based on the natural harmonics of musical notes. This is most easily explained by using a stringed instrument like a violin as an example, but it applies just as much to any other musical instrument, from saxophones to synthesizers, and also to the human voice." : {
 
     },
     "Key: this lets you select the musical key that the keyboard is in: changing this transposes the entire keyboard up or down. In combination with the scale selection, this determines which musical note is mapped to each of the keys." : {
@@ -416,7 +416,7 @@
     "On the Arithmophone Diatone, each of the 12 available scales has its own carefully chosen set of just intonation ratios, optimized to make the most important harmonies in that particular scale sound as pure as possible. This means you get the benefits of perfect tuning without having to think about the mathematics behind it - just select 'just' as your tuning mode and play." : {
 
     },
-    "On the Arithmophone Diatone, you can explore all seven modal scales by selecting them from the 'modal' scale group, and you can play each one in any key you choose. This makes it easy to experiment with the unique flavor of each mode and discover which ones work best for the music you want to create." : {
+    "On the Arithmophone Diatone, you can explore all seven modes by selecting them from the 'modal' scale group, and you can play each one in any key you choose. This makes it easy to experiment with the unique flavor of each mode." : {
 
     },
     "On the piano, the white keys are called A, B, C, D, E, F and G. The black keys don't get their own letter, instead they are 'raised' or 'lowered' versions of the natural notes, that are called things like Eb ('E flat' - the lowered version of E, which is the black key in between D and E) or C# ('C sharp' - the raised version of C, which is the black key in between C and D)." : {
@@ -464,10 +464,10 @@
     "The bottom of the option view always shows the note display, that lets you know which notes are currently mapped to the keyboard by corresponding colours (this changes as you switch to different scales and/or keys)." : {
 
     },
-    "The diagram above shows all seven modes in the key of D. Here, each mode starts on the same root note (D), but uses a different selection of pitches to create its characteristic sound. This is the complementary way to understand modes: same root, different notes. Both perspectives are useful: the first helps you see the relationship between modes, while the second is more practical for actually playing music in a specific key." : {
+    "The diagram above shows all seven modes in the key of D. This is the complementary way to understand modes: same root, different notes." : {
 
     },
-    "The diagram above shows all seven modes using only the natural notes (the white keys on a piano). Notice how each mode starts on a different note, but they all share the same collection of pitches. This is one way to understand modes: same notes, different roots." : {
+    "The diagram above shows all seven modes using only the natural notes (the white keys on a piano). This represents one way to understand how the modes relate to each other: same notes, different roots." : {
 
     },
     "The diagram above shows how just intonation works: you start with a fundamental note (the ratio 1/1) and then build other notes by multiplying or dividing by simple numbers. Moving horizontally multiplies by 3 (going up a perfect fifth), while moving vertically multiplies by 5 (going up a major third). You can also divide to go in the opposite direction. To keep all the notes within a single octave, you multiply or divide by 2 as needed. This creates a lattice of musical notes, all related to each other through pure harmonic ratios." : {
@@ -483,9 +483,6 @@
 
     },
     "The keyboard of the Arithmophone only has seven notes per octave, so it works a little different than a piano. You don't have 12 notes at your fingertips at all times, but you choose which notes you want to map to the keyboard by selecting a key and scale instead. This is more similar to instruments like the harp or the harmonica, that are tuned to a specific scale - except that retuning to a different scale or key is instant and effortless on the Diatone." : {
-
-    },
-    "The name 'just intonation' comes from the idea that these intervals are 'just right' - they are the tuning that produces the most consonant, beatless harmonies possible. When you hear two notes played in just intonation forming a simple ratio like 3/2 or 5/4, there is a special quality to the sound: it locks together perfectly, without the subtle wavering or 'beating' that you get with other tuning systems." : {
 
     },
     "The name Diatone comes from the Greek words διατονικός (diatonikos; diatonic), a term that has been used since ancient times to describe scales with 7 notes per octave. The familiar 'do re mi fa sol la ti do' is such a scale, but there are many others as well. The Arithmophone Diatone has 12 different scales to choose from, and each of these can be played in any musical key and in two different tuning modes: just intonation (rational harmonic intervals, where the notes sound perfectly in tune with each other) or equal temperament (standard Western tuning, suitable for playing along with guitars, pianos et cetera)." : {
@@ -579,7 +576,7 @@
     "Use the buttons below to turn to the next sections and learn how to use the Arithmophone Diatone (section II) or read about musical scales and tunings (section III)." : {
 
     },
-    "Using only the white keys on a piano, you can play all seven modes simply by starting on a different note each time. If you play from C to C, you get the Ionian mode (the familiar major scale). If you play from D to D, you get Dorian. From E to E gives you Phrygian, and so on. These seven modes all contain exactly the same notes - just the white keys - but each one sounds completely different because of which note serves as the root." : {
+    "Using only the white keys on a piano, you can play all seven modes simply by starting on a different note each time. If you play from C to C, you get the Ionian mode (the familiar major scale). If you play from D to D, you get Dorian. From E to E gives you Phrygian, and so on. These seven modes all contain exactly the same notes - just the white keys - but each mode takes a different note as its center, and this is what creates its specific character." : {
 
     },
     "Voice Mode" : {
@@ -612,6 +609,9 @@
 
     },
     "When you first open the Arithmophone Diatone app, you will see the keyboard, divided into a right and a left section divided by a small vertical bar. The left and right sections combine to form one keyboard together: to play a scale, alternate between playing the left and right keys as you move up or down the keyboard. The keyboard responds to both initial touch and aftertouch: try hitting the keys on different places and moving your finger around while you hold down a key to hear the effect this has on the sound." : {
+
+    },
+    "When you play an open A string on a violin, the string vibrates at a rate of 440 times per second (assuming the violin is in standard tuning). But the sound you're hearing is not just a single frequency, because the string also vibrates at multiples of its root frequency.440 but instead a complex sound containing many overtones. " : {
 
     },
     "You can rename the preset or keep the same name." : {
