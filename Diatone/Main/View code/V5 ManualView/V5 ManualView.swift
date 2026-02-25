@@ -710,13 +710,49 @@ struct ManualView: View {
             .centeredText()
             .id("justIntonation")
         
-        Text("Just intonation is a a way of tuning that is based on the natural harmonics of musical notes. This is most easily explained by using a stringed instrument like a violin as an example, but it applies just as much to any other musical instrument, from saxophones to synthesizers, and also to the human voice.")
+        Text("Just intonation is a tuning system that is based on the natural harmonics of musical notes. It works for any musical instrument, as well as for singing, but is most easily explained by using a stringed instrument like a violin as an example.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("When you play an open A string on a violin, the string vibrates at a rate of 440 times per second (assuming the violin is in standard tuning). But the sound you're hearing is not just a single frequency, because the string also vibrates at multiples of its root frequency.440 but instead a complex sound containing many overtones. ")
+        Text("When you play an open A string on a violin, the string vibrates at a rate of 440 times per second (assuming the violin is in standard tuning). This rate is called the frequency, and is usually expressed in Hertz (Hz). So the pitch of the tuned A string is 440 Hz. But the sound you hear is not just a single frequency, because the string also vibrates at multiples of its root frequency, like 880 Hz (2x440), 1320 Hz (3x440), and so on. These multiples of the root frequency are called overtones or harmonics. Together they combine with the root frequency to produce a complex sound that gives the instrument its own particular tone colour or timbre.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("On an instrument where you can touch the strings directly, like a violin or a guitar, it is very easy to check this for yourself. If you lightly touch the string at exactly half the length of the string (on a fretted instrument like a guitar, this is just over the 12th fret), you will mute the root frequency and accentuate the second harmonic. If you place your finger at one third of the length (or over the 7th fret), you will hear the third harmonic accentuated, et cetera. If after that you just play the open string again, you may be able to hear how the full sound contains all of these individual overtones.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("All the harmonic frequencies have a certain whole number proportion to the root frequency: 2x, 3x, 4x, 5x and so on. In principle this goes on forever, but the relative loudness of the overtones decreases as their frequency increases, so in practice the first few overtones are much more prominent than the higher ones. If we listen to the harmonics in isolation, we can hear that they correspond to different notes. The second harmonic of the A string produces another A, an octave higher, the third harmonic produces an E, the fourth harmonic is an A again, 2 octaves higher this time, and the fifth harmonic produces a C#.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("Each of the overtones of a note stands in a certain ratio to its root frequency, and each of those ratios corresponds to a certain note. We can use this fact to tune the other strings of the violin (or the other notes on any instrument in general) in relation to one specific root frequency, and this is in fact precisely what just intonation means. When we sound the second harmonic of the A string, which produces the note E, and then tune our E string so that it resonates perfectly with the harmonic, we are using just intonation, plain and simple.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("We can use the principle of harmonic proportions to find a ratio for any note we might want to tune to. We have just established that for the note A, 2:1 and 4:1 just give us more A notes in higher octaves. And in general, multiplying or dividing by 2 will give us the same note in a different octave. But all the odd ratios provide us with new notes: if 1:1 is A, then 3:1 is E, and 5:1 is C#. But we can go the other way as well: 1:3 is D (because 3:1 on D is A) and 1:5 is F (because 5:1 on F is A). We can also combine ratios: 5:3 is F#, because 1:3 is D and 5:1 on D is F# (and 5:1 x 1:3 is 5:3).")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("Simply by combining factors of 2, 3 and 5, we can create any of the diatonic scales. For example, the ratios of a D major scale might be: 1/1 (D), 9/8 (E), 5/4 (F#), 4/3 (G), 3/2 (A), 5/3 (B), 15/8 (C#), 2/1 (D). To avoid confusion, we should pay careful attention to the distinction between scale position and harmonic position. For example, in the C major scale, E is the third note and for this reason, the interval from C to E is usually called the (major) third, but E is the fifth harmonic of C. In contrast, G is the fifth note of the scale and usually called the (perfect) fifth, even though G is the third harmonic of C.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("The diagram below shows some of the most commonly used just intonation ratios, arranged in a so called '3-5 grid': you start with a fundamental note (the ratio 1/1) and then build other notes by multiplying or dividing. Moving left multiplies by 3 (going up a perfect fifth), while moving up multiplies by 5 (going up a major third). You can also divide to go in the opposite direction. To bring all the notes within a single octave, simply multiply or divide any of these ratios by 2 as needed. This creates a lattice of musical notes, all related to each other through pure harmonic ratios.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -725,7 +761,7 @@ struct ManualView: View {
         DownsampledImageView(imageName: "Guide JI grid", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("The diagram above shows how just intonation works: you start with a fundamental note (the ratio 1/1) and then build other notes by multiplying or dividing by simple numbers. Moving horizontally multiplies by 3 (going up a perfect fifth), while moving vertically multiplies by 5 (going up a major third). You can also divide to go in the opposite direction. To keep all the notes within a single octave, you multiply or divide by 2 as needed. This creates a lattice of musical notes, all related to each other through pure harmonic ratios.")
+        Text("If we now colour these notes with the same colour scheme that is used in for the keyboard of the Arithmophone Diatone, it will look like this:")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -734,7 +770,7 @@ struct ManualView: View {
         DownsampledImageView(imageName: "Guide JI ratios", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("Just intonation has one significant limitation: because the intervals are defined by their relationship to a root note, some note combinations work perfectly while others don't. If you change the root note or modulate to a different key, the ratios change and some intervals that were pure may no longer be. This is why just intonation works beautifully for music that stays centered around one key, but can be challenging for music that moves between different keys frequently.")
+        Text("And if we replace the ratios with note names, using D for 1/1, it looks like this:")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -743,14 +779,32 @@ struct ManualView: View {
         DownsampledImageView(imageName: "Guide JI note names", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("On the Arithmophone Diatone, each of the 12 available scales has its own carefully chosen set of just intonation ratios, optimized to make the most important harmonies in that particular scale sound as pure as possible. This means you get the benefits of perfect tuning without having to think about the mathematics behind it - just select 'just' as your tuning mode and play.")
+        Text("The scale display in the app shows which of thesse notes/ratios are used in any particular scale. At the end of this guide, some diagrams are included that show the images for each of the 12 available scales, with ratios and note names inscribed.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
+        Text("An important characteristic of just intonation is that there are multiple options for each note (except for the root, which is always 1:1). For example, for root D, there is a C at 9:5 (because 3:1 on D is A, 3:1 on A is E, 1:5 on E is C and 3/1 x 3/1 x 1/5 = 9/5), but there is also a C at 1:9 (because 1:3 on D is G, 1:3 on G is C and 1/3 x 1/3 is 1/9). These notes share the same name, but they don't have the same frequency (because 9/5 is not equal to 1/9, not even when we change the latter to 16/9 so they fall in the same octave). The distance is subtle enough that tempered tunings can 'sweep it under the rug' and represent both ratios with just a single note, but it is definitely audible, and becomes particularly apparent when multiple notes are played simultaneously in chords. And these are just two of the options for the C note on D: there are other, more 'exotic' candidates for the C note as well, most notably the 'pure harmonic seventh' or 7/1 ratio, and there are multiple options for all other notes as well. With just intonation, there are essentially infinitely many different notes, which has both its advantages and its disadvantages.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+
         
         
+        
+                        
+        
+
+        
+
+        
+
+        
+
+         
         
         
         
@@ -761,19 +815,48 @@ struct ManualView: View {
             .centeredText()
             .id("equalTemperament")
         
-        Text("Equal temperament is the tuning system used by most Western musical instruments, including guitars, pianos and synthesizers. In this system, the octave is divided into 12 exactly equal semitone steps.")
+        
+        /*
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         */
+        
+        
+        Text("One situation where it is definitely not an advantage to have infinitely many different notes, is when you're trying to build a fixed pitch instrument like a piano, an organ or a guitar with fixed frets. With just intonation, you can tune a piano so that it sounds great in the key of C, but then if you'd want to play something in the key of D flat, you will find that it is badly out of tune. This can only be resolved by retuning the entire instrument - but in that case it will no longer be in tune in the key of C.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The beauty of equal temperament is that every key sounds the same relative to itself. A major third in the key of C sounds exactly the same size as a major third in the key of F# or any other key. This makes it possible to freely modulate between different keys, transpose melodies up or down, and play with other instruments without running into tuning problems. This flexibility is why equal temperament became the standard tuning for Western music.")
+        Text("As classical music evolved in Western Europe, keyboard instruments like organs and harpsichords became more prominent, and modulation between different keys became an important part of the musical style. This motivated instrument makers and music theorists to explore alternatives to just intonation tuning, and this finally led to the introduction of 12 tone equal temperament, which has since become the standard tuning system for Western musical instruments, from guitars and pianos to saxophones and synthesizers.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The trade-off is that equal temperament intervals are based on irrational numbers (roots and powers of 2) rather than simple ratios. This means that most intervals are slightly 'out of tune' compared to their just intonation equivalents. A major third in equal temperament is about 14 cents (14 hundredths of a semitone) sharper than the pure 5/4 ratio, and a perfect fifth is about 2 cents flatter than the pure 3/2 ratio. These differences are small enough that the intervals still sound good, but you can hear a subtle 'beating' or wavering quality that isn't present in pure just intonation intervals.")
+        Text("In equal temperament tuning, the octave is divided in to a number of steps of exactly the same size. If that number is 12, then we get a selection of notes that provides a pretty good approximation of the first 5 harmonics from whichever note we choose to select as the root. In fact, the third harmonic is nearly perfect, although the fifth harmonic is not quite as good (the second and fourth harmonic are octaves, and they are perfect by definition, because it is the octave that is being divided).")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("As we have seen in the section on just intonation, we can find all the notes of Western diatonic music just by combining the third and fifth harmonic, so all of these are available in 12 tone equal temperament. All of the notes are now slightly out of tune with respect to each other, but none of them terribly much so. This means we can now play in any key we like without having to worry about retuning our instruments.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("Furthermore, we now have only 12 different notes to deal with in total. This is why the scale display shows a different images for equal temperament scales, as per the illustration below. This image does have 13 notes, but The G# and Ab are really just one note, that is shown either on the far left or on the far right of the display depending on the context of the scale.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -782,11 +865,26 @@ struct ManualView: View {
         DownsampledImageView(imageName: "Guide ET note names", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("For most musical purposes, equal temperament is an excellent compromise: the intervals are close enough to just intonation that they sound consonant and musical, while the consistent tuning across all keys provides the freedom to modulate and transpose without limitation. When you select 'equal' as the tuning mode on the Arithmophone Diatone, you'll get the standard equal temperament tuning that will match perfectly with other instruments and recorded music.")
+        Text("With 12 tone equal temperament, what we loose in tuning accuracy, we gain in flexibility. Whether or not this is a good tradeoff really depends on the musical context. Listen to a piano piece by a 19th century composer like Debussy or Brahms and you will hear the full power of 12 tone equal temperament: that kind of harmonic motion and musical flexibility is hardly possible in a just intonation context. But listen to a West-African Kora piece by one of the great players of the instrument like Toumani Diabaté or Ballaké Sissoko and you can hear the sweet harmonic purity of just intonation, that is impossible to achieve on an instrument tuned to equal temperament.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
+        
+        Text("Both of these are the result of wonderfully rich musical traditions. The Arithmophone Diatone lets you get a taste of each approach. If you want to use it to play along with other instruments like a guitar or a keyboard, then definitely select equal temperament tuning. If you are playing by yourself then it may be worth experimenting a bit to see if you can hear the different feeling each tuning system imparts on your playing. Don't be discouraged if you don't immediately hear the difference: it's subtle and more prominent on some note combinations than on other, but it's definitely there.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("It should be noted that there are also some very rich musical traditions that can be represented neither by 12 tone equal temperament nor by '3-5 grid' harmonic ratios. A great example of this is the Arabic Maqam system. This requires either more complex musical ratios that incorporate higher harmonics like the 7th and 11th harmonic, or larger temperaments like 24 tone or even 53 tone equal temperament. Unfortunately, this takes it outside of the current scope of this app, but to be aware of this is a great reminder of the infinite subtleties and complexities of music at least.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+
+        
+
         
         
         
@@ -866,6 +964,26 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
+        
+        /*
+         Locrian: bII major, IV minor, bV major, bVI major and bVII minor
+         Phrygian: I minor, bII major, IV minor, bVI major and bVII minor
+         Aeolian: I minor, IV minor, bVI major and bVII major
+         Dorian: I minor, II minor, bIII major and IV major
+         Mixolydian: I major, IV major, V minor and VI minor
+         Ionian: I major, III minor, IV major, V major and VI minor
+         Lydian: I major, III minor, V major, VI minor and VII minor
+
+         Minor Melodic: I minor and V major
+         Major Melodic: I major and IV minor
+
+         Minor Harmonic: I minor, IV minor, V major and bVI major
+         Double Harmonic: I major, III minor, IV minor and V major
+         Major Harmonic: I major, bII major, III minor andIV minor
+         */
+        
+        
+        
         
         Text("Diatone scale diagrams")
             .foregroundColor(Color("HighlightColour"))
@@ -951,6 +1069,7 @@ struct ZoomableDownsampledImageView: View {
                     .frame(maxWidth: .infinity)
                     .scaleEffect(scale)
                     .offset(offset)
+                    .zIndex(scale > 1.0 ? 999 : 0) // Bring to front when zoomed
                     .gesture(
                         MagnificationGesture()
                             .onChanged { value in
