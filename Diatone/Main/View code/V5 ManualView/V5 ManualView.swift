@@ -661,19 +661,19 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("A whole step / half step note system divides the octave in to 12 steps, so you can think of the process of making a diatonic scale as picking 7 out of 12 notes. If you have ever played a piano-style keyboard, you may have noticed that there are 7 white keys and 5 black keys for each octave. This is no coincidence. The piano keyboard is essentially a diatonic design, with its 'natural' notes being the white keys. The black keys 'fill the gaps' between the notes that are a whole tone apart, and because there are only five such gaps, there are only five black keys. Some of the white keys (B and C, E and F) are just a semitone apart, and these don't have a black key in between them.")
+        Text("Any whole step / half step note system divides the octave in to 12 semitones, so you can think of the process of making a diatonic scale as picking 7 out of 12 notes. If you have ever played a piano-style keyboard, you may have noticed that there are 7 white keys and 5 black keys for each octave. This is no coincidence. The piano keyboard is essentially a diatonic design, with its 'natural' notes being the white keys. The black keys fill the gaps between the notes that are a whole tone apart, and because there are only five such gaps, there are only five black keys. Some of the white keys (B and C, E and F) are just a semitone apart, and these don't have a black key in between them.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("On the piano, the white keys are called A, B, C, D, E, F and G. The black keys don't get their own letter, instead they are 'raised' or 'lowered' versions of the natural notes, that are called things like Eb ('E flat' - the lowered version of E, which is the black key in between D and E) or C# ('C sharp' - the raised version of C, which is the black key in between C and D).")
+        Text("On the piano, the white keys are called A, B, C, D, E, F and G. The black keys don't get their own letter, instead they are 'raised' or 'lowered' versions of the natural notes, that are called things like E♭ (E flat - the lowered version of E, which is the black key in between D and E) or C♯ (C sharp - the raised version of C, which is the black key in between C and D). Depending on context, each black key may take on one of two names. For example, the black key in between G and A my be called G♯ if it takes the place of G in a scale, or A♭ if it takes the place of A.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("What all musically useful 7 note scales have in common, is that they have 'one of each note'. Playing all the white keys on a piano creates a scale with 7 different letters, which works perfectly, but if you were to start on the note A and then play every next note up until you reached the seventh, you would get a sequence like this: A, Bb, B, C, C#, D, Eb. While this is a 7 note scale in some sense, it isn't a very musically useful scale, and this is because it doesn't have 'one of each note'. Instead, there are two versions of 'B' and two version of 'C', while the letters F and G are missing from the scale altogether. On the other hand, as long as you make sure that your scale includes a note for each of the 7 letters, you're very likely to produce a musical sounding scale, even if the sequence is something complicated like A, Bb, C#, D, Eb, F#, G.")
+        Text("Generally speaking, a 'proper' 7-note scale should always include one note for each letter A through G. If you play all the consecutive piano keys starting from A up to E♭, you'd have seven notes — but you'd have two versions of B♭ and B), two versions of C (C and C♯), and no F or G. While this is a 7 note scale in some sense, it isn't a very musically useful one, because the notes are all clustered together in one half of the octave. On the other hand, as long as you make sure that your scale includes a note for each of the 7 letters, the notes will be more evenly distributed and you're likely to produce a musical sounding scale, even if the sequence is something complicated like A, Bb, C#, D, Eb, F#, G.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -716,25 +716,25 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("When you play an open A string on a violin, the string vibrates at a rate of 440 times per second (assuming the violin is in standard tuning). This rate is called the frequency, and is usually expressed in Hertz (Hz). So the pitch of the tuned A string is 440 Hz. But the sound you hear is not just a single frequency, because the string also vibrates at multiples of its root frequency, like 880 Hz (2x440), 1320 Hz (3x440), and so on. These multiples of the root frequency are called overtones or harmonics. Together they combine with the root frequency to produce a complex sound that gives the instrument its own particular tone colour or timbre.")
+        Text("When you play an open A string on a violin, the string vibrates at a rate of 440 times per second (assuming the violin is in standard tuning). This rate is called the frequency, and is usually expressed in Hertz (Hz). So the pitch of the tuned A string is 440 Hz. But the sound you hear is not just a single frequency, because the string also vibrates at multiples of its root frequency, like 880 Hz (2x440), 1320 Hz (3x440), and so on. These multiples of the root frequency are called harmonics or overtones. Together they combine with the root frequency to produce a complex sound that gives the instrument its own particular tone colour or timbre.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("On an instrument where you can touch the strings directly, like a violin or a guitar, it is very easy to check this for yourself. If you lightly touch the string at exactly half the length of the string (on a fretted instrument like a guitar, this is just over the 12th fret), you will mute the root frequency and accentuate the second harmonic. If you place your finger at one third of the length (or over the 7th fret), you will hear the third harmonic accentuated, et cetera. If after that you just play the open string again, you may be able to hear how the full sound contains all of these individual overtones.")
+        Text("On an instrument where you can touch the strings directly, like a violin or a guitar, it is very easy to check this for yourself. If you lightly touch the string at exactly half the length of the string (on a fretted instrument like a guitar, this is just over the 12th fret), you will mute the root frequency and accentuate the second harmonic. If you place your finger at one third of the length (or over the 7th fret), you will hear the third harmonic accentuated, et cetera. If after that you just play the open string again, you may be able to hear how the full sound contains all of these individual harmonics.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("All the harmonic frequencies have a certain whole number proportion to the root frequency: 2x, 3x, 4x, 5x and so on. In principle this goes on forever, but the relative loudness of the overtones decreases as their frequency increases, so in practice the first few overtones are much more prominent than the higher ones. If we listen to the harmonics in isolation, we can hear that they correspond to different notes. The second harmonic of the A string produces another A, an octave higher, the third harmonic produces an E, the fourth harmonic is an A again, 2 octaves higher this time, and the fifth harmonic produces a C#.")
+        Text("If we listen to the harmonics in isolation, we can hear that they correspond to different notes. The second harmonic of the A string produces another A, an octave higher, the third harmonic produces an E, the fourth harmonic is an A again, 2 octaves higher this time, and the fifth harmonic produces a C#.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Each of the overtones of a note stands in a certain ratio to its root frequency, and each of those ratios corresponds to a certain note. We can use this fact to tune the other strings of the violin (or the other notes on any instrument in general) in relation to one specific root frequency, and this is in fact precisely what just intonation means. When we sound the second harmonic of the A string, which produces the note E, and then tune our E string so that it resonates perfectly with the harmonic, we are using just intonation, plain and simple.")
+        Text("Each of the harmonics of a note stands in a certain ratio to its root frequency, and each of those ratios corresponds to a certain note. We can use this fact to tune the other strings of the violin (or the other notes on any instrument in general) in relation to one specific root frequency, and this is in fact precisely what just intonation means. When we sound the second harmonic of the A string, which produces the note E, and then tune our E string so that it resonates perfectly with the harmonic, we are using just intonation, plain and simple.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -746,13 +746,21 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Simply by combining factors of 2, 3 and 5, we can create any of the diatonic scales. For example, the ratios of a D major scale might be: 1/1 (D), 9/8 (E), 5/4 (F#), 4/3 (G), 3/2 (A), 5/3 (B), 15/8 (C#), 2/1 (D). To avoid confusion, we should pay careful attention to the distinction between scale position and harmonic position. For example, in the C major scale, E is the third note and for this reason, the interval from C to E is usually called the (major) third, but E is the fifth harmonic of C. In contrast, G is the fifth note of the scale and usually called the (perfect) fifth, even though G is the third harmonic of C.")
+        
+        
+        Text("Any multiple of the root frequency produces a new harmonic and in principle this goes on forever, but the relative loudness of the harmonics decreases as their frequency increases, so in practice the first few harmonics are much more prominent than the higher ones. Simply by combining factors of 2, 3 and 5, we can create any of the diatonic scales that appear in this app. For example, the ratios of a D major scale might be: 1/1 (D), 9/8 (E), 5/4 (F#), 4/3 (G), 3/2 (A), 5/3 (B), 15/8 (C#), 2/1 (D). ")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The diagram below shows some of the most commonly used just intonation ratios, arranged in a so called '3-5 grid': you start with a fundamental note (the ratio 1/1) and then build other notes by multiplying or dividing. Moving left multiplies by 3 (going up a perfect fifth), while moving up multiplies by 5 (going up a major third). You can also divide to go in the opposite direction. To bring all the notes within a single octave, simply multiply or divide any of these ratios by 2 as needed. This creates a lattice of musical notes, all related to each other through pure harmonic ratios.")
+        Text("To avoid confusion, we should pay careful attention to the distinction between scale position and harmonic position. For example, in the C major scale, E is the third note and for this reason, the interval from C to E is usually called the (major) third, but E is the fifth harmonic of C. In contrast, G is the fifth note of the scale and usually called the (perfect) fifth, even though G is the third harmonic of C.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("The diagram below shows some of the most commonly used just intonation ratios, arranged in a so called '3-5 grid': you start with a fundamental note (the ratio 1/1) and then build other notes by multiplying or dividing. Moving left multiplies by 3 (going up a perfect fifth), while moving up multiplies by 5 (going up a major third). You can also divide to go in the opposite direction. With just two harmonic building block, this creates a complete lattice of musical notes, all related to each other through simple ratios. To bring the notes within the same octave, simply multiply or divide their ratios by 2 as needed.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -779,7 +787,7 @@ struct ManualView: View {
         DownsampledImageView(imageName: "Guide JI note names", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("The scale display in the app shows which of thesse notes/ratios are used in any particular scale. At the end of this guide, some diagrams are included that show the images for each of the 12 available scales, with ratios and note names inscribed.")
+        Text("The scale display in the app shows which of these notes/ratios are used in any particular scale. At the end of this guide, some diagrams are included that show the images for each of the 12 available scales, with ratios and note names inscribed.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -871,7 +879,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Both of these are the result of wonderfully rich musical traditions. The Arithmophone Diatone lets you get a taste of each approach. If you want to use it to play along with other instruments like a guitar or a keyboard, then definitely select equal temperament tuning. If you are playing by yourself then it may be worth experimenting a bit to see if you can hear the different feeling each tuning system imparts on your playing. Don't be discouraged if you don't immediately hear the difference: it's subtle and more prominent on some note combinations than on other, but it's definitely there.")
+        Text("Both of these are the result of wonderfully rich musical traditions. The Arithmophone Diatone lets you get a taste of each approach. If you want to use it to play along with other instruments like a guitar or a keyboard, then definitely select equal temperament tuning. If you are playing by yourself then it may be worth experimenting a bit to see if you can hear the different feeling each tuning system imparts on your playing. Don't be discouraged if you don't immediately hear the difference: it's subtle and more prominent on some note combinations than on others, but it's definitely there.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
