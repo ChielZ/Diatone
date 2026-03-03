@@ -7,33 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Image Downsampling Helper
-
-/// Loads and downsamples an image from assets to prevent excessive memory usage.
-/// This is critical for large vector PDFs that would otherwise be rasterized at full resolution.
-private func downsampledImage(named: String, targetHeight: CGFloat) -> UIImage? {
-    guard let image = UIImage(named: named) else { return nil }
-    
-    // Calculate the scale to fit the target height
-    let scale = targetHeight / image.size.height
-    let targetSize = CGSize(
-        width: image.size.width * scale,
-        height: targetHeight
-    )
-    
-    // Use a graphics renderer to create a downsampled version
-    let format = UIGraphicsImageRendererFormat()
-    format.scale = UIScreen.main.scale // Maintain screen resolution quality
-    format.opaque = false
-    
-    let renderer = UIGraphicsImageRenderer(size: targetSize, format: format)
-    let downsampled = renderer.image { context in
-        image.draw(in: CGRect(origin: .zero, size: targetSize))
-    }
-    
-    return downsampled
-}
-
 /// Creates an AttributedString with underline styling (iOS 15 compatible)
 private func underlinedText(_ text: String) -> AttributedString {
     var attributedString = AttributedString(text)
@@ -766,7 +739,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        DownsampledImageView(imageName: "Guide JI grid", maxHeight: 200)
+        ZoomableDownsampledImageView(imageName: "Guide JI grid", maxHeight: 200)
             .padding(.vertical, 5)
         
         Text("If we now colour these notes with the same colour scheme that is used in for the keyboard of the Arithmophone Diatone, it will look like this:")
@@ -775,7 +748,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        DownsampledImageView(imageName: "Guide JI ratios", maxHeight: 200)
+        ZoomableDownsampledImageView(imageName: "Guide JI ratios", maxHeight: 200)
             .padding(.vertical, 5)
         
         Text("And if we replace the ratios with note names, using D for 1/1, it looks like this:")
@@ -784,7 +757,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        DownsampledImageView(imageName: "Guide JI note names", maxHeight: 200)
+        ZoomableDownsampledImageView(imageName: "Guide JI note names", maxHeight: 200)
             .padding(.vertical, 5)
         
         Text("The scale display in the app shows which of these notes/ratios are used in any particular scale. At the end of this guide, some diagrams are included that show the images for each of the 12 available scales, with ratios and note names inscribed.")
@@ -870,7 +843,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        DownsampledImageView(imageName: "Guide ET note names", maxHeight: 200)
+        ZoomableDownsampledImageView(imageName: "Guide ET note names", maxHeight: 200)
             .padding(.vertical, 5)
         
         Text("With 12 tone equal temperament, what we loose in tuning accuracy, we gain in flexibility. Whether or not this is a good tradeoff really depends on the musical context. Listen to a piano piece by a 19th century composer like Debussy or Brahms and you will hear the full power of 12 tone equal temperament: that kind of harmonic motion and musical flexibility is hardly possible in a just intonation context. But listen to a West-African Kora piece by one of the great players of the instrument like Toumani Diabaté or Ballaké Sissoko and you can hear the sweet harmonic purity of just intonation, that is impossible to achieve on an instrument tuned to equal temperament.")
@@ -975,19 +948,41 @@ struct ManualView: View {
         
         /*
          Locrian: bII major, IV minor, bV major, bVI major and bVII minor
+         Key of D: Eb, Gm, Ab, Bb, Cm
+         
          Phrygian: I minor, bII major, IV minor, bVI major and bVII minor
+         Key of D: Dm, Eb, Gm, Bb, Cm
+         
          Aeolian: I minor, IV minor, bVI major and bVII major
+         Key of D: Dm, Gm, Bb, C
+         
          Dorian: I minor, II minor, bIII major and IV major
+         Key of D: Dm, Em, Fm, G
+         
          Mixolydian: I major, IV major, V minor and VI minor
+         Key of D: D, G, Am, Bm
+         
          Ionian: I major, III minor, IV major, V major and VI minor
+         Key of D: D, Em, G, A, Bm
+         
          Lydian: I major, III minor, V major, VI minor and VII minor
+         Key of D: D, F#m, A, Bm, C#m
 
          Minor Melodic: I minor and V major
+         Key of D: Dm, A
+         
          Major Melodic: I major and IV minor
+         Key of D: D, Gm
 
          Minor Harmonic: I minor, IV minor, V major and bVI major
-         Double Harmonic: I major, III minor, IV minor and V major
-         Major Harmonic: I major, bII major, III minor andIV minor
+         Key of D: Dm, Gm, A, Bb
+         
+         Double Harmonic: I major, bII major, III minor and IV minor
+         Key of D: D, Eb, F#m, Gm
+         
+         Major Harmonic: I major, III minor, IV minor and V major
+         Key of D: D, F#m, Gm, A
+         
          */
         
         
@@ -1033,125 +1028,167 @@ extension View {
     }
 }
 
-// MARK: - Downsampled Image View (Non-Zoomable)
-struct DownsampledImageView: View {
-    let imageName: String
-    let maxHeight: CGFloat
-    
-    var body: some View {
-        // Target height accounts for screen scale for high quality on Retina displays
-        let targetHeight = maxHeight * UIScreen.main.scale
-        
-        if let downsampledUIImage = downsampledImage(named: imageName, targetHeight: targetHeight) {
-            Image(uiImage: downsampledUIImage)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity)
-        } else {
-            // Fallback if downsampling fails
-            Image(imageName)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity)
-        }
+// MARK: - PDF Rendering Helper
+
+/// Maximum pixels per rendered image (~48 MB in RGBA).
+private let maxPixelsPerImage: CGFloat = 12_000_000
+
+/// Renders a PDF from the app bundle at the requested pixel width.
+/// Uses CGPDFDocument so the vector is rasterized directly at the target size.
+/// If the total pixel count would exceed the budget, the image is scaled down.
+private func renderPDFImage(named name: String, targetPixelWidth: CGFloat) -> UIImage? {
+    guard let url = Bundle.main.url(forResource: name, withExtension: "pdf"),
+          let document = CGPDFDocument(url as CFURL),
+          let page = document.page(at: 1) else {
+        return nil
     }
+    
+    let mediaBox = page.getBoxRect(.mediaBox)
+    guard mediaBox.width > 0 else { return nil }
+    
+    var pxScale = targetPixelWidth / mediaBox.width
+    let candidateW = mediaBox.width * pxScale
+    let candidateH = mediaBox.height * pxScale
+    if candidateW * candidateH > maxPixelsPerImage {
+        pxScale *= sqrt(maxPixelsPerImage / (candidateW * candidateH))
+    }
+    
+    let targetWidth = ceil(mediaBox.width * pxScale)
+    let targetHeight = ceil(mediaBox.height * pxScale)
+    
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    guard let context = CGContext(
+        data: nil,
+        width: Int(targetWidth),
+        height: Int(targetHeight),
+        bitsPerComponent: 8,
+        bytesPerRow: 0,
+        space: colorSpace,
+        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+    ) else { return nil }
+    
+    context.scaleBy(x: pxScale, y: pxScale)
+    context.drawPDFPage(page)
+    
+    guard let cgImage = context.makeImage() else { return nil }
+    return UIImage(cgImage: cgImage, scale: UIScreen.main.scale, orientation: .up)
 }
 
-// MARK: - Zoomable Downsampled Image View
+// MARK: - Zoomable Guide Image View
+/// Renders the PDF at 3x display resolution so the image stays crisp up to 3x zoom.
+/// Tap toggles between 1x and 2x, pinch zooms up to 3x.
 struct ZoomableDownsampledImageView: View {
     let imageName: String
     let maxHeight: CGFloat
+    
+    private let maxZoom: CGFloat = 3.0
+    private let tapZoom: CGFloat = 2.0
+    
+    @State private var renderedImage: UIImage?
+    @State private var renderedForWidth: CGFloat = 0
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
     @State private var offset: CGSize = .zero
     @State private var lastOffset: CGSize = .zero
-    @State private var downsampledUIImage: UIImage?
-    @State private var isVisible = false
     
     var body: some View {
-        Group {
-            if let image = downsampledUIImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .scaleEffect(scale)
-                    .offset(offset)
-                    .zIndex(scale > 1.0 ? 999 : 0) // Bring to front when zoomed
-                    .gesture(
-                        MagnificationGesture()
-                            .onChanged { value in
-                                let delta = value / lastScale
-                                lastScale = value
-                                scale = min(max(scale * delta, 1.0), 5.0)
-                            }
-                            .onEnded { _ in
-                                lastScale = 1.0
-                                if scale < 1.0 {
-                                    withAnimation(.spring()) {
-                                        scale = 1.0
-                                        offset = .zero
-                                        lastOffset = .zero
+        GeometryReader { geo in
+            Group {
+                if let image = renderedImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geo.size.width)
+                        .scaleEffect(scale)
+                        .offset(offset)
+                        .gesture(
+                            MagnificationGesture()
+                                .onChanged { value in
+                                    let delta = value / lastScale
+                                    lastScale = value
+                                    scale = min(max(scale * delta, 1.0), maxZoom)
+                                }
+                                .onEnded { _ in
+                                    lastScale = 1.0
+                                    if scale < 1.0 {
+                                        withAnimation(.spring()) {
+                                            scale = 1.0
+                                            offset = .zero
+                                            lastOffset = .zero
+                                        }
                                     }
                                 }
-                            }
-                    )
-                    .simultaneousGesture(
-                        // Only enable drag gesture when zoomed in
-                        scale > 1.0 ?
-                        DragGesture()
-                            .onChanged { value in
-                                offset = CGSize(
-                                    width: lastOffset.width + value.translation.width,
-                                    height: lastOffset.height + value.translation.height
-                                )
-                            }
-                            .onEnded { _ in
-                                lastOffset = offset
-                            }
-                        : nil
-                    )
-                    .onTapGesture(count: 2) {
-                        withAnimation(.spring()) {
-                            if scale > 1.0 {
-                                scale = 1.0
-                                offset = .zero
-                                lastOffset = .zero
-                            } else {
-                                scale = 2.0
+                        )
+                        .simultaneousGesture(
+                            scale > 1.0 ?
+                            DragGesture()
+                                .onChanged { value in
+                                    offset = CGSize(
+                                        width: lastOffset.width + value.translation.width,
+                                        height: lastOffset.height + value.translation.height
+                                    )
+                                }
+                                .onEnded { _ in
+                                    lastOffset = offset
+                                }
+                            : nil
+                        )
+                        .onTapGesture(count: 2) {
+                            withAnimation(.spring()) {
+                                if scale > 1.0 {
+                                    scale = 1.0
+                                    offset = .zero
+                                    lastOffset = .zero
+                                } else {
+                                    scale = tapZoom
+                                }
                             }
                         }
-                    }
-            } else {
-                // Loading placeholder
-                Color.clear
-                    .frame(maxWidth: .infinity)
-                    .frame(height: maxHeight)
+                } else {
+                    Color.clear
+                        .frame(width: geo.size.width)
+                }
+            }
+            .onAppear { renderIfNeeded(width: geo.size.width) }
+            .onChange(of: geo.size.width) { newWidth in
+                renderIfNeeded(width: newWidth)
             }
         }
-        .onAppear {
-            if !isVisible {
-                isVisible = true
-                loadImage()
-            }
-        }
+        .aspectRatio(guideImageAspectRatios[imageName] ?? 1.0, contentMode: .fit)
+        .frame(maxWidth: .infinity)
+        .zIndex(scale > 1.0 ? 999 : 0)
     }
     
-    private func loadImage() {
-        // Load image on background thread to avoid blocking UI
+    private func renderIfNeeded(width: CGFloat) {
+        guard width > 0, renderedImage == nil || abs(width - renderedForWidth) > 10 else { return }
+        renderedForWidth = width
+        // Render at maxZoom × display pixels so the image is crisp at full zoom
+        let targetPixelWidth = width * UIScreen.main.scale * maxZoom
         DispatchQueue.global(qos: .userInitiated).async {
-            // Use a moderate multiplier (1.5x instead of 3x) to balance quality and memory
-            // This gives good quality when zoomed to 2x-3x while keeping memory reasonable
-            let targetHeight = maxHeight * UIScreen.main.scale * 1.5
-            
-            if let image = downsampledImage(named: imageName, targetHeight: targetHeight) {
+            if let image = renderPDFImage(named: imageName, targetPixelWidth: targetPixelWidth) {
                 DispatchQueue.main.async {
-                    self.downsampledUIImage = image
+                    self.renderedImage = image
                 }
             }
         }
     }
 }
+
+/// Pre-defined aspect ratios for Guide PDF images.
+private let guideImageAspectRatios: [String: CGFloat] = [
+    // Landscape: 1125 x 625 pt
+    "Guide JI grid":       1125.0 / 625.0,
+    "Guide JI ratios":     1125.0 / 625.0,
+    "Guide JI note names": 1125.0 / 625.0,
+    "Guide ET note names": 1125.0 / 625.0,
+    // Square: 1490 x 1490 pt
+    "Guide modes natural": 1.0,
+    "Guide modes D":       1.0,
+    // Tall portrait: 950 x 2225 pt
+    "Guide JI scales ratios": 950.0 / 2225.0,
+    "Guide JI scales notes":  950.0 / 2225.0,
+    "Guide ET scales":        950.0 / 2225.0,
+]
 
 #Preview {
     ManualView(
