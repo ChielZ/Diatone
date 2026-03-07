@@ -210,7 +210,7 @@ struct ManualView: View {
             .padding(.top, 10)
             .centeredText()
         
-        Text("Welcome to the Arithmophone Diatone! This guide explains all the functions of the app, and also includes background sections on musical scales and tunings")
+        Text("Welcome to the Arithmophone Diatone! This guide explains all the functions of the app, and also includes a background section on musical scales and tunings")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -221,7 +221,7 @@ struct ManualView: View {
             .padding(.top, 20)
             .centeredText()
         
-        Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, because it uses pure and simple harmonic ratios like 3/2 and 5/4 to produce musical notes.")
+        Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, because it is able to take pure and simple ratios like 3/2 and 5/4 and turn these in to musical notes.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -243,12 +243,12 @@ struct ManualView: View {
             .padding(.top, 10)
             .centeredText()
         
-        Text("Diatone's music keyboard is purpose-built for the form factor of handheld touchscreen devices. It turns your iPhone or iPad into an instrument with exactly the right ergonomics for playing music. Rather than emulating a piano or a guitar fretboard (which are both very well designed interfaces, but with a very different form factor), the Diatone features an original design that takes inspiration from traditional African instruments like the Kora and the Mbira (also known as Kalimba or Karimba), on which melodies are played by alternating between the left and right hand.")
+        Text("Diatone's music keyboard is purpose-built for the form factor of handheld touchscreen devices. It turns your iPhone or iPad into an instrument with exactly the right ergonomics for playing music. Rather than emulating a piano or a guitar fretboard (which are both great interfaces, but with a very different form factor), the Diatone features an original design that takes inspiration from traditional African instruments like the Kora and the Mbira (also known as Kalimba or Karimba), on which melodies are played by alternating between the left and right hand.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         
-        Text("Diatone features a keyboard with 22 keys, 11 on each side of the screen, which can be played very comfortably with both thumbs while holding your iPhone or iPad in your hands. If you rest your device on your lap or some other suitable surface, you can also use your other fingers to play chords and arpeggios as well. To play the notes in scale order, start with the lowest key on the left, then play the lowest key on the right, then the second key on the left, and so on.")
+        Text("Diatone features a keyboard with 22 keys, 11 on each side of the screen, which can be played very comfortably with both thumbs while holding your iPhone or iPad in your hands. If you rest your device on your lap or some other suitable surface, you can use your other fingers as well, so you can play chords and arpeggios too. To play the notes in scale order, start with the lowest key on the left, then play the lowest key on the right, then the second key on the left, and so on.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -280,7 +280,7 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         
-        Text("Each of the preset sounds can be changed by adjusting the 'volume', 'tone' and 'ambience' sliders, and the keyboard's response can be customised further on the 'setup' page. Diatone's sound engine uses a combination of Frequency Modulation and substractive synthesis. It is inspired by some classic digital synthesizers and keyboards from the 1980s, but it also adds a few more modern twists like binaural stereo imaging and effects.")
+        Text("Each of the preset sounds can be changed by adjusting the volume, tone and ambience sliders, and the keyboard's response can be customised further on the 'setup' page. Diatone's sound engine uses a combination of FM (frequency modulation) and substractive synthesis. It is inspired by some classic digital synthesizers and keyboards from the 1980s, but it also adds a few more modern twists like binaural stereo imaging and effects.")
         /*
          It features a binaural 2x2 operator FM synth with a resonant lowpass filter per voice, a flexible modulation system and stereo detune, delay and reverb. An optional in-app purchase unlocks the full sound design experience, giving you access to all parameters of the sound engine, as well as the ability to create, store, import and export up to 100 user presets.
          */
@@ -376,7 +376,7 @@ struct ManualView: View {
             .centeredText()
             .id("keyboard")
         
-        Text("When you first open the Arithmophone Diatone app, you will see the keyboard, divided into a right and a left section divided by a small vertical bar. The left and right sections combine to form one keyboard together: to play a scale, alternate between playing the left and right keys as you move up or down the keyboard. The keyboard responds to both initial touch and aftertouch: try hitting the keys on different places and moving your finger around while you hold down a key to hear the effect this has on the sound.")
+        Text("When you first open the Arithmophone Diatone app, you will see the keyboard, divided into a right and a left section by a small vertical bar. The left and right sections combine to form one keyboard together: to play a scale, alternate between playing the left and right keys as you move up or down the keyboard. The keyboard responds to both initial touch and aftertouch: try hitting the keys on different places and moving your finger around while you hold down a key to hear the effect this has on the sound.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -402,37 +402,37 @@ struct ManualView: View {
             .centeredText()
             .id("scaleView")
         
-        Text("The scale view lets you switch between different scales, keys and and tunings. At the top of the view (just below the main page selector) there is an image that represents the currently selected scale and tuning. What these images mean exactly is explained at the end of section III of this guide, but mainly this just serves as a quick visual indication of the active scale. Beneath this are 5 options for changing the the notes of the keyboard:")
+        Text("The scale view lets you switch between different scales, keys and and tunings. At the top of the view (just below the main page selector) there is an image that represents the currently selected scale and tuning. What these images mean exactly is explained at the end of section III of this guide, but mainly this serves as a quick visual indication of the active scale. Beneath this are 5 options for changing the the notes of the keyboard:")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Tuning: here you can switch between just intonation and equal temperament tuning. Just intonation uses rational harmonic intervals, where the notes sound perfectly in tune with each other, while equal temperament is the standard tuning of Western musical instruments like guitars and pianos. Both of these tuning modes have their own distinct character. The differences are fairly subtle but in general, with just intonation some note combinations sound perfect together while other combinations sound quite out of tune, whereas in equal temperament, no note combinations are perfect, but all combinations are quite acceptable. If you'd like to learn more about this, please read the background information in section III of this guide, but you don't need to worry about this if you don't want to. In general, you can simply leave this on 'just' when you're playing by yourself, or switch to 'equal' when you're playing together with other instruments.")
+        Text("TUNING: here you can switch between just intonation and equal temperament tuning. Just intonation uses rational harmonic intervals, where the notes sound perfectly in tune with each other, while equal temperament is the standard tuning of Western musical instruments like guitars and pianos. Both of these tuning modes have their own distinct character. The differences are fairly subtle but in general, with just intonation some note combinations sound perfect together while other combinations sound quite out of tune, whereas in equal temperament, no note combinations are perfect, but all combinations are quite acceptable. If you'd like to learn more about this, please read the background information in section III of this guide, but you don't need to worry about this if you don't want to. In general, you can simply leave this on 'just' when you're playing by yourself, or switch to 'equal' when you're playing together with other instruments.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Key: this lets you select the musical key that the keyboard is in: changing this transposes the entire keyboard up or down. In combination with the scale selection, this determines which musical note is mapped to each of the keys.")
+        Text("KEY: this lets you select the musical key that the keyboard is in: changing this transposes the entire keyboard up or down. In combination with the scale selection, this determines which musical note is mapped to each of the keys.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Scale: this lets you select which musical scale is mapped to the keyboard. Each scale has its own selection of 7 notes and provides its own unique mood. There is more detailed information about the available scales in section III of this guide. To get started without delving in to all of that, just try out the Ionian mode for typical 'major' melodies, the Aeolian mode for typical 'minor' melodies, or the double harmonic scale for a more exotic flavour.")
+        Text("SCALE: this lets you select which musical scale is mapped to the keyboard. Each scale has its own selection of 7 notes and provides its own unique mood. There is more detailed information about the available scales in section III of this guide. To get started without delving in to all of that, just use the Ionian mode for typical 'major' melodies, use the Aeolian mode for typical 'minor' melodies, or try the double harmonic scale for a more spicy flavour.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Scale group: the 12 available scales are arranged in 3 groups: modal, melodic and harmonic. The modal scales will probably sound most familiar to most users, as they are essentially all permutations of the familiar 'do re mi fa sol la ti do' scale. The melodic and harmonic scales offer a few more 'spicy' alternatives: melodic scales are often used in jazz while harmonic scales are common in Eastern European and Arabic music.")
+        Text("SCALE GROUP: the 12 available scales are arranged in 3 groups: modal, melodic and harmonic. The modal scales will probably sound most familiar to most users, as these are essentially all permutations of the familiar 'do re mi fa sol la ti do' scale. The melodic and harmonic scales offer some interesting alternatives: these don't fit the modal pattern, but are commonly used across multiple musical traditions nonetheless.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Rotation: this keeps the mapping from scale note to key colour intact, but shifts the screen keyboard up or down by up to 3 steps. This gives you control over the lowest and highest notes available for playing.")
+        Text("ROTATION: this keeps the mapping from scale note to key colour intact, but shifts the screen keyboard up or down by up to 3 steps. This gives you control over the lowest and highest notes available for playing.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -505,7 +505,7 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         
-        Text("Finally, the bend control lets you adjust how much the pitch of the notes change as you move your fingers from left to right (or from right to left of course) while holding down keys. A setting of 0 means no pitch bend, this is the easiest to play and ensures that your notes are always perfectly in tune. Settings between 100 and 250 will allow you to bend the notes in a reasonably controlled manner, giving you access to all the 'notes in between the notes'. This will let you play guitar solo-like note bends and - with some practice and depending on the sound you've selected - you can even play full chromatic scales on the keyboard. It does require more careful playing though, as you'll need to avoid unintentional finger motion. Higher settings of 500 to 750 will allow for very wide pitch slides, great for theremin-like sounds and special effects, but difficult to control. Some of the presets have this pitch bending 'built in' and these also feature sounds that are particularly suited for it. Tip: when trying this out, make sure the keys are displayed with enough size to give you maximum control over the effect - so try folding the option view to increase the key size, or if you're using an iPad, switch to landscape orientation.")
+        Text("Finally, the bend control lets you adjust how much the pitch of the notes changes as you move your fingers from left to right (or from right to left of course) while holding down keys. A setting of 0 means no pitch bend, this is the easiest to play and ensures that your notes are always perfectly in tune. Settings between 100 and 250 will allow you to bend the notes in a reasonably controlled manner, giving you access to all the 'notes in between the notes'. This will let you play guitar solo-like note bends and - with some practice and depending on the sound you've selected - you can even play full chromatic scales on the keyboard. It does require more careful playing though, as you'll need to avoid unintentional finger motion. Higher settings of 500 to 750 will allow for very wide pitch slides, great for theremin-like sounds and special effects, but difficult to control. Some of the presets have this pitch bending 'built in' and these also feature sounds that are particularly suited for it. Tip: when using note bending, make sure the keys are displayed with enough size to give you maximum control over the effect - try folding the option view to increase the key size, or if you're using an iPad, try switching to landscape orientation.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
