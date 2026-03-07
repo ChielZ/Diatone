@@ -310,7 +310,7 @@ struct ManualView: View {
             .padding(.top, 10)
             .centeredText()
         
-        Text("This section will guide you through using all the features of the Arithmophone Diatone. Scroll down to read on or click on one of the subsection names below to jump there directly.")
+        Text("This section will guide you through using all the features of the Arithmophone Diatone. Scroll down to read on or click one of the subsection names below to jump there directly.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -534,7 +534,7 @@ struct ManualView: View {
             .padding(.top, 10)
             .centeredText()
         
-        Text("In this section, you can learn about the musical concepts behind the Arithmophone Diatone. Scroll down to read on or click on one of the subsection names below to jump there directly.")
+        Text("In this section, you can learn about the musical concepts behind the Arithmophone Diatone. Scroll down to read on or click one of the subsection names below to jump there directly.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
