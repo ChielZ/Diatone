@@ -534,7 +534,7 @@ struct ManualView: View {
             .padding(.top, 10)
             .centeredText()
         
-        Text("In this section, you can learn about the musical concepts behind the Arithmophone Diatone. Scroll down to read on or click one of the subsection names below to jump there directly.")
+        Text("In this section, you can learn about the musical concepts behind the Arithmophone Diatone. Scroll down to read on or click one of the subsection names below to jump there directly. Double tap any of the images in this section to zoom in or out.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -640,19 +640,19 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("On the piano, the white keys are called A, B, C, D, E, F and G. The black keys don't get their own letter, instead they are 'raised' or 'lowered' versions of the natural notes, that are called things like E♭ (E flat - the lowered version of E, which is the black key in between D and E) or C♯ (C sharp - the raised version of C, which is the black key in between C and D). Depending on context, each black key may take on one of two names. For example, the black key in between G and A my be called G♯ if it takes the place of G in a scale, or A♭ if it takes the place of A.")
+        Text("On the piano, the white keys are called A, B, C, D, E, F and G. The black keys don't get their own letter, instead they are 'raised' or 'lowered' versions of the natural notes, that are called things like E♭ (E flat - the lowered version of E, which is the black key in between D and E) or C♯ (C sharp - the raised version of C, which is the black key in between C and D). Depending on context, the black keys may take different names. For example, the black key in between G and A my be called G♯ if it takes the place of G in a scale, or A♭ if it takes the place of A.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Generally speaking, a 'proper' 7-note scale should always include one note for each letter A through G. If you play all the consecutive piano keys starting from A up to E♭, you'd have seven notes — but you'd have two versions of B♭ and B), two versions of C (C and C♯), and no F or G. While this is a 7 note scale in some sense, it isn't a very musically useful one, because the notes are all clustered together in one half of the octave. On the other hand, as long as you make sure that your scale includes a note for each of the 7 letters, the notes will be more evenly distributed and you're likely to produce a musical sounding scale, even if the sequence is something complicated like A, Bb, C#, D, Eb, F#, G.")
+        Text("Any 'proper' diatonic scale will always include one note for each letter, A through G. If you play all the consecutive piano keys starting from A up to E♭, you'd have seven notes — but you'd have two versions of the B note (B♭ and B), two versions of the C note (C and C♯), and no F or G note at all. While this is technically a 7 note scale, it's not a very musically useful one, because the notes are all clustered together in one half of the octave. On the other hand, as long as you make sure that your scale includes a note for each of the 7 letters, the notes will be more properly distributed and you're likely to produce a musical sounding scale, even if the sequence is something complicated like A, Bb, C#, D, Eb, F#, G.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The keyboard of the Arithmophone only has seven notes per octave, so it works a little different than a piano. You don't have 12 notes at your fingertips at all times, but you choose which notes you want to map to the keyboard by selecting a key and scale instead. This is more similar to instruments like the harp or the harmonica, that are tuned to a specific scale - except that retuning to a different scale or key is instant and effortless on the Diatone.")
+        Text("The keyboard of the Arithmophone only has seven notes per octave, so it works a little differently from a piano. You don't have 12 notes at your fingertips at all times, but instead you choose which notes you want to map to the keyboard by selecting a key and scale. This is more similar to instruments like the harp or the harmonica, that are tuned to a specific scale - except that retuning to a different scale or key is instant and effortless on the Diatone.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -664,7 +664,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The scales that are available on the Diatone keyboard are divided in to three groups: in the first group are the 7 modes of the strictly diatonic scales, labeled with their traditional names from Locrian to Lydian. In the second and third group are some melodic and harmonic scales that are not 'strictly' diatonic, but nonetheless satisfy the 'one of each note' requirement. All of these are scales that are commonly used across different musical traditions.")
+        Text("The scales that are available on the Diatone keyboard are divided in to three groups: in the first group are the 7 modes of the strictly diatonic scale, labeled with their traditional Greek names, from Locrian to Lydian. In the second and third group are some melodic and harmonic scales that are not 'strictly' diatonic, but nonetheless satisfy the 'one of each note' requirement. All of these are scales that are commonly used across different musical traditions.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -683,19 +683,19 @@ struct ManualView: View {
             .centeredText()
             .id("justIntonation")
         
-        Text("Just intonation is a tuning system that is based on the natural harmonics of musical notes. It works for any musical instrument, as well as for singing, but is most easily explained by using a stringed instrument like a violin as an example.")
+        Text("Just intonation is a tuning system that is based on the natural harmonics of musical notes. It can be used on many musical instruments, as well as for singing, but how it works is most easily explained by using a stringed instrument like a violin as an example.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("When you play an open A string on a violin, the string vibrates at a rate of 440 times per second (assuming the violin is in standard tuning). This rate is called the frequency, and is usually expressed in Hertz (Hz). So the pitch of the tuned A string is 440 Hz. But the sound you hear is not just a single frequency, because the string also vibrates at multiples of its root frequency, like 880 Hz (2x440), 1320 Hz (3x440), and so on. These multiples of the root frequency are called harmonics or overtones. Together they combine with the root frequency to produce a complex sound that gives the instrument its own particular tone colour or timbre.")
+        Text("When you play an open A string on a violin, the string vibrates at a rate of 440 times per second (assuming the violin is in standard tuning). This rate is called the frequency, and is usually expressed in Hertz (Hz). So the pitch of the tuned A string is 440 Hz, but the sound you hear is not just a single frequency, because the string also vibrates at multiples of its root frequency. These multiples of the root frequency are called harmonics or overtones. Together they combine with the root frequency to produce a complex sound that gives the instrument its own particular tone colour or timbre.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("On an instrument where you can touch the strings directly, like a violin or a guitar, it is very easy to check this for yourself. If you lightly touch the string at exactly half the length of the string (on a fretted instrument like a guitar, this is just over the 12th fret), you will mute the root frequency and accentuate the second harmonic. If you place your finger at one third of the length (or over the 7th fret), you will hear the third harmonic accentuated, et cetera. If after that you just play the open string again, you may be able to hear how the full sound contains all of these individual harmonics.")
+        Text("On an instrument where you can touch the strings directly, like a violin or a guitar, it is very easy to check this for yourself. If you lightly touch the string at exactly half the length of the string (on a fretted instrument like a guitar, this is just over the 12th fret), you will mute the root frequency and accentuate the second harmonic. This uses half the length of the string, and sounds at twice the frequency. If you place your finger at one third of the length (or over the 7th fret), you will hear the third harmonic accentuated (three times the root frequency), et cetera. If after that you just play the open string again, you may be able to hear how the full sound contains all of these individual harmonics.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -707,13 +707,13 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Each of the harmonics of a note stands in a certain ratio to its root frequency, and each of those ratios corresponds to a certain note. We can use this fact to tune the other strings of the violin (or the other notes on any instrument in general) in relation to one specific root frequency, and this is in fact precisely what just intonation means. When we sound the second harmonic of the A string, which produces the note E, and then tune our E string so that it resonates perfectly with the harmonic, we are using just intonation, plain and simple.")
+        Text("Each of the harmonics of a note stands in a certain ratio to its root frequency, and each of those ratios corresponds to a certain note. We can use this fact to tune the other strings of the violin (or on any stringed instrument in general) in relation to one specific root frequency, and this is in fact precisely what just intonation means. When we sound the second harmonic of the A string, which produces the note E, and then tune our E string so that it resonates perfectly with the harmonic, we are using just intonation, plain and simple.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("We can use the principle of harmonic proportions to find a ratio for any note we might want to tune to. We have just established that for the note A, 2:1 and 4:1 just give us more A notes in higher octaves. And in general, multiplying or dividing by 2 will give us the same note in a different octave. But all the odd ratios provide us with new notes: if 1:1 is A, then 3:1 is E, and 5:1 is C#. But we can go the other way as well: 1:3 is D (because 3:1 on D is A) and 1:5 is F (because 5:1 on F is A). We can also combine ratios: 5:3 is F#, because 1:3 is D and 5:1 on D is F# (and 5:1 x 1:3 is 5:3).")
+        Text("We can use the principle of harmonic proportions to find a ratio for any note we might want to tune to. We have just established that for the note A, the ratios 2:1 and 4:1 just give us more A notes, in higher octaves. And in general, multiplying or dividing by 2 will give us the same note in a different octave. But all the odd ratios provide us with new notes: if 1:1 is A, then 3:1 is E, and 5:1 is C#. But we can go the other way as well: 1:3 is D (because 3:1 on D is A) and 1:5 is F (because 5:1 on F is A). We can also combine ratios: 5:3 is F#, because 1:3 is D and 5:1 on D is F# (and 5:1 x 1:3 is 5:3).")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -721,13 +721,13 @@ struct ManualView: View {
         
         
         
-        Text("Any multiple of the root frequency produces a new harmonic and in principle this goes on forever, but the relative loudness of the harmonics decreases as their frequency increases, so in practice the first few harmonics are much more prominent than the higher ones. Simply by combining factors of 2, 3 and 5, we can create any of the diatonic scales that appear in this app. For example, the ratios of a D major scale might be: 1/1 (D), 9/8 (E), 5/4 (F#), 4/3 (G), 3/2 (A), 5/3 (B), 15/8 (C#), 2/1 (D). ")
+        Text("Any multiple of the root frequency produces a new harmonic and in principle this goes on forever, but the relative loudness of the harmonics decreases as their frequency increases, so in practice the first few harmonics are much more prominent than the higher ones. Simply by combining factors of 2, 3 and 5, we can create all of the diatonic scales that are featured in this app. For example, the ratios of a D major scale might be: 1/1 (D), 9/8 (E), 5/4 (F#), 4/3 (G), 3/2 (A), 5/3 (B), 15/8 (C#), 2/1 (D).")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("To avoid confusion, we should pay careful attention to the distinction between scale position and harmonic position. For example, in the C major scale, E is the third note and for this reason, the interval from C to E is usually called the (major) third, but E is the fifth harmonic of C. In contrast, G is the fifth note of the scale and usually called the (perfect) fifth, even though G is the third harmonic of C.")
+        Text("To avoid confusion, we should pay careful attention to the distinction between scale position and harmonic position. For example, in the C major scale, E is the third note and for this reason, the interval from C to E is usually called a (major) third. But E is the fifth harmonic of C. In contrast, G is the fifth note of the scale and usually called a (perfect) fifth, even though G is the third harmonic of C.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -742,7 +742,7 @@ struct ManualView: View {
         ZoomableDownsampledImageView(imageName: "Guide JI grid", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("If we now colour these notes with the same colour scheme that is used in for the keyboard of the Arithmophone Diatone, it will look like this:")
+        Text("If we now colour these notes with the colour scheme that is used for the keyboard of ththis app, the result will look like this:")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -766,28 +766,22 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("An important characteristic of just intonation is that there are multiple options for each note (except for the root, which is always 1:1). For example, for root D, there is a C at 9:5 (because 3:1 on D is A, 3:1 on A is E, 1:5 on E is C and 3/1 x 3/1 x 1/5 = 9/5), but there is also a C at 1:9 (because 1:3 on D is G, 1:3 on G is C and 1/3 x 1/3 is 1/9). These notes share the same name, but they don't have the same frequency (because 9/5 is not equal to 1/9, not even when we change the latter to 16/9 so they fall in the same octave). The distance is subtle enough that tempered tunings can 'sweep it under the rug' and represent both ratios with just a single note, but it is definitely audible, and becomes particularly apparent when multiple notes are played simultaneously in chords. And these are just two of the options for the C note on D: there are other, more 'exotic' candidates for the C note as well, most notably the 'pure harmonic seventh' or 7/1 ratio, and there are multiple options for all other notes as well. With just intonation, there are essentially infinitely many different notes, which has both its advantages and its disadvantages.")
+        Text("An important characteristic of just intonation is that there are multiple options for each note (except for the root, which is always 1:1). For example, with root D, there is a C at 1:9 (because 1:3 on D is G and 1:3 on G is C - and 1/3 x 1/3 is 1/9), but there is also a C at 9:5 (because 3:1 on D is A, 3:1 on A is E and 1:5 on E is C - and 3/1 x 3/1 x 1/5 = 9/5) These notes share the same name, but they don't have the same frequency - because 9/5 is not equal to 1/9, not even when we change the latter to 16/9 so they fall within the same octave.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-
+        Text("The distance between these two notes is small enough that tempered tunings can 'sweep it under the rug' and represent both ratios with just a single note, but it is definitely audible, and becomes particularly apparent when multiple notes are played simultaneously in chords. And these are just two of the options for the C note on D: there are other, more 'microtonal' candidates for the C note, most notably the 'pure harmonic seventh' or 7/1 ratio, and there are multiple options for all other notes as well. With just intonation, there are essentially infinitely many different tonal colours, and this can be a good thing or a problem, depending on how you look at it.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
         
         
         
-                        
         
-
-        
-
-        
-
-        
-
-         
-        
-        
+    
         
         Text("What is equal temperament?")
             .foregroundColor(Color("HighlightColour"))
@@ -796,24 +790,9 @@ struct ManualView: View {
             .centeredText()
             .id("equalTemperament")
         
+
         
-        /*
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         */
-        
-        
-        Text("One situation where it is definitely not an advantage to have infinitely many different notes, is when you're trying to build a fixed pitch instrument like a piano, an organ or a guitar with fixed frets. With just intonation, you can tune a piano so that it sounds great in the key of C, but then if you'd want to play something in the key of D flat, you will find that it is badly out of tune. This can only be resolved by retuning the entire instrument - but in that case it will no longer be in tune in the key of C.")
+        Text("One situation where it is clearly NOT a good thing to have infinitely many different notes, is when you're trying to build a fixed pitch instrument like a piano or a guitar with fixed frets, that only has a limited number of notes/strings/frets available. With just intonation, you can tune a piano so that it sounds great in the key of C, but then if you'd want to play something in the key of D flat, you will find that it is quite badly out of tune. This can only be resolved by retuning the entire instrument - but in that case it will no longer be in tune in the key of C.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -825,7 +804,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("In equal temperament tuning, the octave is divided in to a number of steps of exactly the same size. If that number is 12, then we get a selection of notes that provides a pretty good approximation of the first 5 harmonics from whichever note we choose to select as the root. In fact, the third harmonic is nearly perfect, although the fifth harmonic is not quite as good (the second and fourth harmonic are octaves, and they are perfect by definition, because it is the octave that is being divided).")
+        Text("In an equal temperament tuning, the octave is divided in to a number of steps of exactly the same size. If that number is 12, then we get a selection of notes that provides a pretty good approximation of the first 5 harmonics from whichever note we choose to select as the root. In fact, the third harmonic is nearly perfect, although the fifth harmonic is not quite as good (the second and fourth harmonic are octaves, and they are perfect by definition, because it is the octave that is being divided).")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -837,7 +816,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Furthermore, we now have only 12 different notes to deal with in total. This is why the scale display shows a different images for equal temperament scales, as per the illustration below. This image does have 13 notes, but The G# and Ab are really just one note, that is shown either on the far left or on the far right of the display depending on the context of the scale.")
+        Text("Furthermore, we now have only 12 different notes to deal with in total. This is why the scale display in this app shows a different images for equal temperament scales, one like the illustration below. This full image does show 13 notes in total, but The G# and Ab are really just the same note, that is shown either on the far left or on the far right of the display depending on the context of the scale.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -846,7 +825,7 @@ struct ManualView: View {
         ZoomableDownsampledImageView(imageName: "Guide ET note names", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("With 12 tone equal temperament, what we loose in tuning accuracy, we gain in flexibility. Whether or not this is a good tradeoff really depends on the musical context. Listen to a piano piece by a 19th century composer like Debussy or Brahms and you will hear the full power of 12 tone equal temperament: that kind of harmonic motion and musical flexibility is hardly possible in a just intonation context. But listen to a West-African Kora piece by one of the great players of the instrument like Toumani Diabaté or Ballaké Sissoko and you can hear the sweet harmonic purity of just intonation, that is impossible to achieve on an instrument tuned to equal temperament.")
+        Text("With 12 tone equal temperament, what we loose in tuning accuracy, we gain in flexibility. Whether or not this is a good tradeoff really depends on the musical context. Listen to a piano piece by a 19th century composer like Debussy or Brahms and you will hear the full power of 12 tone equal temperament: that kind of harmonic motion and musical flexibility is hardly possible in a just intonation context. But listen to a Kora piece by one of the great players of this instrument like Toumani Diabaté or Ballaké Sissoko and you can hear the sweet harmonic purity of just intonation that is impossible to achieve on an instrument tuned to equal temperament.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -858,7 +837,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("It should be noted that there are also some very rich musical traditions that can be represented neither by 12 tone equal temperament nor by '3-5 grid' harmonic ratios. A great example of this is the Arabic Maqam system. This requires either more complex musical ratios that incorporate higher harmonics like the 7th and 11th harmonic, or larger temperaments like 24 tone or even 53 tone equal temperament. Unfortunately, this takes it outside of the current scope of this app, but to be aware of this is a great reminder of the infinite subtleties and complexities of music at least.")
+        Text("It should be noted that there are also some very rich musical traditions that can be represented neither by 12 tone equal temperament nor by '3-5 grid' harmonic ratios. A great example of this is the Arabic Maqam system. This requires either more complex musical ratios that incorporate higher harmonics like the 7th and 11th harmonic, or larger temperaments like 24 tone or even 53 tone equal temperament. Unfortunately, this takes it outside of the current scope of this app, but to be aware of this is a great reminder of the infinite subtleties and complexities of music.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -880,19 +859,19 @@ struct ManualView: View {
             .centeredText()
             .id("modes")
         
-        Text("The terms 'scale' and 'mode' are closely related but describe slightly different concepts. A scale is simply a collection of notes arranged in ascending order, while a mode is a scale with a particular starting note that serves as the tonal center or 'root'. The distinction becomes clear when you understand that the same collection of notes can create different modes depending on which note you treat as home.")
+        Text("The terms 'scale' and 'mode' are closely related but describe slightly different concepts. You can think of it like this: a scale is a collection of notes arranged from lowest to highest, while a mode is a collection of notes arranged around a specific center. In practice, their meanings overlap and the terms are often used interchangeably, but they are not identical. If we take the selection of notes 'A, B, C, D, E, F, G' and use C as our tonal center, then we are in the Ionian mode, regardless of the order of the notes. If we now play these notes starting from C and up to the next C (C, D, E, F, G, A, B and C again), we are playing a C major scale, sometimes also called the C Ionian scale. In both cases, we use the same set of notes, but in the one case the emphasis is on the order in which we play the notes, while in the other case the emphasis is on the note we attach the most weight to in our playing.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The seven diatonic modes - Locrian, Phrygian, Aeolian, Dorian, Mixolydian, Ionian and Lydian - have names that come from ancient Greek music theory, but their current forms originated in medieval European liturgical music. Because of this historical connection to church music, they are also sometimes called 'church modes' or 'church scales'. Each mode has its own distinctive character and emotional quality, which is why composers throughout history have used them to create different moods and atmospheres.")
+        Text("The seven diatonic modes - Locrian, Phrygian, Aeolian, Dorian, Mixolydian, Ionian and Lydian - have names that come from ancient Greek music theory, but their current forms originated in medieval European liturgical music. Because of this historical connection to church music, they are also sometimes called 'church modes' or 'church scales'. Each of these modes has its own distinct character, mood or atmosphere.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Using only the white keys on a piano, you can play all seven modes simply by starting on a different note each time. If you play from C to C, you get the Ionian mode (the familiar major scale). If you play from D to D, you get Dorian. From E to E gives you Phrygian, and so on. These seven modes all contain exactly the same notes - just the white keys - but each mode takes a different note as its center, and this is what creates its specific character.")
+        Text("Using only the white keys on a piano, you can play all seven modes simply by putting a different note at the center. If you play around C, you get the Ionian mode (the familiar major scale). If you play around D, you get Dorian. Taking E as the center gives you the Phrygian mode, and so on. These seven modes all contain exactly the same notes - just the white keys - but each mode takes a different note as its center point, and this is what creates its specific character.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -922,7 +901,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("On the Arithmophone Diatone, you can explore all seven modes by selecting them from the 'modal' scale group, and you can play each one in any key you choose. This makes it easy to experiment with the unique flavor of each mode.")
+        Text("On the Arithmophone Diatone, you can explore all seven modes by selecting them from the 'modal' scale group, and you can play each one in any key you choose. This makes it easy to experiment with the unique flavour of each mode.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -940,53 +919,168 @@ struct ManualView: View {
             .centeredText()
             .id("scaleSelection")
         
-        Text("[Content to be added]")
+        Text("The seven modal scales, which were discussed in the previous paragraphs, are in a way all just different rotations of the same scale. Apart from these, this app includes two 'melodic' and three 'harmonic' scales, that have a different internal structure. Each of these can even be said to have its own set of modes. Although these are not presented as separate options in this app, they are still available by selecting a scale and using different notes as center. The minor melodic scale is often used in jazz music and its modes include things like the lydo-mixolydian and altered scales. The major melodic   ")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        /*
-         Locrian: bII major, IV minor, bV major, bVI major and bVII minor
-         Key of D: Eb, Gm, Ab, Bb, Cm
-         
-         Phrygian: I minor, bII major, IV minor, bVI major and bVII minor
-         Key of D: Dm, Eb, Gm, Bb, Cm
-         
-         Aeolian: I minor, IV minor, bVI major and bVII major
-         Key of D: Dm, Gm, Bb, C
-         
-         Dorian: I minor, II minor, bIII major and IV major
-         Key of D: Dm, Em, Fm, G
-         
-         Mixolydian: I major, IV major, V minor and VI minor
-         Key of D: D, G, Am, Bm
-         
-         Ionian: I major, III minor, IV major, V major and VI minor
-         Key of D: D, Em, G, A, Bm
-         
-         Lydian: I major, III minor, V major, VI minor and VII minor
-         Key of D: D, F#m, A, Bm, C#m
+        Text("Melodic scales are scales that contain only wholetone and halftone steps. In fact, the 'modal' scale(s) can be considered a special case of this category. As far as the other included melodic scales are concerned: the minor melodic scale is often used in jazz music and its modes include things like the lydo-mixolydian and altered scales. The major melodic scale is in fact another mode of this same scalar pattern.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("Harmonic scales are scales that contain at least one augmented whole tone, meaning they have at least one gap of three semitones between consecutive notes. This means that the notes in these scales are less evenly distributed than the notes in melodic scales, which gives them a particular effect that is hard to describe but easy to hear. The minor harmonic scale is often (but not only) used in Western Classical music, because it matches the common harmonic progression of a dominant chord to a minor root. The major harmonic scale is also called the 'molldur' scale sometimes, and it has a particularly bittersweet quality to it, combining the major root with the minor subdominant. The double harmonic scale has not just one but two large gaps of three semitones. This is scale is commonly, and highly effectively, used in Balkan and Klezmer music.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("It should be emphasized that, for the modal scales in particular, there is an important difference between the equal temperament and just intonation scale selections. Whereas in equal temperament there is a lot of overlap in these scales (for example, C Ionian and D Dorian contain exactly the same notes), in just intonation there are many subtle differences. For example, there is not just one single 'Mixolydian' scale in just intonation: there are many different combinations of ratios that will produce that particular combination of notes. In this app, there are 5 different 'shapes' of just intonation modal scales, and each shape determines which combination of chords is perfectly tuned within that scale. Different shapes work best with different chord progressions, so experimentation is highly recommended.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+    /*
+        Text("For reference, a list is included below which shows for  which triads are perfectly tuned for each of the available just intonation scales, expressed in scale degrees with chord names in the key of D as examples.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+   
+   
+     Text("Locrian: ♭II major, IV minor, ♭V major, ♭VI major and ♭VII minor")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("In the key of D: E♭, Gm, A♭, B♭, Cm")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
+        
+        Text("Phrygian: I minor, ♭II major, IV minor, ♭VI major and ♭VII minor")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("In the key of D: Dm, E♭, Gm, B♭, Cm")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
+        
+        Text("Aeolian: I minor, IV minor, ♭VI major and ♭VII major")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("In the key of D: Dm, Gm, B♭, C")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
 
-         Minor Melodic: I minor and V major
-         Key of D: Dm, A
-         
-         Major Melodic: I major and IV minor
-         Key of D: D, Gm
+        
+        Text("Dorian: I minor, II minor, ♭III major and IV major")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("In the key of D: Dm, Em, Fm, G")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
 
-         Minor Harmonic: I minor, IV minor, V major and bVI major
-         Key of D: Dm, Gm, A, Bb
-         
-         Double Harmonic: I major, bII major, III minor and IV minor
-         Key of D: D, Eb, F#m, Gm
-         
-         Major Harmonic: I major, III minor, IV minor and V major
-         Key of D: D, F#m, Gm, A
-         
-         */
         
+        Text("Mixolydian: I major, IV major, V minor and VI minor")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
         
+        Text("In the key of D: D, G, Am, Bm")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
+
         
+        Text("Ionian: I major, III minor, IV major, V major and VI minor")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("In the key of D: D, Em, G, A, Bm")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
+
+        
+        Text("Lydian: I major, III minor, V major, VI minor and VII minor")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("In the key of D: D, F♯m, A, Bm, C♯m")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
+
+        Text("Minor Melodic: I minor and V major")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("In the key of D: Dm, A")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
+
+        
+        Text("Major Melodic: I major and IV minor")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("In the key of D: D, Gm")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
+
+        
+        Text("Minor Harmonic: I minor, IV minor, V major and ♭VI major")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("In the key of D: Dm, Gm, A, B♭")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
+
+        
+       Text("Double Harmonic: I major, ♭II major, III minor and IV minor (in the key of D: D, E♭, F♯m, Gm)")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
+
+        
+        Text("Major Harmonic: I major, III minor, IV minor and V major (in the key of D: D, F♯m, Gm, A)")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 15)
+
+  */
         
         Text("Diatone scale diagrams")
             .foregroundColor(Color("HighlightColour"))
@@ -995,24 +1089,33 @@ struct ManualView: View {
             .centeredText()
             .id("scaleDiagrams")
         
-        Text("All JI scales ratios")
+        Text("The diagrams below show all of the available scales in the Arithmophone Diatone app. The first diagram shows the just intonation scales with ratios inscribed, the second diagram shows those same scales with note names inscribed instead, while the last diagram shows all of the equal temperament scales")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
+            .padding(.bottom, 20)
+        
+        Text("JUST INTONATION SCALES WITH RATIOS")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.top, 20)
         ZoomableDownsampledImageView(imageName: "Guide JI scales ratios", maxHeight: 800)
             .padding(.vertical, 5)
         
-        Text("All JI scales note names")
+        Text("JUST INTONATION SCALES WITH NOTE NAMES")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
+            .padding(.top, 20)
         ZoomableDownsampledImageView(imageName: "Guide JI scales notes", maxHeight: 800)
             .padding(.vertical, 5)
         
-        Text("All ET scales note names")
+        Text("EQUAL TEMPERAMENT SCALES WITH NOTE NAMES")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
+            .padding(.top, 20)
         ZoomableDownsampledImageView(imageName: "Guide ET scales", maxHeight: 800)
             .padding(.vertical, 5)
          
