@@ -402,7 +402,7 @@ struct ManualView: View {
             .centeredText()
             .id("scaleView")
         
-        Text("The scale view lets you switch between different scales, keys and and tunings. At the top of the view (just below the main page selector) there is an image that represents the currently selected scale and tuning. What these images mean exactly is explained at the end of section III of this guide, but mainly this serves as a quick visual indication of the active scale. Beneath this are 5 options for changing the the notes of the keyboard:")
+        Text("The scale view lets you switch between different scales, keys and and tunings. At the top of the view (just below the main page selector) there is an image that represents the currently selected scale and tuning. What these images mean exactly is explained at the end of section III of this guide, but mainly this serves as a quick visual indication of the active scale. Beneath this are 5 options for changing the notes of the keyboard:")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -816,7 +816,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Furthermore, we now have only 12 different notes to deal with in total. This is why the scale display in this app shows a different images for equal temperament scales, one like the illustration below. This full image does show 13 notes in total, but The G# and Ab are really just the same note, that is shown either on the far left or on the far right of the display depending on the context of the scale.")
+        Text("Furthermore, we now have only 12 different notes to deal with in total. This is why the scale display in this app shows different images for equal temperament scales, one like the illustration below. This full image does show 13 notes in total, but The G# and Ab are really just the same note, that is shown either on the far left or on the far right of the display depending on the context of the scale.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()

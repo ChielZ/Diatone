@@ -46,9 +46,6 @@
     ">" : {
 
     },
-    "Aeolian: I minor, IV minor, ♭VI major and ♭VII major" : {
-
-    },
     "All common musical keys are available on the Diatone, from the central D (the natural center point because it is in the middle of the sequence a-b-c-D-e-f-g) all the way up to G# or down to Ab." : {
 
     },
@@ -115,12 +112,6 @@
 
     },
     "Diatone's music keyboard is purpose-built for the form factor of handheld touchscreen devices. It turns your iPhone or iPad into an instrument with exactly the right ergonomics for playing music. Rather than emulating a piano or a guitar fretboard (which are both great interfaces, but with a very different form factor), the Diatone features an original design that takes inspiration from traditional African instruments like the Kora and the Mbira (also known as Kalimba or Karimba), on which melodies are played by alternating between the left and right hand." : {
-
-    },
-    "Dorian: I minor, II minor, ♭III major and IV major" : {
-
-    },
-    "Double Harmonic: I major, ♭II major, III minor and IV minor (in the key of D: D, E♭, F♯m, Gm)" : {
 
     },
     "Drag to snap to musical notes • Buttons for 1 Hz precision" : {
@@ -195,46 +186,13 @@
     "In an equal temperament tuning, the octave is divided in to a number of steps of exactly the same size. If that number is 12, then we get a selection of notes that provides a pretty good approximation of the first 5 harmonics from whichever note we choose to select as the root. In fact, the third harmonic is nearly perfect, although the fifth harmonic is not quite as good (the second and fourth harmonic are octaves, and they are perfect by definition, because it is the octave that is being divided)." : {
 
     },
-    "In the key of D: D, Em, G, A, Bm" : {
-
-    },
-    "In the key of D: D, F♯m, A, Bm, C♯m" : {
-
-    },
-    "In the key of D: D, G, Am, Bm" : {
-
-    },
-    "In the key of D: D, Gm" : {
-
-    },
-    "In the key of D: Dm, A" : {
-
-    },
-    "In the key of D: Dm, E♭, Gm, B♭, Cm" : {
-
-    },
-    "In the key of D: Dm, Em, Fm, G" : {
-
-    },
-    "In the key of D: Dm, Gm, A, B♭" : {
-
-    },
-    "In the key of D: Dm, Gm, B♭, C" : {
-
-    },
-    "In the key of D: E♭, Gm, A♭, B♭, Cm" : {
-
-    },
     "In this section, you can learn about the musical concepts behind the Arithmophone Diatone. Scroll down to read on or click one of the subsection names below to jump there directly. Double tap any of the images in this section to zoom in or out." : {
 
     },
     "Informally, the term 'diatonic' is also used to describe any musical scale with 7 notes per octave. This contrasts it with, for example, pentatonic scales (which have only 5 notes per octave) and with the chromatic scale (which contains all of the available notes in 12 tone equal temperament)." : {
 
     },
-    "Ionian: I major, III minor, IV major, V major and VI minor" : {
-
-    },
-    "It should be emphasized that, for the modal scales in particular, there is an important difference between the equal temperament and just intonation scale selections. Whereas in equal temperament there is a lot of overlap in these scales (for example, C Ionian and D Dorian contain exactly the same notes), in just intonation there are many subtle differences. There is not just one single 'Mixolydian' scale in just intonation: there are many different combinations of ratios that will produce that particular combination of notes. In this app, there are 5 different 'shapes' of just intonation modal scales, and each shape determines which chords are perfectly tuned within each scale. For reference, a list is included below which shows for  which triads are perfectly tuned for each of the available just intonation scales, expressed in scale degrees with chord names in the key of D as examples." : {
+    "It should be emphasized that, for the modal scales in particular, there is an important difference between the equal temperament and just intonation scale selections. Whereas in equal temperament there is a lot of overlap in these scales (for example, C Ionian and D Dorian contain exactly the same notes), in just intonation there are many subtle differences. For example, there is not just one single 'Mixolydian' scale in just intonation: there are many different combinations of ratios that will produce that particular combination of notes. In this app, there are 5 different 'shapes' of just intonation modal scales, and each shape determines which combination of chords is perfectly tuned within that scale. Different shapes work best with different chord progressions, so experimentation is highly recommended." : {
 
     },
     "It should be noted that there are also some very rich musical traditions that can be represented neither by 12 tone equal temperament nor by '3-5 grid' harmonic ratios. A great example of this is the Arabic Maqam system. This requires either more complex musical ratios that incorporate higher harmonics like the 7th and 11th harmonic, or larger temperaments like 24 tone or even 53 tone equal temperament. Unfortunately, this takes it outside of the current scope of this app, but to be aware of this is a great reminder of the infinite subtleties and complexities of music." : {
@@ -250,18 +208,6 @@
 
     },
     "KEY: this lets you select the musical key that the keyboard is in: changing this transposes the entire keyboard up or down. In combination with the scale selection, this determines which musical note is mapped to each of the keys." : {
-
-    },
-    "Locrian: ♭II major, IV minor, ♭V major, ♭VI major and ♭VII minor" : {
-
-    },
-    "Lydian: I major, III minor, V major, VI minor and VII minor" : {
-
-    },
-    "Major Harmonic: I major, III minor, IV minor and V major (in the key of D: D, F♯m, Gm, A)" : {
-
-    },
-    "Major Melodic: I major and IV minor" : {
 
     },
     "manual.keyboard.touch.content" : {
@@ -483,15 +429,6 @@
     "Melodic scales are scales that contain only wholetone and halftone steps. In fact, the 'modal' scale(s) can be considered a special case of this category. As far as the other included melodic scales are concerned: the minor melodic scale is often used in jazz music and its modes include things like the lydo-mixolydian and altered scales. The major melodic scale is in fact another mode of this same scalar pattern." : {
 
     },
-    "Minor Harmonic: I minor, IV minor, V major and ♭VI major" : {
-
-    },
-    "Minor Melodic: I minor and V major" : {
-
-    },
-    "Mixolydian: I major, IV major, V minor and VI minor" : {
-
-    },
     "Name your sound" : {
       "comment" : "A section header in the save preset dialog, instructing the user to name their sound.",
       "isCommentAutoGenerated" : true
@@ -519,9 +456,6 @@
 
     },
     "One situation where it is clearly NOT a good thing to have infinitely many different notes, is when you're trying to build a fixed pitch instrument like a piano or a guitar with fixed frets, that only has a limited number of notes/strings/frets available. With just intonation, you can tune a piano so that it sounds great in the key of C, but then if you'd want to play something in the key of D flat, you will find that it is quite badly out of tune. This can only be resolved by retuning the entire instrument - but in that case it will no longer be in tune in the key of C." : {
-
-    },
-    "Phrygian: I minor, ♭II major, IV minor, ♭VI major and ♭VII minor" : {
 
     },
     "Preset Manager" : {
