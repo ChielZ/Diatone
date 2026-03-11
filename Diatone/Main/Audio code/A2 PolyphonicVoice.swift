@@ -473,8 +473,12 @@ final class PolyphonicVoice {
         let modEnvAttack = voiceModulation.modulatorEnvelope.attack
         let auxEnvAttack = voiceModulation.auxiliaryEnvelope.attack
         
-        // 1) MOD ENVELOPE → MODULATION INDEX
-        if voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0 {
+        /// 1) MOD ENVELOPE → MODULATION INDEX
+        // Check both direct envelope amount AND initial touch routing to mod envelope
+        // Touch routing can produce a non-zero effective amount even when direct amount is zero
+        let hasModEnvToModIndex = voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0
+            || voiceModulation.touchInitial.amountToModEnvelope != 0.0
+        if hasModEnvToModIndex {
             // Apply initial touch meta-modulation if active
             var effectiveModEnvAmount = voiceModulation.modulatorEnvelope.amountToModulationIndex
             if voiceModulation.touchInitial.amountToModEnvelope != 0.0 {
@@ -736,7 +740,10 @@ final class PolyphonicVoice {
         modulationState.modulatorStartModIndex = Double(oscLeft.modulationIndex)
 
         // Calculate peak mod index (target at end of attack) for handover tracking
-        if voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0 {
+        // Check both direct envelope amount AND initial touch routing to mod envelope
+        let hasModEnvToModIndex = voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0
+            || voiceModulation.touchInitial.amountToModEnvelope != 0.0
+        if hasModEnvToModIndex {
             var effectiveModEnvAmount = voiceModulation.modulatorEnvelope.amountToModulationIndex
             if voiceModulation.touchInitial.amountToModEnvelope != 0.0 {
                 effectiveModEnvAmount = ModulationRouter.calculateTouchScaledAmount(
@@ -749,6 +756,7 @@ final class PolyphonicVoice {
         } else {
             modulationState.modulatorPeakModIndex = modulationState.baseModulationIndex
         }
+
 
         // CRITICAL: Apply envelope modulation values immediately with ramp time = attack time
         // This eliminates 0-5ms timing jitter between trigger and first control rate update
@@ -877,6 +885,7 @@ final class PolyphonicVoice {
         // Check if modulation is active for modulation index
         let hasActiveModIndexModulation =
             voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0 ||
+            voiceModulation.touchInitial.amountToModEnvelope != 0.0 ||
             voiceModulation.voiceLFO.amountToModulatorLevel != 0.0 ||
             voiceModulation.touchAftertouch.amountToModulatorLevel != 0.0
         

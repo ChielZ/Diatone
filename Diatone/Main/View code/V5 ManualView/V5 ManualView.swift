@@ -919,7 +919,7 @@ struct ManualView: View {
             .centeredText()
             .id("scaleSelection")
         
-        Text("The seven modal scales, which were discussed in the previous paragraphs, are in a way all just different rotations of the same scale. Apart from these, this app includes two 'melodic' and three 'harmonic' scales, that have a different internal structure. Each of these can even be said to have its own set of modes. Although these are not presented as separate options in this app, they are still available by selecting a scale and using different notes as center. The minor melodic scale is often used in jazz music and its modes include things like the lydo-mixolydian and altered scales. The major melodic   ")
+        Text("The seven modal scales, which were discussed in the previous paragraphs, are in a way all just different rotations of the same scale. Apart from these, this app includes two 'melodic' and three 'harmonic' scales, that have a different internal structure. Each of these can even be said to have its own set of modes. Although these are not presented as separate options in this app, they are still available by selecting a scale and using different notes as center.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
