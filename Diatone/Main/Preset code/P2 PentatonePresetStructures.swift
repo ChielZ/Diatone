@@ -94,41 +94,41 @@ struct DiatoneFactoryLayout {
         DiatonePresetSlot(bankType: .factory, row: 1, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         DiatonePresetSlot(bankType: .factory, row: 1, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
         
-        // Slots 2.1 ... 2.7
-        DiatonePresetSlot(bankType: .factory, row: 2, column: 1, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 2, column: 2, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 2, column: 3, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 2, column: 4, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 2, column: 5, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 2, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 2, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        // Slots 2.1 ... 2.7 (Piano / E-Piano)
+        DiatonePresetSlot(bankType: .factory, row: 2, column: 1, presetID: UUID(uuidString: "A1B2C3D4-1111-4AAA-BBBB-000000000001")!), // Rhodes
+        DiatonePresetSlot(bankType: .factory, row: 2, column: 2, presetID: UUID(uuidString: "A1B2C3D4-2222-4AAA-BBBB-000000000002")!), // Wurli
+        DiatonePresetSlot(bankType: .factory, row: 2, column: 3, presetID: UUID(uuidString: "A1B2C3D4-3333-4AAA-BBBB-000000000003")!), // DX Piano
+        DiatonePresetSlot(bankType: .factory, row: 2, column: 4, presetID: UUID(uuidString: "A1B2C3D4-4444-4AAA-BBBB-000000000004")!), // Tine
+        DiatonePresetSlot(bankType: .factory, row: 2, column: 5, presetID: UUID(uuidString: "A1B2C3D4-5555-4AAA-BBBB-000000000005")!), // Clavinet
+        DiatonePresetSlot(bankType: .factory, row: 2, column: 6, presetID: UUID(uuidString: "A1B2C3D4-6666-4AAA-BBBB-000000000006")!), // Soft Keys
+        DiatonePresetSlot(bankType: .factory, row: 2, column: 7, presetID: UUID(uuidString: "A1B2C3D4-7777-4AAA-BBBB-000000000007")!), // Honky
         
-        // Slots 3.1 ... 3.7
-        DiatonePresetSlot(bankType: .factory, row: 3, column: 1, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 3, column: 2, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 3, column: 3, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 3, column: 4, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 3, column: 5, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 3, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 3, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        // Slots 3.1 ... 3.7 (Piano / Keys - Hybrid)
+        DiatonePresetSlot(bankType: .factory, row: 3, column: 1, presetID: UUID(uuidString: "B2C3D4E5-1111-4BBB-CCCC-000000000001")!), // Felt
+        DiatonePresetSlot(bankType: .factory, row: 3, column: 2, presetID: UUID(uuidString: "B2C3D4E5-2222-4BBB-CCCC-000000000002")!), // Bark
+        DiatonePresetSlot(bankType: .factory, row: 3, column: 3, presetID: UUID(uuidString: "B2C3D4E5-3333-4BBB-CCCC-000000000003")!), // Dusk
+        DiatonePresetSlot(bankType: .factory, row: 3, column: 4, presetID: UUID(uuidString: "B2C3D4E5-4444-4BBB-CCCC-000000000004")!), // Pluck
+        DiatonePresetSlot(bankType: .factory, row: 3, column: 5, presetID: UUID(uuidString: "B2C3D4E5-5555-4BBB-CCCC-000000000005")!), // Mellow
+        DiatonePresetSlot(bankType: .factory, row: 3, column: 6, presetID: UUID(uuidString: "B2C3D4E5-6666-4BBB-CCCC-000000000006")!), // Chime
+        DiatonePresetSlot(bankType: .factory, row: 3, column: 7, presetID: UUID(uuidString: "B2C3D4E5-7777-4BBB-CCCC-000000000007")!), // Thump
         
-        // Slots 4.1 ... 4.7
-        DiatonePresetSlot(bankType: .factory, row: 4, column: 1, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 4, column: 2, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 4, column: 3, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 4, column: 4, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 4, column: 5, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 4, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 4, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        // Slots 4.1 ... 4.7 (Synth Leads / Pads)
+        DiatonePresetSlot(bankType: .factory, row: 4, column: 1, presetID: UUID(uuidString: "C3D4E5F6-1111-4CCC-DDDD-000000000001")!), // Siren
+        DiatonePresetSlot(bankType: .factory, row: 4, column: 2, presetID: UUID(uuidString: "C3D4E5F6-2222-4CCC-DDDD-000000000002")!), // Growl
+        DiatonePresetSlot(bankType: .factory, row: 4, column: 3, presetID: UUID(uuidString: "C3D4E5F6-3333-4CCC-DDDD-000000000003")!), // Pulse
+        DiatonePresetSlot(bankType: .factory, row: 4, column: 4, presetID: UUID(uuidString: "C3D4E5F6-4444-4CCC-DDDD-000000000004")!), // Nebula
+        DiatonePresetSlot(bankType: .factory, row: 4, column: 5, presetID: UUID(uuidString: "C3D4E5F6-5555-4CCC-DDDD-000000000005")!), // Razor
+        DiatonePresetSlot(bankType: .factory, row: 4, column: 6, presetID: UUID(uuidString: "C3D4E5F6-6666-4CCC-DDDD-000000000006")!), // Warp
+        DiatonePresetSlot(bankType: .factory, row: 4, column: 7, presetID: UUID(uuidString: "C3D4E5F6-7777-4CCC-DDDD-000000000007")!), // Brass
         
-        // Slots 5.1 ... 5.7
-        DiatonePresetSlot(bankType: .factory, row: 5, column: 1, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 5, column: 2, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 5, column: 3, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 5, column: 4, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 5, column: 5, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!),  // Basic
-        DiatonePresetSlot(bankType: .factory, row: 5, column: 6, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
-        DiatonePresetSlot(bankType: .factory, row: 5, column: 7, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic
+        // Slots 5.1 ... 5.7 (Ambient / Atmospheric)
+        DiatonePresetSlot(bankType: .factory, row: 5, column: 1, presetID: UUID(uuidString: "D4E5F6A7-1111-4DDD-EEEE-000000000001")!), // Glisten
+        DiatonePresetSlot(bankType: .factory, row: 5, column: 2, presetID: UUID(uuidString: "D4E5F6A7-2222-4DDD-EEEE-000000000002")!), // Drift
+        DiatonePresetSlot(bankType: .factory, row: 5, column: 3, presetID: UUID(uuidString: "D4E5F6A7-3333-4DDD-EEEE-000000000003")!), // Haze
+        DiatonePresetSlot(bankType: .factory, row: 5, column: 4, presetID: UUID(uuidString: "D4E5F6A7-4444-4DDD-EEEE-000000000004")!), // Vapor
+        DiatonePresetSlot(bankType: .factory, row: 5, column: 5, presetID: UUID(uuidString: "D4E5F6A7-5555-4DDD-EEEE-000000000005")!), // Shade
+        DiatonePresetSlot(bankType: .factory, row: 5, column: 6, presetID: UUID(uuidString: "D4E5F6A7-6666-4DDD-EEEE-000000000006")!), // Murk
+        DiatonePresetSlot(bankType: .factory, row: 5, column: 7, presetID: UUID(uuidString: "D4E5F6A7-7777-4DDD-EEEE-000000000007")!), // Abyss
         
         // Slots 6.1 ... 6.7
         DiatonePresetSlot(bankType: .factory, row: 6, column: 1, presetID: UUID(uuidString: "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B")!), // Basic

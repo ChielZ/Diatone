@@ -1,0 +1,144 @@
+{
+  "createdAt" : "2026-03-11T12:00:00Z",
+  "id" : "C3D4E5F6-1111-4CCC-DDDD-000000000001",
+  "macroState" : {
+    "ambiencePosition" : 0,
+    "baseDelayFeedback" : 0.3,
+    "baseDelayMix" : 0.05,
+    "baseFilterCutoff" : 1800,
+    "baseFilterSaturation" : 1.0,
+    "baseModulationIndex" : 1.5,
+    "basePreVolume" : 0.45,
+    "baseReverbFeedback" : 0.5,
+    "baseReverbMix" : 0.08,
+    "tonePosition" : 0,
+    "volumePosition" : 0.45
+  },
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0.05,
+      "feedback" : 0.3,
+      "timeValue" : 0.125,
+      "toneCutoff" : 4000
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0,
+      "amountToFilterFrequency" : 0,
+      "amountToModulatorMultiplier" : 0,
+      "amountToVoiceMixerVolume" : 0,
+      "frequency" : 1,
+      "frequencyMode" : "hertz",
+      "isEnabled" : true,
+      "resetMode" : "free",
+      "syncValue" : 1,
+      "waveform" : "sine"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 1,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.3,
+      "ambienceToDelayMixRange" : 0.25,
+      "ambienceToReverbFeedbackRange" : 0.25,
+      "ambienceToReverbMixRange" : 0.35,
+      "toneToFilterCutoffOctaves" : 3,
+      "toneToFilterSaturationRange" : 0.6,
+      "toneToModulationIndexRange" : 2.0
+    },
+    "output" : {
+      "preVolume" : 0.45,
+      "volume" : 0.75
+    },
+    "reverb" : {
+      "balance" : 0.08,
+      "cutoffFrequency" : 4000,
+      "feedback" : 0.5
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Siren",
+  "voiceTemplate" : {
+    "envelope" : {
+      "attackDuration" : 0.005,
+      "decayDuration" : 0.3,
+      "releaseDuration" : 0.15,
+      "sustainLevel" : 0.85
+    },
+    "filter" : {
+      "cutoffFrequency" : 1800
+    },
+    "filterStatic" : {
+      "resonance" : 0.3,
+      "saturation" : 1.0
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 1.5,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0,
+        "attack" : 0.001,
+        "decay" : 0.2,
+        "isEnabled" : true,
+        "release" : 0.1,
+        "sustain" : 0
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0.5,
+        "amountToVoiceLFOFrequency" : 0,
+        "isEnabled" : true
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.005,
+        "decay" : 0.3,
+        "isEnabled" : true,
+        "release" : 0.15,
+        "sustain" : 0.85
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 2.0,
+        "attack" : 0,
+        "decay" : 0.4,
+        "isEnabled" : true,
+        "release" : 0.1,
+        "sustain" : 0
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 2.0,
+        "amountToVibrato" : 0.8,
+        "isEnabled" : true
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0,
+        "amountToAuxEnvPitch" : 0,
+        "amountToModEnvelope" : 0.5,
+        "amountToOscillatorAmplitude" : 0.3,
+        "isEnabled" : true
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0.15,
+        "delayTime" : 0.6,
+        "frequency" : 5.5,
+        "isEnabled" : true,
+        "resetMode" : "trigger",
+        "waveform" : "sine"
+      }
+    },
+    "oscillator" : {
+      "amplitude" : 0.5,
+      "carrierMultiplier" : 1,
+      "detuneMode" : "constant",
+      "modulatingMultiplier" : 1.005,
+      "modulationIndex" : 1.5,
+      "stereoOffsetConstant" : 3.0,
+      "stereoOffsetProportional" : 5,
+      "waveform" : "square"
+    }
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "createdAt" : "2026-03-11T11:00:04Z",
+  "id" : "B2C3D4E5-5555-4BBB-CCCC-000000000005",
+  "macroState" : {
+    "ambiencePosition" : 0,
+    "baseDelayFeedback" : 0.35,
+    "baseDelayMix" : 0.08,
+    "baseFilterCutoff" : 900,
+    "baseFilterSaturation" : 0.7,
+    "baseModulationIndex" : 0.4,
+    "basePreVolume" : 0.5,
+    "baseReverbFeedback" : 0.65,
+    "baseReverbMix" : 0.15,
+    "tonePosition" : 0,
+    "volumePosition" : 0.5
+  },
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0.08,
+      "feedback" : 0.35,
+      "timeValue" : 0.1875,
+      "toneCutoff" : 2500
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0,
+      "amountToFilterFrequency" : 0.1,
+      "amountToModulatorMultiplier" : 0,
+      "amountToVoiceMixerVolume" : 0.06,
+      "frequency" : 0.5,
+      "frequencyMode" : "hertz",
+      "isEnabled" : true,
+      "resetMode" : "free",
+      "syncValue" : 1,
+      "waveform" : "sine"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 1,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.25,
+      "ambienceToDelayMixRange" : 0.2,
+      "ambienceToReverbFeedbackRange" : 0.2,
+      "ambienceToReverbMixRange" : 0.4,
+      "toneToFilterCutoffOctaves" : 3.5,
+      "toneToFilterSaturationRange" : 0.5,
+      "toneToModulationIndexRange" : 1.0
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.75
+    },
+    "reverb" : {
+      "balance" : 0.15,
+      "cutoffFrequency" : 2500,
+      "feedback" : 0.65
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Mellow",
+  "voiceTemplate" : {
+    "envelope" : {
+      "attackDuration" : 0.008,
+      "decayDuration" : 2.8,
+      "releaseDuration" : 0.5,
+      "sustainLevel" : 0
+    },
+    "filter" : {
+      "cutoffFrequency" : 900
+    },
+    "filterStatic" : {
+      "resonance" : 0.15,
+      "saturation" : 0.7
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 2.0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0.02,
+        "attack" : 0.001,
+        "decay" : 0.5,
+        "isEnabled" : true,
+        "release" : 0.3,
+        "sustain" : 0
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0.55,
+        "amountToVoiceLFOFrequency" : 0,
+        "isEnabled" : true
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.008,
+        "decay" : 2.8,
+        "isEnabled" : true,
+        "release" : 0.5,
+        "sustain" : 0
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 1.0,
+        "attack" : 0,
+        "decay" : 0.6,
+        "isEnabled" : true,
+        "release" : 0.2,
+        "sustain" : 0
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0.6,
+        "amountToModulatorLevel" : 1.0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0.25,
+        "isEnabled" : true
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0.8,
+        "amountToAuxEnvPitch" : 0,
+        "amountToModEnvelope" : 0.5,
+        "amountToOscillatorAmplitude" : 0.4,
+        "isEnabled" : true
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0.3,
+        "amountToOscillatorPitch" : 0.03,
+        "delayTime" : 0.8,
+        "frequency" : 2.5,
+        "isEnabled" : true,
+        "resetMode" : "trigger",
+        "waveform" : "sine"
+      }
+    },
+    "oscillator" : {
+      "amplitude" : 0.5,
+      "carrierMultiplier" : 1,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 2.008,
+      "modulationIndex" : 0.4,
+      "stereoOffsetConstant" : 2,
+      "stereoOffsetProportional" : 7,
+      "waveform" : "triangle"
+    }
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "createdAt" : "2026-03-11T10:00:01Z",
+  "id" : "A1B2C3D4-2222-4AAA-BBBB-000000000002",
+  "macroState" : {
+    "ambiencePosition" : 0,
+    "baseDelayFeedback" : 0.25,
+    "baseDelayMix" : 0.05,
+    "baseFilterCutoff" : 3500,
+    "baseFilterSaturation" : 0.6,
+    "baseModulationIndex" : 2.5,
+    "basePreVolume" : 0.5,
+    "baseReverbFeedback" : 0.4,
+    "baseReverbMix" : 0.05,
+    "tonePosition" : 0,
+    "volumePosition" : 0.5
+  },
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0.05,
+      "feedback" : 0.25,
+      "timeValue" : 0.125,
+      "toneCutoff" : 5000
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0,
+      "amountToFilterFrequency" : 0,
+      "amountToModulatorMultiplier" : 0,
+      "amountToVoiceMixerVolume" : 0.35,
+      "frequency" : 5.0,
+      "frequencyMode" : "hertz",
+      "isEnabled" : true,
+      "resetMode" : "free",
+      "syncValue" : 1,
+      "waveform" : "sine"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 1,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.3,
+      "ambienceToDelayMixRange" : 0.25,
+      "ambienceToReverbFeedbackRange" : 0.2,
+      "ambienceToReverbMixRange" : 0.3,
+      "toneToFilterCutoffOctaves" : 2.5,
+      "toneToFilterSaturationRange" : 0.6,
+      "toneToModulationIndexRange" : 2.0
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.75
+    },
+    "reverb" : {
+      "balance" : 0.05,
+      "cutoffFrequency" : 5000,
+      "feedback" : 0.4
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Wurli",
+  "voiceTemplate" : {
+    "envelope" : {
+      "attackDuration" : 0.001,
+      "decayDuration" : 1.2,
+      "releaseDuration" : 0.2,
+      "sustainLevel" : 0.08
+    },
+    "filter" : {
+      "cutoffFrequency" : 3500
+    },
+    "filterStatic" : {
+      "resonance" : 0.15,
+      "saturation" : 0.6
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 2.0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0,
+        "attack" : 0.001,
+        "decay" : 0.25,
+        "isEnabled" : true,
+        "release" : 0.1,
+        "sustain" : 0
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0.7,
+        "amountToVoiceLFOFrequency" : 0,
+        "isEnabled" : true
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.001,
+        "decay" : 1.2,
+        "isEnabled" : true,
+        "release" : 0.2,
+        "sustain" : 0.08
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 4.0,
+        "attack" : 0,
+        "decay" : 0.35,
+        "isEnabled" : true,
+        "release" : 0.1,
+        "sustain" : 0
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 3,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0.2,
+        "isEnabled" : true
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0.5,
+        "amountToAuxEnvPitch" : 0,
+        "amountToModEnvelope" : 1.5,
+        "amountToOscillatorAmplitude" : 0.5,
+        "isEnabled" : true
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0.06,
+        "delayTime" : 1.0,
+        "frequency" : 5.5,
+        "isEnabled" : true,
+        "resetMode" : "trigger",
+        "waveform" : "sine"
+      }
+    },
+    "oscillator" : {
+      "amplitude" : 0.5,
+      "carrierMultiplier" : 1,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 1.0,
+      "modulationIndex" : 2.5,
+      "stereoOffsetConstant" : 2,
+      "stereoOffsetProportional" : 6,
+      "waveform" : "sine"
+    }
+  }
+}
