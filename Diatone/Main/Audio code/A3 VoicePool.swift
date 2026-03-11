@@ -786,7 +786,7 @@ final class VoicePool {
         }
         
         // Create a dispatch timer on a background queue
-        let queue = DispatchQueue(label: "com.pentatone.modulation", qos: .userInteractive)
+        let queue = DispatchQueue(label: "com.Diatone.modulation", qos: .userInteractive)
         let timer = DispatchSource.makeTimerSource(queue: queue)
         
         // Set to fire every 5ms (200 Hz)

@@ -38,12 +38,12 @@ final class PresetManager: ObservableObject {
     
     /// User preset layout (U1.1 - U5.5)
     /// This is saved to disk and persists across app launches
-    @Published var userLayout: PentatoneUserLayout = .default
+    @Published var userLayout: DiatoneUserLayout = .default
     
     /// Factory preset layout (F1.1 - F5.5)
     /// This is hardcoded and read-only
-    var factoryLayout: [PentatonePresetSlot] {
-        return PentatoneFactoryLayout.factorySlots
+    var factoryLayout: [DiatonePresetSlot] {
+        return DiatoneFactoryLayout.factorySlots
     }
     
     /// User layout file location
@@ -102,7 +102,7 @@ final class PresetManager: ObservableObject {
             loadUserPresets()
             
             // Automatically load factory preset at slot 1.1 on app launch if it exists
-            if let slot = PentatoneFactoryLayout.slot(row: 1, column: 1),
+            if let slot = DiatoneFactoryLayout.slot(row: 1, column: 1),
                let presetID = slot.presetID,
                let preset = presetLookup[presetID] {
                 // Load this preset so the app starts with it active
@@ -511,7 +511,7 @@ final class PresetManager: ObservableObject {
     /// - Throws: Decoding, file system, or slot assignment errors
     @discardableResult
     func importPresetToSlot(from url: URL, 
-                           bankType: PentatoneBankType, 
+                           bankType: DiatoneBankType, 
                            row: Int, 
                            column: Int,
                            loadImmediately: Bool = true) throws -> AudioParameterSet {
@@ -549,7 +549,7 @@ final class PresetManager: ObservableObject {
         return factoryPresetCount + userPresetCount
     }
     
-    /// Check if user preset storage is full (100 slots for Pentatone)
+    /// Check if user preset storage is full (100 slots for Diatone)
     var userPresetsAreFull: Bool {
         return userPresetCount >= 198
     }
@@ -575,7 +575,7 @@ final class PresetManager: ObservableObject {
             let data = try Data(contentsOf: userLayoutURL)
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
-            userLayout = try decoder.decode(PentatoneUserLayout.self, from: data)
+            userLayout = try decoder.decode(DiatoneUserLayout.self, from: data)
             
             print("✅ PresetManager: Loaded user layout (\(userLayout.assignedCount) slots assigned)")
         } catch {
@@ -608,11 +608,11 @@ final class PresetManager: ObservableObject {
     ///   - row: Row within bank (1-7)
     ///   - column: Column within bank (1-7)
     /// - Returns: The preset assigned to this slot, or nil if empty/not found
-    func preset(forBankType bankType: PentatoneBankType, row: Int, column: Int) -> AudioParameterSet? {
+    func preset(forBankType bankType: DiatoneBankType, row: Int, column: Int) -> AudioParameterSet? {
         // Get the slot
-        let slot: PentatonePresetSlot?
+        let slot: DiatonePresetSlot?
         if bankType == .factory {
-            slot = PentatoneFactoryLayout.slot(row: row, column: column)
+            slot = DiatoneFactoryLayout.slot(row: row, column: column)
         } else {
             slot = userLayout.slot(bankType: bankType, row: row, column: column)
         }
@@ -627,16 +627,16 @@ final class PresetManager: ObservableObject {
     }
     
     /// Get slot by bank type, row, and column
-    func slot(forBankType bankType: PentatoneBankType, row: Int, column: Int) -> PentatonePresetSlot? {
+    func slot(forBankType bankType: DiatoneBankType, row: Int, column: Int) -> DiatonePresetSlot? {
         if bankType == .factory {
-            return PentatoneFactoryLayout.slot(row: row, column: column)
+            return DiatoneFactoryLayout.slot(row: row, column: column)
         } else {
             return userLayout.slot(bankType: bankType, row: row, column: column)
         }
     }
     
     /// Check if a slot is empty (no preset assigned)
-    func isSlotEmpty(bankType: PentatoneBankType, row: Int, column: Int) -> Bool {
+    func isSlotEmpty(bankType: DiatoneBankType, row: Int, column: Int) -> Bool {
         return preset(forBankType: bankType, row: row, column: column) == nil
     }
     
@@ -647,7 +647,7 @@ final class PresetManager: ObservableObject {
     ///   - row: Row within bank (1-7)
     ///   - column: Column within bank (1-7)
     /// - Throws: File system errors or validation errors
-    func assignPresetToSlot(preset: AudioParameterSet, bankType: PentatoneBankType, row: Int, column: Int) throws {
+    func assignPresetToSlot(preset: AudioParameterSet, bankType: DiatoneBankType, row: Int, column: Int) throws {
         // Validate it's a user preset (not factory)
         guard userPresets.contains(where: { $0.id == preset.id }) else {
             throw PresetError.cannotAssignFactoryPresetToUserSlot
@@ -678,7 +678,7 @@ final class PresetManager: ObservableObject {
     ///   - row: Row within bank (1-7)
     ///   - column: Column within bank (1-7)
     /// - Throws: File system errors or validation errors
-    func clearSlot(bankType: PentatoneBankType, row: Int, column: Int) throws {
+    func clearSlot(bankType: DiatoneBankType, row: Int, column: Int) throws {
         guard bankType.isUserBank else {
             throw PresetError.cannotModifyFactoryBank
         }
@@ -690,7 +690,7 @@ final class PresetManager: ObservableObject {
     }
     
     /// Get all slots for a specific bank type
-    func slots(forBankType bankType: PentatoneBankType) -> [PentatonePresetSlot] {
+    func slots(forBankType bankType: DiatoneBankType) -> [DiatonePresetSlot] {
         if bankType == .factory {
             return factoryLayout
         } else {
@@ -699,7 +699,7 @@ final class PresetManager: ObservableObject {
     }
     
     /// Get all presets for a specific bank (non-nil only)
-    func presets(forBankType bankType: PentatoneBankType) -> [AudioParameterSet] {
+    func presets(forBankType bankType: DiatoneBankType) -> [AudioParameterSet] {
         return slots(forBankType: bankType)
             .compactMap { slot in
                 guard let presetID = slot.presetID else { return nil }

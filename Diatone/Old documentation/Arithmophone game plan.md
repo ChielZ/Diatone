@@ -1,14 +1,16 @@
 ARITHMOPHONE APP ECOSYSTEM - GAME PLAN
 
+//Note: autoreplaced all occurences of 'Pentatone' with 'Diatone' in this entire project - cleaner code now, but probably caused some nonsensical statements in this document
+
 The Arithmophone project has been going for a few years. It is a one-person project, created and maintained by musician and amateur software developer Chiel Zwinkels.
 
 Over the pas 4 years, a number of web apps have been made under the 'Arithmophone' umbrella, both with built in sound engines and as MIDI controllers for external (software/hardware) instruments. At this point, work is under way for the next generation (gen 5) of Arithmophone apps, which will now be native iOS apps for the first time. There are plans for releasing 5 separate apps. All of these apps will have their own unique keyboard design, but they will all be sharing the same sound engine.
 
 1) PENTATONE - featuring a pentatonic music keyboard (current app, in development but nearing completion of version 1)
 
-2) DIATONE - a diatonic version of the pentatone, using diatonic scales instead of pentatonic scales, with a slightly larger keyboard but otherwise mostly identical (currently just a design mockup, could possibly be cloned from pentatone repo and adjusted accordingly)
+2) DIATONE - a diatonic version of the Diatone, using diatonic scales instead of pentatonic scales, with a slightly larger keyboard but otherwise mostly identical (currently just a design mockup, could possibly be cloned from Diatone repo and adjusted accordingly)
 
-3) TONEHIVE - a 29 note per octave keyboard in 7-limit just intonation. Has a completely different UI from the pentatone/diatone apps (currently in development, keyboard UI is working well, sound engine is very basic at the moment, to be replaced by the full sound engine that's currently being implemented in the Pentatone app)
+3) TONEHIVE - a 29 note per octave keyboard in 7-limit just intonation. Has a completely different UI from the Diatone/diatone apps (currently in development, keyboard UI is working well, sound engine is very basic at the moment, to be replaced by the full sound engine that's currently being implemented in the Diatone app)
 
 4) IVORY - a 'traditional' 12 note per octave piano-style keyboard in standard tuning (12 tone equal temperament). Has a different keyboard from the ToneHive, but will otherwise share its UI (currently just a design mockup, could possibly be cloned from ToneHive repo and adjusted accordingly)
 
@@ -62,24 +64,24 @@ Target audience:
 
 LAUNCH ORDER CONSIDERATIONS
 
-The Pentatone app will be finished first, but should it also be released first? It will probably not be too much work to finish the ToneHive app once the Pentatone app is completed and the engine / preset structure can be ported. The Pentatone design is very new and aimed at a very broad audience, which is new for the Arithmophone project. PRevious web app releases have been mostly targeted at microtonal music and synth enthusiasts, and have already had some modest success in those circles (featured on major synth blogs, some 1000s of youtube view for demonstration videos, nothing major but at least some bit of resonance within the small subculture. It might be smart to first release iOS an app that is immediately recognisable to those who have encountered earlier incarnations of the Arithmophone, to gain a bit of a foothold with the 'innnovator/early adapter' crowd before releasing a more widely targeted iOS app?
+The Diatone app will be finished first, but should it also be released first? It will probably not be too much work to finish the ToneHive app once the Diatone app is completed and the engine / preset structure can be ported. The Diatone design is very new and aimed at a very broad audience, which is new for the Arithmophone project. PRevious web app releases have been mostly targeted at microtonal music and synth enthusiasts, and have already had some modest success in those circles (featured on major synth blogs, some 1000s of youtube view for demonstration videos, nothing major but at least some bit of resonance within the small subculture. It might be smart to first release iOS an app that is immediately recognisable to those who have encountered earlier incarnations of the Arithmophone, to gain a bit of a foothold with the 'innnovator/early adapter' crowd before releasing a more widely targeted iOS app?
 
-Launch apps 1 by 1 or in groups? Pentatone and Diatone form a natural group, as would ToneHive, Ivory and Huygens. What are the pros and cons of doing 5 separate staged releases vs 2 more comprehensive multi-app releases?
+Launch apps 1 by 1 or in groups? Diatone and Diatone form a natural group, as would ToneHive, Ivory and Huygens. What are the pros and cons of doing 5 separate staged releases vs 2 more comprehensive multi-app releases?
 
-Make everything iPhone+iPad or limit some apps to iPad only? Pentatone is definitely the most suitable for use on phone-sized screens, followed by Diatone and Ivory. ToneHive and Huygens are strongly optimized for iPad in landscape mode (fullscreen), but is there anything against also releasing them for iPhone? 
+Make everything iPhone+iPad or limit some apps to iPad only? Diatone is definitely the most suitable for use on phone-sized screens, followed by Diatone and Ivory. ToneHive and Huygens are strongly optimized for iPad in landscape mode (fullscreen), but is there anything against also releasing them for iPhone? 
 
 
 MONETIZATION CONSIDERATIONS
 
 Note: monetization is not our primary concern for this project, it is a passion project first and foremost. All apps hould definitely remain ad-free at all times.
 
-Make all apps free or make some apps free and others paid upfront? Pentatone and Diatone should definitely be free apps, considering their educational potential. ToneHive and Huygens should probably be free in their basic version at least. Ivory could be free or paid for, whichever will be most beneficial to the project.
+Make all apps free or make some apps free and others paid upfront? Diatone and Diatone should definitely be free apps, considering their educational potential. ToneHive and Huygens should probably be free in their basic version at least. Ivory could be free or paid for, whichever will be most beneficial to the project.
 
-In app purchases: the layered structure of Pentatone and Diatone makes it so that full access to the sound editing/preset saving functionality could be a natural in app purchase. But for the other three apps, this sound editing will be a more integral part of their UI so it would not make too much sense to offer them in a version without this functionality (or would it? could be worked around perhaps). Would it be weird/offputting if features that are available for free in some Arithmophone apps would have to be paid for in others? 
+In app purchases: the layered structure of Diatone and Diatone makes it so that full access to the sound editing/preset saving functionality could be a natural in app purchase. But for the other three apps, this sound editing will be a more integral part of their UI so it would not make too much sense to offer them in a version without this functionality (or would it? could be worked around perhaps). Would it be weird/offputting if features that are available for free in some Arithmophone apps would have to be paid for in others? 
 
 Other options for in app purchases could be midi support and/or AUv3 support (both yet to be implemented). Comprehensive midi support would require MPE and/or .tun/.scala support for microtonality, charging for this would seem very fair. 
 
-Where could the most gain be had from monetization? The Pentatone/Diatone apps target a very large audience, but how many of them would be interested in paying for features like midi support or detailed sound editing. The ToneHive and Huygens apps are tailored more toward specialists who would be more likely to pay for such features, but their numbers will not be that large. The Ivory app may strike the best balance between mass appeal and a space where people are used to paying for 'pro' features or even upfront for the app itself, but focusing on the one app for monetization may appear disingenuous.
+Where could the most gain be had from monetization? The Diatone/Diatone apps target a very large audience, but how many of them would be interested in paying for features like midi support or detailed sound editing. The ToneHive and Huygens apps are tailored more toward specialists who would be more likely to pay for such features, but their numbers will not be that large. The Ivory app may strike the best balance between mass appeal and a space where people are used to paying for 'pro' features or even upfront for the app itself, but focusing on the one app for monetization may appear disingenuous.
 
 It is interesting to consider the strategy that optimizes for revenue, but what is the strategy that optimizes for total reach (number of downloads, number of active users), which is at least as important for our considerations. Would that be to make everything completely free? Or could the possible perceived 'valuelessness' of that strategy actually hinder the total reach?
 
@@ -89,15 +91,15 @@ CLAUDE SAYS:
 Strategic Observations
 
 Launch Order
-Your instinct about launching ToneHive first (or alongside Pentatone) is actually quite sound:
+Your instinct about launching ToneHive first (or alongside Diatone) is actually quite sound:
 
 Pros of ToneHive-first approach:
 • Builds credibility with your existing microtonal/synth enthusiast base
-• Creates a "halo effect" for the broader Pentatone launch
+• Creates a "halo effect" for the broader Diatone launch
 • Early reviews from knowledgeable users can provide valuable testimonials
 • Establishes the "Arithmophone on iOS" brand with people already primed to care
 
-However, consider this alternative: Launch Pentatone first anyway, because:
+However, consider this alternative: Launch Diatone first anyway, because:
 • You're already close to completion with it
 • The broader audience means more potential for viral spread and press coverage
 • You can mention "first of five apps in the Arithmophone ecosystem" in marketing, creating anticipation
@@ -115,9 +117,9 @@ I'd recommend staged individual releases for these reasons:
 5. Community building: Time between releases lets you nurture users, build anticipation
 
 Suggested sequence:
-1. Pentatone (broad appeal, nearly done)
+1. Diatone (broad appeal, nearly done)
 2. ToneHive (serves existing community, shared engine validation)
-3. Diatone (capitalize on Pentatone success, relatively easy clone)
+3. Diatone (capitalize on Diatone success, relatively easy clone)
 4. Ivory (broadest synth appeal, monetization potential)
 5. Huygens (specialist audience, completes the ecosystem)
 
@@ -140,7 +142,7 @@ Monetization Strategy
 
 This is where I have the strongest opinions. Here's a recommended approach:
 
-Pentatone & Diatone:
+Diatone & Diatone:
 • Free download with full basic functionality
 • Single IAP ($4.99-$6.99): "Pro" unlock including:
    • Full synth parameter editing
@@ -179,7 +181,7 @@ Additional Strategic Considerations
 2. StoreKit & App Clips
 Since you're on iOS, consider:
 • Using StoreKit views to cross-promote your other apps in-app
-• Creating App Clips for Pentatone especially - lets people try it instantly via links/QR codes without downloading
+• Creating App Clips for Diatone especially - lets people try it instantly via links/QR codes without downloading
 
 3. Educational Content
 Your scale theory documentation could be:
@@ -209,14 +211,14 @@ Bottom Line
 
 Your strategy of differentiated apps sharing a core engine is excellent. My key recommendations:
 
-1. ✅ Launch Pentatone first (you're ready, and broader appeal builds momentum)
+1. ✅ Launch Diatone first (you're ready, and broader appeal builds momentum)
 2. ✅ Stage releases individually with 2-3 months between each
 3. ✅ Support both iPhone and iPad for all apps
 4. ✅ Use tiered monetization appropriate to each app's audience
-5. ✅ Make Pentatone/Diatone free with IAP; price ToneHive/Huygens upfront; give Ivory freemium model
+5. ✅ Make Diatone/Diatone free with IAP; price ToneHive/Huygens upfront; give Ivory freemium model
 6. ✅ Consider AUv3 as a premium cross-app purchase
 
-This is genuinely exciting work. The combination of accessibility (Pentatone) and deep musical exploration (ToneHive, Huygens) with a shared professional-quality synth engine is a compelling proposition. The iOS ecosystem needs more innovative music theory tools, and you're building exactly that.
+This is genuinely exciting work. The combination of accessibility (Diatone) and deep musical exploration (ToneHive, Huygens) with a shared professional-quality synth engine is a compelling proposition. The iOS ecosystem needs more innovative music theory tools, and you're building exactly that.
 
 
 CHIEL SAYS:
@@ -268,7 +270,7 @@ Too wide (> 12 weeks):
 • TestFlight beta for next app can start while current one is fresh
 
 Suggested Calendar (hypothetical)
-• Month 1: Pentatone launch
+• Month 1: Diatone launch
 • Month 2-3: Monitor, iterate, build anticipation for ToneHive
 • Month 3: ToneHive launch
 • Month 4-5: Monitor both apps, tease Diatone
@@ -286,7 +288,7 @@ Don't wait for MIDI. Launch with sound editing as the IAP.
 
 Here's the structure I'd suggest:
 
-Pentatone v1.0 (and subsequent apps):
+Diatone v1.0 (and subsequent apps):
 • Free tier:
    • Full keyboard functionality
    • All scales available
@@ -294,7 +296,7 @@ Pentatone v1.0 (and subsequent apps):
    • Scale theory documentation
    • Audio output only
 
-• "Pentatone Pro" IAP ($4.99):
+• "Diatone Pro" IAP ($4.99):
    • Full synth parameter editing
    • Unlimited preset saving/loading
    • Export/import presets
@@ -370,13 +372,13 @@ Button(action: { showParameterHelp = true }) {
 
 2. Smart Email Response Template
 Create a template for common questions:
-• "Thanks for your message! Pentatone is a solo project..."
+• "Thanks for your message! Diatone is a solo project..."
 • Link to FAQ page
 • "Expected response time: 3-5 days"
 
 3. App Store Description Sets Expectations
 Be upfront:
-• "Pentatone is a passion project by solo musician/developer Chiel Zwinkels"
+• "Diatone is a passion project by solo musician/developer Chiel Zwinkels"
 • "Updates and support provided on a best-effort basis"
 • "Join the community at [your website] for tips and discussions"
 
@@ -400,7 +402,7 @@ Does Support Concern Change Release Order?
 
 Actually, it strengthens the staged release recommendation. Here's why:
 
-• Launching Pentatone first lets you learn what users actually need help with
+• Launching Diatone first lets you learn what users actually need help with
 • By the time you launch ToneHive, you'll have templated solutions
 • Each app launch teaches you more about common issues
 • You can build better in-app help as you go
@@ -423,7 +425,7 @@ Your "solid, finished synth" philosophy is perfect and actually rare and valuabl
 • Each app release is about new instruments, not engine revisions
 • Classic instrument philosophy: "a D-35 Martin guitar is what it is"
 
-This also means: Get the engine REALLY right in Pentatone, because you're committing to it. Worth doing extended beta testing.
+This also means: Get the engine REALLY right in Diatone, because you're committing to it. Worth doing extended beta testing.
 
 2. Shared Framework Architecture
 
@@ -438,10 +440,10 @@ ArithmophoneAudioEngine (Swift Package)
 │   ├── TuningSystem (scale/tuning logic)
 │   └── SharedModels (common data types)
 │
-Pentatone App
+Diatone App
 ├── Links to ArithmophoneAudioEngine package
-├── Pentatone-specific UI
-├── Pentatone scales
+├── Diatone-specific UI
+├── Diatone scales
 │
 ToneHive App
 ├── Links to same ArithmophoneAudioEngine package  
@@ -455,11 +457,11 @@ Benefits:
 • Clean separation of concerns
 
 When to do this:
-I'd recommend extracting it after Pentatone v1.0 ships, not before. Here's why:
+I'd recommend extracting it after Diatone v1.0 ships, not before. Here's why:
 
 1. You'll know what's truly shared vs. what's app-specific
 2. No premature abstraction
-3. Pentatone teaches you the architecture
+3. Diatone teaches you the architecture
 4. You can do it during the 6-8 week gap before ToneHive
 
 We can absolutely walk through this when you're ready. It's a great learning exercise and will make you a better Swift developer.
@@ -468,16 +470,16 @@ Revised Strategic Recommendation
 
 Given everything you've shared:
 
-Phase 1: Pentatone (Month 1)
+Phase 1: Diatone (Month 1)
 • ✅ Launch without MIDI
-• ✅ Include "Pentatone Pro" IAP ($4.99) with sound editing + preset management
+• ✅ Include "Diatone Pro" IAP ($4.99) with sound editing + preset management
 • ✅ 8-10 excellent factory presets free
 • ✅ TestFlight beta 2-3 weeks before launch
 • ✅ Simple support via email with clear expectations
 
 Phase 2: Gap Period (Month 2)
 • Extract audio engine to Swift Package
-• Monitor Pentatone feedback
+• Monitor Diatone feedback
 • Iterate based on real-world usage
 • Build ToneHive with shared engine
 • Start MIDI implementation
@@ -485,8 +487,8 @@ Phase 2: Gap Period (Month 2)
 Phase 3: ToneHive (Month 3)
 • Launch with same IAP model
 • Include MIDI support in Pro unlock
-• Update Pentatone to v1.5 with free MIDI support for all users
-• Press angle: "Pentatone gets major free update, ToneHive launches"
+• Update Diatone to v1.5 with free MIDI support for all users
+• Press angle: "Diatone gets major free update, ToneHive launches"
 
 Phase 4: Iterate (Months 4-9)
 • Diatone, Ivory, Huygens every 6-8 weeks
@@ -505,7 +507,7 @@ Your instinct toward a consistent, simple monetization model is spot on. My conc
 1. Spacing: 6-8 weeks between releases (creates 9-month narrative)
 2. First release: Sound editing IAP ($4.99), no MIDI yet (gets you to market)
 3. Support: Include IAPs from day one (manageable with good docs, worth it)
-4. Architecture: Extract shared package after Pentatone ships (not taxing, very beneficial)
+4. Architecture: Extract shared package after Diatone ships (not taxing, very beneficial)
 5. MIDI: Add in v1.5 update for free (second marketing opportunity)
 
 The beauty of your approach is that you're building instruments, not services. Like selling guitars: you don't need to provide lifetime support, just a quality product and reasonable help when needed.
@@ -539,7 +541,7 @@ External Testing (up to 10,000 testers)
 
 Should You Use External TestFlight Publicly?
 
-Yes, absolutely! For Pentatone specifically, this is a fantastic strategy. Here's why:
+Yes, absolutely! For Diatone specifically, this is a fantastic strategy. Here's why:
 
 Benefits for Your Project:
 
@@ -568,7 +570,7 @@ Benefits for Your Project:
    • Audio glitches that only happen on certain devices
    • UI issues on different screen sizes
 
-Suggested TestFlight Strategy for Pentatone:
+Suggested TestFlight Strategy for Diatone:
 
 Week 1-2: Internal Testing
 • Close friends, family, trusted musicians
@@ -603,9 +605,9 @@ In App Store Connect:
 
 Then share this link:
 
-**Pentatone Beta Now Open!**
+**Diatone Beta Now Open!**
 
-Help test Pentatone, a revolutionary pentatonic music keyboard for iOS.
+Help test Diatone, a revolutionary pentatonic music keyboard for iOS.
 
 Perfect for:
 - Music educators
@@ -636,7 +638,7 @@ Practical Posting Example:
 Title: "I've built a pentatonic keyboard iOS app with built-in music theory education. Looking for beta testers!"
 
 Body:
-Hi r/musictheory! I'm a musician and amateur developer who's spent the last 2 years building Pentatone - an iOS app that combines:
+Hi r/musictheory! I'm a musician and amateur developer who's spent the last 2 years building Diatone - an iOS app that combines:
 
 - An easy-to-play pentatonic keyboard optimized for touchscreens
 - Comprehensive scale education (just intonation vs. equal temperament)
@@ -770,7 +772,7 @@ struct IAPTestView: View {
 }
 
 
-For Pentatone, I recommend Option 1 (unlock everything) because:
+For Diatone, I recommend Option 1 (unlock everything) because:
 • You want comprehensive feedback on sound editing
 • IAP UX testing isn't critical for v1.0
 • Simpler for testers = better experience
@@ -782,9 +784,9 @@ TestFlight Beta Best Practices
 
 Create a TestFlight welcome message:
 
-🎹 Welcome to Pentatone Beta!
+🎹 Welcome to Diatone Beta!
 
-Thank you for helping test Pentatone! 
+Thank you for helping test Diatone! 
 
 WHAT TO TEST:
 • Play with the keyboard - is it intuitive?
@@ -845,7 +847,7 @@ Keep the feedback coming!
 TestFlight builds expire after 90 days. Plan accordingly:
 
 • Start beta ~6 weeks before planned launch
-• Aim for 100-300 active testers for Pentatone (manageable feedback volume)
+• Aim for 100-300 active testers for Diatone (manageable feedback volume)
 • You can have up to 10,000, but more isn't always better
 
 5. TestFlight Review Requirements
@@ -862,7 +864,7 @@ Much more lenient than App Review. But you still need:
 
 Review usually takes 1-2 days, occasionally up to 48 hours.
 
-Pentatone-Specific TestFlight Strategy
+Diatone-Specific TestFlight Strategy
 
 Given your unique positioning:
 
@@ -894,7 +896,7 @@ Bottom Line for Your TestFlight Strategy
 
 My recommendation:
 
-1. ✅ Use External TestFlight widely for Pentatone
+1. ✅ Use External TestFlight widely for Diatone
 2. ✅ Start with targeted communities, expand gradually
 3. ✅ Unlock all Pro features for testers (no IAP barriers)
 4. ✅ Use Google Forms for structured feedback
@@ -988,12 +990,12 @@ What Shows in the App Store:
 
 With an Individual Account, users see:
 
-Pentatone
+Diatone
 by Chiel Zwinkels
 
 With an Organization Account, users see:
 
-Pentatone  
+Diatone  
 by Arithmophone
 
 
@@ -1024,7 +1026,7 @@ Cons:
 
 Implementation:
 • Use "Arithmophone" prominently in:
-   • App names: "Pentatone - by Arithmophone"
+   • App names: "Diatone - by Arithmophone"
    • App descriptions
    • All UI branding
    • Your website
@@ -1088,9 +1090,9 @@ Timeline:
 • Start TestFlight when ready
 
 If you want to move faster:
-• Use Option 1 (individual) to launch Pentatone sooner
+• Use Option 1 (individual) to launch Diatone sooner
 • Form organization for ToneHive and subsequent apps
-• Accept that Pentatone might need migration later
+• Accept that Diatone might need migration later
 
 Important Note About Developer Accounts:
 
@@ -1183,14 +1185,14 @@ If You Go Individual Route:
 • Today: Pay $99, upgrade to paid developer account
 • Tomorrow: Access to TestFlight and App Store Connect
 • This Week: Can start TestFlight beta
-• 1-2 Months: Launch Pentatone
+• 1-2 Months: Launch Diatone
 
 If You Go Organization Route:
 • Week 1-2: Register business, apply for D-U-N-S
 • Week 2-4: Receive D-U-N-S, apply for Apple Developer Program
 • Week 4-5: Apple approves, pay $99
 • Week 5: Access to TestFlight and App Store Connect
-• 2-3 Months: Launch Pentatone
+• 2-3 Months: Launch Diatone
 
 So organization route adds ~3-4 weeks to your timeline.
 
@@ -1215,10 +1217,10 @@ Why this makes sense:
 Alternative If You're Impatient:
 
 1. Pay $99 now with individual account
-2. Launch Pentatone in 2-3 months as "Chiel Zwinkels"
+2. Launch Diatone in 2-3 months as "Chiel Zwinkels"
 3. Form organization during gap period before ToneHive
 4. Launch remaining 4 apps as "Arithmophone"
-5. Eventually migrate Pentatone (painful but doable)
+5. Eventually migrate Diatone (painful but doable)
 
 This gets you to market faster but creates tech debt.
 
@@ -1243,7 +1245,7 @@ Since you're planning a 9-month release cycle for 5 apps, spending 3-4 weeks now
 Next steps if you go organization route:
 1. Research business registration in your jurisdiction
 2. Start D-U-N-S application (do this first, it's slow)
-3. Continue Pentatone development while waiting
+3. Continue Diatone development while waiting
 4. Apply for developer program when D-U-N-S arrives
 5. Start TestFlight when approved
 
@@ -1432,7 +1434,7 @@ What Happens After Approval
 Once you're approved and have paid:
 
 1. App Store Connect Access
-   • Create app entries for Pentatone, ToneHive, etc.
+   • Create app entries for Diatone, ToneHive, etc.
    • All apps will show "Arithmophone" as the developer
    • Set up IAPs, screenshots, descriptions
 
@@ -1475,7 +1477,7 @@ This Week:
 • [ ] Update KVK registration to add "Arithmophone" as handelsnaam
 • [ ] Apply for D-U-N-S number (do this right away - longest wait)
 • [ ] Decide on Apple ID strategy (existing vs. new)
-• [ ] Continue Pentatone development
+• [ ] Continue Diatone development
 
 Week 2-3:
 • [ ] Wait for D-U-N-S number
@@ -1501,7 +1503,7 @@ Week 6-10:
 • [ ] Iterate based on feedback
 • [ ] Prepare for launch
 
-This puts you on track for Pentatone launch in ~3 months, which aligns perfectly with your overall timeline!
+This puts you on track for Diatone launch in ~3 months, which aligns perfectly with your overall timeline!
 
 Bottom Line
 
@@ -1517,6 +1519,6 @@ Total: 3-4 weeks from start to finish
 
 The fact that you're already registered with KVK makes this much easier than starting from scratch. You're basically just adding a trade name and getting some international identifiers.
 
-Start the D-U-N-S application now since it's the slowest step. While waiting, you can update KVK and continue developing Pentatone. By the time you're ready for TestFlight, your organization account will be ready!
+Start the D-U-N-S application now since it's the slowest step. While waiting, you can update KVK and continue developing Diatone. By the time you're ready for TestFlight, your organization account will be ready!
 
 Any questions about the Dutch-specific parts, or want help with any of these steps?

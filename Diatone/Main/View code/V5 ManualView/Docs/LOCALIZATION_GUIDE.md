@@ -1,14 +1,14 @@
-# Pentatone Localization Guide
+# Diatone Localization Guide
 
 ## Overview
 
-This guide explains how localization is implemented in Pentatone and how to add or update translations.
+This guide explains how localization is implemented in Diatone and how to add or update translations.
 
 ## Architecture
 
 ### 1. String Catalogs (`.xcstrings`)
 
-Pentatone uses Apple's modern **Strings Catalog** system for all localized text. All translations are stored in a single file: `Localizable.xcstrings`.
+Diatone uses Apple's modern **Strings Catalog** system for all localized text. All translations are stored in a single file: `Localizable.xcstrings`.
 
 **Benefits:**
 - Single source of truth for all languages
@@ -63,10 +63,10 @@ Examples:
 
 ```swift
 // Preferred method (SwiftUI)
-Text("manual.welcome.title", defaultValue: "Welcome to Pentatone")
+Text("manual.welcome.title", defaultValue: "Welcome to Diatone")
 
 // Alternative method
-let title = String(localized: "manual.welcome.title", defaultValue: "Welcome to Pentatone")
+let title = String(localized: "manual.welcome.title", defaultValue: "Welcome to Diatone")
 Text(title)
 ```
 
@@ -185,7 +185,7 @@ Test localization by:
 ## File Structure
 
 ```
-Pentatone/
+Diatone/
 ├── Resources/
 │   └── Localizable.xcstrings          ← All translations
 ├── Views/
@@ -196,12 +196,12 @@ Pentatone/
     └── LOCALIZATION_GUIDE.md          ← This file
 ```
 
-## Special Considerations for Pentatone
+## Special Considerations for Diatone
 
 ### Musical Terminology
 
 Some terms should **NOT** be translated:
-- Proper names: "Arithmophone", "Pentatone"
+- Proper names: "Arithmophone", "Diatone"
 - Note names: C, D, E, F, G, A, B (in most contexts)
 - Technical abbreviations: FM, LFO, ADSR
 

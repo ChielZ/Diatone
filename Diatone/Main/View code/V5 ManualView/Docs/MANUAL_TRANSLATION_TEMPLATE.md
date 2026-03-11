@@ -25,12 +25,12 @@ Each entry follows this format:
 
 ### manual.welcome.title
 - **Context**: Main heading of welcome section
-- **English**: "Welcome to Pentatone"
-- **Notes**: "Pentatone" is the app name - do not translate
+- **English**: "Welcome to Diatone"
+- **Notes**: "Diatone" is the app name - do not translate
 
 ### manual.welcome.description
 - **Context**: App description paragraph
-- **English**: "Pentatone is a musical instrument based on the Arithmophone, a keyboard designed to explore just intonation through pentatonic scales."
+- **English**: "Diatone is a musical instrument based on the Arithmophone, a keyboard designed to explore just intonation through pentatonic scales."
 - **Notes**: 
   - "Arithmophone" = proper name, do not translate
   - "just intonation" = technical music term
@@ -115,7 +115,7 @@ Each entry follows this format:
 
 ### manual.scales.ji.content
 - **Context**: Explanation text
-- **English**: "Pentatone uses just intonation, where intervals are based on simple frequency ratios, creating purer harmonies than equal temperament. See the Background section for more details."
+- **English**: "Diatone uses just intonation, where intervals are based on simple frequency ratios, creating purer harmonies than equal temperament. See the Background section for more details."
 - **Notes**: Brief introduction to tuning systems
 
 ### manual.scales.keys.title
@@ -135,7 +135,7 @@ Each entry follows this format:
 
 ### manual.scales.scales.content
 - **Context**: Explanation text
-- **English**: "Pentatone features the Arithmophone scale system with multiple pentatonic scales. Swipe or use the arrows to navigate between scales. See Background for scale theory."
+- **English**: "Diatone features the Arithmophone scale system with multiple pentatonic scales. Swipe or use the arrows to navigate between scales. See Background for scale theory."
 - **Notes**: Describes navigation UI
 
 ### manual.scales.rotation.title
@@ -286,7 +286,7 @@ Each entry follows this format:
 
 ### manual.editor.presets.content
 - **Context**: Explanation text
-- **English**: "Create, save, share, and organize your sound presets. Presets can be exported and shared with other Pentatone users."
+- **English**: "Create, save, share, and organize your sound presets. Presets can be exported and shared with other Diatone users."
 - **Notes**: File management features
 
 ### manual.editor.oscillators.title

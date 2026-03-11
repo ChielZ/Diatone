@@ -525,7 +525,7 @@ struct ScalesCatalog {
     
     
     /*
-    // OLD: PENTATONIC SCALES FOR PENTATONE APP
+    // OLD: PENTATONIC SCALES FOR Diatone APP
     // Just Intonation (ratios)
     static let moonOrient_JI = Scale(
         name: "Moon Orient (JI)",

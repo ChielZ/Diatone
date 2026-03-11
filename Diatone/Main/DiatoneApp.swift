@@ -156,18 +156,18 @@ struct Penta_ToneApp: App {
     private func resetUIToFactoryPreset() {
         // Reset all UI tracking to factory preset 1.1
         // Note: Both SoundView and PresetView share the same bank selection key
-        UserDefaults.standard.set(PentatoneBankType.factory.rawValue, forKey: "presetView.selectedBankTypeRawValue")
+        UserDefaults.standard.set(DiatoneBankType.factory.rawValue, forKey: "presetView.selectedBankTypeRawValue")
         UserDefaults.standard.set(1, forKey: "presetView.selectedRow")
         UserDefaults.standard.set(1, forKey: "presetView.selectedColumn")
         
         UserDefaults.standard.set(1, forKey: "soundView.selectedRow")
         UserDefaults.standard.set(1, forKey: "soundView.selectedColumn")
         
-        UserDefaults.standard.set(PentatoneBankType.factory.rawValue, forKey: "activePreset.bankType")
+        UserDefaults.standard.set(DiatoneBankType.factory.rawValue, forKey: "activePreset.bankType")
         UserDefaults.standard.set(1, forKey: "activePreset.row")
         UserDefaults.standard.set(1, forKey: "activePreset.column")
         
-        print("✅ PentatoneApp: Reset UI to factory preset 1.1")
+        print("✅ DiatoneApp: Reset UI to factory preset 1.1")
     }
 }
 

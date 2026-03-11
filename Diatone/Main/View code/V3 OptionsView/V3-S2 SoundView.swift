@@ -19,19 +19,19 @@ struct SoundView: View {
     @AppStorage("soundView.selectedColumn") private var selectedColumn: Int = 1 // 1-5
     
     // PresetView's @AppStorage properties - update these when switching to EditView
-    @AppStorage("presetView.selectedBankTypeRawValue") private var presetViewSelectedBankTypeRawValue: String = PentatoneBankType.factory.rawValue
+    @AppStorage("presetView.selectedBankTypeRawValue") private var presetViewSelectedBankTypeRawValue: String = DiatoneBankType.factory.rawValue
     @AppStorage("presetView.selectedRow") private var presetViewSelectedRow: Int = 1
     @AppStorage("presetView.selectedColumn") private var presetViewSelectedColumn: Int = 1
     
     // Track the actually loaded preset (this is the source of truth for SoundView)
-    @AppStorage("activePreset.bankType") private var activePresetBankType: String = PentatoneBankType.factory.rawValue
+    @AppStorage("activePreset.bankType") private var activePresetBankType: String = DiatoneBankType.factory.rawValue
     @AppStorage("activePreset.row") private var activePresetRow: Int = 1
     @AppStorage("activePreset.column") private var activePresetColumn: Int = 1
     
     // SoundView always shows the bank of the currently active preset
     // (not the bank that was navigated to in PresetView)
-    private var selectedBankType: PentatoneBankType {
-        PentatoneBankType(rawValue: activePresetBankType) ?? .factory
+    private var selectedBankType: DiatoneBankType {
+        DiatoneBankType(rawValue: activePresetBankType) ?? .factory
     }
     
     // Get the currently selected preset

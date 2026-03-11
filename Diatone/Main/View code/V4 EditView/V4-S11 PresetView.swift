@@ -16,7 +16,7 @@ struct PresetView: View {
     @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
     
     // UI State - Using @AppStorage to persist across view changes
-    @AppStorage("presetView.selectedBankTypeRawValue") private var selectedBankTypeRawValue: String = PentatoneBankType.factory.rawValue
+    @AppStorage("presetView.selectedBankTypeRawValue") private var selectedBankTypeRawValue: String = DiatoneBankType.factory.rawValue
     @AppStorage("presetView.selectedRow") private var selectedRow: Int = 1 // 1-5
     @AppStorage("presetView.selectedColumn") private var selectedColumn: Int = 1 // 1-5
     
@@ -25,14 +25,14 @@ struct PresetView: View {
     @AppStorage("soundView.selectedColumn") private var soundViewSelectedColumn: Int = 1
     
     // Track the actually loaded preset (for color computation)
-    @AppStorage("activePreset.bankType") private var activePresetBankType: String = PentatoneBankType.factory.rawValue
+    @AppStorage("activePreset.bankType") private var activePresetBankType: String = DiatoneBankType.factory.rawValue
     @AppStorage("activePreset.row") private var activePresetRow: Int = 1
     @AppStorage("activePreset.column") private var activePresetColumn: Int = 1
     
     // Computed property for selectedBankType
-    private var selectedBankType: PentatoneBankType {
+    private var selectedBankType: DiatoneBankType {
         get {
-            PentatoneBankType(rawValue: selectedBankTypeRawValue) ?? .factory
+            DiatoneBankType(rawValue: selectedBankTypeRawValue) ?? .factory
         }
         set {
             selectedBankTypeRawValue = newValue.rawValue
@@ -363,7 +363,7 @@ struct PresetView: View {
     
     private func previousBank() {
         // Get all bank types and find current index
-        let allBanks = PentatoneBankType.allCases
+        let allBanks = DiatoneBankType.allCases
         if let currentIndex = allBanks.firstIndex(of: selectedBankType) {
             if currentIndex > 0 {
                 selectedBankTypeRawValue = allBanks[currentIndex - 1].rawValue
@@ -376,7 +376,7 @@ struct PresetView: View {
     
     private func nextBank() {
         // Get all bank types and find current index
-        let allBanks = PentatoneBankType.allCases
+        let allBanks = DiatoneBankType.allCases
         if let currentIndex = allBanks.firstIndex(of: selectedBankType) {
             if currentIndex < allBanks.count - 1 {
                 selectedBankTypeRawValue = allBanks[currentIndex + 1].rawValue
@@ -619,7 +619,7 @@ struct PresetView: View {
                 // Pre-fill with the name of the currently active preset
                 // (the one being edited), not the preset in the slot being overwritten
                 if let activePreset = presetManager.preset(
-                    forBankType: PentatoneBankType(rawValue: activePresetBankType) ?? .factory,
+                    forBankType: DiatoneBankType(rawValue: activePresetBankType) ?? .factory,
                     row: activePresetRow,
                     column: activePresetColumn
                 ) {

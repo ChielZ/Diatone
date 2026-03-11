@@ -1,6 +1,6 @@
 //
 //  Manual sketchpad.swift
-//  Pentatone
+//  Diatone
 //
 //  Created by Chiel Zwinkels on 10/01/2026.
 //
@@ -9,7 +9,7 @@
  
  INTRODUCTION
  - What is an Arithmophone?
- - What is Pentatone?
+ - What is Diatone?
  
  THE KEYBOARD
  - Touch sensitivity

@@ -184,7 +184,7 @@ CHECKLIST FOR LATER TROUBLESHOOTING/IMPROVEMENTS
  
  4. Voice view
  4.3        Tips
- 4.4/5/6    Pentatone logo area
+ 4.4/5/6    Diatone logo area
  4.7        Voice mode
  4.8        Octave
  4.9        Fine tune
