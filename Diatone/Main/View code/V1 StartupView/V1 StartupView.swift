@@ -9,11 +9,15 @@ import SwiftUI
 
 struct StartupView: View {
     var body: some View {
-        ZStack{
-            Color("BackgroundColour").ignoresSafeArea()            
-            //Image("Penta-Tone icon dark")
-              //  .resizable().aspectRatio(contentMode: .fit)
-        }.statusBar(hidden: true)
+        Color("BackgroundColour")
+            .overlay {
+                Image("Diatone startup icon")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 1024, maxHeight: 1024)
+            }
+            .ignoresSafeArea()
+            .statusBar(hidden: true)
     }
 }
 
