@@ -163,7 +163,7 @@ struct ManualView: View {
                                 .fill(Color("BackgroundColour"))
                             
                             ScrollViewReader { proxy in
-                                ScrollView {
+                                ScrollView(showsIndicators: false) {
                                     VStack(alignment: .center, spacing: 15) {
                                         // Invisible anchor at the top for scrolling
                                         Color.clear
@@ -742,7 +742,7 @@ struct ManualView: View {
         ZoomableDownsampledImageView(imageName: "Guide JI grid", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("If we now colour these notes with the colour scheme that is used for the keyboard of ththis app, the result will look like this:")
+        Text("If we now colour these notes with the colour scheme that is used for the keyboard of this app, the result will look like this:")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
