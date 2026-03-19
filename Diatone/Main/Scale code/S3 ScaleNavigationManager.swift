@@ -89,11 +89,11 @@ final class ScaleNavigationManager: ObservableObject {
     
     /// Creates a scale navigation manager
     /// - Parameters:
-    ///   - initialScale: The initial scale to select (defaults to Center Meridian JI)
+    ///   - initialScale: The initial scale to select (defaults to Dorian ET)
     ///   - initialKey: The initial musical key (defaults to D)
     init(initialScale: Scale? = nil, initialKey: MusicalKey = .D) {
         // Find the index of the initial scale
-        let targetScale = initialScale ?? ScalesCatalog.Dorian_JI_E
+        let targetScale = initialScale ?? ScalesCatalog.Dorian_ET_E
         if let index = ScalesCatalog.all.firstIndex(where: { $0 == targetScale }) {
             self.currentScaleIndex = index
         } else {

@@ -47,11 +47,11 @@ final class KeyboardState: ObservableObject {
     
     /// Creates a keyboard state with the specified scale and key
     /// - Parameters:
-    ///   - scale: The initial scale (default: Center Meridian JI)
+    ///   - scale: The initial scale (default: Dorian ET)
     ///   - key: The initial musical key (default: D)
     init(scale: Scale? = nil, key: MusicalKey = .D) {
-        // Use provided scale or default to Center Meridian JI
-        self.currentScale = scale ?? ScalesCatalog.Dorian_JI_E
+        // Use provided scale or default to Dorian ET
+        self.currentScale = scale ?? ScalesCatalog.Dorian_ET_E
         self.currentKey = key
         
         // Compute initial frequencies

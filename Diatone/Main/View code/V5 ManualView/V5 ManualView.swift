@@ -221,7 +221,7 @@ struct ManualView: View {
             .padding(.top, 20)
             .centeredText()
         
-        Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, because it is able to take pure and simple ratios like 3/2 and 5/4 and turn these in to musical notes.")
+        Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, because it has an option for 'Just Intonation' tuning, that doesn't use the standard notes of Western Music, but instead takes pure and simple numeric ratios like 3/2 and 5/4 and turn these in to musical notes.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -408,7 +408,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("TUNING: here you can switch between just intonation and equal temperament tuning. Just intonation uses rational harmonic intervals, where the notes sound perfectly in tune with each other, while equal temperament is the standard tuning of Western musical instruments like guitars and pianos. Both of these tuning modes have their own distinct character. The differences are fairly subtle but in general, with just intonation some note combinations sound perfect together while other combinations sound quite out of tune, whereas in equal temperament, no note combinations are perfect, but all combinations are quite acceptable. If you'd like to learn more about this, please read the background information in section III of this guide, but you don't need to worry about this if you don't want to. In general, you can simply leave this on 'just' when you're playing by yourself, or switch to 'equal' when you're playing together with other instruments.")
+        Text("TUNING: here you can switch between equal temperament and just intonation tuning. Equal temperament is the standard tuning system used in Western musical instruments like guitars and pianos, while just intonation uses rational harmonic intervals instead, so that the notes in the scale are in perfect numerical proportions to each other. This tuning method is much more ancient and universal than the modern Western system of equal temperament and has a distinctly 'harmonious' feel to it, though this comes at the expense of less flexibility in playing chords and moving to different keys. Both of these tuning systems have their own distinct character. The differences are fairly subtle but put simply, with just intonation some note combinations sound perfect together while other combinations are quite out of tune, whereas in equal temperament, no note combinations are perfect, but all combinations are quite acceptable. If you'd like to learn more about this, please read the background information in section III of this guide, but you don't need to worry about it if you don't want to. You can simply leave this on 'equal', forget about it and start making some music, and revisit this setting any time you feel like exploring the wonderfully deep connection between notes and numbers.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -772,7 +772,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The distance between these two notes is small enough that tempered tunings can 'sweep it under the rug' and represent both ratios with just a single note, but it is definitely audible, and becomes particularly apparent when multiple notes are played simultaneously in chords. And these are just two of the options for the C note on D: there are other, more 'microtonal' candidates for the C note, most notably the 'pure harmonic seventh' or 7/1 ratio, and there are multiple options for all other notes as well. With just intonation, there are essentially infinitely many different tonal colours, and this can be a grat thing or a problem, depending on how you look at it.")
+        Text("The distance between these two notes is small enough that tempered tunings can 'sweep it under the rug' and represent both ratios with just a single note, but it is definitely audible, and becomes particularly apparent when multiple notes are played simultaneously in chords. And these are just two of the options for the C note on D: there are other, more 'microtonal' candidates for the C note, most notably the 'pure harmonic seventh' or 7/1 ratio, and there are multiple options for all other notes as well. With just intonation, there are essentially infinitely many different tonal colours, and this can be a great thing or a problem, depending on how you look at it.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -825,13 +825,13 @@ struct ManualView: View {
         ZoomableDownsampledImageView(imageName: "Guide ET note names", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("With 12 tone equal temperament, what we loose in tuning accuracy, we gain in flexibility. Whether or not this is a good tradeoff really depends on the musical context. Listen to a piano piece by a 19th century composer like Debussy or Brahms and you will hear the full power of 12 tone equal temperament: that kind of harmonic motion and musical flexibility is hardly possible in a just intonation context. But listen to a Kora piece by one of the great players of this instrument like Toumani Diabaté or Ballaké Sissoko and you can hear the sweet harmonic purity of just intonation that is impossible to achieve on an instrument tuned to equal temperament.")
+        Text("With 12 tone equal temperament, what we lose in tuning accuracy, we gain in flexibility. Whether or not this is a good tradeoff really depends on the musical context. Listen to a piano piece by a 19th century composer like Debussy or Brahms and you will hear the full power of 12 tone equal temperament: that kind of harmonic motion and musical flexibility is hardly possible in a just intonation context. But listen to a Kora piece by one of the great players of this instrument like Toumani Diabaté or Ballaké Sissoko and you can hear the sweet harmonic purity of just intonation that is impossible to achieve on an instrument tuned to equal temperament.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Both of these are the result of wonderfully rich musical traditions. The Arithmophone Diatone lets you get a taste of each approach. If you want to use it to play along with other instruments like a guitar or a keyboard, then definitely select equal temperament tuning. If you are playing by yourself then it may be worth experimenting a bit to see if you can hear the different feeling each tuning system imparts on your playing. Don't be discouraged if you don't immediately hear the difference: it's subtle and more prominent on some note combinations than on others, but it's definitely there.")
+        Text("Both of these are the result of wonderfully rich musical traditions. The Arithmophone Diatone lets you get a taste of each approach. If you want to use it to play along with other instruments, then make sure you use the proper tuning system. For typical Western instruments like a guitar or a keyboard, this will be equal temperament tuning, but many instruments from other musical traditions, like the sitar, the kora or the koto, are commonly tuned with just intonation intervals. If you are playing by yourself then it may be worth experimenting a bit to see if you can hear the different feeling each tuning system imparts on your playing. Don't be discouraged if you don't immediately hear the difference: it's subtle and more prominent on some note combinations than on others, but it's definitely there.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -1095,6 +1095,14 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 20)
         
+        Text("EQUAL TEMPERAMENT SCALES WITH NOTE NAMES")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.top, 20)
+        ZoomableDownsampledImageView(imageName: "Guide ET scales", maxHeight: 800)
+            .padding(.vertical, 5)
+ 
         Text("JUST INTONATION SCALES WITH RATIOS")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
@@ -1111,14 +1119,7 @@ struct ManualView: View {
         ZoomableDownsampledImageView(imageName: "Guide JI scales notes", maxHeight: 800)
             .padding(.vertical, 5)
         
-        Text("EQUAL TEMPERAMENT SCALES WITH NOTE NAMES")
-            .foregroundColor(Color("HighlightColour"))
-            .adaptiveFont("MontserratAlternates-Medium", size: 16)
-            .centeredText()
-            .padding(.top, 20)
-        ZoomableDownsampledImageView(imageName: "Guide ET scales", maxHeight: 800)
-            .padding(.vertical, 5)
-         
+        
     }
 }
 
