@@ -41,6 +41,9 @@ struct EditView: View {
     
     // Observe the shared button width from OptionsView
     @ObservedObject private var sharedButtonWidth = SharedButtonWidth.shared
+    
+    // Randomization flash animation
+    @State private var isFlashingRandomize = false
 
     var body: some View {
         
@@ -130,14 +133,28 @@ struct EditView: View {
                         .fill(Color("BackgroundColour"))
                     GeometryReader { geometry in
                         Text("Arithmophone")
-                            .foregroundColor(Color("SupportColour"))
+                            .foregroundColor(isFlashingRandomize ? Color("HighlightColour") : Color("SupportColour"))
                             .adaptiveFont("LobsterTwo-Italic", size: 42)
                             .frame(width: geometry.size.width, height: geometry.size.height)
                             .contentShape(Rectangle())
                             .offset(y: -(geometry.size.height/10))
                             .padding(0)
-                            .onTapGesture {
-                                onSwitchToOptions?()
+                            //.onTapGesture {
+                            //    onSwitchToOptions?()
+                            //}
+                            .onLongPressGesture(minimumDuration: 0.5) {
+                                // Flash the text to highlight colour
+                                withAnimation(.easeIn(duration: 0.05)) {
+                                    isFlashingRandomize = true
+                                }
+                                // Randomize all parameters
+                                AudioParameterManager.shared.randomizeAllParameters()
+                                // Fade back to support colour
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                    withAnimation(.easeOut(duration: 0.4)) {
+                                        isFlashingRandomize = false
+                                    }
+                                }
                             }
                     }
                 }

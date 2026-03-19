@@ -147,7 +147,7 @@ struct PresetView: View {
             // Row 5 - Load/Save Preset
             ZStack {
                 RoundedRectangle(cornerRadius: radius)
-                    .fill(currentSlotPreset != nil ? Color("SupportColour") : Color("HighlightColour"))
+                    .fill(currentSlotPreset != nil ? Color("SupportColour") : Color("SupportColour"))
                 GeometryReader { geometry in
                     Text(currentSlotPreset != nil ? "･LOAD PRESET･" : "･SAVE PRESET･")
                         .foregroundColor(Color("BackgroundColour"))

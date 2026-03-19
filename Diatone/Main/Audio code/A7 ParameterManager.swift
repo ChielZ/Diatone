@@ -946,6 +946,153 @@ final class AudioParameterManager: ObservableObject {
         )
     }
     
+    // MARK: - Parameter Randomization
+    
+    /// Randomize all editable sound parameters to produce a new random patch
+    /// Preserves output volume, tempo, voice mode, and macro ranges
+    /// Uses musically sensible ranges to avoid unusable extremes
+    func randomizeAllParameters() {
+        // --- Oscillator ---
+        let waveforms = OscillatorWaveform.allCases
+        let newWaveform = waveforms.randomElement() ?? .sine
+        updateOscillatorWaveform(newWaveform)
+        
+        let carriers = CarrierMultiplier.allCases
+        let newCarrier = carriers.randomElement() ?? .one
+        updateCarrierMultiplier(newCarrier.rawValue)
+        
+        // Modulating multiplier: coarse 0-8, fine 0.0-0.99
+        let coarse = Int.random(in: 0...8)
+        let fine = Double.random(in: 0.0...0.99)
+        let newModMult = Double(coarse) + (round(fine * 100) / 100)
+        voiceTemplate.oscillator.modulatingMultiplier = newModMult
+        
+        // Modulation index: 0.0 - 5.0
+        updateModulationIndex(Double.random(in: 0.0...5.0))
+        
+        // Detune mode
+        let detuneModes = DetuneMode.allCases
+        updateDetuneMode(detuneModes.randomElement() ?? .proportional)
+        
+        // Stereo offset
+        updateStereoOffsetProportional(Double.random(in: 0.0...30.0))
+        updateStereoOffsetConstant(Double.random(in: 0.0...5.0))
+        
+        // --- Filter ---
+        // Cutoff: 80 Hz to 12000 Hz (logarithmic feel via exponential random)
+        let logCutoff = Double.random(in: log(80.0)...log(12000.0))
+        updateFilterCutoff(exp(logCutoff))
+        
+        // Resonance: 0.0 - 1.5
+        updateFilterResonance(Double.random(in: 0.0...1.5))
+        
+        // Saturation: 0.0 - 1.5
+        updateFilterSaturation(Double.random(in: 0.0...1.5))
+        
+        // --- Loudness Envelope ---
+        updateEnvelopeAttack(Double.random(in: 0.001...1.0))
+        updateEnvelopeDecay(Double.random(in: 0.0...1.5))
+        updateEnvelopeSustain(Double.random(in: 0.0...1.0))
+        updateEnvelopeRelease(Double.random(in: 0.01...2.0))
+        
+        // --- Modulator Envelope ---
+        updateModulatorEnvelopeAttack(Double.random(in: 0.0...1.0))
+        updateModulatorEnvelopeDecay(Double.random(in: 0.0...1.5))
+        updateModulatorEnvelopeSustain(Double.random(in: 0.0...1.0))
+        updateModulatorEnvelopeRelease(Double.random(in: 0.0...2.0))
+        updateModulatorEnvelopeAmountToModulationIndex(Double.random(in: -3.0...3.0))
+        
+        // --- Auxiliary Envelope ---
+        updateAuxiliaryEnvelopeAttack(Double.random(in: 0.0...1.0))
+        updateAuxiliaryEnvelopeDecay(Double.random(in: 0.0...1.5))
+        updateAuxiliaryEnvelopeSustain(Double.random(in: 0.0...1.0))
+        updateAuxiliaryEnvelopeRelease(Double.random(in: 0.0...2.0))
+        updateAuxiliaryEnvelopeAmountToPitch(Double.random(in: -12.0...12.0))
+        updateAuxiliaryEnvelopeAmountToFilter(Double.random(in: -3.0...3.0))
+        updateAuxiliaryEnvelopeAmountToVibrato(Double.random(in: 0.0...1.0))
+        
+        // --- Voice LFO ---
+        let lfoWaveforms = LFOWaveform.allCases
+        updateVoiceLFOWaveform(lfoWaveforms.randomElement() ?? .sine)
+        let lfoResetModes: [LFOResetMode] = [.free, .trigger]
+        updateVoiceLFOResetMode(lfoResetModes.randomElement() ?? .free)
+        updateVoiceLFOFrequency(Double.random(in: 0.1...10.0))
+        updateVoiceLFODelayTime(Double.random(in: 0.0...2.0))
+        updateVoiceLFOAmountToPitch(Double.random(in: -2.0...2.0))
+        updateVoiceLFOAmountToFilter(Double.random(in: -2.0...2.0))
+        updateVoiceLFOAmountToModulatorLevel(Double.random(in: -2.0...2.0))
+        
+        // --- Global LFO ---
+        updateGlobalLFOWaveform(lfoWaveforms.randomElement() ?? .sine)
+        let globalResetModes = LFOResetMode.allCases
+        updateGlobalLFOResetMode(globalResetModes.randomElement() ?? .free)
+        updateGlobalLFOFrequency(Double.random(in: 0.1...8.0))
+        let syncValues = LFOSyncValue.allCases
+        updateGlobalLFOSyncValue(syncValues.randomElement() ?? .whole)
+        updateGlobalLFOAmountToMixerVolume(Double.random(in: 0.0...0.5))
+        updateGlobalLFOAmountToModulatorMultiplier(Double.random(in: 0.0...0.3))
+        updateGlobalLFOAmountToFilter(Double.random(in: -1.0...1.0))
+        updateGlobalLFOAmountToDelayTime(Double.random(in: 0.0...0.02))
+        
+        // --- Key Tracking ---
+        updateKeyTrackingAmountToFilterFrequency(Double.random(in: 0.0...1.0))
+        updateKeyTrackingAmountToVoiceLFOFrequency(Double.random(in: 0.0...0.5))
+        
+        // --- Touch ---
+        updateInitialTouchAmountToAmplitude(Double.random(in: 0.0...1.0))
+        updateInitialTouchAmountToModEnvelope(Double.random(in: 0.0...1.0))
+        updateInitialTouchAmountToAuxEnvPitch(Double.random(in: 0.0...1.0))
+        updateInitialTouchAmountToAuxEnvCutoff(Double.random(in: 0.0...1.0))
+        updateAftertouchAmountToPitch(Double.random(in: -2.0...2.0))
+        updateAftertouchAmountToFilter(Double.random(in: -2.0...2.0))
+        updateAftertouchAmountToModulatorLevel(Double.random(in: -2.0...2.0))
+        updateAftertouchAmountToVibrato(Double.random(in: 0.0...2.0))
+        
+        // --- Effects ---
+        let delayTimes = DelayTimeValue.allCases
+        updateDelayTimeValue(delayTimes.randomElement() ?? .eighth)
+        updateDelayFeedback(Double.random(in: 0.0...0.8))
+        updateDelayMix(Double.random(in: 0.0...0.5))
+        let logToneCutoff = Double.random(in: log(200.0)...log(18000.0))
+        updateDelayToneCutoff(exp(logToneCutoff))
+        
+        updateReverbFeedback(Double.random(in: 0.0...0.95))
+        updateReverbMix(Double.random(in: 0.0...0.5))
+        let logReverbCutoff = Double.random(in: log(500.0)...log(18000.0))
+        updateReverbCutoff(exp(logReverbCutoff))
+        
+        // --- Macro Control Ranges ---
+        // Randomize the macro sensitivity ranges too
+        updateToneToModulationIndexRange(Double.random(in: 0.0...3.0))
+        updateToneToFilterCutoffOctaves(Double.random(in: 0.0...4.0))
+        updateToneToFilterSaturationRange(Double.random(in: 0.0...1.0))
+        updateAmbienceToDelayFeedbackRange(Double.random(in: 0.0...0.5))
+        updateAmbienceToDelayMixRange(Double.random(in: 0.0...0.5))
+        updateAmbienceToReverbFeedbackRange(Double.random(in: 0.0...0.5))
+        updateAmbienceToReverbMixRange(Double.random(in: 0.0...0.5))
+        
+        // --- Global Pitch ---
+        // Reset pitch to neutral (randomizing pitch would be disorienting)
+        updateTransposeSemitones(0)
+        updateOctaveOffset(0)
+        updateFineTuneCents(0.0)
+        
+        // Sync macro base values to new parameters
+        captureBaseValues()
+        
+        // Apply oscillator changes to all voices (waveform change needs recreation)
+        voicePool?.recreateOscillators(waveform: newWaveform) {
+            voicePool?.updateAllVoiceOscillators(self.voiceTemplate.oscillator)
+            voicePool?.updateAllVoiceFilters(self.voiceTemplate.filter)
+            voicePool?.updateAllVoiceFilterStatic(self.voiceTemplate.filterStatic)
+            voicePool?.updateAllVoiceModulation(self.voiceTemplate.modulation)
+            voicePool?.updateAllVoiceLoudnessEnvelopes(self.voiceTemplate.loudnessEnvelope)
+        }
+        
+        markAsModified()
+        print("🎲 All parameters randomized")
+    }
+    
     // MARK: - Application to AudioKit
     
     /// Apply all parameters to the audio engine

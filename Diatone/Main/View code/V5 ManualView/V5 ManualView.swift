@@ -695,7 +695,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("On an instrument where you can touch the strings directly, like a violin or a guitar, it is very easy to check this for yourself. If you lightly touch the string at exactly half the length of the string (on a fretted instrument like a guitar, this is just over the 12th fret), you will mute the root frequency and accentuate the second harmonic. This uses half the length of the string, and sounds at twice the frequency. If you place your finger at one third of the length (or over the 7th fret), you will hear the third harmonic accentuated (three times the root frequency), et cetera. If after that you just play the open string again, you may be able to hear how the full sound contains all of these individual harmonics.")
+        Text("On an instrument where you can touch the strings directly, like a violin or a guitar, it is very easy to check this for yourself. If you lightly touch the string at exactly half the length of the string (on a fretted instrument like a guitar, this is just over the 12th fret), you will mute the root frequency and accentuate the second harmonic. This uses half the length of the string, and sounds at twice the frequency (880 Hz). If you place your finger at one third of the length (or over the 7th fret), you will hear the third harmonic accentuated (three times the root frequency), et cetera. If you then just play the open string again, you will probably be able to hear how the full sound of the vibrating string contains all of these individual harmonics within itself.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -707,7 +707,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Each of the harmonics of a note stands in a certain ratio to its root frequency, and each of those ratios corresponds to a certain note. We can use this fact to tune the other strings of the violin (or on any stringed instrument in general) in relation to one specific root frequency, and this is in fact precisely what just intonation means. When we sound the second harmonic of the A string, which produces the note E, and then tune our E string so that it resonates perfectly with the harmonic, we are using just intonation, plain and simple.")
+        Text("Each of the harmonics of a note stands in a certain ratio to its root frequency, and each of those ratios corresponds to a certain note. We can use this fact to tune the other strings of the violin (or on any stringed instrument in general) in relation to one specific root frequency, and this is in fact precisely what just intonation means. When we sound the third harmonic of the A string, which produces the note E, and then tune our E string so that it resonates perfectly with the harmonic, we are using just intonation, plain and simple.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -721,19 +721,19 @@ struct ManualView: View {
         
         
         
-        Text("Any multiple of the root frequency produces a new harmonic and in principle this goes on forever, but the relative loudness of the harmonics decreases as their frequency increases, so in practice the first few harmonics are much more prominent than the higher ones. Simply by combining factors of 2, 3 and 5, we can create all of the diatonic scales that are featured in this app. For example, the ratios of a D major scale might be: 1/1 (D), 9/8 (E), 5/4 (F#), 4/3 (G), 3/2 (A), 5/3 (B), 15/8 (C#), 2/1 (D).")
+        Text("Any multiple of the root frequency produces a new harmonic and in principle this goes on forever, but the relative loudness of the harmonics decreases as their frequency increases, so in practice the first few harmonics are much more prominent than the higher ones. Simply by combining factors of 2, 3 and 5, we can create all of the diatonic scales that are featured in this app. For example, the ratios and notes of a D major scale might be: 1/1 (D), 9/8 (E), 5/4 (F#), 4/3 (G), 3/2 (A), 5/3 (B), 15/8 (C#), 2/1 (D).")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("To avoid confusion, we should pay careful attention to the distinction between scale position and harmonic position. For example, in the C major scale, E is the third note and for this reason, the interval from C to E is usually called a (major) third. But E is the fifth harmonic of C. In contrast, G is the fifth note of the scale and usually called a (perfect) fifth, even though G is the third harmonic of C.")
+        Text("To avoid confusion, we should pay careful attention to the distinction between scale position and harmonic position. For example, in the C major scale, E is the third note and for this reason, the interval from C to E is usually called a (major) third. But E is the fifth harmonic of C. In contrast, G is the fifth note of the scale and usually called a (perfect) fifth, even though G is the third harmonic of C. This is potentially very confusing, but the scale position terminology is quite useful in itself for describing diatonic note relations, and it is so deeply ingrained in music theory and education that it can hardly be avoided, so it is just something that we will need to stay aware of.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The diagram below shows some of the most commonly used just intonation ratios, arranged in a so called '3-5 grid': you start with a fundamental note (the ratio 1/1) and then build other notes by multiplying or dividing. Moving left multiplies by 3 (going up a perfect fifth), while moving up multiplies by 5 (going up a major third). You can also divide to go in the opposite direction. With just two harmonic building block, this creates a complete lattice of musical notes, all related to each other through simple ratios. To bring the notes within the same octave, simply multiply or divide their ratios by 2 as needed.")
+        Text("The diagram below shows some of the most commonly used just intonation ratios, arranged in a so called '3-5 grid': you start with a fundamental note (the ratio 1/1) and then build other notes by multiplying or dividing. Moving left multiplies by 3 (going up a perfect fifth), while moving up multiplies by 5 (going up a major third). You can also divide to go in the opposite direction. With just two harmonic building blocks, this creates a complete lattice of musical notes, all related to each other through simple ratios. To bring the notes within the same octave, simply multiply or divide their ratios by 2 as needed.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -772,7 +772,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The distance between these two notes is small enough that tempered tunings can 'sweep it under the rug' and represent both ratios with just a single note, but it is definitely audible, and becomes particularly apparent when multiple notes are played simultaneously in chords. And these are just two of the options for the C note on D: there are other, more 'microtonal' candidates for the C note, most notably the 'pure harmonic seventh' or 7/1 ratio, and there are multiple options for all other notes as well. With just intonation, there are essentially infinitely many different tonal colours, and this can be a good thing or a problem, depending on how you look at it.")
+        Text("The distance between these two notes is small enough that tempered tunings can 'sweep it under the rug' and represent both ratios with just a single note, but it is definitely audible, and becomes particularly apparent when multiple notes are played simultaneously in chords. And these are just two of the options for the C note on D: there are other, more 'microtonal' candidates for the C note, most notably the 'pure harmonic seventh' or 7/1 ratio, and there are multiple options for all other notes as well. With just intonation, there are essentially infinitely many different tonal colours, and this can be a grat thing or a problem, depending on how you look at it.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
