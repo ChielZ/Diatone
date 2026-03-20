@@ -570,6 +570,16 @@ private struct KeyTouchHandler: UIViewRepresentable {
     class TouchHandlingView: UIView {
         weak var touchHandler: Coordinator?
         
+        /// Expand the touch-sensitive area vertically so gaps between keys are nearly eliminated.
+        /// Each key claims extra space above and below its visual bounds.
+        /// The visual appearance is unchanged — only hit-testing is affected.
+        private let verticalTouchExpansion: CGFloat = 4.0
+        
+        override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+            let expandedBounds = bounds.insetBy(dx: 0, dy: -verticalTouchExpansion)
+            return expandedBounds.contains(point)
+        }
+        
         override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
             guard let touch = touches.first else { return }
             let location = touch.location(in: self)
