@@ -284,6 +284,9 @@ final class VoicePool {
             // Check if the voice is still in use (not fully released yet)
             if !existingVoice.isAvailable {
                 // Retrigger the existing voice for this key
+                // Set skip flag before setFrequency to prevent modulation loop from
+                // overwriting the new frequency before trigger() completes
+                existingVoice.skipModulation = true
                 existingVoice.setFrequency(finalFrequency)
                 existingVoice.trigger(
                     initialTouchX: initialTouchX,
@@ -311,6 +314,9 @@ final class VoicePool {
         clearKeyMappingForVoice(voice)
         
         // Set frequency and trigger with initial touch value
+        // Set skip flag before setFrequency to prevent modulation loop from
+        // overwriting the new frequency before trigger() completes
+        voice.skipModulation = true
         voice.setFrequency(finalFrequency)
         voice.trigger(
             initialTouchX: initialTouchX, 

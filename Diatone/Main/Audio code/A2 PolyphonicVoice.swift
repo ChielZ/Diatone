@@ -68,6 +68,12 @@ final class PolyphonicVoice {
     var isAvailable: Bool = true
     var isPlaying: Bool = false
     
+    /// When true, the modulation loop skips writing to this voice's audio parameters.
+    /// Set at the start of trigger()/retrigger() and cleared at the end, preventing the
+    /// background modulation thread from overwriting freshly-set frequency/filter values
+    /// with stale data calculated from the previous note's modulation state.
+    var skipModulation: Bool = false
+    
     /// The current base frequency (center frequency between left and right oscillators)
     private(set) var currentFrequency: Double = 440.0
     
@@ -361,7 +367,11 @@ final class PolyphonicVoice {
     ///   - initialTouchX: Initial touch x-position for the new note
     ///   - templateFilterCutoff: Optional override for base filter cutoff (from current template)
     func retrigger(frequency: Double, initialTouchX: Double = 0.5, templateFilterCutoff: Double? = nil) {
+        // Prevent the background modulation loop from overwriting parameters during retrigger
+        skipModulation = true
+        
         guard isInitialized else {
+            skipModulation = false
             assertionFailure("Voice must be initialized before retriggering")
             return
         }
@@ -450,6 +460,9 @@ final class PolyphonicVoice {
         
         // NOTE: Envelopes are NOT restarted - this is the key difference from trigger()
         // The voice continues playing with its current envelope state
+        
+        // Allow the modulation loop to resume writing to this voice's parameters
+        skipModulation = false
     }
     
     /// Applies initial envelope modulation values at trigger time
@@ -576,7 +589,11 @@ final class PolyphonicVoice {
     ///   - templateFilterCutoff: Optional override for base filter cutoff (from current template)
     ///   - templateFilterStatic: Optional override for static filter parameters (resonance, saturation)
     func trigger(initialTouchX: Double = 0.5, templateFilterCutoff: Double? = nil, templateFilterStatic: FilterStaticParameters? = nil) {
+        // Prevent the background modulation loop from overwriting parameters during trigger setup
+        skipModulation = true
+        
         guard isInitialized else {
+            skipModulation = false
             assertionFailure("Voice must be initialized before triggering")
             return
         }
@@ -808,6 +825,10 @@ final class PolyphonicVoice {
         isAvailable = false
         isPlaying = true
         triggerTime = Date()
+        
+        // Allow the modulation loop to resume writing to this voice's parameters.
+        // All modulation state is now fully consistent with the new note.
+        skipModulation = false
     }
     
     /// Releases this voice (starts envelope release)
@@ -1022,6 +1043,11 @@ final class PolyphonicVoice {
         deltaTime: Double,
         currentTempo: Double = 120.0
     ) {
+        // Skip modulation writes while trigger() or retrigger() is in progress on the main thread.
+        // This prevents the modulation loop from overwriting freshly-set frequency/filter values
+        // with stale data calculated from the previous note's state.
+        guard !skipModulation else { return }
+        
         // Update envelope times based on gate state
         if modulationState.isGateOpen {
             // THREAD-SAFE TRIGGER DETECTION:
