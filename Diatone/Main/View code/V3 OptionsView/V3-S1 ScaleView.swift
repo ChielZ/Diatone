@@ -94,16 +94,7 @@ struct ScaleView: View {
                     }
                 }
             )
-            ZStack { // Row 5 - Intonation
-                AlignedSelectorRow(
-                    leftSymbol: "<",
-                    rightSymbol: ">",
-                    centerText: currentScale.intonation.rawValue,
-                    buttonAnchors: buttonAnchors,
-                    onLeftTap: { onCycleIntonation?(false) },
-                    onRightTap: { onCycleIntonation?(true) }
-                )
-            }
+            
             ZStack { // Row 6 - Musical Key
                 AlignedSelectorRow(
                     leftSymbol: "<",
@@ -115,6 +106,16 @@ struct ScaleView: View {
                 )
                 // Overlay the MusicalKeyText for proper formatting
                 MusicalKeyText(key: currentKey, size: 30)
+            }
+            ZStack { // Row 5 - Intonation
+                AlignedSelectorRow(
+                    leftSymbol: "<",
+                    rightSymbol: ">",
+                    centerText: currentScale.intonation.rawValue,
+                    buttonAnchors: buttonAnchors,
+                    onLeftTap: { onCycleIntonation?(false) },
+                    onRightTap: { onCycleIntonation?(true) }
+                )
             }
             ZStack { // Row 7 - Celestial
                 AlignedSelectorRow(

@@ -458,6 +458,9 @@
     "One situation where it is clearly NOT a good thing to have infinitely many different notes, is when you're trying to build a fixed pitch instrument like a piano or a guitar with fixed frets, that only has a limited number of notes/strings/frets available. With just intonation, you can tune a piano so that it sounds great in the key of C, but then if you'd want to play something in the key of D flat, you will find that it is quite badly out of tune. This can only be resolved by retuning the entire instrument - but in that case it will no longer be in tune in the key of C." : {
 
     },
+    "Per Sound" : {
+
+    },
     "Preset Manager" : {
 
     },
