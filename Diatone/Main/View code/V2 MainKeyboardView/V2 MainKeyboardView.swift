@@ -496,8 +496,8 @@ private struct KeyTouchHandler: UIViewRepresentable {
             // Normalize touch position to 0...1
             let normalized = max(0.0, min(1.0, touchX / viewWidth))
             
-            // Get global pitch parameters from parameter manager
-            let globalPitch = AudioParameterManager.shared.master.globalPitch
+            // Get effective global pitch (respects global mode overrides)
+            let globalPitch = AudioParameterManager.shared.effectiveGlobalPitch
             
             // Allocate voice from pool with initial touch value (for immediate velocity-like response)
             // This ensures amplitude is set correctly BEFORE the voice is triggered

@@ -1,0 +1,130 @@
+//
+//  NewPresetFormat.swift
+//  Diatone
+//
+//  Created by Chiel Zwinkels on 22/03/2026.
+//
+
+// EXAMPLE FILE FOR NEW PRESET STRUCTURE
+
+/*
+
+{
+  "createdAt" : "2026-02-05T13:42:52Z",
+  "id" : "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B",
+  "name" : "Basic",
+  "voiceTemplate" : {
+      "oscillator" {
+        "waveform" : "sine",
+      "carrierMultiplier" : 1,
+      "modulatingMultiplier" : 2,
+      "modulationIndex" : 1,
+      "detuneMode" : "proportional",
+      "stereoOffsetConstant" : 2,
+      "stereoOffsetProportional" : 5,
+      "amplitude" : 0.5
+    }
+      "filter" : {
+      "cutoffFrequency" : 880
+    },
+    "filterStatic" : {
+      "resonance" : 0.5,
+      "saturation" : 0.5
+    },
+     "modulation" : {
+       "loudnessEnvelope" : {
+        "attack" : 0.001,
+        "decay" : 0,
+        "sustain" : 1,
+        "release" : 0.01
+      },
+      "modulatorEnvelope" : {
+        "attack" : 0,
+        "decay" : 0.5,
+        "sustain" : 0,
+        "release" : 0.25,
+        "amountToModulationIndex" : 0
+      },
+      "auxiliaryEnvelope" : {
+        "attack" : 0,
+        "decay" : 0.5,
+        "sustain" : 0,
+        "release" : 0.25,
+        "amountToOscillatorPitch" : 0,
+        "amountToFilterFrequency" : 0,
+        "amountToVibrato" : 0,
+        
+      },
+      "voiceLFO" : {
+        "waveform" : "sine",
+        "resetMode" : "free",
+        "frequency" : 5,
+        "delayTime" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0,
+        "amountToVoiceLFOFrequency" : 0,
+      },
+      "touchInitial" : {
+        "amountToOscillatorAmplitude" : 0,
+        "amountToModEnvelope" : 0,
+        "amountToAuxEnvCutoff" : 0,
+      },
+      "touchAftertouch" : {
+        "amountToModulatorLevel" : 0,
+        "amountToFilterFrequency" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0
+      }
+    },
+  }
+  "master" : {
+      "tempo" : 100,
+    "voiceMode" : "polyphonic"
+    "globalPitch" : {
+      "octave" : 1,
+      "transpose" : 1
+      "fineTune" : 1,
+    },
+    "globalLFO" : {
+      "waveform" : "sine",
+      "resetMode" : "free",
+      "frequencyMode" : "hertz",
+      "frequency" : 1,
+      "syncValue" : 1,
+      "amountToVoiceMixerVolume" : 0,
+      "amountToModulatorMultiplier" : 0,
+      "amountToFilterFrequency" : 0,
+      "amountToDelayTime" : 0,
+    },
+    "delay" : {
+      "timeValue" : 0.125,
+      "feedback" : 0.5,
+      "toneCutoff" : 10000,
+      "dryWetMix" : 0
+    },
+    "reverb" : {
+      "feedback" : 0.5,
+      "cutoffFrequency" : 10000,
+      "balance" : 0
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.75
+    },
+    "macroControl" : {
+      "toneToModulationIndexRange" : 1.25,
+      "toneToFilterCutoffOctaves" : 2.5,
+      "toneToFilterSaturationRange" : 0.5,
+      "ambienceToDelayFeedbackRange" : 0.25,
+      "ambienceToDelayMixRange" : 0.25,
+      "ambienceToReverbFeedbackRange" : 0.25,
+      "ambienceToReverbMixRange" : 0.25
+    },
+  },
+}
+ 
+*/

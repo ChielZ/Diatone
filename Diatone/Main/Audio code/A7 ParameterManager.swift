@@ -67,10 +67,143 @@ final class AudioParameterManager: ObservableObject {
         parametersModifiedSinceLoad = false
     }
     
+    // MARK: - Global Mode
+    
+    /// When true, tempo/octave/tune/bend persist across preset changes
+    @Published var isGlobalMode: Bool = false
+    
+    /// Global override values (used when isGlobalMode is true)
+    @Published var globalTempo: Double = 100.0
+    @Published var globalOctaveOffset: Int = 0
+    @Published var globalFineTuneCents: Double = 0.0
+    @Published var globalBendRange: Double = 2.0
+    
+    /// Tempo that the audio engine should use
+    var effectiveTempo: Double {
+        isGlobalMode ? globalTempo : master.tempo
+    }
+    
+    /// GlobalPitch that voices should use at trigger time
+    var effectiveGlobalPitch: GlobalPitchParameters {
+        if isGlobalMode {
+            var pitch = master.globalPitch
+            pitch.setOctaveOffset(globalOctaveOffset)
+            pitch.setFineTuneCents(globalFineTuneCents)
+            return pitch
+        }
+        return master.globalPitch
+    }
+    
+    /// Bend range the modulation system should use
+    var effectiveBendRange: Double {
+        isGlobalMode ? globalBendRange : voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
+    }
+    
+    /// Modulation parameters with effective bend range applied
+    var effectiveModulationForVoices: VoiceModulationParameters {
+        if isGlobalMode {
+            var mod = voiceTemplate.modulation
+            mod.touchAftertouch.amountToOscillatorPitch = globalBendRange
+            return mod
+        }
+        return voiceTemplate.modulation
+    }
+    
+    /// Toggle between Per Sound and Global modes
+    func setGlobalMode(_ enabled: Bool) {
+        if enabled && !isGlobalMode {
+            // Entering global mode: snapshot current live values
+            globalTempo = master.tempo
+            globalOctaveOffset = master.globalPitch.octaveOffset
+            globalFineTuneCents = master.globalPitch.fineTuneCents
+            globalBendRange = voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
+            persistGlobalValues()
+        } else if !enabled && isGlobalMode {
+            // Leaving global mode: push global values back into preset data
+            // so the sound continues unchanged
+            master.tempo = globalTempo
+            var pitch = master.globalPitch
+            pitch.setOctaveOffset(globalOctaveOffset)
+            pitch.setFineTuneCents(globalFineTuneCents)
+            master.globalPitch = pitch
+            voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch = globalBendRange
+        }
+        isGlobalMode = enabled
+        UserDefaults.standard.set(enabled, forKey: "globalMode.enabled")
+    }
+    
+    private func persistGlobalValues() {
+        UserDefaults.standard.set(globalTempo, forKey: "globalMode.tempo")
+        UserDefaults.standard.set(globalOctaveOffset, forKey: "globalMode.octaveOffset")
+        UserDefaults.standard.set(globalFineTuneCents, forKey: "globalMode.fineTuneCents")
+        UserDefaults.standard.set(globalBendRange, forKey: "globalMode.bendRange")
+    }
+    
+    // MARK: - Effective Parameter Updates (used by VoiceView)
+    
+    func updateEffectiveTempo(_ tempo: Double) {
+        if isGlobalMode {
+            globalTempo = tempo
+            UserDefaults.standard.set(tempo, forKey: "globalMode.tempo")
+            // Apply to audio engine using global tempo
+            let timeInSeconds = master.delay.timeInSeconds(tempo: tempo)
+            fxDelay?.time = AUValue(timeInSeconds)
+            voicePool?.updateBaseDelayTime(timeInSeconds)
+            if master.globalLFO.resetMode == .sync {
+                let lfoFrequency = master.globalLFO.actualFrequency(tempo: tempo)
+                voicePool?.updateGlobalLFOFrequency(lfoFrequency)
+            }
+        } else {
+            updateTempo(tempo)
+        }
+    }
+    
+    func updateEffectiveOctaveOffset(_ offset: Int) {
+        if isGlobalMode {
+            globalOctaveOffset = offset
+            UserDefaults.standard.set(offset, forKey: "globalMode.octaveOffset")
+        } else {
+            updateOctaveOffset(offset)
+        }
+    }
+    
+    func updateEffectiveFineTuneCents(_ cents: Double) {
+        if isGlobalMode {
+            globalFineTuneCents = cents
+            UserDefaults.standard.set(cents, forKey: "globalMode.fineTuneCents")
+        } else {
+            updateFineTuneCents(cents)
+        }
+    }
+    
+    func updateEffectiveBendRange(_ value: Double) {
+        if isGlobalMode {
+            globalBendRange = value
+            UserDefaults.standard.set(value, forKey: "globalMode.bendRange")
+            // Push effective modulation to all voices
+            let effectiveMod = effectiveModulationForVoices
+            for voice in voicePool?.voices ?? [] {
+                voice.updateModulationParameters(effectiveMod)
+            }
+        } else {
+            updateAftertouchAmountToPitch(value)
+        }
+    }
+    
     // MARK: - Initialization
     
     private init() {
-        // Private to enforce singleton
+        let savedGlobalMode = UserDefaults.standard.bool(forKey: "globalMode.enabled")
+        self._isGlobalMode = Published(initialValue: savedGlobalMode)
+        if savedGlobalMode {
+            let t = UserDefaults.standard.double(forKey: "globalMode.tempo")
+            self._globalTempo = Published(initialValue: (t >= 30 && t <= 240) ? t : 100.0)
+            self._globalOctaveOffset = Published(initialValue: UserDefaults.standard.integer(forKey: "globalMode.octaveOffset"))
+            let ft = UserDefaults.standard.double(forKey: "globalMode.fineTuneCents")
+            self._globalFineTuneCents = Published(initialValue: (ft >= -50 && ft <= 50) ? ft : 0.0)
+            let br = UserDefaults.standard.double(forKey: "globalMode.bendRange")
+            self._globalBendRange = Published(initialValue: (br >= 0 && br <= 15) ? br : 2.0)
+        }
     }
     
     // MARK: - Master Parameter Updates
@@ -89,7 +222,7 @@ final class AudioParameterManager: ObservableObject {
     func updateDelayTimeValue(_ timeValue: DelayTimeValue) {
         master.delay.timeValue = timeValue
         // Calculate actual time in seconds and apply to engine
-        let timeInSeconds = timeValue.timeInSeconds(tempo: master.tempo)
+        let timeInSeconds = timeValue.timeInSeconds(tempo: effectiveTempo)
         fxDelay?.time = AUValue(timeInSeconds)
         // Update base delay time in voice pool for LFO modulation
         voicePool?.updateBaseDelayTime(timeInSeconds)
@@ -165,6 +298,8 @@ final class AudioParameterManager: ObservableObject {
     
     func updateTempo(_ tempo: Double) {
         master.tempo = tempo
+        // In global mode, editor changes preset data but don't affect audio engine
+        guard !isGlobalMode else { return }
         // Recalculate and apply delay time with new tempo
         let timeInSeconds = master.delay.timeInSeconds(tempo: tempo)
         fxDelay?.time = AUValue(timeInSeconds)
@@ -533,7 +668,7 @@ final class AudioParameterManager: ObservableObject {
         // When switching to sync mode, recalculate frequency from sync value
         // When switching from sync mode, keep the current Hz frequency
         if mode == .sync {
-            let lfoFrequency = master.globalLFO.actualFrequency(tempo: master.tempo)
+            let lfoFrequency = master.globalLFO.actualFrequency(tempo: effectiveTempo)
             master.globalLFO.frequency = lfoFrequency  // Update the master copy too!
             voicePool?.updateGlobalLFOFrequency(lfoFrequency)
         }
@@ -563,7 +698,7 @@ final class AudioParameterManager: ObservableObject {
     func updateGlobalLFOSyncValue(_ syncValue: LFOSyncValue) {
         master.globalLFO.syncValue = syncValue
         // Calculate actual frequency from sync value and apply
-        let lfoFrequency = syncValue.frequencyInHz(tempo: master.tempo)
+        let lfoFrequency = syncValue.frequencyInHz(tempo: effectiveTempo)
         master.globalLFO.frequency = lfoFrequency  // Update the master copy too!
         voicePool?.updateGlobalLFOFrequency(lfoFrequency)
         voicePool?.updateGlobalLFO(master.globalLFO)
@@ -1088,7 +1223,7 @@ final class AudioParameterManager: ObservableObject {
     private func applyDelayParameters() {
         guard let delay = fxDelay else { return }
         // Calculate time in seconds based on current tempo
-        let timeInSeconds = master.delay.timeInSeconds(tempo: master.tempo)
+        let timeInSeconds = master.delay.timeInSeconds(tempo: effectiveTempo)
         delay.time = AUValue(timeInSeconds)
         delay.feedback = AUValue(master.delay.feedback)
         // Note: delay.dryWetMix is now fixed at 0.0 (100% wet) - controlled by external mixer
@@ -1261,7 +1396,8 @@ final class AudioParameterManager: ObservableObject {
         voiceTemplate = voiceParams
         
         // Update base values in all voices immediately
-        voicePool?.updateAllVoiceModulation(voiceParams.modulation)
+        // In global mode, use effective modulation so global bend range is preserved
+        voicePool?.updateAllVoiceModulation(effectiveModulationForVoices)
         voicePool?.updateAllVoiceOscillators(voiceParams.oscillator)
         voicePool?.updateAllVoiceFilters(voiceParams.filter)
         voicePool?.updateAllVoiceFilterStatic(voiceParams.filterStatic)

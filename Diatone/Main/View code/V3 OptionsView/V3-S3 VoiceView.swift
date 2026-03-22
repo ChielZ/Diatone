@@ -23,8 +23,8 @@ struct VoiceView: View {
     
     // Computed property to force view updates
     private var fineTuneCentsDisplay: Int {
-        let value = Int(round(paramManager.master.globalPitch.fineTuneCents))
-        return value
+        let cents = paramManager.isGlobalMode ? paramManager.globalFineTuneCents : paramManager.master.globalPitch.fineTuneCents
+        return Int(round(cents))
     }
     
     var body: some View {
@@ -41,16 +41,16 @@ struct VoiceView: View {
                 RoundedRectangle(cornerRadius: radius)
                     .fill(Color("BackgroundColour"))
                 GeometryReader { geometry in
-                    Text("Per Sound")
+                    Text(paramManager.isGlobalMode ? "Global" : "Per Sound")
                         .foregroundColor(Color("SupportColour"))
                         .adaptiveFont("LobsterTwo-Italic", size: 50)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .contentShape(Rectangle())
                         .offset(y: -(geometry.size.height/2 + 11))
                         .padding(0)
-                        //.onTapGesture {
-                        //    onSwitchToEdit?()
-                        //}
+                        .onTapGesture {
+                            paramManager.setGlobalMode(!paramManager.isGlobalMode)
+                        }
                 }
             }
             
@@ -117,9 +117,9 @@ struct VoiceView: View {
                                 )
                                 .contentShape(Rectangle())
                                 .onTapGesture {
-                                    let current = paramManager.master.tempo
+                                    let current = paramManager.effectiveTempo
                                     if current > 30 {
-                                        paramManager.updateTempo(Double(current - 1))
+                                        paramManager.updateEffectiveTempo(current - 1)
                                     }
                                 }
                         }
@@ -127,7 +127,7 @@ struct VoiceView: View {
                         Spacer()
                         
                         // Center text with drag gesture
-                        Text("TEMPO \(Int(paramManager.master.tempo))")
+                        Text("TEMPO \(Int(paramManager.effectiveTempo))")
                             .foregroundColor(Color("HighlightColour"))
                             .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
@@ -137,7 +137,7 @@ struct VoiceView: View {
                                     .onChanged { value in
                                         if dragStartValue == 0 {
                                             dragStartValue = value.startLocation.x
-                                            tempoDragStart = paramManager.master.tempo
+                                            tempoDragStart = paramManager.effectiveTempo
                                         }
                                         
                                         let delta = value.location.x - dragStartValue
@@ -145,8 +145,8 @@ struct VoiceView: View {
                                         let newValue = tempoDragStart + Double(steps)
                                         let clampedValue = max(30, min(240, newValue))
                                         
-                                        if clampedValue != paramManager.master.tempo {
-                                            paramManager.updateTempo(clampedValue)
+                                        if clampedValue != paramManager.effectiveTempo {
+                                            paramManager.updateEffectiveTempo(clampedValue)
                                         }
                                     }
                                     .onEnded { _ in
@@ -169,9 +169,9 @@ struct VoiceView: View {
                                 )
                                 .contentShape(Rectangle())
                                 .onTapGesture {
-                                    let current = paramManager.master.tempo
+                                    let current = paramManager.effectiveTempo
                                     if current < 240 {
-                                        paramManager.updateTempo(Double(current + 1))
+                                        paramManager.updateEffectiveTempo(current + 1)
                                     }
                                 }
                         }
@@ -186,19 +186,20 @@ struct VoiceView: View {
                     rightSymbol: ">",
                     buttonAnchors: buttonAnchors,
                     onLeftTap: {
-                        let current = paramManager.master.globalPitch.octaveOffset
+                        let current = paramManager.isGlobalMode ? paramManager.globalOctaveOffset : paramManager.master.globalPitch.octaveOffset
                         if current > -2 {
-                            paramManager.updateOctaveOffset(current - 1)
+                            paramManager.updateEffectiveOctaveOffset(current - 1)
                         }
                     },
                     onRightTap: {
-                        let current = paramManager.master.globalPitch.octaveOffset
+                        let current = paramManager.isGlobalMode ? paramManager.globalOctaveOffset : paramManager.master.globalPitch.octaveOffset
                         if current < 2 {
-                            paramManager.updateOctaveOffset(current + 1)
+                            paramManager.updateEffectiveOctaveOffset(current + 1)
                         }
                     }
                 ) {
-                    Text("OCTAVE \(paramManager.master.globalPitch.octaveOffset > 0 ? "+" : "")\(paramManager.master.globalPitch.octaveOffset)")
+                    let octave = paramManager.isGlobalMode ? paramManager.globalOctaveOffset : paramManager.master.globalPitch.octaveOffset
+                    Text("OCTAVE \(octave > 0 ? "+" : "")\(octave)")
                         .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         .minimumScaleFactor(0.5)
@@ -208,7 +209,7 @@ struct VoiceView: View {
                                 .onChanged { value in
                                     if dragStartValue == 0 {
                                         dragStartValue = value.startLocation.x
-                                        octaveDragStart = paramManager.master.globalPitch.octaveOffset
+                                        octaveDragStart = paramManager.isGlobalMode ? paramManager.globalOctaveOffset : paramManager.master.globalPitch.octaveOffset
                                     }
                                     
                                     let delta = value.location.x - dragStartValue
@@ -216,8 +217,9 @@ struct VoiceView: View {
                                     let newValue = octaveDragStart + steps
                                     let clampedValue = max(-2, min(2, newValue))
                                     
-                                    if clampedValue != paramManager.master.globalPitch.octaveOffset {
-                                        paramManager.updateOctaveOffset(clampedValue)
+                                    let currentOctave = paramManager.isGlobalMode ? paramManager.globalOctaveOffset : paramManager.master.globalPitch.octaveOffset
+                                    if clampedValue != currentOctave {
+                                        paramManager.updateEffectiveOctaveOffset(clampedValue)
                                     }
                                 }
                                 .onEnded { _ in
@@ -234,13 +236,13 @@ struct VoiceView: View {
                     onLeftTap: {
                         let current = fineTuneCentsDisplay
                         if current > -50 {
-                            paramManager.updateFineTuneCents(Double(current - 1))
+                            paramManager.updateEffectiveFineTuneCents(Double(current - 1))
                         }
                     },
                     onRightTap: {
                         let current = fineTuneCentsDisplay
                         if current < 50 {
-                            paramManager.updateFineTuneCents(Double(current + 1))
+                            paramManager.updateEffectiveFineTuneCents(Double(current + 1))
                         }
                     }
                 ) {
@@ -254,7 +256,8 @@ struct VoiceView: View {
                                 .onChanged { value in
                                     if dragStartValue == 0 {
                                         dragStartValue = value.startLocation.x
-                                        tuneDragStart = paramManager.master.globalPitch.fineTuneCents
+                                        let currentCents = paramManager.isGlobalMode ? paramManager.globalFineTuneCents : paramManager.master.globalPitch.fineTuneCents
+                                        tuneDragStart = currentCents
                                     }
                                     
                                     let delta = value.location.x - dragStartValue
@@ -262,8 +265,8 @@ struct VoiceView: View {
                                     let newValue = tuneDragStart + Double(steps)
                                     let clampedValue = max(-50, min(50, newValue))
                                     
-                                    if round(clampedValue) != round(paramManager.master.globalPitch.fineTuneCents) {
-                                        paramManager.updateFineTuneCents(round(clampedValue))
+                                    if round(clampedValue) != Double(fineTuneCentsDisplay) {
+                                        paramManager.updateEffectiveFineTuneCents(round(clampedValue))
                                     }
                                 }
                                 .onEnded { _ in
@@ -280,21 +283,21 @@ struct VoiceView: View {
                     rightSymbol: ">",
                     buttonAnchors: buttonAnchors,
                     onLeftTap: {
-                        let current = paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
+                        let current = paramManager.effectiveBendRange
                         if current > 0 {
-                            paramManager.updateAftertouchAmountToPitch(current - 1)
+                            paramManager.updateEffectiveBendRange(current - 1)
                             applyModulationToAllVoices()
                         }
                     },
                     onRightTap: {
-                        let current = paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
+                        let current = paramManager.effectiveBendRange
                         if current < 15 {
-                            paramManager.updateAftertouchAmountToPitch(current + 1)
+                            paramManager.updateEffectiveBendRange(current + 1)
                             applyModulationToAllVoices()
                         }
                     }
                 ) {
-                    Text("BEND \(50 * Int(paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch))")
+                    Text("BEND \(50 * Int(paramManager.effectiveBendRange))")
                         .foregroundColor(Color("HighlightColour"))
                         .adaptiveFont("MontserratAlternates-Medium", size: 30)
                         .minimumScaleFactor(0.5)
@@ -304,7 +307,7 @@ struct VoiceView: View {
                                 .onChanged { value in
                                     if dragStartValue == 0 {
                                         dragStartValue = value.startLocation.x
-                                        BendDragStart = paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch
+                                        BendDragStart = paramManager.effectiveBendRange
                                     }
                                     
                                     let delta = value.location.x - dragStartValue
@@ -312,8 +315,8 @@ struct VoiceView: View {
                                     let newValue = Int(BendDragStart) + steps
                                     let clampedValue = max(0, min(15, newValue))
                                     
-                                    if clampedValue != Int(paramManager.voiceTemplate.modulation.touchAftertouch.amountToOscillatorPitch) {
-                                        paramManager.updateAftertouchAmountToPitch(Double(clampedValue))
+                                    if clampedValue != Int(paramManager.effectiveBendRange) {
+                                        paramManager.updateEffectiveBendRange(Double(clampedValue))
                                         applyModulationToAllVoices()
                                     }
                                 }
@@ -390,7 +393,7 @@ struct VoiceView: View {
     }
     /// Applies current modulation parameters to all active voices
     private func applyModulationToAllVoices() {
-        let modulationParams = paramManager.voiceTemplate.modulation
+        let modulationParams = paramManager.effectiveModulationForVoices
         
         // Apply to all voices in the pool
         for voice in voicePool.voices {

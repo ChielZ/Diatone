@@ -156,7 +156,7 @@ struct TouchView: View {
     
     /// Applies current modulation parameters to all active voices
     private func applyModulationToAllVoices() {
-        let modulationParams = paramManager.voiceTemplate.modulation
+        let modulationParams = paramManager.effectiveModulationForVoices
         
         // Apply to all voices in the pool
         for voice in voicePool.voices {
