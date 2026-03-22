@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-02-03T20:30:07Z",
   "id" : "3CC21418-B3FF-4A44-9858-8DE49D15F244",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.5,
-    "baseDelayMix" : 0,
-    "baseFilterCutoff" : 18794.54514671409,
-    "baseFilterSaturation" : 0,
-    "baseModulationIndex" : 0.5,
-    "basePreVolume" : 0.5,
-    "baseReverbFeedback" : 0.9,
-    "baseReverbMix" : 0.125,
-    "tonePosition" : 0,
-    "volumePosition" : 0.5
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0,
@@ -28,7 +15,6 @@
       "amountToVoiceMixerVolume" : 0.45,
       "frequency" : 3.33,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "sine"
@@ -41,7 +27,7 @@
     "macroControl" : {
       "ambienceToDelayFeedbackRange" : 0.25,
       "ambienceToDelayMixRange" : 0.25,
-      "ambienceToReverbFeedbackRange" : 0.15000000000000002,
+      "ambienceToReverbFeedbackRange" : 0.15,
       "ambienceToReverbMixRange" : 0.5,
       "toneToFilterCutoffOctaves" : 5,
       "toneToFilterSaturationRange" : 1,
@@ -49,10 +35,10 @@
     },
     "output" : {
       "preVolume" : 0.5,
-      "volume" : 0.4999999999999999
+      "volume" : 0.5
     },
     "reverb" : {
-      "balance" : 0.125,
+      "balance" : 0.13,
       "cutoffFrequency" : 2500,
       "feedback" : 0.9
     },
@@ -61,14 +47,8 @@
   },
   "name" : "Belle",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.001,
-      "decayDuration" : 0,
-      "releaseDuration" : 0.14962356560944345,
-      "sustainLevel" : 1
-    },
     "filter" : {
-      "cutoffFrequency" : 18794.54514671409
+      "cutoffFrequency" : 18795
     },
     "filterStatic" : {
       "resonance" : 0,
@@ -76,62 +56,53 @@
     },
     "modulation" : {
       "auxiliaryEnvelope" : {
-        "amountToFilterFrequency" : 1.3877787807814457e-17,
+        "amountToFilterFrequency" : 0,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 2.8449465006019636e-16,
-        "attack" : 1.2797784817315643,
-        "decay" : 1.1756608833707216,
-        "isEnabled" : true,
-        "release" : 0.024952913133080148,
+        "amountToVibrato" : 0,
+        "attack" : 1.28,
+        "decay" : 1.18,
+        "release" : 0.02,
         "sustain" : 1
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0,
-        "amountToVoiceLFOFrequency" : 1,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 1
       },
       "loudnessEnvelope" : {
         "attack" : 0.001,
         "decay" : 0,
-        "isEnabled" : true,
-        "release" : 0.14962356560944345,
+        "release" : 0.15,
         "sustain" : 1
       },
       "modulatorEnvelope" : {
-        "amountToModulationIndex" : 2.0000000000000018,
+        "amountToModulationIndex" : 2,
         "attack" : 0,
-        "decay" : 0.6950210813926442,
-        "isEnabled" : true,
-        "release" : 0.05069907082747045,
+        "decay" : 0.7,
+        "release" : 0.05,
         "sustain" : 0
       },
       "touchAftertouch" : {
         "amountToFilterFrequency" : 0,
         "amountToModulatorLevel" : 5,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0,
-        "isEnabled" : true
+        "amountToVibrato" : 0
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 0,
-        "amountToAuxEnvPitch" : 0,
         "amountToModEnvelope" : 2,
-        "amountToOscillatorAmplitude" : 0,
-        "isEnabled" : true
+        "amountToOscillatorAmplitude" : 0
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0,
-        "amountToModulatorLevel" : 0.25,
+        "amountToModulatorLevel" : 0.3,
         "amountToOscillatorPitch" : 0,
         "delayTime" : 0,
         "frequency" : 6,
-        "isEnabled" : true,
         "resetMode" : "free",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "proportional",
       "modulatingMultiplier" : 5.025,

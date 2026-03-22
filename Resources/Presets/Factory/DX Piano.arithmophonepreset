@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T10:00:02Z",
   "id" : "A1B2C3D4-3333-4AAA-BBBB-000000000003",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.2,
-    "baseDelayMix" : 0,
-    "baseFilterCutoff" : 6000,
-    "baseFilterSaturation" : 0.1,
-    "baseModulationIndex" : 1.2,
-    "basePreVolume" : 0.5,
-    "baseReverbFeedback" : 0.55,
-    "baseReverbMix" : 0.08,
-    "tonePosition" : 0,
-    "volumePosition" : 0.5
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0,
@@ -28,7 +15,6 @@
       "amountToVoiceMixerVolume" : 0,
       "frequency" : 1,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "sine"
@@ -61,39 +47,30 @@
   },
   "name" : "DX Piano",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.001,
-      "decayDuration" : 2.5,
-      "releaseDuration" : 0.4,
-      "sustainLevel" : 0.05
-    },
     "filter" : {
       "cutoffFrequency" : 6000
     },
     "filterStatic" : {
-      "resonance" : 0.05,
+      "resonance" : 0.1,
       "saturation" : 0.1
     },
     "modulation" : {
       "auxiliaryEnvelope" : {
-        "amountToFilterFrequency" : 1.0,
+        "amountToFilterFrequency" : 1,
         "amountToOscillatorPitch" : 0,
         "amountToVibrato" : 0,
         "attack" : 0.001,
         "decay" : 0.5,
-        "isEnabled" : true,
         "release" : 0.2,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.8,
-        "amountToVoiceLFOFrequency" : 0,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0
       },
       "loudnessEnvelope" : {
         "attack" : 0.001,
         "decay" : 2.5,
-        "isEnabled" : true,
         "release" : 0.4,
         "sustain" : 0.05
       },
@@ -101,7 +78,6 @@
         "amountToModulationIndex" : 2.5,
         "attack" : 0,
         "decay" : 0.8,
-        "isEnabled" : true,
         "release" : 0.2,
         "sustain" : 0
       },
@@ -109,15 +85,12 @@
         "amountToFilterFrequency" : 0,
         "amountToModulatorLevel" : 2,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0.15,
-        "isEnabled" : true
+        "amountToVibrato" : 0.2
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 0.3,
-        "amountToAuxEnvPitch" : 0,
-        "amountToModEnvelope" : 1.0,
-        "amountToOscillatorAmplitude" : 0.5,
-        "isEnabled" : true
+        "amountToModEnvelope" : 1,
+        "amountToOscillatorAmplitude" : 0.5
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0,
@@ -125,16 +98,14 @@
         "amountToOscillatorPitch" : 0,
         "delayTime" : 0,
         "frequency" : 5,
-        "isEnabled" : true,
         "resetMode" : "free",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "proportional",
-      "modulatingMultiplier" : 7.0,
+      "modulatingMultiplier" : 7,
       "modulationIndex" : 1.2,
       "stereoOffsetConstant" : 2,
       "stereoOffsetProportional" : 3,

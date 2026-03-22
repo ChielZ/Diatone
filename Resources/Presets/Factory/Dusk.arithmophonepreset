@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T11:00:02Z",
   "id" : "B2C3D4E5-3333-4BBB-CCCC-000000000003",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.4,
-    "baseDelayMix" : 0.1,
-    "baseFilterCutoff" : 500,
-    "baseFilterSaturation" : 0.6,
-    "baseModulationIndex" : 0,
-    "basePreVolume" : 0.5,
-    "baseReverbFeedback" : 0.8,
-    "baseReverbMix" : 0.25,
-    "tonePosition" : 0,
-    "volumePosition" : 0.5
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0.1,
@@ -28,7 +15,6 @@
       "amountToVoiceMixerVolume" : 0.12,
       "frequency" : 0.4,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "sine"
@@ -61,12 +47,6 @@
   },
   "name" : "Dusk",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.005,
-      "decayDuration" : 3.5,
-      "releaseDuration" : 0.6,
-      "sustainLevel" : 0
-    },
     "filter" : {
       "cutoffFrequency" : 500
     },
@@ -81,19 +61,16 @@
         "amountToVibrato" : 0,
         "attack" : 0.001,
         "decay" : 1.8,
-        "isEnabled" : true,
         "release" : 0.5,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.5,
-        "amountToVoiceLFOFrequency" : 0,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0
       },
       "loudnessEnvelope" : {
         "attack" : 0.005,
         "decay" : 3.5,
-        "isEnabled" : true,
         "release" : 0.6,
         "sustain" : 0
       },
@@ -101,37 +78,31 @@
         "amountToModulationIndex" : 0,
         "attack" : 0,
         "decay" : 0.5,
-        "isEnabled" : true,
         "release" : 0.25,
         "sustain" : 0
       },
       "touchAftertouch" : {
-        "amountToFilterFrequency" : 1.0,
+        "amountToFilterFrequency" : 1,
         "amountToModulatorLevel" : 0,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0.3,
-        "isEnabled" : true
+        "amountToVibrato" : 0.3
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 1.5,
-        "amountToAuxEnvPitch" : 0,
         "amountToModEnvelope" : 0,
-        "amountToOscillatorAmplitude" : 0.4,
-        "isEnabled" : true
+        "amountToOscillatorAmplitude" : 0.4
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0.2,
         "amountToModulatorLevel" : 0,
-        "amountToOscillatorPitch" : 0.04,
+        "amountToOscillatorPitch" : 0.1,
         "delayTime" : 0.6,
-        "frequency" : 4.0,
-        "isEnabled" : true,
+        "frequency" : 4,
         "resetMode" : "trigger",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "constant",
       "modulatingMultiplier" : 2,

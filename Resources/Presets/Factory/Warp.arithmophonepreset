@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T12:00:05Z",
   "id" : "C3D4E5F6-6666-4CCC-DDDD-000000000006",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.35,
-    "baseDelayMix" : 0.08,
-    "baseFilterCutoff" : 800,
-    "baseFilterSaturation" : 1.0,
-    "baseModulationIndex" : 1.8,
-    "basePreVolume" : 0.45,
-    "baseReverbFeedback" : 0.6,
-    "baseReverbMix" : 0.12,
-    "tonePosition" : 0,
-    "volumePosition" : 0.45
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0.08,
@@ -24,11 +11,10 @@
     "globalLFO" : {
       "amountToDelayTime" : 0,
       "amountToFilterFrequency" : 0.3,
-      "amountToModulatorMultiplier" : 0.03,
+      "amountToModulatorMultiplier" : 0,
       "amountToVoiceMixerVolume" : 0,
       "frequency" : 0.15,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "sine"
@@ -45,7 +31,7 @@
       "ambienceToReverbMixRange" : 0.35,
       "toneToFilterCutoffOctaves" : 3.5,
       "toneToFilterSaturationRange" : 0.6,
-      "toneToModulationIndexRange" : 2.0
+      "toneToModulationIndexRange" : 2
     },
     "output" : {
       "preVolume" : 0.45,
@@ -61,18 +47,12 @@
   },
   "name" : "Warp",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.01,
-      "decayDuration" : 0.4,
-      "releaseDuration" : 0.2,
-      "sustainLevel" : 0.9
-    },
     "filter" : {
       "cutoffFrequency" : 800
     },
     "filterStatic" : {
-      "resonance" : 0.35,
-      "saturation" : 1.0
+      "resonance" : 0.4,
+      "saturation" : 1
     },
     "modulation" : {
       "auxiliaryEnvelope" : {
@@ -80,63 +60,54 @@
         "amountToOscillatorPitch" : 0,
         "amountToVibrato" : 0,
         "attack" : 0.01,
-        "decay" : 2.0,
-        "isEnabled" : true,
+        "decay" : 2,
         "release" : 0.5,
         "sustain" : 0.2
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.5,
-        "amountToVoiceLFOFrequency" : 0.4,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0.4
       },
       "loudnessEnvelope" : {
         "attack" : 0.01,
         "decay" : 0.4,
-        "isEnabled" : true,
         "release" : 0.2,
         "sustain" : 0.9
       },
       "modulatorEnvelope" : {
-        "amountToModulationIndex" : 3.0,
+        "amountToModulationIndex" : 3,
         "attack" : 0.02,
         "decay" : 1.5,
-        "isEnabled" : true,
         "release" : 0.3,
         "sustain" : 0.15
       },
       "touchAftertouch" : {
         "amountToFilterFrequency" : 1.5,
-        "amountToModulatorLevel" : 3.0,
-        "amountToOscillatorPitch" : 0.3,
-        "amountToVibrato" : 0.5,
-        "isEnabled" : true
+        "amountToModulatorLevel" : 3,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0.5
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 0.5,
-        "amountToAuxEnvPitch" : 0,
         "amountToModEnvelope" : 0.5,
-        "amountToOscillatorAmplitude" : 0.25,
-        "isEnabled" : true
+        "amountToOscillatorAmplitude" : 0.25
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0.2,
         "amountToModulatorLevel" : 0.3,
-        "amountToOscillatorPitch" : 0.08,
+        "amountToOscillatorPitch" : 0.1,
         "delayTime" : 0.3,
         "frequency" : 3.5,
-        "isEnabled" : true,
         "resetMode" : "free",
         "waveform" : "triangle"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "constant",
       "modulatingMultiplier" : 2.01,
       "modulationIndex" : 1.8,
-      "stereoOffsetConstant" : 3.0,
+      "stereoOffsetConstant" : 3,
       "stereoOffsetProportional" : 5,
       "waveform" : "triangle"
     }

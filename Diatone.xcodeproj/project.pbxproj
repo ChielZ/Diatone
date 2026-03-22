@@ -24,13 +24,6 @@
 			);
 			target = 7F3D45E02EDCF9AC00538543 /* Diatone */;
 		};
-		7F4DA7252F7089FE001C94E7 /* Exceptions for "Resources" folder in "Diatone" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Presets/Untitled.swift,
-			);
-			target = 7F3D45E02EDCF9AC00538543 /* Diatone */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -44,9 +37,6 @@
 		};
 		7F7EE6C32F0FEACA00EF9DA8 /* Resources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				7F4DA7252F7089FE001C94E7 /* Exceptions for "Resources" folder in "Diatone" target */,
-			);
 			path = Resources;
 			sourceTree = "<group>";
 		};

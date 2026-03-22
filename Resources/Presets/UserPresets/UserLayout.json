@@ -1,0 +1,1216 @@
+{
+  "lastModified" : "2026-03-21T16:15:09Z",
+  "userASlots" : [
+    {
+      "bankType" : "User A",
+      "column" : 1,
+      "id" : "010E5A48-EA86-4F15-977B-FDA41E9987D6",
+      "row" : 1
+    },
+    {
+      "bankType" : "User A",
+      "column" : 2,
+      "id" : "7AF85D6D-0CDC-424F-A30C-842F858716D5",
+      "row" : 1
+    },
+    {
+      "bankType" : "User A",
+      "column" : 3,
+      "id" : "4255FB11-4391-4666-BAE5-7C28BF8966F6",
+      "row" : 1
+    },
+    {
+      "bankType" : "User A",
+      "column" : 4,
+      "id" : "5F229249-5342-4547-9A18-5FC55E947AA6",
+      "row" : 1
+    },
+    {
+      "bankType" : "User A",
+      "column" : 5,
+      "id" : "FB8D00B2-4FFF-4F04-B721-96B3E50C988A",
+      "row" : 1
+    },
+    {
+      "bankType" : "User A",
+      "column" : 6,
+      "id" : "7C28FC00-7B18-49D0-9916-54CC7E5D0D1B",
+      "row" : 1
+    },
+    {
+      "bankType" : "User A",
+      "column" : 7,
+      "id" : "74DFAB1D-9460-40C4-B601-101E9EB2AF3E",
+      "row" : 1
+    },
+    {
+      "bankType" : "User A",
+      "column" : 1,
+      "id" : "9B7335BA-A13D-4C48-8C56-AADD38F086B7",
+      "row" : 2
+    },
+    {
+      "bankType" : "User A",
+      "column" : 2,
+      "id" : "AF92D047-60BD-4A33-AFDB-0F0E870C11DF",
+      "row" : 2
+    },
+    {
+      "bankType" : "User A",
+      "column" : 3,
+      "id" : "A5AF327B-E595-4121-B7A8-23F947D5BE2D",
+      "row" : 2
+    },
+    {
+      "bankType" : "User A",
+      "column" : 4,
+      "id" : "20D396C1-3549-40C7-8B16-A66953E2E939",
+      "row" : 2
+    },
+    {
+      "bankType" : "User A",
+      "column" : 5,
+      "id" : "F1A116C1-DFD0-44CB-ADF7-E19919638D30",
+      "row" : 2
+    },
+    {
+      "bankType" : "User A",
+      "column" : 6,
+      "id" : "C5C5718E-86C4-4388-9EAF-400875B5422C",
+      "row" : 2
+    },
+    {
+      "bankType" : "User A",
+      "column" : 7,
+      "id" : "9F076753-E585-4977-95DE-DAAA60407172",
+      "row" : 2
+    },
+    {
+      "bankType" : "User A",
+      "column" : 1,
+      "id" : "205A19D2-5EDD-47B2-A2BB-2E842EB5D909",
+      "row" : 3
+    },
+    {
+      "bankType" : "User A",
+      "column" : 2,
+      "id" : "7AA61044-3571-4382-9AC2-1AEFD006C840",
+      "row" : 3
+    },
+    {
+      "bankType" : "User A",
+      "column" : 3,
+      "id" : "8CF48063-487E-4BAA-A392-12702402AA33",
+      "row" : 3
+    },
+    {
+      "bankType" : "User A",
+      "column" : 4,
+      "id" : "72D1C87B-F09C-417C-B472-A63B778CC843",
+      "row" : 3
+    },
+    {
+      "bankType" : "User A",
+      "column" : 5,
+      "id" : "404ADA09-8F01-4668-B890-704ADE084698",
+      "row" : 3
+    },
+    {
+      "bankType" : "User A",
+      "column" : 6,
+      "id" : "0BCA0D34-4E5B-4AB9-894B-34FC6ACF8E6A",
+      "row" : 3
+    },
+    {
+      "bankType" : "User A",
+      "column" : 7,
+      "id" : "F399A7E8-EF3A-4525-90DE-432197FA53A3",
+      "row" : 3
+    },
+    {
+      "bankType" : "User A",
+      "column" : 1,
+      "id" : "0B630A88-809A-4BBA-98EC-F5D72B7FB128",
+      "row" : 4
+    },
+    {
+      "bankType" : "User A",
+      "column" : 2,
+      "id" : "5D644EA9-E00A-496D-B8E7-468C3C01E382",
+      "row" : 4
+    },
+    {
+      "bankType" : "User A",
+      "column" : 3,
+      "id" : "AB225DB7-FEB9-4B1E-8CBD-87CC0917198A",
+      "row" : 4
+    },
+    {
+      "bankType" : "User A",
+      "column" : 4,
+      "id" : "1B9A3B48-4405-4641-8C75-09851FB532B6",
+      "row" : 4
+    },
+    {
+      "bankType" : "User A",
+      "column" : 5,
+      "id" : "FD27E1DE-3FD1-44F5-8ECD-12051C679CD1",
+      "row" : 4
+    },
+    {
+      "bankType" : "User A",
+      "column" : 6,
+      "id" : "3D3A2C19-77D9-4D87-AD16-EE17AFF13D0C",
+      "row" : 4
+    },
+    {
+      "bankType" : "User A",
+      "column" : 7,
+      "id" : "F8FE1721-55FC-452D-843F-D6A44614F8E9",
+      "row" : 4
+    },
+    {
+      "bankType" : "User A",
+      "column" : 1,
+      "id" : "DCD09399-5569-499C-9FFE-72354A4787BE",
+      "row" : 5
+    },
+    {
+      "bankType" : "User A",
+      "column" : 2,
+      "id" : "1B242333-ECA1-4945-9944-6268A2F40733",
+      "row" : 5
+    },
+    {
+      "bankType" : "User A",
+      "column" : 3,
+      "id" : "F3C213FB-0A76-461D-AF0C-06D4FE5CBEA8",
+      "row" : 5
+    },
+    {
+      "bankType" : "User A",
+      "column" : 4,
+      "id" : "5683D8F9-BE0B-48AB-BCBD-C1F822E82326",
+      "row" : 5
+    },
+    {
+      "bankType" : "User A",
+      "column" : 5,
+      "id" : "EBDF94D4-91B9-4209-8AF9-9371559C16CD",
+      "row" : 5
+    },
+    {
+      "bankType" : "User A",
+      "column" : 6,
+      "id" : "56EE5324-D812-4825-B467-0F79A45BB05D",
+      "row" : 5
+    },
+    {
+      "bankType" : "User A",
+      "column" : 7,
+      "id" : "DF8380C4-13E1-4189-B172-58C72EB605CF",
+      "row" : 5
+    },
+    {
+      "bankType" : "User A",
+      "column" : 1,
+      "id" : "1553AFB0-2B6D-4137-8736-D058794250EA",
+      "row" : 6
+    },
+    {
+      "bankType" : "User A",
+      "column" : 2,
+      "id" : "586968CC-F712-43B8-B73E-88DD264B5207",
+      "row" : 6
+    },
+    {
+      "bankType" : "User A",
+      "column" : 3,
+      "id" : "B9A36ABA-3A5A-4C3A-BC9C-A14AD49D0E62",
+      "row" : 6
+    },
+    {
+      "bankType" : "User A",
+      "column" : 4,
+      "id" : "BBF62279-0328-4CD1-806C-A0170134AD55",
+      "row" : 6
+    },
+    {
+      "bankType" : "User A",
+      "column" : 5,
+      "id" : "EE0605F3-F203-473F-A3D1-5E3F609259E6",
+      "row" : 6
+    },
+    {
+      "bankType" : "User A",
+      "column" : 6,
+      "id" : "6DA510E1-3B37-4730-85D0-257A87BF88C6",
+      "row" : 6
+    },
+    {
+      "bankType" : "User A",
+      "column" : 7,
+      "id" : "55F371E7-25CB-431A-B023-A116E9B1F313",
+      "row" : 6
+    },
+    {
+      "bankType" : "User A",
+      "column" : 1,
+      "id" : "03B85564-06E0-4A7A-9416-884B492EDE9B",
+      "row" : 7
+    },
+    {
+      "bankType" : "User A",
+      "column" : 2,
+      "id" : "AE1CFC28-D1DE-4A6B-8BA9-258D9C80BD17",
+      "row" : 7
+    },
+    {
+      "bankType" : "User A",
+      "column" : 3,
+      "id" : "BB744ECF-854B-418E-8065-9FC2C89D0598",
+      "row" : 7
+    },
+    {
+      "bankType" : "User A",
+      "column" : 4,
+      "id" : "05D81AF9-B426-4B73-A342-758B8376C495",
+      "row" : 7
+    },
+    {
+      "bankType" : "User A",
+      "column" : 5,
+      "id" : "48233247-DB29-49D2-A889-06BEA97E1561",
+      "row" : 7
+    },
+    {
+      "bankType" : "User A",
+      "column" : 6,
+      "id" : "24F93BD8-1489-4C2B-AFDD-DEB32A55737B",
+      "row" : 7
+    },
+    {
+      "bankType" : "User A",
+      "column" : 7,
+      "id" : "24B42AB2-F5C4-4961-8615-BAD030D8D4B0",
+      "presetID" : "8602617C-9C86-444D-98EF-1C8C9E642A18",
+      "row" : 7
+    }
+  ],
+  "userBSlots" : [
+    {
+      "bankType" : "User B",
+      "column" : 1,
+      "id" : "EDA5A9E8-AD8B-456A-9F4F-252BEE24CD31",
+      "row" : 1
+    },
+    {
+      "bankType" : "User B",
+      "column" : 2,
+      "id" : "357577D1-39DC-44F2-8B18-D2A48E463985",
+      "row" : 1
+    },
+    {
+      "bankType" : "User B",
+      "column" : 3,
+      "id" : "CCBAAD41-5C88-423B-B997-606394BE6A9B",
+      "row" : 1
+    },
+    {
+      "bankType" : "User B",
+      "column" : 4,
+      "id" : "056B1E05-4325-4BB2-806F-4271859408D9",
+      "row" : 1
+    },
+    {
+      "bankType" : "User B",
+      "column" : 5,
+      "id" : "86954B96-07C1-4C59-89F6-CE9D0981B23C",
+      "row" : 1
+    },
+    {
+      "bankType" : "User B",
+      "column" : 6,
+      "id" : "3BC06AE3-4A1A-4317-BC37-11D49F22D2CC",
+      "row" : 1
+    },
+    {
+      "bankType" : "User B",
+      "column" : 7,
+      "id" : "642E750C-B76C-4E34-89BD-E158F80BB769",
+      "row" : 1
+    },
+    {
+      "bankType" : "User B",
+      "column" : 1,
+      "id" : "AC95CF12-7FE2-4253-898D-34E9A47CA893",
+      "row" : 2
+    },
+    {
+      "bankType" : "User B",
+      "column" : 2,
+      "id" : "0E0950AC-1CEF-462E-8C57-21D6B2B29692",
+      "row" : 2
+    },
+    {
+      "bankType" : "User B",
+      "column" : 3,
+      "id" : "05A3B7F5-E05C-4675-9A4B-52E371EAC5BD",
+      "row" : 2
+    },
+    {
+      "bankType" : "User B",
+      "column" : 4,
+      "id" : "85847DE0-CAA1-4F9D-83CE-5D456DFA2953",
+      "row" : 2
+    },
+    {
+      "bankType" : "User B",
+      "column" : 5,
+      "id" : "4BEEF499-2212-4682-8B55-25071DD30A2D",
+      "row" : 2
+    },
+    {
+      "bankType" : "User B",
+      "column" : 6,
+      "id" : "EB485A5A-CE46-4317-91B1-054B924D88EA",
+      "row" : 2
+    },
+    {
+      "bankType" : "User B",
+      "column" : 7,
+      "id" : "3902E219-02F9-4D3D-A9DE-5B9ED6C9083A",
+      "row" : 2
+    },
+    {
+      "bankType" : "User B",
+      "column" : 1,
+      "id" : "C10E39FF-CE3F-4C30-B261-4E1C1FBCAE0E",
+      "row" : 3
+    },
+    {
+      "bankType" : "User B",
+      "column" : 2,
+      "id" : "9C669562-91D5-4966-B4FE-B9CEC6A19C37",
+      "row" : 3
+    },
+    {
+      "bankType" : "User B",
+      "column" : 3,
+      "id" : "E689336F-837D-4157-B244-10C431D266AD",
+      "row" : 3
+    },
+    {
+      "bankType" : "User B",
+      "column" : 4,
+      "id" : "C02A608E-723C-44EF-8F67-E246B660AAD7",
+      "row" : 3
+    },
+    {
+      "bankType" : "User B",
+      "column" : 5,
+      "id" : "D99FCDA6-BC9A-4FAC-B735-15258728E408",
+      "row" : 3
+    },
+    {
+      "bankType" : "User B",
+      "column" : 6,
+      "id" : "1F2F1715-C07B-41F3-B766-C07F45C08373",
+      "row" : 3
+    },
+    {
+      "bankType" : "User B",
+      "column" : 7,
+      "id" : "B43E6726-9E2F-4953-BACE-2A1B91CD048D",
+      "row" : 3
+    },
+    {
+      "bankType" : "User B",
+      "column" : 1,
+      "id" : "6891927F-CBEC-489B-8E70-17EF6CC33062",
+      "row" : 4
+    },
+    {
+      "bankType" : "User B",
+      "column" : 2,
+      "id" : "B7F99254-2E69-4391-B9B2-7FC5A563C2C3",
+      "row" : 4
+    },
+    {
+      "bankType" : "User B",
+      "column" : 3,
+      "id" : "119FF302-2D88-422A-BF85-1101C120EB5F",
+      "row" : 4
+    },
+    {
+      "bankType" : "User B",
+      "column" : 4,
+      "id" : "45ED400E-739A-4960-9541-8FBEB5044B43",
+      "row" : 4
+    },
+    {
+      "bankType" : "User B",
+      "column" : 5,
+      "id" : "E503F2E6-327D-46D1-BE69-6524F376ECDD",
+      "row" : 4
+    },
+    {
+      "bankType" : "User B",
+      "column" : 6,
+      "id" : "B234C97E-F781-4932-9064-2AAB13BD789F",
+      "row" : 4
+    },
+    {
+      "bankType" : "User B",
+      "column" : 7,
+      "id" : "07822907-6D66-4F22-A3E4-2AC5E7014A27",
+      "row" : 4
+    },
+    {
+      "bankType" : "User B",
+      "column" : 1,
+      "id" : "B72BA579-C52E-4D6A-BB95-DF50FA7294D2",
+      "row" : 5
+    },
+    {
+      "bankType" : "User B",
+      "column" : 2,
+      "id" : "C5C6C0D5-C79E-48D5-BC85-0F2D9D16121C",
+      "row" : 5
+    },
+    {
+      "bankType" : "User B",
+      "column" : 3,
+      "id" : "F598159C-1094-4716-B52D-E17A5D346155",
+      "row" : 5
+    },
+    {
+      "bankType" : "User B",
+      "column" : 4,
+      "id" : "4AF4AF46-604D-4BC3-87E3-A652FDB5E4E0",
+      "row" : 5
+    },
+    {
+      "bankType" : "User B",
+      "column" : 5,
+      "id" : "A7454719-7C8B-4F9F-AEDB-F69C9DC837AF",
+      "row" : 5
+    },
+    {
+      "bankType" : "User B",
+      "column" : 6,
+      "id" : "291CB329-4FB5-4E36-8499-BADAB2EA398F",
+      "row" : 5
+    },
+    {
+      "bankType" : "User B",
+      "column" : 7,
+      "id" : "459EECB1-7A20-4C60-8AC6-AAF37CE39080",
+      "row" : 5
+    },
+    {
+      "bankType" : "User B",
+      "column" : 1,
+      "id" : "7CCCE0CA-0A1B-415A-AA1D-8ABD5CF974B6",
+      "row" : 6
+    },
+    {
+      "bankType" : "User B",
+      "column" : 2,
+      "id" : "F8F78287-A090-44EA-B1D0-80303DF0D0EC",
+      "row" : 6
+    },
+    {
+      "bankType" : "User B",
+      "column" : 3,
+      "id" : "B3FFB461-4DB7-4761-9DD6-3C630D699652",
+      "row" : 6
+    },
+    {
+      "bankType" : "User B",
+      "column" : 4,
+      "id" : "A4E23BCB-B4DE-43D4-A0F0-CA2BF4B3FF41",
+      "row" : 6
+    },
+    {
+      "bankType" : "User B",
+      "column" : 5,
+      "id" : "09B5D810-FCF6-401D-83FC-545DF25D8852",
+      "row" : 6
+    },
+    {
+      "bankType" : "User B",
+      "column" : 6,
+      "id" : "5D097DFF-A3F7-4501-BF60-EFEC3FB32FA4",
+      "row" : 6
+    },
+    {
+      "bankType" : "User B",
+      "column" : 7,
+      "id" : "161E691F-9DD2-4EE8-814C-5BCCCC1516E1",
+      "row" : 6
+    },
+    {
+      "bankType" : "User B",
+      "column" : 1,
+      "id" : "912608EB-1228-4CBF-A57C-731056952E48",
+      "row" : 7
+    },
+    {
+      "bankType" : "User B",
+      "column" : 2,
+      "id" : "CF0C69FE-631D-4EC0-8BD8-0D5625F302D4",
+      "row" : 7
+    },
+    {
+      "bankType" : "User B",
+      "column" : 3,
+      "id" : "B75022D5-4A89-4865-8808-85D807E7D576",
+      "row" : 7
+    },
+    {
+      "bankType" : "User B",
+      "column" : 4,
+      "id" : "AA15B7D1-46BD-4C7F-B369-59A39FF1ADDE",
+      "row" : 7
+    },
+    {
+      "bankType" : "User B",
+      "column" : 5,
+      "id" : "884C8AC5-4DF3-464D-AB23-34D5D451AB96",
+      "row" : 7
+    },
+    {
+      "bankType" : "User B",
+      "column" : 6,
+      "id" : "642C6B47-3F8F-41D5-9792-1F34B0EAD3EC",
+      "row" : 7
+    },
+    {
+      "bankType" : "User B",
+      "column" : 7,
+      "id" : "8F76B42D-0729-4D02-A91A-94E2AC9A537A",
+      "row" : 7
+    }
+  ],
+  "userCSlots" : [
+    {
+      "bankType" : "User C",
+      "column" : 1,
+      "id" : "ABC0E3E9-18B7-4D45-A696-D0B506147B1D",
+      "presetID" : "2CF9AA56-934D-4CC0-8528-692F7EE6D965",
+      "row" : 1
+    },
+    {
+      "bankType" : "User C",
+      "column" : 2,
+      "id" : "85147CCE-C170-4053-9569-CD5E503BC673",
+      "presetID" : "DE906E50-C272-4B68-BDE7-968064303ECC",
+      "row" : 1
+    },
+    {
+      "bankType" : "User C",
+      "column" : 3,
+      "id" : "4A7A2B0D-9E07-4A99-9597-61E450F9C7B9",
+      "presetID" : "C6DAC6AA-9150-441D-BAC0-9DFE925EEF90",
+      "row" : 1
+    },
+    {
+      "bankType" : "User C",
+      "column" : 4,
+      "id" : "02F4C5F7-CCFE-4CC7-9F4D-1791351BAA80",
+      "presetID" : "05CBE47D-C6EB-4BC6-AB51-567EE2E245D4",
+      "row" : 1
+    },
+    {
+      "bankType" : "User C",
+      "column" : 5,
+      "id" : "F5009E83-5246-478D-9271-0F75D15BE36A",
+      "row" : 1
+    },
+    {
+      "bankType" : "User C",
+      "column" : 6,
+      "id" : "6EDCEAA3-92B6-4F67-8F31-5817A06C6F7C",
+      "row" : 1
+    },
+    {
+      "bankType" : "User C",
+      "column" : 7,
+      "id" : "E6A247BB-8032-40AC-AB45-C14E22C72B58",
+      "row" : 1
+    },
+    {
+      "bankType" : "User C",
+      "column" : 1,
+      "id" : "1F8E9663-C738-4C24-AC88-C19908F6F516",
+      "presetID" : "9CFE5A4A-A920-4666-B695-26DD04125668",
+      "row" : 2
+    },
+    {
+      "bankType" : "User C",
+      "column" : 2,
+      "id" : "54225A54-FFA6-40A1-91F0-E9488B219E81",
+      "row" : 2
+    },
+    {
+      "bankType" : "User C",
+      "column" : 3,
+      "id" : "FF3BA1C7-20FF-4AEC-AAC8-5D09105B8F83",
+      "row" : 2
+    },
+    {
+      "bankType" : "User C",
+      "column" : 4,
+      "id" : "6E45BDAD-68F8-477B-9C2C-C6F330D3707C",
+      "row" : 2
+    },
+    {
+      "bankType" : "User C",
+      "column" : 5,
+      "id" : "A10DA301-73E8-47A4-9AF5-AF5B7C2DA243",
+      "row" : 2
+    },
+    {
+      "bankType" : "User C",
+      "column" : 6,
+      "id" : "0BF8191E-B6EB-4FFD-9824-E610968D791B",
+      "row" : 2
+    },
+    {
+      "bankType" : "User C",
+      "column" : 7,
+      "id" : "547CD403-7DBC-4E2F-AE63-7A998501ACE8",
+      "row" : 2
+    },
+    {
+      "bankType" : "User C",
+      "column" : 1,
+      "id" : "0A884F69-CCC7-4D86-AFFA-E977992D9194",
+      "presetID" : "3E8A3AD8-78EF-4EC3-B10C-B771B1EA9973",
+      "row" : 3
+    },
+    {
+      "bankType" : "User C",
+      "column" : 2,
+      "id" : "FE7B8DE8-CEED-4D51-9F03-F4D9009956B3",
+      "presetID" : "BD8665BA-58DE-4504-A6D4-AE0742A96EE1",
+      "row" : 3
+    },
+    {
+      "bankType" : "User C",
+      "column" : 3,
+      "id" : "3C4210B9-30E5-4BFE-B671-1D75545D33D1",
+      "presetID" : "25E40045-08DD-4075-8D0A-2EEBA60AC011",
+      "row" : 3
+    },
+    {
+      "bankType" : "User C",
+      "column" : 4,
+      "id" : "A8701B76-DE5F-4047-8C43-5202924EC53B",
+      "presetID" : "EE046DC2-E75E-4012-9CC8-1B605D5D434D",
+      "row" : 3
+    },
+    {
+      "bankType" : "User C",
+      "column" : 5,
+      "id" : "31765C71-3741-415B-BE02-A95B918D4407",
+      "row" : 3
+    },
+    {
+      "bankType" : "User C",
+      "column" : 6,
+      "id" : "354B7A0D-F229-44A0-A02D-15B656EB25D8",
+      "row" : 3
+    },
+    {
+      "bankType" : "User C",
+      "column" : 7,
+      "id" : "40294BC2-24F6-4C5B-9D9F-3A273CD552F4",
+      "row" : 3
+    },
+    {
+      "bankType" : "User C",
+      "column" : 1,
+      "id" : "EA4C1B69-321B-4BBD-A94F-A4DC340996EC",
+      "presetID" : "7566D124-BAD7-477F-A75E-AECA264529B3",
+      "row" : 4
+    },
+    {
+      "bankType" : "User C",
+      "column" : 2,
+      "id" : "EC5C0F4D-680D-4A5C-BA0A-0F77AF0BF1EA",
+      "presetID" : "B243D866-2C4E-4C0E-B334-ACDAD84645FA",
+      "row" : 4
+    },
+    {
+      "bankType" : "User C",
+      "column" : 3,
+      "id" : "B39F69FA-B439-414B-B071-6B861ABCDF33",
+      "presetID" : "7D4C6927-E357-4016-8689-3DA773228FDD",
+      "row" : 4
+    },
+    {
+      "bankType" : "User C",
+      "column" : 4,
+      "id" : "773BD977-F7E5-441E-AE60-52A743AE142A",
+      "row" : 4
+    },
+    {
+      "bankType" : "User C",
+      "column" : 5,
+      "id" : "B536F9BB-01F3-4681-93CA-E18767A54DDD",
+      "row" : 4
+    },
+    {
+      "bankType" : "User C",
+      "column" : 6,
+      "id" : "A7462849-05A8-4E8F-BDF5-288CA54ACE99",
+      "row" : 4
+    },
+    {
+      "bankType" : "User C",
+      "column" : 7,
+      "id" : "27A2DD5C-FCF5-4653-A73F-BBB84D343C2D",
+      "row" : 4
+    },
+    {
+      "bankType" : "User C",
+      "column" : 1,
+      "id" : "2EEE9AF0-ADCD-4130-ABAC-6A562CDF9F55",
+      "presetID" : "1090B60E-84B7-455B-98E5-7CF656D6B78E",
+      "row" : 5
+    },
+    {
+      "bankType" : "User C",
+      "column" : 2,
+      "id" : "43217107-811B-4970-9BEB-0C9A02540C27",
+      "presetID" : "2356D111-FD53-4A1F-8464-EC9A3CF9500F",
+      "row" : 5
+    },
+    {
+      "bankType" : "User C",
+      "column" : 3,
+      "id" : "3F07C616-A680-4DB3-A1D5-42E9257523B8",
+      "presetID" : "CBA68B74-3B8D-4452-A839-E02580732824",
+      "row" : 5
+    },
+    {
+      "bankType" : "User C",
+      "column" : 4,
+      "id" : "58ABCE5A-F296-430E-AE19-89514DAA24D6",
+      "presetID" : "723366A3-7257-427C-9E56-230281F32D0B",
+      "row" : 5
+    },
+    {
+      "bankType" : "User C",
+      "column" : 5,
+      "id" : "346C9D92-C0D4-47C5-B70F-50764F15F00B",
+      "presetID" : "7E974F26-1F47-45F6-9B25-99C38B81FDC2",
+      "row" : 5
+    },
+    {
+      "bankType" : "User C",
+      "column" : 6,
+      "id" : "78195BD2-3E76-4EAC-83DB-46E7E27CA472",
+      "presetID" : "D521388E-125F-41C5-BD75-06FD2CF08057",
+      "row" : 5
+    },
+    {
+      "bankType" : "User C",
+      "column" : 7,
+      "id" : "7ED8151E-0DCB-4A8F-8CE6-B1440A938C80",
+      "row" : 5
+    },
+    {
+      "bankType" : "User C",
+      "column" : 1,
+      "id" : "28B2A52A-721A-430B-980D-7888F23981FA",
+      "presetID" : "7155E286-BE2B-4CB5-A604-72C6F15015FD",
+      "row" : 6
+    },
+    {
+      "bankType" : "User C",
+      "column" : 2,
+      "id" : "6266B472-A348-4FC0-B5D9-D046E5FFE215",
+      "presetID" : "AC011728-F749-435E-B8EF-8908F872FA84",
+      "row" : 6
+    },
+    {
+      "bankType" : "User C",
+      "column" : 3,
+      "id" : "38EC8CA5-728F-485F-9CDC-210D50DE691D",
+      "presetID" : "9EC8A873-6E40-42D4-A4E5-26D913B4E155",
+      "row" : 6
+    },
+    {
+      "bankType" : "User C",
+      "column" : 4,
+      "id" : "E48C27C9-EC16-4D06-9705-D6261869F73C",
+      "presetID" : "A3AFB201-30D3-4EAB-98CE-5F437B5E2EBB",
+      "row" : 6
+    },
+    {
+      "bankType" : "User C",
+      "column" : 5,
+      "id" : "933AF656-899B-46E0-9C65-4BD8F585CD78",
+      "presetID" : "33714074-98B1-4A46-B967-78B7FD2024D9",
+      "row" : 6
+    },
+    {
+      "bankType" : "User C",
+      "column" : 6,
+      "id" : "4880A1B9-1EA9-431C-837C-901ED78DF021",
+      "row" : 6
+    },
+    {
+      "bankType" : "User C",
+      "column" : 7,
+      "id" : "1A096C34-A897-4365-ACC6-3484CDFCE880",
+      "row" : 6
+    },
+    {
+      "bankType" : "User C",
+      "column" : 1,
+      "id" : "B7C5D718-AA60-49D3-A90B-3FFA99996A9F",
+      "presetID" : "8B3B126E-086F-463C-A73E-28C9ED31A19B",
+      "row" : 7
+    },
+    {
+      "bankType" : "User C",
+      "column" : 2,
+      "id" : "4C87934E-EE0E-475B-8C23-A3D86094558A",
+      "presetID" : "5BDBDFEF-A528-4526-8285-564D01BD5EBB",
+      "row" : 7
+    },
+    {
+      "bankType" : "User C",
+      "column" : 3,
+      "id" : "AE3FDC4B-3620-48D4-8812-6DCB2EC93BDD",
+      "presetID" : "828FCC69-7129-4567-BD39-D8EF231B14E8",
+      "row" : 7
+    },
+    {
+      "bankType" : "User C",
+      "column" : 4,
+      "id" : "1EA5243A-0A64-43F3-BC9D-2A55DC56BF66",
+      "presetID" : "80ABC455-1542-4FEB-9C76-83CD35D91C39",
+      "row" : 7
+    },
+    {
+      "bankType" : "User C",
+      "column" : 5,
+      "id" : "D6D66903-C9CB-425F-B463-FFBD340B89E7",
+      "presetID" : "A16BBAB5-D268-4285-B686-29B550ADC22C",
+      "row" : 7
+    },
+    {
+      "bankType" : "User C",
+      "column" : 6,
+      "id" : "BF8E8895-4A83-4EDE-B845-9D44D5561AED",
+      "row" : 7
+    },
+    {
+      "bankType" : "User C",
+      "column" : 7,
+      "id" : "55131347-25A2-4B7D-8BA0-6D888E62E50D",
+      "row" : 7
+    }
+  ],
+  "userDSlots" : [
+    {
+      "bankType" : "User D",
+      "column" : 1,
+      "id" : "DF55C460-E15D-4076-BBE8-573F3FE30CFA",
+      "row" : 1
+    },
+    {
+      "bankType" : "User D",
+      "column" : 2,
+      "id" : "6D5C2A9F-7D4C-42D1-AB86-22DA5C5713DD",
+      "row" : 1
+    },
+    {
+      "bankType" : "User D",
+      "column" : 3,
+      "id" : "B4E47D22-AA69-4B30-B383-EF78858DCD33",
+      "row" : 1
+    },
+    {
+      "bankType" : "User D",
+      "column" : 4,
+      "id" : "91B65151-B213-44CA-8C5C-C71819A62B21",
+      "row" : 1
+    },
+    {
+      "bankType" : "User D",
+      "column" : 5,
+      "id" : "BD2F6F0B-502B-4219-998B-805C80807F4C",
+      "row" : 1
+    },
+    {
+      "bankType" : "User D",
+      "column" : 6,
+      "id" : "F597DC45-8C5F-44A1-85FB-42FAD2134D09",
+      "row" : 1
+    },
+    {
+      "bankType" : "User D",
+      "column" : 7,
+      "id" : "B2BE8F98-E12D-4860-9892-8B7E3BA71817",
+      "row" : 1
+    },
+    {
+      "bankType" : "User D",
+      "column" : 1,
+      "id" : "0E00F162-ABCA-493A-84AB-B8A8DBCC25DD",
+      "row" : 2
+    },
+    {
+      "bankType" : "User D",
+      "column" : 2,
+      "id" : "6692AFE0-0405-4C0B-A7EF-43F1B3302F7E",
+      "row" : 2
+    },
+    {
+      "bankType" : "User D",
+      "column" : 3,
+      "id" : "6A5E32ED-2DF2-4032-99BD-3173D8A6F341",
+      "row" : 2
+    },
+    {
+      "bankType" : "User D",
+      "column" : 4,
+      "id" : "8C5B17E2-5036-437D-9A81-FBEFA457A247",
+      "row" : 2
+    },
+    {
+      "bankType" : "User D",
+      "column" : 5,
+      "id" : "ABDF0218-3C60-473D-B07D-7FC75CDB215D",
+      "row" : 2
+    },
+    {
+      "bankType" : "User D",
+      "column" : 6,
+      "id" : "66355592-C08C-4810-A79D-81FC7A02DD54",
+      "row" : 2
+    },
+    {
+      "bankType" : "User D",
+      "column" : 7,
+      "id" : "2A627792-0327-42BF-9805-9E8802D5CBAB",
+      "row" : 2
+    },
+    {
+      "bankType" : "User D",
+      "column" : 1,
+      "id" : "7E7713B1-CB2D-415B-B7BA-03E43256DCEA",
+      "row" : 3
+    },
+    {
+      "bankType" : "User D",
+      "column" : 2,
+      "id" : "C6A78D38-EA42-4481-836E-F31FB3625691",
+      "row" : 3
+    },
+    {
+      "bankType" : "User D",
+      "column" : 3,
+      "id" : "04386E1A-8DB5-42B9-99BA-E73BA70B9C42",
+      "row" : 3
+    },
+    {
+      "bankType" : "User D",
+      "column" : 4,
+      "id" : "414B1E28-B7F1-43F0-9509-5CE5FC9D9C82",
+      "row" : 3
+    },
+    {
+      "bankType" : "User D",
+      "column" : 5,
+      "id" : "98FF1ECA-1B41-49CE-A249-2F15A7867CCD",
+      "row" : 3
+    },
+    {
+      "bankType" : "User D",
+      "column" : 6,
+      "id" : "7B01B012-7DCB-4457-AD75-D107C3DD7029",
+      "row" : 3
+    },
+    {
+      "bankType" : "User D",
+      "column" : 7,
+      "id" : "4A94366F-622C-425E-A57B-DEBBCDF846AC",
+      "row" : 3
+    },
+    {
+      "bankType" : "User D",
+      "column" : 1,
+      "id" : "50BA960F-F814-4465-B043-8FF3F58ADD0A",
+      "row" : 4
+    },
+    {
+      "bankType" : "User D",
+      "column" : 2,
+      "id" : "1841A60B-A855-48A7-A007-9FC9114D1E6A",
+      "row" : 4
+    },
+    {
+      "bankType" : "User D",
+      "column" : 3,
+      "id" : "74C45120-FFA7-434D-B365-4F2FB14039AE",
+      "row" : 4
+    },
+    {
+      "bankType" : "User D",
+      "column" : 4,
+      "id" : "9964D48E-4266-4D87-A85F-573EC3D04CA4",
+      "row" : 4
+    },
+    {
+      "bankType" : "User D",
+      "column" : 5,
+      "id" : "571BAAF6-2BA1-444D-8BCC-EE5D24BAD27C",
+      "row" : 4
+    },
+    {
+      "bankType" : "User D",
+      "column" : 6,
+      "id" : "7A496207-593E-4073-ABC5-0055EDFE021F",
+      "row" : 4
+    },
+    {
+      "bankType" : "User D",
+      "column" : 7,
+      "id" : "B0EA6FC5-7066-4A35-962D-366B38D7C900",
+      "row" : 4
+    },
+    {
+      "bankType" : "User D",
+      "column" : 1,
+      "id" : "2090488F-FD69-4D79-BE14-9FA1B20F7B24",
+      "row" : 5
+    },
+    {
+      "bankType" : "User D",
+      "column" : 2,
+      "id" : "3F9C8EE1-275F-45CE-BC5B-D2B5CEF099B0",
+      "row" : 5
+    },
+    {
+      "bankType" : "User D",
+      "column" : 3,
+      "id" : "2E4D4675-FF6F-4600-A005-A8112CDF2BC5",
+      "row" : 5
+    },
+    {
+      "bankType" : "User D",
+      "column" : 4,
+      "id" : "7EA4A20C-C4EC-4D52-801B-0D6823270081",
+      "row" : 5
+    },
+    {
+      "bankType" : "User D",
+      "column" : 5,
+      "id" : "79478CC2-796C-4065-84B9-635ADE5F00A7",
+      "row" : 5
+    },
+    {
+      "bankType" : "User D",
+      "column" : 6,
+      "id" : "9C95610E-BF81-403D-BAF1-67BDF8BB61A3",
+      "row" : 5
+    },
+    {
+      "bankType" : "User D",
+      "column" : 7,
+      "id" : "9CC6F742-373C-4C2F-80B9-4F503BE9AB82",
+      "row" : 5
+    },
+    {
+      "bankType" : "User D",
+      "column" : 1,
+      "id" : "3592A44C-E498-4A97-8D50-DE0F73ACCCE8",
+      "row" : 6
+    },
+    {
+      "bankType" : "User D",
+      "column" : 2,
+      "id" : "0B3C3913-4DB7-4356-818A-5F13F1EAD1E4",
+      "row" : 6
+    },
+    {
+      "bankType" : "User D",
+      "column" : 3,
+      "id" : "27185826-F084-401E-8562-4E952FE0483B",
+      "row" : 6
+    },
+    {
+      "bankType" : "User D",
+      "column" : 4,
+      "id" : "C40FB81F-7516-458C-9E7F-87A1D3520841",
+      "row" : 6
+    },
+    {
+      "bankType" : "User D",
+      "column" : 5,
+      "id" : "55897DDF-DC84-4578-8F2B-6ACDC61D8E3C",
+      "row" : 6
+    },
+    {
+      "bankType" : "User D",
+      "column" : 6,
+      "id" : "FF8865EF-DBB0-424F-A610-1811E1C3EA3C",
+      "row" : 6
+    },
+    {
+      "bankType" : "User D",
+      "column" : 7,
+      "id" : "69B5252F-58E7-41D3-85D9-049654CAD136",
+      "row" : 6
+    },
+    {
+      "bankType" : "User D",
+      "column" : 1,
+      "id" : "0AFDC449-EBD4-4378-84EB-F33AA17103E9",
+      "row" : 7
+    },
+    {
+      "bankType" : "User D",
+      "column" : 2,
+      "id" : "664E3041-9AD2-4BF0-8289-F32A4CA749F6",
+      "row" : 7
+    },
+    {
+      "bankType" : "User D",
+      "column" : 3,
+      "id" : "31BD906D-0B29-42A8-AAED-5E2A3D4A04AF",
+      "row" : 7
+    },
+    {
+      "bankType" : "User D",
+      "column" : 4,
+      "id" : "9E2EF959-DFE8-4499-993F-66A4A11C6EDD",
+      "row" : 7
+    },
+    {
+      "bankType" : "User D",
+      "column" : 5,
+      "id" : "D945E3D4-CF43-4E6A-AC08-F1CF2D980936",
+      "row" : 7
+    },
+    {
+      "bankType" : "User D",
+      "column" : 6,
+      "id" : "8E47D7C4-388C-47F3-9EE3-0B4B2008CA3C",
+      "row" : 7
+    },
+    {
+      "bankType" : "User D",
+      "column" : 7,
+      "id" : "C38EC314-A747-4097-8490-0D06108DF713",
+      "row" : 7
+    }
+  ]
+}

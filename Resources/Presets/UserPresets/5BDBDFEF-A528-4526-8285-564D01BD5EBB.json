@@ -1,0 +1,115 @@
+{
+  "createdAt" : "2026-03-13T16:28:23Z",
+  "id" : "5BDBDFEF-A528-4526-8285-564D01BD5EBB",
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0.25,
+      "feedback" : 0.13,
+      "timeValue" : 0.1875,
+      "toneCutoff" : 7400
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0.011,
+      "amountToFilterFrequency" : -0.09,
+      "amountToModulatorMultiplier" : 0.2,
+      "amountToVoiceMixerVolume" : 0.45,
+      "frequency" : 1.67,
+      "frequencyMode" : "hertz",
+      "resetMode" : "trigger",
+      "syncValue" : 4,
+      "waveform" : "triangle"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 1,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.41,
+      "ambienceToDelayMixRange" : 0.38,
+      "ambienceToReverbFeedbackRange" : 0.28,
+      "ambienceToReverbMixRange" : 0.43,
+      "toneToFilterCutoffOctaves" : 1.5,
+      "toneToFilterSaturationRange" : 0.1,
+      "toneToModulationIndexRange" : 2.1
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.75
+    },
+    "reverb" : {
+      "balance" : 0.08,
+      "cutoffFrequency" : 900,
+      "feedback" : 0.64
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Chirps",
+  "voiceTemplate" : {
+    "filter" : {
+      "cutoffFrequency" : 667
+    },
+    "filterStatic" : {
+      "resonance" : 1.2,
+      "saturation" : 0.1
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 1.8,
+        "amountToOscillatorPitch" : 2.4,
+        "amountToVibrato" : 0.1,
+        "attack" : 0.994,
+        "decay" : 0.54,
+        "release" : 1.74,
+        "sustain" : 0.31
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0.15,
+        "amountToVoiceLFOFrequency" : 0.4
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.7,
+        "decay" : 1.43,
+        "release" : 1.51,
+        "sustain" : 0.82
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 2.2,
+        "attack" : 0.053,
+        "decay" : 1.46,
+        "release" : 1.62,
+        "sustain" : 0.96
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0.48,
+        "amountToModulatorLevel" : 1.9,
+        "amountToOscillatorPitch" : 1,
+        "amountToVibrato" : 1.1
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0.9,
+        "amountToModEnvelope" : 0.7,
+        "amountToOscillatorAmplitude" : 0.34
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 1.2,
+        "amountToModulatorLevel" : 1,
+        "amountToOscillatorPitch" : -1.9,
+        "delayTime" : 0.67,
+        "frequency" : 3.72,
+        "resetMode" : "trigger",
+        "waveform" : "sawtooth"
+      }
+    },
+    "oscillator" : {
+      "carrierMultiplier" : 0.25,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 5.93,
+      "modulationIndex" : 3,
+      "stereoOffsetConstant" : 2.69,
+      "stereoOffsetProportional" : 15.8,
+      "waveform" : "square3"
+    }
+  }
+}

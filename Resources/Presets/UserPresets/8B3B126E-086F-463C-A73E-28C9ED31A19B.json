@@ -1,0 +1,115 @@
+{
+  "createdAt" : "2026-03-13T13:13:55Z",
+  "id" : "8B3B126E-086F-463C-A73E-28C9ED31A19B",
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0.25,
+      "feedback" : 0.5,
+      "timeValue" : 0.25,
+      "toneCutoff" : 4500
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0,
+      "amountToFilterFrequency" : 0,
+      "amountToModulatorMultiplier" : 0,
+      "amountToVoiceMixerVolume" : 0,
+      "frequency" : 1,
+      "frequencyMode" : "hertz",
+      "resetMode" : "free",
+      "syncValue" : 1,
+      "waveform" : "sine"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 1,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.25,
+      "ambienceToDelayMixRange" : 0.25,
+      "ambienceToReverbFeedbackRange" : 0.25,
+      "ambienceToReverbMixRange" : 0.25,
+      "toneToFilterCutoffOctaves" : 2.5,
+      "toneToFilterSaturationRange" : 0.5,
+      "toneToModulationIndexRange" : 1.3
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.75
+    },
+    "reverb" : {
+      "balance" : 0.5,
+      "cutoffFrequency" : 2500,
+      "feedback" : 0.99
+    },
+    "tempo" : 30,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Eerie",
+  "voiceTemplate" : {
+    "filter" : {
+      "cutoffFrequency" : 18795
+    },
+    "filterStatic" : {
+      "resonance" : 0,
+      "saturation" : 0
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0,
+        "attack" : 0,
+        "decay" : 0.5,
+        "release" : 0.25,
+        "sustain" : 0
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0,
+        "amountToVoiceLFOFrequency" : 0
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.787,
+        "decay" : 0,
+        "release" : 0.35,
+        "sustain" : 1
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 2.8,
+        "attack" : 5,
+        "decay" : 1.25,
+        "release" : 0.25,
+        "sustain" : 0
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 2
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0,
+        "amountToModEnvelope" : 0,
+        "amountToOscillatorAmplitude" : 0
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0,
+        "delayTime" : 4,
+        "frequency" : 5,
+        "resetMode" : "free",
+        "waveform" : "square"
+      }
+    },
+    "oscillator" : {
+      "carrierMultiplier" : 0.125,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 3.283,
+      "modulationIndex" : 0,
+      "stereoOffsetConstant" : 2,
+      "stereoOffsetProportional" : 6.1,
+      "waveform" : "square"
+    }
+  }
+}

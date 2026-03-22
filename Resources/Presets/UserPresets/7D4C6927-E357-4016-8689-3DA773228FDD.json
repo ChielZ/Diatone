@@ -1,0 +1,115 @@
+{
+  "createdAt" : "2026-02-11T22:21:42Z",
+  "id" : "7D4C6927-E357-4016-8689-3DA773228FDD",
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0,
+      "feedback" : 0.5,
+      "timeValue" : 0.25,
+      "toneCutoff" : 10000
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0,
+      "amountToFilterFrequency" : 0,
+      "amountToModulatorMultiplier" : 0,
+      "amountToVoiceMixerVolume" : 0,
+      "frequency" : 1,
+      "frequencyMode" : "hertz",
+      "resetMode" : "free",
+      "syncValue" : 1,
+      "waveform" : "sine"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 0.5,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.4,
+      "ambienceToDelayMixRange" : 0.4,
+      "ambienceToReverbFeedbackRange" : 0.2,
+      "ambienceToReverbMixRange" : 0.25,
+      "toneToFilterCutoffOctaves" : 2,
+      "toneToFilterSaturationRange" : 1,
+      "toneToModulationIndexRange" : 2.5
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.9
+    },
+    "reverb" : {
+      "balance" : 0.25,
+      "cutoffFrequency" : 1000,
+      "feedback" : 0.9
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Bow",
+  "voiceTemplate" : {
+    "filter" : {
+      "cutoffFrequency" : 1760
+    },
+    "filterStatic" : {
+      "resonance" : 0.5,
+      "saturation" : 2.5
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0,
+        "attack" : 0.71,
+        "decay" : 0.2,
+        "release" : 0.3,
+        "sustain" : 1
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0,
+        "amountToVoiceLFOFrequency" : 0
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.18,
+        "decay" : 0.5,
+        "release" : 0.23,
+        "sustain" : 1
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 0,
+        "attack" : 0.01,
+        "decay" : 0.2,
+        "release" : 0.1,
+        "sustain" : 0.3
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0.75,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0.5
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0,
+        "amountToModEnvelope" : 0,
+        "amountToOscillatorAmplitude" : 1
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0,
+        "delayTime" : 0,
+        "frequency" : 5,
+        "resetMode" : "free",
+        "waveform" : "sine"
+      }
+    },
+    "oscillator" : {
+      "carrierMultiplier" : 1,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 1.005,
+      "modulationIndex" : 1,
+      "stereoOffsetConstant" : 2,
+      "stereoOffsetProportional" : 5,
+      "waveform" : "triangle"
+    }
+  }
+}

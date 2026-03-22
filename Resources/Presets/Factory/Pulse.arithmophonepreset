@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T12:00:02Z",
   "id" : "C3D4E5F6-3333-4CCC-DDDD-000000000003",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.4,
-    "baseDelayMix" : 0.1,
-    "baseFilterCutoff" : 1200,
-    "baseFilterSaturation" : 0.8,
-    "baseModulationIndex" : 1.0,
-    "basePreVolume" : 0.45,
-    "baseReverbFeedback" : 0.5,
-    "baseReverbMix" : 0.06,
-    "tonePosition" : 0,
-    "volumePosition" : 0.45
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0.1,
@@ -28,7 +15,6 @@
       "amountToVoiceMixerVolume" : 0.7,
       "frequency" : 4,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "sync",
       "syncValue" : 8,
       "waveform" : "square"
@@ -61,17 +47,11 @@
   },
   "name" : "Pulse",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.001,
-      "decayDuration" : 0.5,
-      "releaseDuration" : 0.1,
-      "sustainLevel" : 0.6
-    },
     "filter" : {
       "cutoffFrequency" : 1200
     },
     "filterStatic" : {
-      "resonance" : 0.35,
+      "resonance" : 0.4,
       "saturation" : 0.8
     },
     "modulation" : {
@@ -81,19 +61,16 @@
         "amountToVibrato" : 0,
         "attack" : 0.001,
         "decay" : 0.15,
-        "isEnabled" : true,
         "release" : 0.08,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.5,
-        "amountToVoiceLFOFrequency" : 0,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0
       },
       "loudnessEnvelope" : {
         "attack" : 0.001,
         "decay" : 0.5,
-        "isEnabled" : true,
         "release" : 0.1,
         "sustain" : 0.6
       },
@@ -101,23 +78,19 @@
         "amountToModulationIndex" : 1.5,
         "attack" : 0,
         "decay" : 0.2,
-        "isEnabled" : true,
         "release" : 0.08,
         "sustain" : 0
       },
       "touchAftertouch" : {
-        "amountToFilterFrequency" : 2.0,
+        "amountToFilterFrequency" : 2,
         "amountToModulatorLevel" : 1.5,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0,
-        "isEnabled" : true
+        "amountToVibrato" : 0
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 0.5,
-        "amountToAuxEnvPitch" : 0,
         "amountToModEnvelope" : 0.5,
-        "amountToOscillatorAmplitude" : 0.3,
-        "isEnabled" : true
+        "amountToOscillatorAmplitude" : 0.3
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0,
@@ -125,17 +98,15 @@
         "amountToOscillatorPitch" : 0,
         "delayTime" : 0,
         "frequency" : 5,
-        "isEnabled" : true,
         "resetMode" : "free",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "proportional",
-      "modulatingMultiplier" : 2.0,
-      "modulationIndex" : 1.0,
+      "modulatingMultiplier" : 2,
+      "modulationIndex" : 1,
       "stereoOffsetConstant" : 2,
       "stereoOffsetProportional" : 6,
       "waveform" : "square5"

@@ -1,0 +1,115 @@
+{
+  "createdAt" : "2026-02-11T22:21:11Z",
+  "id" : "9CFE5A4A-A920-4666-B695-26DD04125668",
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0.05,
+      "feedback" : 0.2,
+      "timeValue" : 0.09375,
+      "toneCutoff" : 2000
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0,
+      "amountToFilterFrequency" : 0,
+      "amountToModulatorMultiplier" : 0,
+      "amountToVoiceMixerVolume" : 0.51,
+      "frequency" : 6.67,
+      "frequencyMode" : "hertz",
+      "resetMode" : "sync",
+      "syncValue" : 16,
+      "waveform" : "sine"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 1,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.4,
+      "ambienceToDelayMixRange" : 0.4,
+      "ambienceToReverbFeedbackRange" : 0,
+      "ambienceToReverbMixRange" : 0,
+      "toneToFilterCutoffOctaves" : 2.5,
+      "toneToFilterSaturationRange" : 0,
+      "toneToModulationIndexRange" : 0
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.75
+    },
+    "reverb" : {
+      "balance" : 0.08,
+      "cutoffFrequency" : 3600,
+      "feedback" : 0.8
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Coconut",
+  "voiceTemplate" : {
+    "filter" : {
+      "cutoffFrequency" : 880
+    },
+    "filterStatic" : {
+      "resonance" : 0,
+      "saturation" : 1
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 2.3,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0,
+        "attack" : 0.001,
+        "decay" : 0.02,
+        "release" : 0.3,
+        "sustain" : 0
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0.5,
+        "amountToVoiceLFOFrequency" : 0
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.001,
+        "decay" : 0.75,
+        "release" : 0.2,
+        "sustain" : 0
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : -0,
+        "attack" : 0,
+        "decay" : 0.1,
+        "release" : 0.1,
+        "sustain" : 0
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 5,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0.5
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0,
+        "amountToModEnvelope" : 0.5,
+        "amountToOscillatorAmplitude" : 0.5
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0,
+        "delayTime" : 0,
+        "frequency" : 5,
+        "resetMode" : "free",
+        "waveform" : "sine"
+      }
+    },
+    "oscillator" : {
+      "carrierMultiplier" : 1,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 2.005,
+      "modulationIndex" : 0.1,
+      "stereoOffsetConstant" : 0,
+      "stereoOffsetProportional" : 5,
+      "waveform" : "sine"
+    }
+  }
+}

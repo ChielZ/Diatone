@@ -521,18 +521,8 @@ final class PolyphonicVoice {
         
         // 2) AUX ENVELOPE → PITCH
         if voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch != 0.0 {
-            // Apply initial touch meta-modulation if active
-            var effectiveAuxEnvPitchAmount = voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch
-            if voiceModulation.touchInitial.amountToAuxEnvPitch != 0.0 {
-                effectiveAuxEnvPitchAmount = ModulationRouter.calculateTouchScaledAmount(
-                    baseAmount: effectiveAuxEnvPitchAmount,
-                    initialTouchValue: modulationState.initialTouchX,
-                    initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvPitch
-                )
-            }
-
             // Calculate target frequency (base + peak envelope offset in semitones)
-            let semitoneOffset = auxEnvPeakValue * effectiveAuxEnvPitchAmount
+            let semitoneOffset = auxEnvPeakValue * voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch
             let targetFrequency = modulationState.baseFrequency * pow(2.0, semitoneOffset / 12.0)
             let clampedFrequency = max(20.0, min(20000.0, targetFrequency))
 
@@ -1314,10 +1304,9 @@ final class PolyphonicVoice {
         let hasVoiceLFO = voiceModulation.voiceLFO.amountToOscillatorPitch != 0.0
         let hasVibratoMetaMod = voiceModulation.auxiliaryEnvelope.amountToVibrato != 0.0
             || voiceModulation.touchAftertouch.amountToVibrato != 0.0
-        let hasInitialTouchToPitch = voiceModulation.touchInitial.amountToAuxEnvPitch != 0.0
         let hasAftertouchToPitch = voiceModulation.touchAftertouch.amountToOscillatorPitch != 0.0
         
-        guard hasAuxEnv || hasVoiceLFO || hasVibratoMetaMod || hasInitialTouchToPitch || hasAftertouchToPitch else { return }
+        guard hasAuxEnv || hasVoiceLFO || hasVibratoMetaMod || hasAftertouchToPitch else { return }
         
         // Calculate envelope stage for instant transition detection
         let auxEnvAttack = voiceModulation.auxiliaryEnvelope.attack
@@ -1327,16 +1316,6 @@ final class PolyphonicVoice {
                             modulationState.auxiliaryEnvelopeTime >= auxEnvAttack &&
                             modulationState.auxiliaryEnvelopeTime < (auxEnvAttack + auxEnvDecay)
         let isInReleasePhase = !modulationState.isGateOpen
-        
-        // Apply initial touch meta-modulation to aux envelope pitch amount
-        var effectiveAuxEnvPitchAmount = voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch
-        if voiceModulation.touchInitial.amountToAuxEnvPitch != 0.0 {
-            effectiveAuxEnvPitchAmount = ModulationRouter.calculateTouchScaledAmount(
-                baseAmount: effectiveAuxEnvPitchAmount,
-                initialTouchValue: modulationState.initialTouchX,
-                initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvPitch
-            )
-        }
         
         // Calculate effective voice LFO amount (with meta-modulation)
         // Allow aftertouch/aux env to add vibrato even if base amount is 0
@@ -1357,7 +1336,7 @@ final class PolyphonicVoice {
         let finalFreq = ModulationRouter.calculateOscillatorPitch(
             baseFrequency: modulationState.baseFrequency,
             auxEnvValue: auxiliaryEnvValue,
-            auxEnvAmount: effectiveAuxEnvPitchAmount,
+            auxEnvAmount: voiceModulation.auxiliaryEnvelope.amountToOscillatorPitch,
             voiceLFOValue: voiceLFORawValue,
             voiceLFOAmount: effectiveVoiceLFOAmount,
             voiceLFORampFactor: modulationState.voiceLFORampFactor,

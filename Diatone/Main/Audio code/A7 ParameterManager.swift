@@ -781,12 +781,6 @@ final class AudioParameterManager: ObservableObject {
         markAsModified()
     }
     
-    /// Update initial touch amount to aux envelope pitch
-    func updateInitialTouchAmountToAuxEnvPitch(_ value: Double) {
-        voiceTemplate.modulation.touchInitial.amountToAuxEnvPitch = value
-        markAsModified()
-    }
-    
     /// Update initial touch amount to aux envelope cutoff
     func updateInitialTouchAmountToAuxEnvCutoff(_ value: Double) {
         voiceTemplate.modulation.touchInitial.amountToAuxEnvCutoff = value
@@ -1160,7 +1154,6 @@ final class AudioParameterManager: ObservableObject {
         // --- Touch ---
         updateInitialTouchAmountToAmplitude(Double.random(in: 0.0...1.0))
         updateInitialTouchAmountToModEnvelope(Double.random(in: 0.0...1.0))
-        updateInitialTouchAmountToAuxEnvPitch(Double.random(in: 0.0...1.0))
         updateInitialTouchAmountToAuxEnvCutoff(Double.random(in: 0.0...1.0))
         updateAftertouchAmountToPitch(Double.random(in: -2.0...2.0))
         updateAftertouchAmountToFilter(Double.random(in: -2.0...2.0))

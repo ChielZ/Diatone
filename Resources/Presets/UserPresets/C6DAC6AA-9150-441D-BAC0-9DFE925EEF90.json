@@ -1,0 +1,115 @@
+{
+  "createdAt" : "2026-02-11T22:20:58Z",
+  "id" : "C6DAC6AA-9150-441D-BAC0-9DFE925EEF90",
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0,
+      "feedback" : 0.5,
+      "timeValue" : 0.25,
+      "toneCutoff" : 10000
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0,
+      "amountToFilterFrequency" : 0,
+      "amountToModulatorMultiplier" : 0,
+      "amountToVoiceMixerVolume" : 0.45,
+      "frequency" : 3.33,
+      "frequencyMode" : "hertz",
+      "resetMode" : "free",
+      "syncValue" : 1,
+      "waveform" : "sine"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 0.5,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.25,
+      "ambienceToDelayMixRange" : 0.25,
+      "ambienceToReverbFeedbackRange" : 0.15,
+      "ambienceToReverbMixRange" : 0.5,
+      "toneToFilterCutoffOctaves" : 5,
+      "toneToFilterSaturationRange" : 1,
+      "toneToModulationIndexRange" : 2.5
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.5
+    },
+    "reverb" : {
+      "balance" : 0.13,
+      "cutoffFrequency" : 2500,
+      "feedback" : 0.9
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Belle",
+  "voiceTemplate" : {
+    "filter" : {
+      "cutoffFrequency" : 18795
+    },
+    "filterStatic" : {
+      "resonance" : 0,
+      "saturation" : 0
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0,
+        "attack" : 1.28,
+        "decay" : 1.18,
+        "release" : 0.02,
+        "sustain" : 1
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0,
+        "amountToVoiceLFOFrequency" : 1
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.001,
+        "decay" : 0,
+        "release" : 0.15,
+        "sustain" : 1
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 2,
+        "attack" : 0,
+        "decay" : 0.7,
+        "release" : 0.05,
+        "sustain" : 0
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 5,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0,
+        "amountToModEnvelope" : 2,
+        "amountToOscillatorAmplitude" : 0
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0.3,
+        "amountToOscillatorPitch" : 0,
+        "delayTime" : 0,
+        "frequency" : 6,
+        "resetMode" : "free",
+        "waveform" : "sine"
+      }
+    },
+    "oscillator" : {
+      "carrierMultiplier" : 1,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 5.025,
+      "modulationIndex" : 0.5,
+      "stereoOffsetConstant" : 2,
+      "stereoOffsetProportional" : 5,
+      "waveform" : "sine"
+    }
+  }
+}

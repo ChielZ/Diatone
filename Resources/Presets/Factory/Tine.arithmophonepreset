@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T10:00:03Z",
   "id" : "A1B2C3D4-4444-4AAA-BBBB-000000000004",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.35,
-    "baseDelayMix" : 0.1,
-    "baseFilterCutoff" : 4500,
-    "baseFilterSaturation" : 0.05,
-    "baseModulationIndex" : 0.8,
-    "basePreVolume" : 0.5,
-    "baseReverbFeedback" : 0.75,
-    "baseReverbMix" : 0.18,
-    "tonePosition" : 0,
-    "volumePosition" : 0.5
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0.1,
@@ -26,9 +13,8 @@
       "amountToFilterFrequency" : 0,
       "amountToModulatorMultiplier" : 0,
       "amountToVoiceMixerVolume" : 0.15,
-      "frequency" : 3.0,
+      "frequency" : 3,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "sine"
@@ -45,7 +31,7 @@
       "ambienceToReverbMixRange" : 0.4,
       "toneToFilterCutoffOctaves" : 3,
       "toneToFilterSaturationRange" : 0.3,
-      "toneToModulationIndexRange" : 1.0
+      "toneToModulationIndexRange" : 1
     },
     "output" : {
       "preVolume" : 0.5,
@@ -61,18 +47,12 @@
   },
   "name" : "Tine",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.001,
-      "decayDuration" : 3.0,
-      "releaseDuration" : 0.5,
-      "sustainLevel" : 0.03
-    },
     "filter" : {
       "cutoffFrequency" : 4500
     },
     "filterStatic" : {
-      "resonance" : 0.05,
-      "saturation" : 0.05
+      "resonance" : 0.1,
+      "saturation" : 0.1
     },
     "modulation" : {
       "auxiliaryEnvelope" : {
@@ -81,19 +61,16 @@
         "amountToVibrato" : 0,
         "attack" : 0.001,
         "decay" : 0.6,
-        "isEnabled" : true,
         "release" : 0.3,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.7,
-        "amountToVoiceLFOFrequency" : 0,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0
       },
       "loudnessEnvelope" : {
         "attack" : 0.001,
-        "decay" : 3.0,
-        "isEnabled" : true,
+        "decay" : 3,
         "release" : 0.5,
         "sustain" : 0.03
       },
@@ -101,7 +78,6 @@
         "amountToModulationIndex" : 1.5,
         "attack" : 0,
         "decay" : 1.2,
-        "isEnabled" : true,
         "release" : 0.3,
         "sustain" : 0
       },
@@ -109,32 +85,27 @@
         "amountToFilterFrequency" : 0,
         "amountToModulatorLevel" : 1.5,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0.25,
-        "isEnabled" : true
+        "amountToVibrato" : 0.3
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 0.3,
-        "amountToAuxEnvPitch" : 0,
         "amountToModEnvelope" : 0.8,
-        "amountToOscillatorAmplitude" : 0.35,
-        "isEnabled" : true
+        "amountToOscillatorAmplitude" : 0.35
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0,
         "amountToModulatorLevel" : 0,
-        "amountToOscillatorPitch" : 0.05,
+        "amountToOscillatorPitch" : 0.1,
         "delayTime" : 1.2,
-        "frequency" : 5.0,
-        "isEnabled" : true,
+        "frequency" : 5,
         "resetMode" : "trigger",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "proportional",
-      "modulatingMultiplier" : 14.0,
+      "modulatingMultiplier" : 14,
       "modulationIndex" : 0.8,
       "stereoOffsetConstant" : 2,
       "stereoOffsetProportional" : 5,

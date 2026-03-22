@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-01-12T14:49:07Z",
   "id" : "719BFDB1-0FA5-41C4-9579-0A4EBE49A06B",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.5,
-    "baseDelayMix" : 0,
-    "baseFilterCutoff" : 1760,
-    "baseFilterSaturation" : 0.5,
-    "baseModulationIndex" : 0,
-    "basePreVolume" : 0.5,
-    "baseReverbFeedback" : 0.725,
-    "baseReverbMix" : 0.125,
-    "tonePosition" : 0,
-    "volumePosition" : 0.5
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0,
@@ -28,7 +15,6 @@
       "amountToVoiceMixerVolume" : 0.25,
       "frequency" : 5.5,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "sine"
@@ -45,28 +31,22 @@
       "ambienceToReverbMixRange" : 0.25,
       "toneToFilterCutoffOctaves" : 2.5,
       "toneToFilterSaturationRange" : 0.5,
-      "toneToModulationIndexRange" : 1.25
+      "toneToModulationIndexRange" : 1.3
     },
     "output" : {
       "preVolume" : 0.5,
       "volume" : 0.75
     },
     "reverb" : {
-      "balance" : 0.125,
+      "balance" : 0.13,
       "cutoffFrequency" : 10000,
-      "feedback" : 0.725
+      "feedback" : 0.73
     },
     "tempo" : 100,
     "voiceMode" : "polyphonic"
   },
   "name" : "Swirly",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.001,
-      "decayDuration" : 0,
-      "releaseDuration" : 0.019999999999999997,
-      "sustainLevel" : 1
-    },
     "filter" : {
       "cutoffFrequency" : 1760
     },
@@ -80,58 +60,49 @@
         "amountToOscillatorPitch" : 0,
         "amountToVibrato" : 0,
         "attack" : 0,
-        "decay" : 0.034175763258987246,
-        "isEnabled" : true,
+        "decay" : 0.03,
         "release" : 0.01,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.5,
-        "amountToVoiceLFOFrequency" : 0.35,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0.35
       },
       "loudnessEnvelope" : {
         "attack" : 0.001,
         "decay" : 0,
-        "isEnabled" : true,
-        "release" : 0.019999999999999997,
+        "release" : 0.02,
         "sustain" : 1
       },
       "modulatorEnvelope" : {
-        "amountToModulationIndex" : 0.9999999999999998,
+        "amountToModulationIndex" : 1,
         "attack" : 0,
-        "decay" : 0.49596818239615204,
-        "isEnabled" : true,
+        "decay" : 0.5,
         "release" : 0.1,
         "sustain" : 0
       },
       "touchAftertouch" : {
-        "amountToFilterFrequency" : 2.000000000000001,
+        "amountToFilterFrequency" : 2,
         "amountToModulatorLevel" : 0,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 1,
-        "isEnabled" : true
+        "amountToVibrato" : 1
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 0,
-        "amountToAuxEnvPitch" : 0,
         "amountToModEnvelope" : 1,
-        "amountToOscillatorAmplitude" : 0.5,
-        "isEnabled" : true
+        "amountToOscillatorAmplitude" : 0.5
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0,
         "amountToModulatorLevel" : 0,
-        "amountToOscillatorPitch" : 0.175,
+        "amountToOscillatorPitch" : 0.2,
         "delayTime" : 0.5,
         "frequency" : 5.5,
-        "isEnabled" : true,
         "resetMode" : "free",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "proportional",
       "modulatingMultiplier" : 2.003,

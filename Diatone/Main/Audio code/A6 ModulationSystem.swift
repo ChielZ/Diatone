@@ -8,7 +8,17 @@
 import Foundation
 import AudioKit
 
+// MARK: - Encoding Helpers
 
+/// Snap a value to the nearest step size for clean preset storage
+/// Includes a final rounding pass to eliminate floating-point representation artifacts
+private func snap(_ value: Double, to step: Double) -> Double {
+    let snapped = (value / step).rounded() * step
+    // Determine decimal places from step size to eliminate artifacts like 5.050000000000001
+    let decimals = -log10(step).rounded(.up)
+    let factor = pow(10.0, max(decimals, 0))
+    return (snapped * factor).rounded() / factor
+}
 
 // MARK: - LFO Waveforms
 
@@ -288,14 +298,14 @@ struct VoiceLFOParameters: Codable, Equatable {
     
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
+        // Field order matches NewPresetFormat.json
         try c.encode(waveform, forKey: .waveform)
         try c.encode(resetMode, forKey: .resetMode)
-        try c.encode(frequency, forKey: .frequency)
-        try c.encode(amountToOscillatorPitch, forKey: .amountToOscillatorPitch)
-        try c.encode(amountToFilterFrequency, forKey: .amountToFilterFrequency)
-        try c.encode(amountToModulatorLevel, forKey: .amountToModulatorLevel)
-        try c.encode(delayTime, forKey: .delayTime)
-        // isEnabled not encoded
+        try c.encode(snap(frequency, to: 0.01), forKey: .frequency)
+        try c.encode(snap(delayTime, to: 0.01), forKey: .delayTime)
+        try c.encode(snap(amountToOscillatorPitch, to: 0.025), forKey: .amountToOscillatorPitch)
+        try c.encode(snap(amountToFilterFrequency, to: 0.05), forKey: .amountToFilterFrequency)
+        try c.encode(snap(amountToModulatorLevel, to: 0.05), forKey: .amountToModulatorLevel)
     }
     
     /// Calculate the raw LFO waveform value at a given phase
@@ -359,12 +369,11 @@ struct ModulatorEnvelopeParameters: Codable, Equatable {
     
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(attack, forKey: .attack)
-        try c.encode(decay, forKey: .decay)
-        try c.encode(sustain, forKey: .sustain)
-        try c.encode(release, forKey: .release)
-        try c.encode(amountToModulationIndex, forKey: .amountToModulationIndex)
-        // isEnabled not encoded
+        try c.encode(snap(attack, to: 0.001), forKey: .attack)
+        try c.encode(snap(decay, to: 0.01), forKey: .decay)
+        try c.encode(snap(sustain, to: 0.01), forKey: .sustain)
+        try c.encode(snap(release, to: 0.01), forKey: .release)
+        try c.encode(snap(amountToModulationIndex, to: 0.05), forKey: .amountToModulationIndex)
     }
 }
 
@@ -430,14 +439,13 @@ struct AuxiliaryEnvelopeParameters: Codable, Equatable {
     
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(attack, forKey: .attack)
-        try c.encode(decay, forKey: .decay)
-        try c.encode(sustain, forKey: .sustain)
-        try c.encode(release, forKey: .release)
-        try c.encode(amountToOscillatorPitch, forKey: .amountToOscillatorPitch)
-        try c.encode(amountToFilterFrequency, forKey: .amountToFilterFrequency)
-        try c.encode(amountToVibrato, forKey: .amountToVibrato)
-        // isEnabled not encoded
+        try c.encode(snap(attack, to: 0.001), forKey: .attack)
+        try c.encode(snap(decay, to: 0.01), forKey: .decay)
+        try c.encode(snap(sustain, to: 0.01), forKey: .sustain)
+        try c.encode(snap(release, to: 0.01), forKey: .release)
+        try c.encode(snap(amountToOscillatorPitch, to: 0.1), forKey: .amountToOscillatorPitch)
+        try c.encode(snap(amountToFilterFrequency, to: 0.05), forKey: .amountToFilterFrequency)
+        try c.encode(snap(amountToVibrato, to: 0.02), forKey: .amountToVibrato)
     }
 }
 
@@ -481,11 +489,10 @@ struct LoudnessEnvelopeParameters: Codable, Equatable {
     
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(attack, forKey: .attack)
-        try c.encode(decay, forKey: .decay)
-        try c.encode(sustain, forKey: .sustain)
-        try c.encode(release, forKey: .release)
-        // isEnabled not encoded
+        try c.encode(snap(attack, to: 0.001), forKey: .attack)
+        try c.encode(snap(decay, to: 0.01), forKey: .decay)
+        try c.encode(snap(sustain, to: 0.01), forKey: .sustain)
+        try c.encode(snap(release, to: 0.01), forKey: .release)
     }
 }
 
@@ -531,9 +538,8 @@ struct KeyTrackingParameters: Codable, Equatable {
     
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(amountToFilterFrequency, forKey: .amountToFilterFrequency)
-        try c.encode(amountToVoiceLFOFrequency, forKey: .amountToVoiceLFOFrequency)
-        // isEnabled not encoded
+        try c.encode(snap(amountToFilterFrequency, to: 0.01), forKey: .amountToFilterFrequency)
+        try c.encode(snap(amountToVoiceLFOFrequency, to: 0.01), forKey: .amountToVoiceLFOFrequency)
     }
     
     /// Calculate key tracking value based on frequency (called once at note-on)
@@ -554,16 +560,14 @@ struct KeyTrackingParameters: Codable, Equatable {
 /// Touch modulation from initial touch X position
 /// The X coordinate where the key was first touched (applied at note-on)
 struct TouchInitialParameters: Codable, Equatable {
-    // Fixed destinations with individual amounts (Page 9, items 1-4)
+    // Fixed destinations with individual amounts (Page 9, items 1-3)
     var amountToOscillatorAmplitude: Double    // Scales base amplitude (velocity-like)
     var amountToModEnvelope: Double            // Scales mod envelope amount (meta-modulation)
-    var amountToAuxEnvPitch: Double            // Scales aux envelope pitch amount (meta-modulation)
     var amountToAuxEnvCutoff: Double           // Scales aux envelope filter amount (meta-modulation)
     
     static let `default` = TouchInitialParameters(
         amountToOscillatorAmplitude: 0.0,      // No velocity sensitivity by default
         amountToModEnvelope: 0.0,              // No envelope scaling by default
-        amountToAuxEnvPitch: 0.0,              // No pitch envelope scaling by default
         amountToAuxEnvCutoff: 0.0              // No filter envelope scaling by default
     )
     
@@ -571,21 +575,19 @@ struct TouchInitialParameters: Codable, Equatable {
     var hasActiveDestinations: Bool {
         return amountToOscillatorAmplitude != 0.0
             || amountToModEnvelope != 0.0
-            || amountToAuxEnvPitch != 0.0
             || amountToAuxEnvCutoff != 0.0
     }
     
-    // Custom Codable to silently ignore legacy isEnabled field in old preset files
+    // Custom Codable to silently ignore legacy isEnabled and amountToAuxEnvPitch fields
     enum CodingKeys: String, CodingKey {
         case amountToOscillatorAmplitude, amountToModEnvelope
         case amountToAuxEnvPitch, amountToAuxEnvCutoff, isEnabled
     }
     
     init(amountToOscillatorAmplitude: Double, amountToModEnvelope: Double,
-         amountToAuxEnvPitch: Double, amountToAuxEnvCutoff: Double) {
+         amountToAuxEnvCutoff: Double) {
         self.amountToOscillatorAmplitude = amountToOscillatorAmplitude
         self.amountToModEnvelope = amountToModEnvelope
-        self.amountToAuxEnvPitch = amountToAuxEnvPitch
         self.amountToAuxEnvCutoff = amountToAuxEnvCutoff
     }
     
@@ -593,18 +595,15 @@ struct TouchInitialParameters: Codable, Equatable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         amountToOscillatorAmplitude = try c.decode(Double.self, forKey: .amountToOscillatorAmplitude)
         amountToModEnvelope = try c.decode(Double.self, forKey: .amountToModEnvelope)
-        amountToAuxEnvPitch = try c.decode(Double.self, forKey: .amountToAuxEnvPitch)
         amountToAuxEnvCutoff = try c.decode(Double.self, forKey: .amountToAuxEnvCutoff)
-        // isEnabled silently ignored if present
+        // amountToAuxEnvPitch and isEnabled silently ignored if present
     }
     
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(amountToOscillatorAmplitude, forKey: .amountToOscillatorAmplitude)
-        try c.encode(amountToModEnvelope, forKey: .amountToModEnvelope)
-        try c.encode(amountToAuxEnvPitch, forKey: .amountToAuxEnvPitch)
-        try c.encode(amountToAuxEnvCutoff, forKey: .amountToAuxEnvCutoff)
-        // isEnabled not encoded
+        try c.encode(snap(amountToOscillatorAmplitude, to: 0.01), forKey: .amountToOscillatorAmplitude)
+        try c.encode(snap(amountToModEnvelope, to: 0.02), forKey: .amountToModEnvelope)
+        try c.encode(snap(amountToAuxEnvCutoff, to: 0.02), forKey: .amountToAuxEnvCutoff)
     }
 }
 
@@ -657,11 +656,11 @@ struct TouchAftertouchParameters: Codable, Equatable {
     
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(amountToOscillatorPitch, forKey: .amountToOscillatorPitch)
-        try c.encode(amountToFilterFrequency, forKey: .amountToFilterFrequency)
-        try c.encode(amountToModulatorLevel, forKey: .amountToModulatorLevel)
-        try c.encode(amountToVibrato, forKey: .amountToVibrato)
-        // isEnabled not encoded
+        // Field order matches NewPresetFormat.json
+        try c.encode(snap(amountToModulatorLevel, to: 0.05), forKey: .amountToModulatorLevel)
+        try c.encode(snap(amountToFilterFrequency, to: 0.01), forKey: .amountToFilterFrequency)
+        try c.encode(snap(amountToOscillatorPitch, to: 1.0), forKey: .amountToOscillatorPitch)
+        try c.encode(snap(amountToVibrato, to: 0.02), forKey: .amountToVibrato)
     }
 }
 
@@ -692,6 +691,23 @@ struct VoiceModulationParameters: Codable, Equatable {
         touchInitial: .default,
         touchAftertouch: .default
     )
+    
+    enum CodingKeys: String, CodingKey {
+        case loudnessEnvelope, modulatorEnvelope, auxiliaryEnvelope
+        case voiceLFO, keyTracking, touchInitial, touchAftertouch
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        // Field order matches NewPresetFormat.json
+        try c.encode(loudnessEnvelope, forKey: .loudnessEnvelope)
+        try c.encode(modulatorEnvelope, forKey: .modulatorEnvelope)
+        try c.encode(auxiliaryEnvelope, forKey: .auxiliaryEnvelope)
+        try c.encode(voiceLFO, forKey: .voiceLFO)
+        try c.encode(keyTracking, forKey: .keyTracking)
+        try c.encode(touchInitial, forKey: .touchInitial)
+        try c.encode(touchAftertouch, forKey: .touchAftertouch)
+    }
 }
 
 // MARK: - Global LFO Parameters (Fixed Destinations)
@@ -770,16 +786,16 @@ struct GlobalLFOParameters: Codable, Equatable {
     
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
+        // Field order matches NewPresetFormat.json
         try c.encode(waveform, forKey: .waveform)
         try c.encode(resetMode, forKey: .resetMode)
         try c.encode(frequencyMode, forKey: .frequencyMode)
-        try c.encode(frequency, forKey: .frequency)
+        try c.encode(snap(frequency, to: 0.01), forKey: .frequency)
         try c.encode(syncValue, forKey: .syncValue)
-        try c.encode(amountToVoiceMixerVolume, forKey: .amountToVoiceMixerVolume)
-        try c.encode(amountToModulatorMultiplier, forKey: .amountToModulatorMultiplier)
-        try c.encode(amountToFilterFrequency, forKey: .amountToFilterFrequency)
-        try c.encode(amountToDelayTime, forKey: .amountToDelayTime)
-        // isEnabled not encoded
+        try c.encode(snap(amountToVoiceMixerVolume, to: 0.01), forKey: .amountToVoiceMixerVolume)
+        try c.encode(snap(amountToModulatorMultiplier, to: 0.02), forKey: .amountToModulatorMultiplier)
+        try c.encode(snap(amountToFilterFrequency, to: 0.01), forKey: .amountToFilterFrequency)
+        try c.encode(snap(amountToDelayTime, to: 0.001), forKey: .amountToDelayTime)
     }
     
     /// Get the actual frequency in Hz based on mode and tempo

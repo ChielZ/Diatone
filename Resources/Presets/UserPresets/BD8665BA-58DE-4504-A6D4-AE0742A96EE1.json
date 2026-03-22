@@ -1,0 +1,115 @@
+{
+  "createdAt" : "2026-02-04T23:06:07Z",
+  "id" : "BD8665BA-58DE-4504-A6D4-AE0742A96EE1",
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0.18,
+      "feedback" : 0.25,
+      "timeValue" : 0.1875,
+      "toneCutoff" : 1000
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0,
+      "amountToFilterFrequency" : 0,
+      "amountToModulatorMultiplier" : 0,
+      "amountToVoiceMixerVolume" : 0.38,
+      "frequency" : 3.56,
+      "frequencyMode" : "hertz",
+      "resetMode" : "free",
+      "syncValue" : 1,
+      "waveform" : "triangle"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 1,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.5,
+      "ambienceToDelayMixRange" : 0.5,
+      "ambienceToReverbFeedbackRange" : 0.5,
+      "ambienceToReverbMixRange" : 0.5,
+      "toneToFilterCutoffOctaves" : 2,
+      "toneToFilterSaturationRange" : 1,
+      "toneToModulationIndexRange" : 2.5
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.75
+    },
+    "reverb" : {
+      "balance" : 0.3,
+      "cutoffFrequency" : 10000,
+      "feedback" : 0.63
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Chime",
+  "voiceTemplate" : {
+    "filter" : {
+      "cutoffFrequency" : 1760
+    },
+    "filterStatic" : {
+      "resonance" : 1,
+      "saturation" : 1
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0,
+        "attack" : 0.1,
+        "decay" : 0.2,
+        "release" : 0.3,
+        "sustain" : 0.5
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0.5,
+        "amountToVoiceLFOFrequency" : 0
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.005,
+        "decay" : 0.18,
+        "release" : 0.1,
+        "sustain" : 0.5
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 0.5,
+        "attack" : 0.001,
+        "decay" : 0.2,
+        "release" : 0.1,
+        "sustain" : 0
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0.35,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 2
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0,
+        "amountToModEnvelope" : 0,
+        "amountToOscillatorAmplitude" : 1
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0.2,
+        "delayTime" : 1.25,
+        "frequency" : 5.5,
+        "resetMode" : "trigger",
+        "waveform" : "sine"
+      }
+    },
+    "oscillator" : {
+      "carrierMultiplier" : 1,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 5.5,
+      "modulationIndex" : 0,
+      "stereoOffsetConstant" : 0.65,
+      "stereoOffsetProportional" : 5,
+      "waveform" : "sine"
+    }
+  }
+}

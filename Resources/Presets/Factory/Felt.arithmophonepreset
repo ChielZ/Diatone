@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T11:00:00Z",
   "id" : "B2C3D4E5-1111-4BBB-CCCC-000000000001",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.35,
-    "baseDelayMix" : 0.06,
-    "baseFilterCutoff" : 600,
-    "baseFilterSaturation" : 0.8,
-    "baseModulationIndex" : 0,
-    "basePreVolume" : 0.5,
-    "baseReverbFeedback" : 0.65,
-    "baseReverbMix" : 0.15,
-    "tonePosition" : 0,
-    "volumePosition" : 0.5
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0.06,
@@ -28,7 +15,6 @@
       "amountToVoiceMixerVolume" : 0.08,
       "frequency" : 0.6,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "sine"
@@ -61,12 +47,6 @@
   },
   "name" : "Felt",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.001,
-      "decayDuration" : 2.5,
-      "releaseDuration" : 0.4,
-      "sustainLevel" : 0
-    },
     "filter" : {
       "cutoffFrequency" : 600
     },
@@ -81,19 +61,16 @@
         "amountToVibrato" : 0,
         "attack" : 0.001,
         "decay" : 0.08,
-        "isEnabled" : true,
         "release" : 0.15,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.6,
-        "amountToVoiceLFOFrequency" : 0,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0
       },
       "loudnessEnvelope" : {
         "attack" : 0.001,
         "decay" : 2.5,
-        "isEnabled" : true,
         "release" : 0.4,
         "sustain" : 0
       },
@@ -101,7 +78,6 @@
         "amountToModulationIndex" : 0,
         "attack" : 0,
         "decay" : 0.5,
-        "isEnabled" : true,
         "release" : 0.25,
         "sustain" : 0
       },
@@ -109,15 +85,12 @@
         "amountToFilterFrequency" : 0.8,
         "amountToModulatorLevel" : 0,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0,
-        "isEnabled" : true
+        "amountToVibrato" : 0
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 1.5,
-        "amountToAuxEnvPitch" : 0,
         "amountToModEnvelope" : 0,
-        "amountToOscillatorAmplitude" : 0.5,
-        "isEnabled" : true
+        "amountToOscillatorAmplitude" : 0.5
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0.3,
@@ -125,13 +98,11 @@
         "amountToOscillatorPitch" : 0,
         "delayTime" : 0.4,
         "frequency" : 3.5,
-        "isEnabled" : true,
         "resetMode" : "trigger",
         "waveform" : "triangle"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "proportional",
       "modulatingMultiplier" : 2,

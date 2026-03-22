@@ -1,0 +1,115 @@
+{
+  "createdAt" : "2026-02-04T23:08:24Z",
+  "id" : "7E974F26-1F47-45F6-9B25-99C38B81FDC2",
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0,
+      "feedback" : 0.5,
+      "timeValue" : 0.25,
+      "toneCutoff" : 10000
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0,
+      "amountToFilterFrequency" : 0,
+      "amountToModulatorMultiplier" : 0,
+      "amountToVoiceMixerVolume" : 0,
+      "frequency" : 1,
+      "frequencyMode" : "hertz",
+      "resetMode" : "free",
+      "syncValue" : 1,
+      "waveform" : "sine"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 1,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.5,
+      "ambienceToDelayMixRange" : 0.5,
+      "ambienceToReverbFeedbackRange" : 0.5,
+      "ambienceToReverbMixRange" : 0.5,
+      "toneToFilterCutoffOctaves" : 2,
+      "toneToFilterSaturationRange" : 1,
+      "toneToModulationIndexRange" : 2.5
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.5
+    },
+    "reverb" : {
+      "balance" : 0.22,
+      "cutoffFrequency" : 10000,
+      "feedback" : 0.8
+    },
+    "tempo" : 120,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Unsquare",
+  "voiceTemplate" : {
+    "filter" : {
+      "cutoffFrequency" : 2489
+    },
+    "filterStatic" : {
+      "resonance" : 0.4,
+      "saturation" : 1
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0,
+        "attack" : 0,
+        "decay" : 0.5,
+        "release" : 0.25,
+        "sustain" : 0
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0,
+        "amountToVoiceLFOFrequency" : 0
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.001,
+        "decay" : 0.5,
+        "release" : 0.1,
+        "sustain" : 1
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 0,
+        "attack" : 0,
+        "decay" : 0.5,
+        "release" : 0.25,
+        "sustain" : 0
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0,
+        "amountToModEnvelope" : 0,
+        "amountToOscillatorAmplitude" : 0
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0,
+        "delayTime" : 0,
+        "frequency" : 5,
+        "resetMode" : "free",
+        "waveform" : "sine"
+      }
+    },
+    "oscillator" : {
+      "carrierMultiplier" : 1,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 2,
+      "modulationIndex" : 0,
+      "stereoOffsetConstant" : 2,
+      "stereoOffsetProportional" : 5,
+      "waveform" : "unsquare"
+    }
+  }
+}

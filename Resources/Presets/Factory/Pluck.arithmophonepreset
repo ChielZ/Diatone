@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T11:00:03Z",
   "id" : "B2C3D4E5-4444-4BBB-CCCC-000000000004",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.25,
-    "baseDelayMix" : 0.03,
-    "baseFilterCutoff" : 800,
-    "baseFilterSaturation" : 0.4,
-    "baseModulationIndex" : 0.5,
-    "basePreVolume" : 0.5,
-    "baseReverbFeedback" : 0.55,
-    "baseReverbMix" : 0.1,
-    "tonePosition" : 0,
-    "volumePosition" : 0.5
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0.03,
@@ -28,7 +15,6 @@
       "amountToVoiceMixerVolume" : 0,
       "frequency" : 1,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "sine"
@@ -45,7 +31,7 @@
       "ambienceToReverbMixRange" : 0.35,
       "toneToFilterCutoffOctaves" : 3,
       "toneToFilterSaturationRange" : 0.4,
-      "toneToModulationIndexRange" : 1.0
+      "toneToModulationIndexRange" : 1
     },
     "output" : {
       "preVolume" : 0.5,
@@ -61,39 +47,30 @@
   },
   "name" : "Pluck",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.001,
-      "decayDuration" : 1.6,
-      "releaseDuration" : 0.2,
-      "sustainLevel" : 0
-    },
     "filter" : {
       "cutoffFrequency" : 800
     },
     "filterStatic" : {
-      "resonance" : 0.35,
+      "resonance" : 0.4,
       "saturation" : 0.4
     },
     "modulation" : {
       "auxiliaryEnvelope" : {
-        "amountToFilterFrequency" : 4.0,
+        "amountToFilterFrequency" : 4,
         "amountToOscillatorPitch" : 0,
         "amountToVibrato" : 0,
         "attack" : 0.001,
         "decay" : 0.02,
-        "isEnabled" : true,
         "release" : 0.03,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.8,
-        "amountToVoiceLFOFrequency" : 0.3,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0.3
       },
       "loudnessEnvelope" : {
         "attack" : 0.001,
         "decay" : 1.6,
-        "isEnabled" : true,
         "release" : 0.2,
         "sustain" : 0
       },
@@ -101,7 +78,6 @@
         "amountToModulationIndex" : 1.5,
         "attack" : 0,
         "decay" : 0.06,
-        "isEnabled" : true,
         "release" : 0.03,
         "sustain" : 0
       },
@@ -109,32 +85,27 @@
         "amountToFilterFrequency" : 0.5,
         "amountToModulatorLevel" : 1.5,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0.15,
-        "isEnabled" : true
+        "amountToVibrato" : 0.2
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 1.5,
-        "amountToAuxEnvPitch" : 0,
-        "amountToModEnvelope" : 1.0,
-        "amountToOscillatorAmplitude" : 0.6,
-        "isEnabled" : true
+        "amountToModEnvelope" : 1,
+        "amountToOscillatorAmplitude" : 0.6
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0.1,
-        "amountToModulatorLevel" : 0.15,
+        "amountToModulatorLevel" : 0.2,
         "amountToOscillatorPitch" : 0,
         "delayTime" : 0.5,
-        "frequency" : 5.0,
-        "isEnabled" : true,
+        "frequency" : 5,
         "resetMode" : "trigger",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "proportional",
-      "modulatingMultiplier" : 3.0,
+      "modulatingMultiplier" : 3,
       "modulationIndex" : 0.5,
       "stereoOffsetConstant" : 2,
       "stereoOffsetProportional" : 4,

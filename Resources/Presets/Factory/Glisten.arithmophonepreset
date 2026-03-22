@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T13:00:00Z",
   "id" : "D4E5F6A7-1111-4DDD-EEEE-000000000001",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.5,
-    "baseDelayMix" : 0.15,
-    "baseFilterCutoff" : 2800,
-    "baseFilterSaturation" : 0.1,
-    "baseModulationIndex" : 0.6,
-    "basePreVolume" : 0.45,
-    "baseReverbFeedback" : 0.85,
-    "baseReverbMix" : 0.35,
-    "tonePosition" : 0,
-    "volumePosition" : 0.45
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0.15,
@@ -28,7 +15,6 @@
       "amountToVoiceMixerVolume" : 0.2,
       "frequency" : 0.35,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "sine"
@@ -45,7 +31,7 @@
       "ambienceToReverbMixRange" : 0.3,
       "toneToFilterCutoffOctaves" : 2.5,
       "toneToFilterSaturationRange" : 0.3,
-      "toneToModulationIndexRange" : 1.0
+      "toneToModulationIndexRange" : 1
     },
     "output" : {
       "preVolume" : 0.45,
@@ -61,39 +47,30 @@
   },
   "name" : "Glisten",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.03,
-      "decayDuration" : 4.0,
-      "releaseDuration" : 0.8,
-      "sustainLevel" : 0
-    },
     "filter" : {
       "cutoffFrequency" : 2800
     },
     "filterStatic" : {
-      "resonance" : 0.05,
+      "resonance" : 0.1,
       "saturation" : 0.1
     },
     "modulation" : {
       "auxiliaryEnvelope" : {
-        "amountToFilterFrequency" : 1.0,
+        "amountToFilterFrequency" : 1,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0.02,
+        "amountToVibrato" : 0,
         "attack" : 0.05,
-        "decay" : 2.0,
-        "isEnabled" : true,
+        "decay" : 2,
         "release" : 0.5,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.5,
-        "amountToVoiceLFOFrequency" : 0.5,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0.5
       },
       "loudnessEnvelope" : {
         "attack" : 0.03,
-        "decay" : 4.0,
-        "isEnabled" : true,
+        "decay" : 4,
         "release" : 0.8,
         "sustain" : 0
       },
@@ -101,37 +78,31 @@
         "amountToModulationIndex" : 1.2,
         "attack" : 0,
         "decay" : 2.5,
-        "isEnabled" : true,
         "release" : 0.5,
         "sustain" : 0
       },
       "touchAftertouch" : {
         "amountToFilterFrequency" : 0.5,
-        "amountToModulatorLevel" : 1.0,
+        "amountToModulatorLevel" : 1,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0.2,
-        "isEnabled" : true
+        "amountToVibrato" : 0.2
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 0.3,
-        "amountToAuxEnvPitch" : 0,
         "amountToModEnvelope" : 0.5,
-        "amountToOscillatorAmplitude" : 0.25,
-        "isEnabled" : true
+        "amountToOscillatorAmplitude" : 0.25
       },
       "voiceLFO" : {
-        "amountToFilterFrequency" : 0.08,
+        "amountToFilterFrequency" : 0.1,
         "amountToModulatorLevel" : 0.1,
         "amountToOscillatorPitch" : 0,
         "delayTime" : 0.5,
         "frequency" : 2.5,
-        "isEnabled" : true,
         "resetMode" : "trigger",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "proportional",
       "modulatingMultiplier" : 5.01,

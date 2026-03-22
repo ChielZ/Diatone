@@ -1,0 +1,115 @@
+{
+  "createdAt" : "2026-03-14T00:02:02Z",
+  "id" : "A16BBAB5-D268-4285-B686-29B550ADC22C",
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0.02,
+      "feedback" : 0,
+      "timeValue" : 0.0625,
+      "toneCutoff" : 1700
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0.009,
+      "amountToFilterFrequency" : 0.34,
+      "amountToModulatorMultiplier" : 0.1,
+      "amountToVoiceMixerVolume" : 0.34,
+      "frequency" : 10,
+      "frequencyMode" : "hertz",
+      "resetMode" : "sync",
+      "syncValue" : 24,
+      "waveform" : "sine"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 1,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.47,
+      "ambienceToDelayMixRange" : 0.14,
+      "ambienceToReverbFeedbackRange" : 0.38,
+      "ambienceToReverbMixRange" : 0.43,
+      "toneToFilterCutoffOctaves" : 0.31,
+      "toneToFilterSaturationRange" : 0.5,
+      "toneToModulationIndexRange" : 1.3
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.75
+    },
+    "reverb" : {
+      "balance" : 0.2,
+      "cutoffFrequency" : 8100,
+      "feedback" : 0.47
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Talkie",
+  "voiceTemplate" : {
+    "filter" : {
+      "cutoffFrequency" : 2198
+    },
+    "filterStatic" : {
+      "resonance" : 1.1,
+      "saturation" : 0.3
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : -2.2,
+        "amountToOscillatorPitch" : 11.5,
+        "amountToVibrato" : 0.3,
+        "attack" : 0.644,
+        "decay" : 0.05,
+        "release" : 1.26,
+        "sustain" : 0.46
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0.82,
+        "amountToVoiceLFOFrequency" : 0.05
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.035,
+        "decay" : 0.89,
+        "release" : 1.78,
+        "sustain" : 0.7
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : -1.1,
+        "attack" : 0.663,
+        "decay" : 1.39,
+        "release" : 1.62,
+        "sustain" : 0.2
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0.38,
+        "amountToModulatorLevel" : -1.9,
+        "amountToOscillatorPitch" : 2,
+        "amountToVibrato" : 1.2
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0.4,
+        "amountToModEnvelope" : 0.1,
+        "amountToOscillatorAmplitude" : 0.15
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0.4,
+        "amountToModulatorLevel" : -1.9,
+        "amountToOscillatorPitch" : 1.5,
+        "delayTime" : 1.35,
+        "frequency" : 3.22,
+        "resetMode" : "free",
+        "waveform" : "reverseSawtooth"
+      }
+    },
+    "oscillator" : {
+      "carrierMultiplier" : 0.166667,
+      "detuneMode" : "constant",
+      "modulatingMultiplier" : 2.67,
+      "modulationIndex" : 1.2,
+      "stereoOffsetConstant" : 0.99,
+      "stereoOffsetProportional" : 17.5,
+      "waveform" : "square"
+    }
+  }
+}

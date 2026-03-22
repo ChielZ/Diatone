@@ -1,0 +1,115 @@
+{
+  "createdAt" : "2026-03-14T00:00:23Z",
+  "id" : "80ABC455-1542-4FEB-9C76-83CD35D91C39",
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0.12,
+      "feedback" : 0.49,
+      "timeValue" : 0.03125,
+      "toneCutoff" : 400
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0.007,
+      "amountToFilterFrequency" : -0.06,
+      "amountToModulatorMultiplier" : 0.3,
+      "amountToVoiceMixerVolume" : 0.31,
+      "frequency" : 1.67,
+      "frequencyMode" : "hertz",
+      "resetMode" : "free",
+      "syncValue" : 4,
+      "waveform" : "square"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 1,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.38,
+      "ambienceToDelayMixRange" : 0.14,
+      "ambienceToReverbFeedbackRange" : 0.09,
+      "ambienceToReverbMixRange" : 0.15,
+      "toneToFilterCutoffOctaves" : 3.38,
+      "toneToFilterSaturationRange" : 0.4,
+      "toneToModulationIndexRange" : 2.1
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.75
+    },
+    "reverb" : {
+      "balance" : 0.29,
+      "cutoffFrequency" : 4700,
+      "feedback" : 0.52
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Revver",
+  "voiceTemplate" : {
+    "filter" : {
+      "cutoffFrequency" : 6082
+    },
+    "filterStatic" : {
+      "resonance" : 1,
+      "saturation" : 0.8
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 1.3,
+        "amountToOscillatorPitch" : -8.1,
+        "amountToVibrato" : 0.4,
+        "attack" : 0.024,
+        "decay" : 1.02,
+        "release" : 1.15,
+        "sustain" : 0.13
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0.84,
+        "amountToVoiceLFOFrequency" : 0.19
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.202,
+        "decay" : 0.52,
+        "release" : 0.47,
+        "sustain" : 0.76
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 0.9,
+        "attack" : 0.997,
+        "decay" : 1.41,
+        "release" : 0.86,
+        "sustain" : 0.67
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0.02,
+        "amountToModulatorLevel" : -0.8,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 1.1
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 1,
+        "amountToModEnvelope" : 0.4,
+        "amountToOscillatorAmplitude" : 0.86
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : -0.7,
+        "amountToModulatorLevel" : 1.1,
+        "amountToOscillatorPitch" : -0.8,
+        "delayTime" : 0.77,
+        "frequency" : 5.42,
+        "resetMode" : "free",
+        "waveform" : "sawtooth"
+      }
+    },
+    "oscillator" : {
+      "carrierMultiplier" : 0.166667,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 0.71,
+      "modulationIndex" : 1,
+      "stereoOffsetConstant" : 1.35,
+      "stereoOffsetProportional" : 12.8,
+      "waveform" : "square"
+    }
+  }
+}

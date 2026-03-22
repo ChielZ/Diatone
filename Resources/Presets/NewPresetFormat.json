@@ -1,37 +1,25 @@
-//
-//  NewPresetFormat.swift
-//  Diatone
-//
-//  Created by Chiel Zwinkels on 22/03/2026.
-//
-
-// EXAMPLE FILE FOR NEW PRESET STRUCTURE
-
-/*
-
 {
   "createdAt" : "2026-02-05T13:42:52Z",
   "id" : "6B06BE18-B1BF-4B70-9027-E3DE53ADDC8B",
-  "name" : "Basic",
+  "name" : "New Style",
   "voiceTemplate" : {
-      "oscillator" {
-        "waveform" : "sine",
+      "oscillator" : {
+      "waveform" : "sine",
       "carrierMultiplier" : 1,
       "modulatingMultiplier" : 2,
       "modulationIndex" : 1,
       "detuneMode" : "proportional",
       "stereoOffsetConstant" : 2,
-      "stereoOffsetProportional" : 5,
-      "amplitude" : 0.5
-    }
-      "filter" : {
+      "stereoOffsetProportional" : 5
+    },
+    "filter" : {
       "cutoffFrequency" : 880
     },
     "filterStatic" : {
       "resonance" : 0.5,
       "saturation" : 0.5
     },
-     "modulation" : {
+    "modulation" : {
        "loudnessEnvelope" : {
         "attack" : 0.001,
         "decay" : 0,
@@ -52,8 +40,7 @@
         "release" : 0.25,
         "amountToOscillatorPitch" : 0,
         "amountToFilterFrequency" : 0,
-        "amountToVibrato" : 0,
-        
+        "amountToVibrato" : 0
       },
       "voiceLFO" : {
         "waveform" : "sine",
@@ -66,12 +53,12 @@
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0,
-        "amountToVoiceLFOFrequency" : 0,
+        "amountToVoiceLFOFrequency" : 0
       },
       "touchInitial" : {
         "amountToOscillatorAmplitude" : 0,
         "amountToModEnvelope" : 0,
-        "amountToAuxEnvCutoff" : 0,
+        "amountToAuxEnvCutoff" : 0
       },
       "touchAftertouch" : {
         "amountToModulatorLevel" : 0,
@@ -80,14 +67,14 @@
         "amountToVibrato" : 0
       }
     },
-  }
+  },
   "master" : {
       "tempo" : 100,
-    "voiceMode" : "polyphonic"
+    "voiceMode" : "polyphonic",
     "globalPitch" : {
       "octave" : 1,
-      "transpose" : 1
-      "fineTune" : 1,
+      "transpose" : 1,
+      "fineTune" : 1
     },
     "globalLFO" : {
       "waveform" : "sine",
@@ -98,7 +85,7 @@
       "amountToVoiceMixerVolume" : 0,
       "amountToModulatorMultiplier" : 0,
       "amountToFilterFrequency" : 0,
-      "amountToDelayTime" : 0,
+      "amountToDelayTime" : 0
     },
     "delay" : {
       "timeValue" : 0.125,
@@ -126,5 +113,3 @@
     },
   },
 }
- 
-*/

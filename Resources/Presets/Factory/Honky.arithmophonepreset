@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T10:00:06Z",
   "id" : "A1B2C3D4-7777-4AAA-BBBB-000000000007",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.25,
-    "baseDelayMix" : 0.06,
-    "baseFilterCutoff" : 3200,
-    "baseFilterSaturation" : 0.35,
-    "baseModulationIndex" : 2.0,
-    "basePreVolume" : 0.5,
-    "baseReverbFeedback" : 0.5,
-    "baseReverbMix" : 0.12,
-    "tonePosition" : 0,
-    "volumePosition" : 0.5
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0.06,
@@ -24,11 +11,10 @@
     "globalLFO" : {
       "amountToDelayTime" : 0,
       "amountToFilterFrequency" : 0,
-      "amountToModulatorMultiplier" : 0.02,
+      "amountToModulatorMultiplier" : 0,
       "amountToVoiceMixerVolume" : 0,
       "frequency" : 0.8,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "triangle"
@@ -61,18 +47,12 @@
   },
   "name" : "Honky",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.001,
-      "decayDuration" : 1.5,
-      "releaseDuration" : 0.3,
-      "sustainLevel" : 0.1
-    },
     "filter" : {
       "cutoffFrequency" : 3200
     },
     "filterStatic" : {
-      "resonance" : 0.15,
-      "saturation" : 0.35
+      "resonance" : 0.2,
+      "saturation" : 0.4
     },
     "modulation" : {
       "auxiliaryEnvelope" : {
@@ -81,19 +61,16 @@
         "amountToVibrato" : 0,
         "attack" : 0.001,
         "decay" : 0.3,
-        "isEnabled" : true,
         "release" : 0.15,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.65,
-        "amountToVoiceLFOFrequency" : 0,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0
       },
       "loudnessEnvelope" : {
         "attack" : 0.001,
         "decay" : 1.5,
-        "isEnabled" : true,
         "release" : 0.3,
         "sustain" : 0.1
       },
@@ -101,7 +78,6 @@
         "amountToModulationIndex" : 3.5,
         "attack" : 0,
         "decay" : 0.5,
-        "isEnabled" : true,
         "release" : 0.12,
         "sustain" : 0
       },
@@ -109,15 +85,12 @@
         "amountToFilterFrequency" : 0,
         "amountToModulatorLevel" : 2.5,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0.15,
-        "isEnabled" : true
+        "amountToVibrato" : 0.2
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 0.4,
-        "amountToAuxEnvPitch" : 0,
         "amountToModEnvelope" : 1.2,
-        "amountToOscillatorAmplitude" : 0.45,
-        "isEnabled" : true
+        "amountToOscillatorAmplitude" : 0.45
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0,
@@ -125,17 +98,15 @@
         "amountToOscillatorPitch" : 0,
         "delayTime" : 0,
         "frequency" : 5,
-        "isEnabled" : true,
         "resetMode" : "free",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "constant",
       "modulatingMultiplier" : 1.005,
-      "modulationIndex" : 2.0,
+      "modulationIndex" : 2,
       "stereoOffsetConstant" : 3.5,
       "stereoOffsetProportional" : 5,
       "waveform" : "sine"

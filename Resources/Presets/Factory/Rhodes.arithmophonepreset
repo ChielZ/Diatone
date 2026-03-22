@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T10:00:00Z",
   "id" : "A1B2C3D4-1111-4AAA-BBBB-000000000001",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.3,
-    "baseDelayMix" : 0.08,
-    "baseFilterCutoff" : 2200,
-    "baseFilterSaturation" : 0.15,
-    "baseModulationIndex" : 1.8,
-    "basePreVolume" : 0.5,
-    "baseReverbFeedback" : 0.6,
-    "baseReverbMix" : 0.1,
-    "tonePosition" : 0,
-    "volumePosition" : 0.5
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0.08,
@@ -28,7 +15,6 @@
       "amountToVoiceMixerVolume" : 0.25,
       "frequency" : 4.5,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "sine"
@@ -61,18 +47,12 @@
   },
   "name" : "Rhodes",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.001,
-      "decayDuration" : 1.8,
-      "releaseDuration" : 0.35,
-      "sustainLevel" : 0.15
-    },
     "filter" : {
       "cutoffFrequency" : 2200
     },
     "filterStatic" : {
       "resonance" : 0.1,
-      "saturation" : 0.15
+      "saturation" : 0.2
     },
     "modulation" : {
       "auxiliaryEnvelope" : {
@@ -81,27 +61,23 @@
         "amountToVibrato" : 0,
         "attack" : 0.001,
         "decay" : 0.4,
-        "isEnabled" : true,
         "release" : 0.2,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.6,
-        "amountToVoiceLFOFrequency" : 0,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0
       },
       "loudnessEnvelope" : {
         "attack" : 0.001,
         "decay" : 1.8,
-        "isEnabled" : true,
         "release" : 0.35,
         "sustain" : 0.15
       },
       "modulatorEnvelope" : {
-        "amountToModulationIndex" : 3.0,
+        "amountToModulationIndex" : 3,
         "attack" : 0,
         "decay" : 0.6,
-        "isEnabled" : true,
         "release" : 0.15,
         "sustain" : 0
       },
@@ -109,32 +85,27 @@
         "amountToFilterFrequency" : 0,
         "amountToModulatorLevel" : 2,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0.3,
-        "isEnabled" : true
+        "amountToVibrato" : 0.3
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 0,
-        "amountToAuxEnvPitch" : 0,
-        "amountToModEnvelope" : 1.0,
-        "amountToOscillatorAmplitude" : 0.4,
-        "isEnabled" : true
+        "amountToModEnvelope" : 1,
+        "amountToOscillatorAmplitude" : 0.4
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0,
         "amountToModulatorLevel" : 0,
-        "amountToOscillatorPitch" : 0.08,
+        "amountToOscillatorPitch" : 0.1,
         "delayTime" : 0.8,
         "frequency" : 5.5,
-        "isEnabled" : true,
         "resetMode" : "trigger",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "proportional",
-      "modulatingMultiplier" : 1.0,
+      "modulatingMultiplier" : 1,
       "modulationIndex" : 1.8,
       "stereoOffsetConstant" : 2,
       "stereoOffsetProportional" : 4,

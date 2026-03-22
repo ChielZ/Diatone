@@ -1,0 +1,115 @@
+{
+  "createdAt" : "2026-02-04T23:09:14Z",
+  "id" : "AC011728-F749-435E-B8EF-8908F872FA84",
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0,
+      "feedback" : 0.5,
+      "timeValue" : 0.125,
+      "toneCutoff" : 10000
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0,
+      "amountToFilterFrequency" : 0,
+      "amountToModulatorMultiplier" : 0,
+      "amountToVoiceMixerVolume" : 0,
+      "frequency" : 0.22,
+      "frequencyMode" : "hertz",
+      "resetMode" : "free",
+      "syncValue" : 2,
+      "waveform" : "triangle"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 0.5,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.25,
+      "ambienceToDelayMixRange" : 0.25,
+      "ambienceToReverbFeedbackRange" : 0.25,
+      "ambienceToReverbMixRange" : 0.25,
+      "toneToFilterCutoffOctaves" : 2.5,
+      "toneToFilterSaturationRange" : 0.5,
+      "toneToModulationIndexRange" : 1.3
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.5
+    },
+    "reverb" : {
+      "balance" : 0.5,
+      "cutoffFrequency" : 1500,
+      "feedback" : 0.75
+    },
+    "tempo" : 100,
+    "voiceMode" : "monophonic"
+  },
+  "name" : "Gravitas",
+  "voiceTemplate" : {
+    "filter" : {
+      "cutoffFrequency" : 14080
+    },
+    "filterStatic" : {
+      "resonance" : 0,
+      "saturation" : 0.6
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0,
+        "attack" : 0.1,
+        "decay" : 0.2,
+        "release" : 0.3,
+        "sustain" : 0.5
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0,
+        "amountToVoiceLFOFrequency" : 0
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.001,
+        "decay" : 0.5,
+        "release" : 0.1,
+        "sustain" : 1
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 0,
+        "attack" : 0.01,
+        "decay" : 0.2,
+        "release" : 0.1,
+        "sustain" : 0.3
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0,
+        "amountToVibrato" : 0
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 0,
+        "amountToModEnvelope" : 0,
+        "amountToOscillatorAmplitude" : 0
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : 0,
+        "amountToModulatorLevel" : 0,
+        "amountToOscillatorPitch" : 0,
+        "delayTime" : 0,
+        "frequency" : 5,
+        "resetMode" : "free",
+        "waveform" : "sine"
+      }
+    },
+    "oscillator" : {
+      "carrierMultiplier" : 1,
+      "detuneMode" : "proportional",
+      "modulatingMultiplier" : 3,
+      "modulationIndex" : 0.3,
+      "stereoOffsetConstant" : 2,
+      "stereoOffsetProportional" : 5,
+      "waveform" : "triangle"
+    }
+  }
+}

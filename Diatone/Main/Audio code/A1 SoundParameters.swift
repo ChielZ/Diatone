@@ -12,6 +12,18 @@ import DunneAudioKit
 import AudioKitEX
 import SoundpipeAudioKit
 
+// MARK: - Encoding Helpers
+
+/// Snap a value to the nearest step size for clean preset storage
+/// Includes a final rounding pass to eliminate floating-point representation artifacts
+private func snap(_ value: Double, to step: Double) -> Double {
+    let snapped = (value / step).rounded() * step
+    // Determine decimal places from step size to eliminate artifacts like 5.050000000000001
+    let decimals = -log10(step).rounded(.up)
+    let factor = pow(10.0, max(decimals, 0))
+    return (snapped * factor).rounded() / factor
+}
+
 // MARK: - Parameter Models
 
 /// Voice mode determining polyphony behavior
@@ -266,13 +278,17 @@ struct OscillatorParameters: Codable, Equatable {
     
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(carrierMultiplier, forKey: .carrierMultiplier)
-        try c.encode(modulatingMultiplier, forKey: .modulatingMultiplier)
-        try c.encode(modulationIndex, forKey: .modulationIndex)
+        // Field order matches NewPresetFormat.json
         try c.encode(waveform, forKey: .waveform)
+        try c.encode(carrierMultiplier, forKey: .carrierMultiplier)
+        // Snap fine part to 0.001, keep coarse integer intact
+        let coarse = floor(modulatingMultiplier)
+        let fine = snap(modulatingMultiplier - coarse, to: 0.001)
+        try c.encode(coarse + fine, forKey: .modulatingMultiplier)
+        try c.encode(snap(modulationIndex, to: 0.05), forKey: .modulationIndex)
         try c.encode(detuneMode, forKey: .detuneMode)
-        try c.encode(stereoOffsetProportional, forKey: .stereoOffsetProportional)
-        try c.encode(stereoOffsetConstant, forKey: .stereoOffsetConstant)
+        try c.encode(snap(stereoOffsetConstant, to: 0.01), forKey: .stereoOffsetConstant)
+        try c.encode(snap(stereoOffsetProportional, to: 0.05), forKey: .stereoOffsetProportional)
         // amplitude not encoded
     }
     
@@ -305,6 +321,15 @@ struct FilterParameters: Codable, Equatable {
     var clampedCutoff: Double {
         min(max(cutoffFrequency, 12), 20_000)
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case cutoffFrequency
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(snap(cutoffFrequency, to: 1.0), forKey: .cutoffFrequency)
+    }
 }
 
 /// Non-modulatable filter parameters (STATIC parameters)
@@ -327,6 +352,16 @@ struct FilterStaticParameters: Codable, Equatable {
     /// Clamps saturation to valid range (0 - 10)
     var clampedSaturation: Double {
         min(max(saturation, 0), 2.0)
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case resonance, saturation
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(snap(resonance, to: 0.02), forKey: .resonance)
+        try c.encode(snap(saturation, to: 0.02), forKey: .saturation)
     }
 }
 
@@ -396,15 +431,13 @@ struct VoiceParameters: Codable, Equatable {
         self.modulation = modulation
     }
     
-    /// Encoder — envelope field is no longer written
+    /// Encoder — field order matches NewPresetFormat.json, envelope field is no longer written
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
         try container.encode(oscillator, forKey: .oscillator)
         try container.encode(filter, forKey: .filter)
         try container.encode(filterStatic, forKey: .filterStatic)
         try container.encode(modulation, forKey: .modulation)
-        // envelope not encoded — loudnessEnvelope inside modulation is canonical
     }
     
     /// Convenience accessor for the loudness envelope
@@ -463,6 +496,19 @@ struct DelayParameters: Codable, Equatable {
     func timeInSeconds(tempo: Double) -> Double {
         return timeValue.timeInSeconds(tempo: tempo)
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case timeValue, feedback, toneCutoff, dryWetMix
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        // Field order matches NewPresetFormat.json
+        try c.encode(timeValue, forKey: .timeValue)
+        try c.encode(snap(feedback, to: 0.01), forKey: .feedback)
+        try c.encode(snap(toneCutoff, to: 100.0), forKey: .toneCutoff)
+        try c.encode(snap(dryWetMix, to: 0.005), forKey: .dryWetMix)
+    }
 }
 
 /// Parameters for the reverb effect
@@ -476,6 +522,17 @@ struct ReverbParameters: Codable, Equatable {
         cutoffFrequency: 10_000,
         balance: 0.0
     )
+    
+    enum CodingKeys: String, CodingKey {
+        case feedback, cutoffFrequency, balance
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(snap(feedback, to: 0.005), forKey: .feedback)
+        try c.encode(snap(cutoffFrequency, to: 100.0), forKey: .cutoffFrequency)
+        try c.encode(snap(balance, to: 0.005), forKey: .balance)
+    }
 }
 
 /// Parameter for the output mixer
@@ -487,6 +544,16 @@ struct OutputParameters: Codable, Equatable {
         preVolume: 0.5,
         volume: 0.75
     )
+    
+    enum CodingKeys: String, CodingKey {
+        case preVolume, volume
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(snap(preVolume, to: 0.01), forKey: .preVolume)
+        try c.encode(snap(volume, to: 0.01), forKey: .volume)
+    }
 }
 
 /// Global pitch modifiers applied to all triggered notes
@@ -501,6 +568,19 @@ struct GlobalPitchParameters: Codable, Equatable {
         octave: 1.0,
         fineTune: 1.0
     )
+    
+    enum CodingKeys: String, CodingKey {
+        case octave, transpose, fineTune
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        // Field order matches NewPresetFormat.json
+        // No snapping — these are computed from integer offsets/semitones, precise values matter
+        try c.encode(octave, forKey: .octave)
+        try c.encode(transpose, forKey: .transpose)
+        try c.encode(fineTune, forKey: .fineTune)
+    }
     
     /// Combined multiplication factor for all pitch modifiers
     var combinedFactor: Double {
@@ -571,6 +651,23 @@ struct MacroControlParameters: Codable, Equatable {
         ambienceToReverbFeedbackRange: 0.25,
         ambienceToReverbMixRange: 0.25
     )
+    
+    enum CodingKeys: String, CodingKey {
+        case toneToModulationIndexRange, toneToFilterCutoffOctaves, toneToFilterSaturationRange
+        case ambienceToDelayFeedbackRange, ambienceToDelayMixRange
+        case ambienceToReverbFeedbackRange, ambienceToReverbMixRange
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(snap(toneToModulationIndexRange, to: 0.05), forKey: .toneToModulationIndexRange)
+        try c.encode(snap(toneToFilterCutoffOctaves, to: 0.01), forKey: .toneToFilterCutoffOctaves)
+        try c.encode(snap(toneToFilterSaturationRange, to: 0.02), forKey: .toneToFilterSaturationRange)
+        try c.encode(snap(ambienceToDelayFeedbackRange, to: 0.01), forKey: .ambienceToDelayFeedbackRange)
+        try c.encode(snap(ambienceToDelayMixRange, to: 0.01), forKey: .ambienceToDelayMixRange)
+        try c.encode(snap(ambienceToReverbFeedbackRange, to: 0.01), forKey: .ambienceToReverbFeedbackRange)
+        try c.encode(snap(ambienceToReverbMixRange, to: 0.01), forKey: .ambienceToReverbMixRange)
+    }
 }
 
 /// Current state of macro controls and their base values
@@ -666,6 +763,23 @@ struct MasterParameters: Codable, Equatable {
         voiceMode: .polyphonic,
         macroControl: .default
     )
+    
+    enum CodingKeys: String, CodingKey {
+        case tempo, voiceMode, globalPitch, globalLFO, delay, reverb, output, macroControl
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        // Field order matches NewPresetFormat.json
+        try c.encode(snap(tempo, to: 1.0), forKey: .tempo)
+        try c.encode(voiceMode, forKey: .voiceMode)
+        try c.encode(globalPitch, forKey: .globalPitch)
+        try c.encode(globalLFO, forKey: .globalLFO)
+        try c.encode(delay, forKey: .delay)
+        try c.encode(reverb, forKey: .reverb)
+        try c.encode(output, forKey: .output)
+        try c.encode(macroControl, forKey: .macroControl)
+    }
 }
 
 // MARK: - Complete Parameter Set (for Presets)
@@ -718,11 +832,12 @@ struct AudioParameterSet: Codable, Equatable, Identifiable {
     
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
+        // Field order matches NewPresetFormat.json
+        try c.encode(createdAt, forKey: .createdAt)
         try c.encode(id, forKey: .id)
         try c.encode(name, forKey: .name)
         try c.encode(voiceTemplate, forKey: .voiceTemplate)
         try c.encode(master, forKey: .master)
-        try c.encode(createdAt, forKey: .createdAt)
         // macroState not encoded — derived from voiceTemplate/master on load
     }
 }

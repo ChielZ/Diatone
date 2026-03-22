@@ -1,0 +1,115 @@
+{
+  "createdAt" : "2026-03-13T23:59:17Z",
+  "id" : "828FCC69-7129-4567-BD39-D8EF231B14E8",
+  "master" : {
+    "delay" : {
+      "dryWetMix" : 0.13,
+      "feedback" : 0.5,
+      "timeValue" : 0.25,
+      "toneCutoff" : 1900
+    },
+    "globalLFO" : {
+      "amountToDelayTime" : 0.014,
+      "amountToFilterFrequency" : 0.95,
+      "amountToModulatorMultiplier" : 0.1,
+      "amountToVoiceMixerVolume" : 0.33,
+      "frequency" : 6.67,
+      "frequencyMode" : "hertz",
+      "resetMode" : "trigger",
+      "syncValue" : 16,
+      "waveform" : "reverseSawtooth"
+    },
+    "globalPitch" : {
+      "fineTune" : 1,
+      "octave" : 1,
+      "transpose" : 1
+    },
+    "macroControl" : {
+      "ambienceToDelayFeedbackRange" : 0.24,
+      "ambienceToDelayMixRange" : 0.32,
+      "ambienceToReverbFeedbackRange" : 0.5,
+      "ambienceToReverbMixRange" : 0.26,
+      "toneToFilterCutoffOctaves" : 3.94,
+      "toneToFilterSaturationRange" : 0.2,
+      "toneToModulationIndexRange" : 0.9
+    },
+    "output" : {
+      "preVolume" : 0.5,
+      "volume" : 0.75
+    },
+    "reverb" : {
+      "balance" : 0.06,
+      "cutoffFrequency" : 1500,
+      "feedback" : 0.07
+    },
+    "tempo" : 100,
+    "voiceMode" : "polyphonic"
+  },
+  "name" : "Wildlife",
+  "voiceTemplate" : {
+    "filter" : {
+      "cutoffFrequency" : 730
+    },
+    "filterStatic" : {
+      "resonance" : 1.4,
+      "saturation" : 0.5
+    },
+    "modulation" : {
+      "auxiliaryEnvelope" : {
+        "amountToFilterFrequency" : 1.8,
+        "amountToOscillatorPitch" : 8.2,
+        "amountToVibrato" : 0.2,
+        "attack" : 0.867,
+        "decay" : 1.31,
+        "release" : 1.36,
+        "sustain" : 0.56
+      },
+      "keyTracking" : {
+        "amountToFilterFrequency" : 0.22,
+        "amountToVoiceLFOFrequency" : 0.44
+      },
+      "loudnessEnvelope" : {
+        "attack" : 0.799,
+        "decay" : 0.04,
+        "release" : 1.35,
+        "sustain" : 0.25
+      },
+      "modulatorEnvelope" : {
+        "amountToModulationIndex" : 1.2,
+        "attack" : 0.27,
+        "decay" : 0.67,
+        "release" : 1.32,
+        "sustain" : 0.53
+      },
+      "touchAftertouch" : {
+        "amountToFilterFrequency" : -1.37,
+        "amountToModulatorLevel" : -0,
+        "amountToOscillatorPitch" : 2,
+        "amountToVibrato" : 0.4
+      },
+      "touchInitial" : {
+        "amountToAuxEnvCutoff" : 1,
+        "amountToModEnvelope" : 0.5,
+        "amountToOscillatorAmplitude" : 0.22
+      },
+      "voiceLFO" : {
+        "amountToFilterFrequency" : -0.1,
+        "amountToModulatorLevel" : -1.9,
+        "amountToOscillatorPitch" : 1.7,
+        "delayTime" : 1.18,
+        "frequency" : 4.28,
+        "resetMode" : "free",
+        "waveform" : "sine"
+      }
+    },
+    "oscillator" : {
+      "carrierMultiplier" : 0.25,
+      "detuneMode" : "constant",
+      "modulatingMultiplier" : 3.003,
+      "modulationIndex" : 3.3,
+      "stereoOffsetConstant" : 4.83,
+      "stereoOffsetProportional" : 2.1,
+      "waveform" : "sine"
+    }
+  }
+}

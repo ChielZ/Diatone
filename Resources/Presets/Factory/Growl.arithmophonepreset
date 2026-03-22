@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T12:00:01Z",
   "id" : "C3D4E5F6-2222-4CCC-DDDD-000000000002",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.2,
-    "baseDelayMix" : 0,
-    "baseFilterCutoff" : 700,
-    "baseFilterSaturation" : 1.5,
-    "baseModulationIndex" : 2.5,
-    "basePreVolume" : 0.45,
-    "baseReverbFeedback" : 0.4,
-    "baseReverbMix" : 0.04,
-    "tonePosition" : 0,
-    "volumePosition" : 0.45
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0,
@@ -28,7 +15,6 @@
       "amountToVoiceMixerVolume" : 0,
       "frequency" : 0.3,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "triangle"
@@ -61,12 +47,6 @@
   },
   "name" : "Growl",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.001,
-      "decayDuration" : 0.15,
-      "releaseDuration" : 0.08,
-      "sustainLevel" : 1.0
-    },
     "filter" : {
       "cutoffFrequency" : 700
     },
@@ -76,65 +56,56 @@
     },
     "modulation" : {
       "auxiliaryEnvelope" : {
-        "amountToFilterFrequency" : 2.0,
+        "amountToFilterFrequency" : 2,
         "amountToOscillatorPitch" : -0.3,
         "amountToVibrato" : 0,
         "attack" : 0.001,
         "decay" : 0.06,
-        "isEnabled" : true,
         "release" : 0.04,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.6,
-        "amountToVoiceLFOFrequency" : 0,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0
       },
       "loudnessEnvelope" : {
         "attack" : 0.001,
         "decay" : 0.15,
-        "isEnabled" : true,
         "release" : 0.08,
-        "sustain" : 1.0
+        "sustain" : 1
       },
       "modulatorEnvelope" : {
-        "amountToModulationIndex" : 3.0,
+        "amountToModulationIndex" : 3,
         "attack" : 0,
         "decay" : 0.1,
-        "isEnabled" : true,
         "release" : 0.05,
         "sustain" : 0
       },
       "touchAftertouch" : {
         "amountToFilterFrequency" : 2.5,
-        "amountToModulatorLevel" : 4.0,
+        "amountToModulatorLevel" : 4,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0,
-        "isEnabled" : true
+        "amountToVibrato" : 0
       },
       "touchInitial" : {
-        "amountToAuxEnvCutoff" : 1.0,
-        "amountToAuxEnvPitch" : 0,
-        "amountToModEnvelope" : 1.0,
-        "amountToOscillatorAmplitude" : 0.3,
-        "isEnabled" : true
+        "amountToAuxEnvCutoff" : 1,
+        "amountToModEnvelope" : 1,
+        "amountToOscillatorAmplitude" : 0.3
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0.4,
         "amountToModulatorLevel" : 0.5,
         "amountToOscillatorPitch" : 0,
         "delayTime" : 0,
-        "frequency" : 4.0,
-        "isEnabled" : true,
+        "frequency" : 4,
         "resetMode" : "free",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "proportional",
-      "modulatingMultiplier" : 1.0,
+      "modulatingMultiplier" : 1,
       "modulationIndex" : 2.5,
       "stereoOffsetConstant" : 2,
       "stereoOffsetProportional" : 5,

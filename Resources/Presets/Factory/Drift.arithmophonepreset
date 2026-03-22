@@ -1,19 +1,6 @@
 {
   "createdAt" : "2026-03-11T13:00:01Z",
   "id" : "D4E5F6A7-2222-4DDD-EEEE-000000000002",
-  "macroState" : {
-    "ambiencePosition" : 0,
-    "baseDelayFeedback" : 0.55,
-    "baseDelayMix" : 0.18,
-    "baseFilterCutoff" : 1200,
-    "baseFilterSaturation" : 0.3,
-    "baseModulationIndex" : 0.25,
-    "basePreVolume" : 0.45,
-    "baseReverbFeedback" : 0.85,
-    "baseReverbMix" : 0.3,
-    "tonePosition" : 0,
-    "volumePosition" : 0.45
-  },
   "master" : {
     "delay" : {
       "dryWetMix" : 0.18,
@@ -24,11 +11,10 @@
     "globalLFO" : {
       "amountToDelayTime" : 0,
       "amountToFilterFrequency" : 0.5,
-      "amountToModulatorMultiplier" : 0.015,
+      "amountToModulatorMultiplier" : 0,
       "amountToVoiceMixerVolume" : 0.08,
       "frequency" : 0.12,
       "frequencyMode" : "hertz",
-      "isEnabled" : true,
       "resetMode" : "free",
       "syncValue" : 1,
       "waveform" : "sine"
@@ -61,12 +47,6 @@
   },
   "name" : "Drift",
   "voiceTemplate" : {
-    "envelope" : {
-      "attackDuration" : 0.15,
-      "decayDuration" : 3.5,
-      "releaseDuration" : 1.0,
-      "sustainLevel" : 0.15
-    },
     "filter" : {
       "cutoffFrequency" : 1200
     },
@@ -78,30 +58,26 @@
       "auxiliaryEnvelope" : {
         "amountToFilterFrequency" : 1.5,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0.015,
+        "amountToVibrato" : 0,
         "attack" : 0.2,
-        "decay" : 3.0,
-        "isEnabled" : true,
+        "decay" : 3,
         "release" : 0.8,
         "sustain" : 0
       },
       "keyTracking" : {
         "amountToFilterFrequency" : 0.4,
-        "amountToVoiceLFOFrequency" : 0,
-        "isEnabled" : true
+        "amountToVoiceLFOFrequency" : 0
       },
       "loudnessEnvelope" : {
         "attack" : 0.15,
         "decay" : 3.5,
-        "isEnabled" : true,
-        "release" : 1.0,
+        "release" : 1,
         "sustain" : 0.15
       },
       "modulatorEnvelope" : {
         "amountToModulationIndex" : 0.5,
         "attack" : 0.1,
-        "decay" : 2.0,
-        "isEnabled" : true,
+        "decay" : 2,
         "release" : 0.5,
         "sustain" : 0
       },
@@ -109,34 +85,29 @@
         "amountToFilterFrequency" : 0.6,
         "amountToModulatorLevel" : 0.5,
         "amountToOscillatorPitch" : 0,
-        "amountToVibrato" : 0.15,
-        "isEnabled" : true
+        "amountToVibrato" : 0.2
       },
       "touchInitial" : {
         "amountToAuxEnvCutoff" : 0.3,
-        "amountToAuxEnvPitch" : 0,
         "amountToModEnvelope" : 0,
-        "amountToOscillatorAmplitude" : 0.2,
-        "isEnabled" : true
+        "amountToOscillatorAmplitude" : 0.2
       },
       "voiceLFO" : {
         "amountToFilterFrequency" : 0.1,
         "amountToModulatorLevel" : 0,
-        "amountToOscillatorPitch" : 0.03,
+        "amountToOscillatorPitch" : 0,
         "delayTime" : 0.8,
-        "frequency" : 2.0,
-        "isEnabled" : true,
+        "frequency" : 2,
         "resetMode" : "trigger",
         "waveform" : "sine"
       }
     },
     "oscillator" : {
-      "amplitude" : 0.5,
       "carrierMultiplier" : 1,
       "detuneMode" : "constant",
       "modulatingMultiplier" : 2.005,
-      "modulationIndex" : 0.25,
-      "stereoOffsetConstant" : 3.0,
+      "modulationIndex" : 0.3,
+      "stereoOffsetConstant" : 3,
       "stereoOffsetProportional" : 5,
       "waveform" : "triangle"
     }
