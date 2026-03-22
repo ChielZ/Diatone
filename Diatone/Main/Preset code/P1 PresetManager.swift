@@ -443,9 +443,14 @@ final class PresetManager: ObservableObject {
         encoder.dateEncodingStrategy = .iso8601
         let data = try encoder.encode(preset)
         
-        // Create temporary file with .arithmophonepreset extension
+        // Create temporary file with name+UUID for uniqueness
         let tempDir = fileManager.temporaryDirectory
-        let filename = "\(preset.name).arithmophonepreset"
+        let sanitized = preset.name
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: ":", with: "-")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let safeName = sanitized.isEmpty ? "Untitled" : sanitized
+        let filename = "\(safeName)-\(preset.id.uuidString).arithmophonepreset"
         let tempURL = tempDir.appendingPathComponent(filename)
         
         // Write to temporary file

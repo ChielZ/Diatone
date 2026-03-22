@@ -265,35 +265,10 @@ struct VoiceLFOParameters: Codable, Equatable {
             || amountToModulatorLevel != 0.0
     }
     
-    // Custom Codable to silently ignore legacy isEnabled field in old preset files
     enum CodingKeys: String, CodingKey {
         case waveform, resetMode, frequency
         case amountToOscillatorPitch, amountToFilterFrequency, amountToModulatorLevel
-        case delayTime, isEnabled
-    }
-    
-    init(waveform: LFOWaveform, resetMode: LFOResetMode, frequency: Double,
-         amountToOscillatorPitch: Double, amountToFilterFrequency: Double,
-         amountToModulatorLevel: Double, delayTime: Double) {
-        self.waveform = waveform
-        self.resetMode = resetMode
-        self.frequency = frequency
-        self.amountToOscillatorPitch = amountToOscillatorPitch
-        self.amountToFilterFrequency = amountToFilterFrequency
-        self.amountToModulatorLevel = amountToModulatorLevel
-        self.delayTime = delayTime
-    }
-    
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        waveform = try c.decode(LFOWaveform.self, forKey: .waveform)
-        resetMode = try c.decode(LFOResetMode.self, forKey: .resetMode)
-        frequency = try c.decode(Double.self, forKey: .frequency)
-        amountToOscillatorPitch = try c.decode(Double.self, forKey: .amountToOscillatorPitch)
-        amountToFilterFrequency = try c.decode(Double.self, forKey: .amountToFilterFrequency)
-        amountToModulatorLevel = try c.decode(Double.self, forKey: .amountToModulatorLevel)
-        delayTime = try c.decode(Double.self, forKey: .delayTime)
-        // isEnabled silently ignored if present
+        case delayTime
     }
     
     func encode(to encoder: Encoder) throws {
@@ -343,28 +318,9 @@ struct ModulatorEnvelopeParameters: Codable, Equatable {
         return amountToModulationIndex != 0.0
     }
     
-    // Custom Codable to silently ignore legacy isEnabled field in old preset files
     enum CodingKeys: String, CodingKey {
         case attack, decay, sustain, release
-        case amountToModulationIndex, isEnabled
-    }
-    
-    init(attack: Double, decay: Double, sustain: Double, release: Double, amountToModulationIndex: Double) {
-        self.attack = attack
-        self.decay = decay
-        self.sustain = sustain
-        self.release = release
-        self.amountToModulationIndex = amountToModulationIndex
-    }
-    
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        attack = try c.decode(Double.self, forKey: .attack)
-        decay = try c.decode(Double.self, forKey: .decay)
-        sustain = try c.decode(Double.self, forKey: .sustain)
-        release = try c.decode(Double.self, forKey: .release)
-        amountToModulationIndex = try c.decode(Double.self, forKey: .amountToModulationIndex)
-        // isEnabled silently ignored if present
+        case amountToModulationIndex
     }
     
     func encode(to encoder: Encoder) throws {
@@ -408,33 +364,9 @@ struct AuxiliaryEnvelopeParameters: Codable, Equatable {
             || amountToVibrato != 0.0
     }
     
-    // Custom Codable to silently ignore legacy isEnabled field in old preset files
     enum CodingKeys: String, CodingKey {
         case attack, decay, sustain, release
-        case amountToOscillatorPitch, amountToFilterFrequency, amountToVibrato, isEnabled
-    }
-    
-    init(attack: Double, decay: Double, sustain: Double, release: Double,
-         amountToOscillatorPitch: Double, amountToFilterFrequency: Double, amountToVibrato: Double) {
-        self.attack = attack
-        self.decay = decay
-        self.sustain = sustain
-        self.release = release
-        self.amountToOscillatorPitch = amountToOscillatorPitch
-        self.amountToFilterFrequency = amountToFilterFrequency
-        self.amountToVibrato = amountToVibrato
-    }
-    
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        attack = try c.decode(Double.self, forKey: .attack)
-        decay = try c.decode(Double.self, forKey: .decay)
-        sustain = try c.decode(Double.self, forKey: .sustain)
-        release = try c.decode(Double.self, forKey: .release)
-        amountToOscillatorPitch = try c.decode(Double.self, forKey: .amountToOscillatorPitch)
-        amountToFilterFrequency = try c.decode(Double.self, forKey: .amountToFilterFrequency)
-        amountToVibrato = try c.decode(Double.self, forKey: .amountToVibrato)
-        // isEnabled silently ignored if present
+        case amountToOscillatorPitch, amountToFilterFrequency, amountToVibrato
     }
     
     func encode(to encoder: Encoder) throws {
@@ -466,25 +398,8 @@ struct LoudnessEnvelopeParameters: Codable, Equatable {
         release: 0.01
     )
     
-    // Custom Codable to silently ignore legacy isEnabled field in old preset files
     enum CodingKeys: String, CodingKey {
-        case attack, decay, sustain, release, isEnabled
-    }
-    
-    init(attack: Double, decay: Double, sustain: Double, release: Double) {
-        self.attack = attack
-        self.decay = decay
-        self.sustain = sustain
-        self.release = release
-    }
-    
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        attack = try c.decode(Double.self, forKey: .attack)
-        decay = try c.decode(Double.self, forKey: .decay)
-        sustain = try c.decode(Double.self, forKey: .sustain)
-        release = try c.decode(Double.self, forKey: .release)
-        // isEnabled silently ignored if present
+        case attack, decay, sustain, release
     }
     
     func encode(to encoder: Encoder) throws {
@@ -519,21 +434,8 @@ struct KeyTrackingParameters: Codable, Equatable {
             || amountToVoiceLFOFrequency != 0.0
     }
     
-    // Custom Codable to silently ignore legacy isEnabled field in old preset files
     enum CodingKeys: String, CodingKey {
-        case amountToFilterFrequency, amountToVoiceLFOFrequency, isEnabled
-    }
-    
-    init(amountToFilterFrequency: Double, amountToVoiceLFOFrequency: Double) {
-        self.amountToFilterFrequency = amountToFilterFrequency
-        self.amountToVoiceLFOFrequency = amountToVoiceLFOFrequency
-    }
-    
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        amountToFilterFrequency = try c.decode(Double.self, forKey: .amountToFilterFrequency)
-        amountToVoiceLFOFrequency = try c.decode(Double.self, forKey: .amountToVoiceLFOFrequency)
-        // isEnabled silently ignored if present
+        case amountToFilterFrequency, amountToVoiceLFOFrequency
     }
     
     func encode(to encoder: Encoder) throws {
@@ -578,25 +480,8 @@ struct TouchInitialParameters: Codable, Equatable {
             || amountToAuxEnvCutoff != 0.0
     }
     
-    // Custom Codable to silently ignore legacy isEnabled and amountToAuxEnvPitch fields
     enum CodingKeys: String, CodingKey {
-        case amountToOscillatorAmplitude, amountToModEnvelope
-        case amountToAuxEnvPitch, amountToAuxEnvCutoff, isEnabled
-    }
-    
-    init(amountToOscillatorAmplitude: Double, amountToModEnvelope: Double,
-         amountToAuxEnvCutoff: Double) {
-        self.amountToOscillatorAmplitude = amountToOscillatorAmplitude
-        self.amountToModEnvelope = amountToModEnvelope
-        self.amountToAuxEnvCutoff = amountToAuxEnvCutoff
-    }
-    
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        amountToOscillatorAmplitude = try c.decode(Double.self, forKey: .amountToOscillatorAmplitude)
-        amountToModEnvelope = try c.decode(Double.self, forKey: .amountToModEnvelope)
-        amountToAuxEnvCutoff = try c.decode(Double.self, forKey: .amountToAuxEnvCutoff)
-        // amountToAuxEnvPitch and isEnabled silently ignored if present
+        case amountToOscillatorAmplitude, amountToModEnvelope, amountToAuxEnvCutoff
     }
     
     func encode(to encoder: Encoder) throws {
@@ -631,27 +516,9 @@ struct TouchAftertouchParameters: Codable, Equatable {
             || amountToVibrato != 0.0
     }
     
-    // Custom Codable to silently ignore legacy isEnabled field in old preset files
     enum CodingKeys: String, CodingKey {
         case amountToOscillatorPitch, amountToFilterFrequency
-        case amountToModulatorLevel, amountToVibrato, isEnabled
-    }
-    
-    init(amountToOscillatorPitch: Double, amountToFilterFrequency: Double,
-         amountToModulatorLevel: Double, amountToVibrato: Double) {
-        self.amountToOscillatorPitch = amountToOscillatorPitch
-        self.amountToFilterFrequency = amountToFilterFrequency
-        self.amountToModulatorLevel = amountToModulatorLevel
-        self.amountToVibrato = amountToVibrato
-    }
-    
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        amountToOscillatorPitch = try c.decode(Double.self, forKey: .amountToOscillatorPitch)
-        amountToFilterFrequency = try c.decode(Double.self, forKey: .amountToFilterFrequency)
-        amountToModulatorLevel = try c.decode(Double.self, forKey: .amountToModulatorLevel)
-        amountToVibrato = try c.decode(Double.self, forKey: .amountToVibrato)
-        // isEnabled silently ignored if present
+        case amountToModulatorLevel, amountToVibrato
     }
     
     func encode(to encoder: Encoder) throws {
@@ -748,40 +615,10 @@ struct GlobalLFOParameters: Codable, Equatable {
             || amountToDelayTime != 0.0
     }
     
-    // Custom Codable to silently ignore legacy isEnabled field in old preset files
     enum CodingKeys: String, CodingKey {
         case waveform, resetMode, frequencyMode, frequency, syncValue
         case amountToVoiceMixerVolume, amountToModulatorMultiplier
-        case amountToFilterFrequency, amountToDelayTime, isEnabled
-    }
-    
-    init(waveform: LFOWaveform, resetMode: LFOResetMode, frequencyMode: LFOFrequencyMode,
-         frequency: Double, syncValue: LFOSyncValue,
-         amountToVoiceMixerVolume: Double, amountToModulatorMultiplier: Double,
-         amountToFilterFrequency: Double, amountToDelayTime: Double) {
-        self.waveform = waveform
-        self.resetMode = resetMode
-        self.frequencyMode = frequencyMode
-        self.frequency = frequency
-        self.syncValue = syncValue
-        self.amountToVoiceMixerVolume = amountToVoiceMixerVolume
-        self.amountToModulatorMultiplier = amountToModulatorMultiplier
-        self.amountToFilterFrequency = amountToFilterFrequency
-        self.amountToDelayTime = amountToDelayTime
-    }
-    
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        waveform = try c.decode(LFOWaveform.self, forKey: .waveform)
-        resetMode = try c.decode(LFOResetMode.self, forKey: .resetMode)
-        frequencyMode = try c.decode(LFOFrequencyMode.self, forKey: .frequencyMode)
-        frequency = try c.decode(Double.self, forKey: .frequency)
-        syncValue = try c.decode(LFOSyncValue.self, forKey: .syncValue)
-        amountToVoiceMixerVolume = try c.decode(Double.self, forKey: .amountToVoiceMixerVolume)
-        amountToModulatorMultiplier = try c.decode(Double.self, forKey: .amountToModulatorMultiplier)
-        amountToFilterFrequency = try c.decode(Double.self, forKey: .amountToFilterFrequency)
-        amountToDelayTime = try c.decode(Double.self, forKey: .amountToDelayTime)
-        // isEnabled silently ignored if present
+        case amountToFilterFrequency, amountToDelayTime
     }
     
     func encode(to encoder: Encoder) throws {

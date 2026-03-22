@@ -245,40 +245,13 @@ struct OscillatorParameters: Codable, Equatable {
         stereoOffsetConstant: 2.0
     )
     
-    // Custom Codable to silently ignore legacy amplitude field in old preset files
     enum CodingKeys: String, CodingKey {
         case carrierMultiplier, modulatingMultiplier, modulationIndex
         case waveform, detuneMode, stereoOffsetProportional, stereoOffsetConstant
-        case amplitude
-    }
-    
-    init(carrierMultiplier: Double, modulatingMultiplier: Double, modulationIndex: Double,
-         waveform: OscillatorWaveform, detuneMode: DetuneMode,
-         stereoOffsetProportional: Double, stereoOffsetConstant: Double) {
-        self.carrierMultiplier = carrierMultiplier
-        self.modulatingMultiplier = modulatingMultiplier
-        self.modulationIndex = modulationIndex
-        self.waveform = waveform
-        self.detuneMode = detuneMode
-        self.stereoOffsetProportional = stereoOffsetProportional
-        self.stereoOffsetConstant = stereoOffsetConstant
-    }
-    
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        carrierMultiplier = try c.decode(Double.self, forKey: .carrierMultiplier)
-        modulatingMultiplier = try c.decode(Double.self, forKey: .modulatingMultiplier)
-        modulationIndex = try c.decode(Double.self, forKey: .modulationIndex)
-        waveform = try c.decode(OscillatorWaveform.self, forKey: .waveform)
-        detuneMode = try c.decode(DetuneMode.self, forKey: .detuneMode)
-        stereoOffsetProportional = try c.decode(Double.self, forKey: .stereoOffsetProportional)
-        stereoOffsetConstant = try c.decode(Double.self, forKey: .stereoOffsetConstant)
-        // amplitude silently ignored if present
     }
     
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        // Field order matches NewPresetFormat.json
         try c.encode(waveform, forKey: .waveform)
         try c.encode(carrierMultiplier, forKey: .carrierMultiplier)
         // Snap fine part to 0.001, keep coarse integer intact
@@ -289,7 +262,6 @@ struct OscillatorParameters: Codable, Equatable {
         try c.encode(detuneMode, forKey: .detuneMode)
         try c.encode(snap(stereoOffsetConstant, to: 0.01), forKey: .stereoOffsetConstant)
         try c.encode(snap(stereoOffsetProportional, to: 0.05), forKey: .stereoOffsetProportional)
-        // amplitude not encoded
     }
     
     /// Helper: Get the coarse part of modulatingMultiplier (integer part)
@@ -372,16 +344,6 @@ struct VoiceParameters: Codable, Equatable {
     var filterStatic: FilterStaticParameters       // Non-modulatable (resonance, saturation)
     var modulation: VoiceModulationParameters      // Modulation system (includes loudnessEnvelope)
     
-    // MARK: - Initializers
-    
-    /// Standard memberwise initializer (required because we have custom Codable)
-    init(oscillator: OscillatorParameters, filter: FilterParameters, filterStatic: FilterStaticParameters, modulation: VoiceModulationParameters) {
-        self.oscillator = oscillator
-        self.filter = filter
-        self.filterStatic = filterStatic
-        self.modulation = modulation
-    }
-    
     static let `default` = VoiceParameters(
         oscillator: .default,
         filter: .default,
@@ -389,49 +351,10 @@ struct VoiceParameters: Codable, Equatable {
         modulation: .default
     )
     
-    // MARK: - Custom Codable Implementation
-    
-    /// Legacy envelope struct used only for decoding old preset files
-    private struct LegacyEnvelopeParameters: Codable {
-        var attackDuration: Double
-        var decayDuration: Double
-        var sustainLevel: Double
-        var releaseDuration: Double
-        
-        func toLoudnessEnvelope() -> LoudnessEnvelopeParameters {
-            LoudnessEnvelopeParameters(
-                attack: attackDuration,
-                decay: decayDuration,
-                sustain: sustainLevel,
-                release: releaseDuration
-            )
-        }
-    }
-    
     enum CodingKeys: String, CodingKey {
-        case oscillator, filter, filterStatic, envelope, modulation
+        case oscillator, filter, filterStatic, modulation
     }
     
-    /// Custom decoder that migrates legacy envelope to loudnessEnvelope
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        oscillator = try container.decode(OscillatorParameters.self, forKey: .oscillator)
-        filter = try container.decode(FilterParameters.self, forKey: .filter)
-        filterStatic = try container.decode(FilterStaticParameters.self, forKey: .filterStatic)
-        
-        // Decode modulation, or create default if missing (old presets)
-        var modulation = (try? container.decode(VoiceModulationParameters.self, forKey: .modulation)) ?? .default
-        
-        // If old envelope field is present, migrate it to loudnessEnvelope
-        if let legacyEnvelope = try? container.decode(LegacyEnvelopeParameters.self, forKey: .envelope) {
-            modulation.loudnessEnvelope = legacyEnvelope.toLoudnessEnvelope()
-        }
-        
-        self.modulation = modulation
-    }
-    
-    /// Encoder — field order matches NewPresetFormat.json, envelope field is no longer written
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(oscillator, forKey: .oscillator)
@@ -803,9 +726,9 @@ struct AudioParameterSet: Codable, Equatable, Identifiable {
         createdAt: Date()
     )
     
-    // Custom Codable — macroState is derived from voiceTemplate/master, not serialized
+    // macroState is derived from voiceTemplate/master on load, not serialized
     enum CodingKeys: String, CodingKey {
-        case id, name, voiceTemplate, master, macroState, createdAt
+        case id, name, voiceTemplate, master, createdAt
     }
     
     init(id: UUID, name: String, voiceTemplate: VoiceParameters, master: MasterParameters,
@@ -825,8 +748,6 @@ struct AudioParameterSet: Codable, Equatable, Identifiable {
         voiceTemplate = try c.decode(VoiceParameters.self, forKey: .voiceTemplate)
         master = try c.decode(MasterParameters.self, forKey: .master)
         createdAt = try c.decode(Date.self, forKey: .createdAt)
-        // macroState is derived from parameters, not loaded from preset
-        // Old macroState in preset files is silently ignored
         macroState = MacroControlState(from: voiceTemplate, masterParams: master)
     }
     
@@ -838,7 +759,6 @@ struct AudioParameterSet: Codable, Equatable, Identifiable {
         try c.encode(name, forKey: .name)
         try c.encode(voiceTemplate, forKey: .voiceTemplate)
         try c.encode(master, forKey: .master)
-        // macroState not encoded — derived from voiceTemplate/master on load
     }
 }
 
