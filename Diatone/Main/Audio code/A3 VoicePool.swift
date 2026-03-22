@@ -645,15 +645,6 @@ final class VoicePool {
         }
     }
     
-    /// Updates loudness envelope parameters from old EnvelopeParameters structure
-    /// This is for backward compatibility when the UI or preset system uses the old structure
-    @available(*, deprecated, message: "Use updateAllVoiceLoudnessEnvelopes with LoudnessEnvelopeParameters instead")
-    func updateAllVoiceEnvelopes(_ parameters: EnvelopeParameters) {
-        // Convert old parameters to new loudness envelope
-        let loudnessParams = parameters.toLoudnessEnvelope()
-        updateAllVoiceLoudnessEnvelopes(loudnessParams)
-    }
-    
     /// Updates detune mode for all voices
     func updateDetuneMode(_ mode: DetuneMode) {
         for voice in voices {
@@ -858,8 +849,6 @@ final class VoicePool {
     /// - Parameter deltaTime: Time since last update (typically 0.005 seconds)
     /// - Returns: Raw global LFO value (-1.0 to +1.0, unscaled by amounts)
     private func updateGlobalLFOPhase(deltaTime: Double) -> Double {
-        guard globalLFO.isEnabled else { return 0.0 }
-        
         // Phase increment calculation
         // Get actual frequency based on mode (sync mode uses tempo, free/trigger mode uses Hz)
         let actualFrequency = globalLFO.actualFrequency(tempo: currentTempo)
@@ -880,7 +869,7 @@ final class VoicePool {
     /// Applies global LFO modulation to global-level parameters (delay time, post-mixer fader)
     /// - Parameter rawValue: Raw global LFO value (-1.0 to +1.0, unscaled)
     private func applyGlobalLFOToGlobalParameters(rawValue: Double) {
-        guard globalLFO.isEnabled else { return }
+        guard globalLFO.hasActiveDestinations else { return }
         
         // Global LFO Destination 1: Post-Mixer Fader (stereo panning tremolo)
         // Apply global stereo tremolo/panning effect by modulating L/R gains in opposite directions
@@ -926,7 +915,7 @@ final class VoicePool {
         print("   Active voices: \(activeVoiceCount)")
         print("   Available voices: \(voices.count - activeVoiceCount)")
         print("   Keys pressed: \(keyToVoiceMap.count)")
-        print("   Global LFO: \(globalLFO.isEnabled ? "enabled" : "disabled")")
+        print("   Global LFO: \(globalLFO.hasActiveDestinations ? "active" : "inactive")")
         print("   Modulation timer: \(modulationTimer != nil ? "running" : "stopped")")
     }
 }

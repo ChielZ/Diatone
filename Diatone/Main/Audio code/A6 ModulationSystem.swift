@@ -238,8 +238,6 @@ struct VoiceLFOParameters: Codable, Equatable {
     // Delay/ramp applied to all LFO outputs (Page 7, item 7)
     var delayTime: Double                      // 0 to 5 seconds
     
-    var isEnabled: Bool
-    
     static let `default` = VoiceLFOParameters(
         waveform: .sine,
         resetMode: .free,
@@ -247,8 +245,7 @@ struct VoiceLFOParameters: Codable, Equatable {
         amountToOscillatorPitch: 0.0,          // No vibrato by default
         amountToFilterFrequency: 0.0,          // No filter modulation by default
         amountToModulatorLevel: 0.0,           // No timbre modulation by default
-        delayTime: 0.0,                        // Instant effect by default
-        isEnabled: true
+        delayTime: 0.0                         // Instant effect by default
     )
     
     /// Check if any destination has a non-zero amount
@@ -258,11 +255,53 @@ struct VoiceLFOParameters: Codable, Equatable {
             || amountToModulatorLevel != 0.0
     }
     
+    // Custom Codable to silently ignore legacy isEnabled field in old preset files
+    enum CodingKeys: String, CodingKey {
+        case waveform, resetMode, frequency
+        case amountToOscillatorPitch, amountToFilterFrequency, amountToModulatorLevel
+        case delayTime, isEnabled
+    }
+    
+    init(waveform: LFOWaveform, resetMode: LFOResetMode, frequency: Double,
+         amountToOscillatorPitch: Double, amountToFilterFrequency: Double,
+         amountToModulatorLevel: Double, delayTime: Double) {
+        self.waveform = waveform
+        self.resetMode = resetMode
+        self.frequency = frequency
+        self.amountToOscillatorPitch = amountToOscillatorPitch
+        self.amountToFilterFrequency = amountToFilterFrequency
+        self.amountToModulatorLevel = amountToModulatorLevel
+        self.delayTime = delayTime
+    }
+    
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        waveform = try c.decode(LFOWaveform.self, forKey: .waveform)
+        resetMode = try c.decode(LFOResetMode.self, forKey: .resetMode)
+        frequency = try c.decode(Double.self, forKey: .frequency)
+        amountToOscillatorPitch = try c.decode(Double.self, forKey: .amountToOscillatorPitch)
+        amountToFilterFrequency = try c.decode(Double.self, forKey: .amountToFilterFrequency)
+        amountToModulatorLevel = try c.decode(Double.self, forKey: .amountToModulatorLevel)
+        delayTime = try c.decode(Double.self, forKey: .delayTime)
+        // isEnabled silently ignored if present
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(waveform, forKey: .waveform)
+        try c.encode(resetMode, forKey: .resetMode)
+        try c.encode(frequency, forKey: .frequency)
+        try c.encode(amountToOscillatorPitch, forKey: .amountToOscillatorPitch)
+        try c.encode(amountToFilterFrequency, forKey: .amountToFilterFrequency)
+        try c.encode(amountToModulatorLevel, forKey: .amountToModulatorLevel)
+        try c.encode(delayTime, forKey: .delayTime)
+        // isEnabled not encoded
+    }
+    
     /// Calculate the raw LFO waveform value at a given phase
     /// - Parameter phase: Current phase of the LFO (0.0 = start, 1.0 = end of cycle)
     /// - Returns: Raw LFO value in range 0.0 to 1.0 (unipolar, unscaled)
     func rawValue(at phase: Double) -> Double {
-        guard isEnabled else { return 0.0 }
         return waveform.value(at: phase, bipolar: false)  // Voice LFO uses unipolar mode
     }
 }
@@ -281,20 +320,51 @@ struct ModulatorEnvelopeParameters: Codable, Equatable {
     // Fixed destination: Modulation Index only (Page 5, item 5)
     var amountToModulationIndex: Double        // Can be positive or negative
     
-    var isEnabled: Bool
-    
     static let `default` = ModulatorEnvelopeParameters(
         attack: 0.0,
         decay: 0.5,
         sustain: 0.0,
         release: 0.25,
-        amountToModulationIndex: 0.0,          // No modulation by default
-        isEnabled: true
+        amountToModulationIndex: 0.0           // No modulation by default
     )
     
     /// Check if envelope has a non-zero amount
     var hasActiveDestinations: Bool {
         return amountToModulationIndex != 0.0
+    }
+    
+    // Custom Codable to silently ignore legacy isEnabled field in old preset files
+    enum CodingKeys: String, CodingKey {
+        case attack, decay, sustain, release
+        case amountToModulationIndex, isEnabled
+    }
+    
+    init(attack: Double, decay: Double, sustain: Double, release: Double, amountToModulationIndex: Double) {
+        self.attack = attack
+        self.decay = decay
+        self.sustain = sustain
+        self.release = release
+        self.amountToModulationIndex = amountToModulationIndex
+    }
+    
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        attack = try c.decode(Double.self, forKey: .attack)
+        decay = try c.decode(Double.self, forKey: .decay)
+        sustain = try c.decode(Double.self, forKey: .sustain)
+        release = try c.decode(Double.self, forKey: .release)
+        amountToModulationIndex = try c.decode(Double.self, forKey: .amountToModulationIndex)
+        // isEnabled silently ignored if present
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(attack, forKey: .attack)
+        try c.encode(decay, forKey: .decay)
+        try c.encode(sustain, forKey: .sustain)
+        try c.encode(release, forKey: .release)
+        try c.encode(amountToModulationIndex, forKey: .amountToModulationIndex)
+        // isEnabled not encoded
     }
 }
 
@@ -312,8 +382,6 @@ struct AuxiliaryEnvelopeParameters: Codable, Equatable {
     var amountToFilterFrequency: Double        // ±octaves (can be positive or negative)
     var amountToVibrato: Double                // Meta-modulation: scales voice LFO pitch amount
     
-    var isEnabled: Bool
-    
     static let `default` = AuxiliaryEnvelopeParameters(
         attack: 0.0,
         decay: 0.5,
@@ -321,8 +389,7 @@ struct AuxiliaryEnvelopeParameters: Codable, Equatable {
         release: 0.25,
         amountToOscillatorPitch: 0.0,          // No pitch sweep by default
         amountToFilterFrequency: 0.0,          // No filter sweep by default
-        amountToVibrato: 0.0,                  // No vibrato modulation by default
-        isEnabled: true
+        amountToVibrato: 0.0                   // No vibrato modulation by default
     )
     
     /// Check if any destination has a non-zero amount
@@ -330,6 +397,47 @@ struct AuxiliaryEnvelopeParameters: Codable, Equatable {
         return amountToOscillatorPitch != 0.0
             || amountToFilterFrequency != 0.0
             || amountToVibrato != 0.0
+    }
+    
+    // Custom Codable to silently ignore legacy isEnabled field in old preset files
+    enum CodingKeys: String, CodingKey {
+        case attack, decay, sustain, release
+        case amountToOscillatorPitch, amountToFilterFrequency, amountToVibrato, isEnabled
+    }
+    
+    init(attack: Double, decay: Double, sustain: Double, release: Double,
+         amountToOscillatorPitch: Double, amountToFilterFrequency: Double, amountToVibrato: Double) {
+        self.attack = attack
+        self.decay = decay
+        self.sustain = sustain
+        self.release = release
+        self.amountToOscillatorPitch = amountToOscillatorPitch
+        self.amountToFilterFrequency = amountToFilterFrequency
+        self.amountToVibrato = amountToVibrato
+    }
+    
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        attack = try c.decode(Double.self, forKey: .attack)
+        decay = try c.decode(Double.self, forKey: .decay)
+        sustain = try c.decode(Double.self, forKey: .sustain)
+        release = try c.decode(Double.self, forKey: .release)
+        amountToOscillatorPitch = try c.decode(Double.self, forKey: .amountToOscillatorPitch)
+        amountToFilterFrequency = try c.decode(Double.self, forKey: .amountToFilterFrequency)
+        amountToVibrato = try c.decode(Double.self, forKey: .amountToVibrato)
+        // isEnabled silently ignored if present
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(attack, forKey: .attack)
+        try c.encode(decay, forKey: .decay)
+        try c.encode(sustain, forKey: .sustain)
+        try c.encode(release, forKey: .release)
+        try c.encode(amountToOscillatorPitch, forKey: .amountToOscillatorPitch)
+        try c.encode(amountToFilterFrequency, forKey: .amountToFilterFrequency)
+        try c.encode(amountToVibrato, forKey: .amountToVibrato)
+        // isEnabled not encoded
     }
 }
 
@@ -343,15 +451,42 @@ struct LoudnessEnvelopeParameters: Codable, Equatable {
     var sustain: Double                        // Sustain level (0.0 - 1.0)
     var release: Double                        // Release time in seconds (EXPONENTIAL)
     
-    var isEnabled: Bool
-    
     static let `default` = LoudnessEnvelopeParameters(
         attack: 0.001,
         decay: 0.0,
         sustain: 1.0,
-        release: 0.01,
-        isEnabled: true
+        release: 0.01
     )
+    
+    // Custom Codable to silently ignore legacy isEnabled field in old preset files
+    enum CodingKeys: String, CodingKey {
+        case attack, decay, sustain, release, isEnabled
+    }
+    
+    init(attack: Double, decay: Double, sustain: Double, release: Double) {
+        self.attack = attack
+        self.decay = decay
+        self.sustain = sustain
+        self.release = release
+    }
+    
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        attack = try c.decode(Double.self, forKey: .attack)
+        decay = try c.decode(Double.self, forKey: .decay)
+        sustain = try c.decode(Double.self, forKey: .sustain)
+        release = try c.decode(Double.self, forKey: .release)
+        // isEnabled silently ignored if present
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(attack, forKey: .attack)
+        try c.encode(decay, forKey: .decay)
+        try c.encode(sustain, forKey: .sustain)
+        try c.encode(release, forKey: .release)
+        // isEnabled not encoded
+    }
 }
 
 // MARK: - Key Tracking (Fixed Destinations)
@@ -366,18 +501,39 @@ struct KeyTrackingParameters: Codable, Equatable {
     var amountToFilterFrequency: Double        // Scales filter modulation (unipolar 0-1)
     var amountToVoiceLFOFrequency: Double      // Scales voice LFO frequency (unipolar 0-1)
     
-    var isEnabled: Bool
-    
     static let `default` = KeyTrackingParameters(
         amountToFilterFrequency: 0.0,          // No key tracking by default
-        amountToVoiceLFOFrequency: 0.0,        // No LFO frequency tracking by default
-        isEnabled: true
+        amountToVoiceLFOFrequency: 0.0         // No LFO frequency tracking by default
     )
     
     /// Check if any destination has a non-zero amount
     var hasActiveDestinations: Bool {
         return amountToFilterFrequency != 0.0
             || amountToVoiceLFOFrequency != 0.0
+    }
+    
+    // Custom Codable to silently ignore legacy isEnabled field in old preset files
+    enum CodingKeys: String, CodingKey {
+        case amountToFilterFrequency, amountToVoiceLFOFrequency, isEnabled
+    }
+    
+    init(amountToFilterFrequency: Double, amountToVoiceLFOFrequency: Double) {
+        self.amountToFilterFrequency = amountToFilterFrequency
+        self.amountToVoiceLFOFrequency = amountToVoiceLFOFrequency
+    }
+    
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        amountToFilterFrequency = try c.decode(Double.self, forKey: .amountToFilterFrequency)
+        amountToVoiceLFOFrequency = try c.decode(Double.self, forKey: .amountToVoiceLFOFrequency)
+        // isEnabled silently ignored if present
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(amountToFilterFrequency, forKey: .amountToFilterFrequency)
+        try c.encode(amountToVoiceLFOFrequency, forKey: .amountToVoiceLFOFrequency)
+        // isEnabled not encoded
     }
     
     /// Calculate key tracking value based on frequency (called once at note-on)
@@ -404,14 +560,11 @@ struct TouchInitialParameters: Codable, Equatable {
     var amountToAuxEnvPitch: Double            // Scales aux envelope pitch amount (meta-modulation)
     var amountToAuxEnvCutoff: Double           // Scales aux envelope filter amount (meta-modulation)
     
-    var isEnabled: Bool
-    
     static let `default` = TouchInitialParameters(
         amountToOscillatorAmplitude: 0.0,      // No velocity sensitivity by default
         amountToModEnvelope: 0.0,              // No envelope scaling by default
         amountToAuxEnvPitch: 0.0,              // No pitch envelope scaling by default
-        amountToAuxEnvCutoff: 0.0,             // No filter envelope scaling by default
-        isEnabled: true
+        amountToAuxEnvCutoff: 0.0              // No filter envelope scaling by default
     )
     
     /// Check if any destination has a non-zero amount
@@ -420,6 +573,38 @@ struct TouchInitialParameters: Codable, Equatable {
             || amountToModEnvelope != 0.0
             || amountToAuxEnvPitch != 0.0
             || amountToAuxEnvCutoff != 0.0
+    }
+    
+    // Custom Codable to silently ignore legacy isEnabled field in old preset files
+    enum CodingKeys: String, CodingKey {
+        case amountToOscillatorAmplitude, amountToModEnvelope
+        case amountToAuxEnvPitch, amountToAuxEnvCutoff, isEnabled
+    }
+    
+    init(amountToOscillatorAmplitude: Double, amountToModEnvelope: Double,
+         amountToAuxEnvPitch: Double, amountToAuxEnvCutoff: Double) {
+        self.amountToOscillatorAmplitude = amountToOscillatorAmplitude
+        self.amountToModEnvelope = amountToModEnvelope
+        self.amountToAuxEnvPitch = amountToAuxEnvPitch
+        self.amountToAuxEnvCutoff = amountToAuxEnvCutoff
+    }
+    
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        amountToOscillatorAmplitude = try c.decode(Double.self, forKey: .amountToOscillatorAmplitude)
+        amountToModEnvelope = try c.decode(Double.self, forKey: .amountToModEnvelope)
+        amountToAuxEnvPitch = try c.decode(Double.self, forKey: .amountToAuxEnvPitch)
+        amountToAuxEnvCutoff = try c.decode(Double.self, forKey: .amountToAuxEnvCutoff)
+        // isEnabled silently ignored if present
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(amountToOscillatorAmplitude, forKey: .amountToOscillatorAmplitude)
+        try c.encode(amountToModEnvelope, forKey: .amountToModEnvelope)
+        try c.encode(amountToAuxEnvPitch, forKey: .amountToAuxEnvPitch)
+        try c.encode(amountToAuxEnvCutoff, forKey: .amountToAuxEnvCutoff)
+        // isEnabled not encoded
     }
 }
 
@@ -432,14 +617,11 @@ struct TouchAftertouchParameters: Codable, Equatable {
     var amountToModulatorLevel: Double         // ±modulation index (bipolar modulation)
     var amountToVibrato: Double                // Meta-modulation: adds to voice LFO pitch amount
     
-    var isEnabled: Bool
-    
     static let `default` = TouchAftertouchParameters(
         amountToOscillatorPitch: 0.0,          // No aftertouch pitch control by default
         amountToFilterFrequency: 0.0,          // No aftertouch filter control by default
         amountToModulatorLevel: 0.0,           // No aftertouch timbre control by default
-        amountToVibrato: 0.0,                  // No aftertouch vibrato control by default
-        isEnabled: true
+        amountToVibrato: 0.0                   // No aftertouch vibrato control by default
     )
     
     /// Check if any destination has a non-zero amount
@@ -448,6 +630,38 @@ struct TouchAftertouchParameters: Codable, Equatable {
             || amountToFilterFrequency != 0.0
             || amountToModulatorLevel != 0.0
             || amountToVibrato != 0.0
+    }
+    
+    // Custom Codable to silently ignore legacy isEnabled field in old preset files
+    enum CodingKeys: String, CodingKey {
+        case amountToOscillatorPitch, amountToFilterFrequency
+        case amountToModulatorLevel, amountToVibrato, isEnabled
+    }
+    
+    init(amountToOscillatorPitch: Double, amountToFilterFrequency: Double,
+         amountToModulatorLevel: Double, amountToVibrato: Double) {
+        self.amountToOscillatorPitch = amountToOscillatorPitch
+        self.amountToFilterFrequency = amountToFilterFrequency
+        self.amountToModulatorLevel = amountToModulatorLevel
+        self.amountToVibrato = amountToVibrato
+    }
+    
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        amountToOscillatorPitch = try c.decode(Double.self, forKey: .amountToOscillatorPitch)
+        amountToFilterFrequency = try c.decode(Double.self, forKey: .amountToFilterFrequency)
+        amountToModulatorLevel = try c.decode(Double.self, forKey: .amountToModulatorLevel)
+        amountToVibrato = try c.decode(Double.self, forKey: .amountToVibrato)
+        // isEnabled silently ignored if present
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(amountToOscillatorPitch, forKey: .amountToOscillatorPitch)
+        try c.encode(amountToFilterFrequency, forKey: .amountToFilterFrequency)
+        try c.encode(amountToModulatorLevel, forKey: .amountToModulatorLevel)
+        try c.encode(amountToVibrato, forKey: .amountToVibrato)
+        // isEnabled not encoded
     }
 }
 
@@ -498,8 +712,6 @@ struct GlobalLFOParameters: Codable, Equatable {
     var amountToFilterFrequency: Double     // ±octaves
     var amountToDelayTime: Double           // ±seconds
     
-    var isEnabled: Bool
-    
     static let `default` = GlobalLFOParameters(
         waveform: .sine,
         resetMode: .free,
@@ -509,8 +721,7 @@ struct GlobalLFOParameters: Codable, Equatable {
         amountToVoiceMixerVolume: 0.0,      // No stereo panning tremolo by default
         amountToModulatorMultiplier: 0.0,   // No FM ratio modulation by default
         amountToFilterFrequency: 0.0,       // No global filter modulation by default
-        amountToDelayTime: 0.0,             // No delay time modulation by default
-        isEnabled: true
+        amountToDelayTime: 0.0              // No delay time modulation by default
     )
     
     /// Check if any destination has a non-zero amount
@@ -519,6 +730,56 @@ struct GlobalLFOParameters: Codable, Equatable {
             || amountToModulatorMultiplier != 0.0
             || amountToFilterFrequency != 0.0
             || amountToDelayTime != 0.0
+    }
+    
+    // Custom Codable to silently ignore legacy isEnabled field in old preset files
+    enum CodingKeys: String, CodingKey {
+        case waveform, resetMode, frequencyMode, frequency, syncValue
+        case amountToVoiceMixerVolume, amountToModulatorMultiplier
+        case amountToFilterFrequency, amountToDelayTime, isEnabled
+    }
+    
+    init(waveform: LFOWaveform, resetMode: LFOResetMode, frequencyMode: LFOFrequencyMode,
+         frequency: Double, syncValue: LFOSyncValue,
+         amountToVoiceMixerVolume: Double, amountToModulatorMultiplier: Double,
+         amountToFilterFrequency: Double, amountToDelayTime: Double) {
+        self.waveform = waveform
+        self.resetMode = resetMode
+        self.frequencyMode = frequencyMode
+        self.frequency = frequency
+        self.syncValue = syncValue
+        self.amountToVoiceMixerVolume = amountToVoiceMixerVolume
+        self.amountToModulatorMultiplier = amountToModulatorMultiplier
+        self.amountToFilterFrequency = amountToFilterFrequency
+        self.amountToDelayTime = amountToDelayTime
+    }
+    
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        waveform = try c.decode(LFOWaveform.self, forKey: .waveform)
+        resetMode = try c.decode(LFOResetMode.self, forKey: .resetMode)
+        frequencyMode = try c.decode(LFOFrequencyMode.self, forKey: .frequencyMode)
+        frequency = try c.decode(Double.self, forKey: .frequency)
+        syncValue = try c.decode(LFOSyncValue.self, forKey: .syncValue)
+        amountToVoiceMixerVolume = try c.decode(Double.self, forKey: .amountToVoiceMixerVolume)
+        amountToModulatorMultiplier = try c.decode(Double.self, forKey: .amountToModulatorMultiplier)
+        amountToFilterFrequency = try c.decode(Double.self, forKey: .amountToFilterFrequency)
+        amountToDelayTime = try c.decode(Double.self, forKey: .amountToDelayTime)
+        // isEnabled silently ignored if present
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(waveform, forKey: .waveform)
+        try c.encode(resetMode, forKey: .resetMode)
+        try c.encode(frequencyMode, forKey: .frequencyMode)
+        try c.encode(frequency, forKey: .frequency)
+        try c.encode(syncValue, forKey: .syncValue)
+        try c.encode(amountToVoiceMixerVolume, forKey: .amountToVoiceMixerVolume)
+        try c.encode(amountToModulatorMultiplier, forKey: .amountToModulatorMultiplier)
+        try c.encode(amountToFilterFrequency, forKey: .amountToFilterFrequency)
+        try c.encode(amountToDelayTime, forKey: .amountToDelayTime)
+        // isEnabled not encoded
     }
     
     /// Get the actual frequency in Hz based on mode and tempo
@@ -539,7 +800,6 @@ struct GlobalLFOParameters: Codable, Equatable {
     /// - Parameter phase: Current phase of the LFO (0.0 = start, 1.0 = end of cycle)
     /// - Returns: Raw LFO value in range -1.0 to +1.0 (bipolar, unscaled)
     func rawValue(at phase: Double) -> Double {
-        guard isEnabled else { return 0.0 }
         return waveform.value(at: phase, bipolar: true)  // Global LFO uses bipolar mode
     }
 }

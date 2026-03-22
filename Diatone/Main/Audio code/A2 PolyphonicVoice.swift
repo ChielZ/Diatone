@@ -1170,7 +1170,7 @@ final class PolyphonicVoice {
     /// - Trigger mode: Uses precise elapsed time from trigger timestamp (eliminates jitter)
     /// - Sync mode: Uses incremental deltaTime (global timing, not per-note)
     private func updateVoiceLFOPhase(deltaTime: Double, tempo: Double) {
-        guard voiceModulation.voiceLFO.isEnabled else { return }
+        guard voiceModulation.voiceLFO.hasActiveDestinations else { return }
         
         let lfo = voiceModulation.voiceLFO
         

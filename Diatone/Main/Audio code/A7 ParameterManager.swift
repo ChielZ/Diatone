@@ -154,12 +154,12 @@ final class AudioParameterManager: ObservableObject {
     
     func updatePreVolume(_ preVolume: Double) {
         master.output.preVolume = preVolume
+        
+        // Keep macroState.volumePosition in sync so both UI controls
+        // (SoundView macro slider and GlobalView editor slider) show the same value
+        macroState.volumePosition = preVolume
+        
         voicePool?.voiceMixer.volume = AUValue(preVolume)
-        //voiceMixer?.volume = AUValue(preVolume)
-        // Note: preVolume is no longer used for global LFO modulation
-        // Global LFO now modulates postMixerFader instead
-        // Voice mixer stays at unity gain (1.0)
-        // Post-mixer fader is not affected by preVolume - it has its own base gain
         markAsModified()
     }
     
@@ -270,13 +270,7 @@ final class AudioParameterManager: ObservableObject {
         markAsModified()
     }
     
-    func updateTemplateEnvelope(_ parameters: EnvelopeParameters) {
-        // Convert old parameters to new loudness envelope
-        voiceTemplate.loudnessEnvelope = parameters.toLoudnessEnvelope()
-        markAsModified()
-    }
-    
-    // MARK: - Loudness Envelope Parameter Updates (NEW)
+    // MARK: - Loudness Envelope Parameter Updates
     
     /// Update loudness envelope attack duration
     func updateEnvelopeAttack(_ value: Double) {
@@ -425,11 +419,7 @@ final class AudioParameterManager: ObservableObject {
     }
   
     
-    /// Update key tracking enabled state
-    func updateKeyTrackingEnabled(_ enabled: Bool) {
-        voiceTemplate.modulation.keyTracking.isEnabled = enabled
-        markAsModified()
-    }
+    
     
     /// Update auxiliary envelope attack
     func updateAuxiliaryEnvelopeAttack(_ value: Double) {
@@ -526,11 +516,7 @@ final class AudioParameterManager: ObservableObject {
         markAsModified()
     }
      
-    /// Update voice LFO enabled state
-    func updateVoiceLFOEnabled(_ enabled: Bool) {
-        voiceTemplate.modulation.voiceLFO.isEnabled = enabled
-        markAsModified()
-    }
+    
     
     // MARK: - Global LFO Parameter Updates
     
@@ -644,11 +630,7 @@ final class AudioParameterManager: ObservableObject {
     }
     */
     
-    /// Update global LFO enabled state
-    func updateGlobalLFOEnabled(_ enabled: Bool) {
-        master.globalLFO.isEnabled = enabled
-        markAsModified()
-    }
+    
     
     // MARK: - Touch Response Parameter Updates
     
@@ -760,10 +742,12 @@ final class AudioParameterManager: ObservableObject {
         let clampedPosition = min(max(position, 0.0), 1.0)
         macroState.volumePosition = clampedPosition
         
-        // Apply directly to preVolume and update master parameter
+        // Keep master.output.preVolume in sync so both UI controls
+        // (SoundView macro slider and GlobalView editor slider) show the same value
+        master.output.preVolume = clampedPosition
+        
+        // Apply to audio engine
         voicePool.voiceMixer.volume = Float(clampedPosition)
-        // Note: preVolume is no longer used for global LFO modulation
-        // Global LFO now modulates postMixerFader instead
         
         // Mark as modified because macro changes affect the sound
         markAsModified()
