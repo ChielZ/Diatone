@@ -83,6 +83,35 @@ final class PresetManager: ObservableObject {
         return documentsURL.appendingPathComponent("UserPresets")
     }
     
+    // MARK: - Filename Helpers
+    
+    /// Generate a user preset filename: "PresetName-UUID.json"
+    /// The name prefix makes presets easy to find in a file manager,
+    /// while the UUID suffix guarantees uniqueness.
+    private func userPresetFilename(name: String, id: UUID) -> String {
+        // Sanitize name: remove characters that are problematic in filenames
+        let sanitized = name
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: ":", with: "-")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let safeName = sanitized.isEmpty ? "Untitled" : sanitized
+        return "\(safeName)-\(id.uuidString).json"
+    }
+    
+    /// Find the existing file for a preset by its UUID suffix, regardless of name prefix.
+    /// Returns the URL if found, nil otherwise.
+    private func existingFileURL(forPresetID id: UUID) -> URL? {
+        let suffix = "-\(id.uuidString).json"
+        let legacyName = "\(id.uuidString).json"
+        guard let files = try? fileManager.contentsOfDirectory(atPath: userPresetsURL.path) else {
+            return nil
+        }
+        if let match = files.first(where: { $0.hasSuffix(suffix) || $0 == legacyName }) {
+            return userPresetsURL.appendingPathComponent(match)
+        }
+        return nil
+    }
+    
     // MARK: - Initialization
     
     private init() {
@@ -239,8 +268,13 @@ final class PresetManager: ObservableObject {
         encoder.dateEncodingStrategy = .iso8601
         let data = try encoder.encode(preset)
         
-        // Save to file (UUID-based filename)
-        let filename = "\(preset.id.uuidString).json"
+        // Remove old file if it exists (handles name changes and legacy UUID-only filenames)
+        if let oldURL = existingFileURL(forPresetID: preset.id) {
+            try? fileManager.removeItem(at: oldURL)
+        }
+        
+        // Save to file with name prefix for easy identification
+        let filename = userPresetFilename(name: preset.name, id: preset.id)
         let fileURL = userPresetsURL.appendingPathComponent(filename)
         try data.write(to: fileURL)
         
@@ -346,11 +380,8 @@ final class PresetManager: ObservableObject {
             throw PresetError.cannotDeleteFactoryPreset
         }
         
-        // Remove file from disk
-        let filename = "\(preset.id.uuidString).json"
-        let fileURL = userPresetsURL.appendingPathComponent(filename)
-        
-        if fileManager.fileExists(atPath: fileURL.path) {
+        // Remove file from disk (finds by UUID suffix, handles both old and new naming)
+        if let fileURL = existingFileURL(forPresetID: preset.id) {
             try fileManager.removeItem(at: fileURL)
         }
         
