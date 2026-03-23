@@ -221,7 +221,7 @@ struct ManualView: View {
             .padding(.top, 20)
             .centeredText()
         
-        Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, because it has an option for 'Just Intonation' tuning, that doesn't use the standard notes of Western Music, but instead takes pure and simple numeric ratios like 3/2 and 5/4 and turn these in to musical notes.")
+        Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, because it features just intonation tuning, which takes pure and simple numeric ratios like 3/2 and 5/4 and turn these in to musical notes directly.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -402,7 +402,7 @@ struct ManualView: View {
             .centeredText()
             .id("scaleView")
         
-        Text("The scale view lets you switch between different scales, keys and and tunings. At the top of the view (just below the main page selector) there is an image that represents the currently selected scale and tuning. What these images mean exactly is explained at the end of section III of this guide, but mainly this serves as a quick visual indication of the active scale. Beneath this are 5 options for changing the notes of the keyboard:")
+        Text("The scale view lets you switch between different scales, keys and and tunings. At the top of the view (just below the main page selector) there is an image that shows how the notes of the currently selected scale are related to each other: their distance in semitones for equal temperament scales, and the rational intervals between them for just intonation scales. How you can read these images precisely is explained at the end of section III of this guide, but regardless of that they serve as a quick visual indication of the currently selected scale. Beneath this are 5 options for changing the notes of the keyboard:")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -772,7 +772,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The distance between these two notes is small enough that tempered tunings can 'sweep it under the rug' and represent both ratios with just a single note, but it is definitely audible, and becomes particularly apparent when multiple notes are played simultaneously in chords. And these are just two of the options for the C note on D: there are other, more 'microtonal' candidates for the C note, most notably the 'pure harmonic seventh' or 7/1 ratio, and there are multiple options for all other notes as well. With just intonation, there are essentially infinitely many different tonal colours, and this can be a great thing or a problem, depending on how you look at it.")
+        Text("The distance between these two notes is small enough that tempered tunings can 'sweep it under the rug' and represent both ratios with just a single note, but it is definitely audible, and becomes particularly apparent when multiple notes are played simultaneously in chords. And these are just two of the options for the C note on D: there are other, more 'microtonal' candidates for the C note, most notably the 'pure harmonic seventh' or 7/1 ratio, and there are multiple options for all other notes as well. With just intonation, there are essentially infinitely many different tonal colours.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -792,7 +792,7 @@ struct ManualView: View {
         
 
         
-        Text("One situation where it is clearly NOT a good thing to have infinitely many different notes, is when you're trying to build a fixed pitch instrument like a piano or a guitar with fixed frets, that only has a limited number of notes/strings/frets available. With just intonation, you can tune a piano so that it sounds great in the key of C, but then if you'd want to play something in the key of D flat, you will find that it is quite badly out of tune. This can only be resolved by retuning the entire instrument - but in that case it will no longer be in tune in the key of C.")
+        Text("The infinite possibilities of just intonation can be a wonderful thing, but it has its downsides too. One situation where it is clearly not desirable to have infinitely many different notes, is when you're trying to build a fixed pitch instrument like a piano or a guitar, that only has a limited number of notes/strings/frets available. With just intonation, you can tune a piano so that it sounds great in the key of C, but then if you'd want to play something in the key of D flat, you will find that it is quite badly out of tune. This can only be resolved by retuning the entire instrument - but in that case it will no longer be in tune in the key of C.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -825,13 +825,13 @@ struct ManualView: View {
         ZoomableDownsampledImageView(imageName: "Guide ET note names", maxHeight: 200)
             .padding(.vertical, 5)
         
-        Text("With 12 tone equal temperament, what we lose in tuning accuracy, we gain in flexibility. Whether or not this is a good tradeoff really depends on the musical context. Listen to a piano piece by a 19th century composer like Debussy or Brahms and you will hear the full power of 12 tone equal temperament: that kind of harmonic motion and musical flexibility is hardly possible in a just intonation context. But listen to a Kora piece by one of the great players of this instrument like Toumani Diabaté or Ballaké Sissoko and you can hear the sweet harmonic purity of just intonation that is impossible to achieve on an instrument tuned to equal temperament.")
+        Text("With 12 tone equal temperament, what we lose in tuning accuracy, we gain in flexibility. Whether or not this is a good tradeoff really depends on the musical context. Listen to a piano piece by a composer like Claude Debussy and you can hear the full power of 12 tone equal temperament: that kind of harmonic motion and musical flexibility is hardly imaginable with just intonation tuning. But listen to a kora piece by one of the great players of this instrument like Toumani Diabaté, and you can hear the rich harmonic resonance of just intonation that is impossible to achieve on an instrument tuned to equal temperament.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Both of these are the result of wonderfully rich musical traditions. The Arithmophone Diatone lets you get a taste of each approach. If you want to use it to play along with other instruments, then make sure you use the proper tuning system. For typical Western instruments like a guitar or a keyboard, this will be equal temperament tuning, but many instruments from other musical traditions, like the sitar, the kora or the koto, are commonly tuned with just intonation intervals. If you are playing by yourself then it may be worth experimenting a bit to see if you can hear the different feeling each tuning system imparts on your playing. Don't be discouraged if you don't immediately hear the difference: it's subtle and more prominent on some note combinations than on others, but it's definitely there.")
+        Text("Both of these are the result of wonderfully rich musical traditions. The Arithmophone Diatone lets you get a taste of each approach. If you want to use it to play along with other instruments, then make sure you use the proper tuning system. For typical Western instruments like a guitar or a keyboard, this will be equal temperament, but many instruments from other musical traditions, like the Indian sitar or the Arabic oud, are commonly tuned with just intonation intervals. If you are playing by yourself then it may be worth experimenting a bit to see if you can hear the different feeling each tuning system imparts on your playing. Don't be discouraged if you don't immediately hear the difference: it's subtle and more prominent on some note combinations than on others, but it's definitely there.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()

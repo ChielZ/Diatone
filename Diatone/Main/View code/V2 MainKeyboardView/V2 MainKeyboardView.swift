@@ -342,7 +342,6 @@ private struct NavigationStrip: View {
                     .frame(width: stripWidth * 0.95, height: 250, alignment: .center)
                     .rotationEffect(Angle(degrees: 90))
                     .offset(x: arithmophoneOffset)
-                   
                 
                 VStack {
                     Text("･UNFOLD･")
@@ -352,16 +351,15 @@ private struct NavigationStrip: View {
                         .lineLimit(1)
                         .fixedSize()
                         .frame(width: stripWidth * 0.7, height: 50, alignment: .leading)
-                        
                         .rotationEffect(Angle(degrees: 90))
-                        .contentShape(Rectangle())
                         .offset(y: unfoldOffset)
-                        .onTapGesture {
-                            showingOptions = true
-                        }
                     Spacer()
                 }
-              }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                showingOptions = true
+            }
         }
         .padding(5)
     }
