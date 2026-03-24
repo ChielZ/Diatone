@@ -221,7 +221,7 @@ struct ManualView: View {
             .padding(.top, 20)
             .centeredText()
         
-        Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, because it features just intonation tuning, which takes pure and simple numeric ratios like 3/2 and 5/4 and turn these in to musical notes directly.")
+        Text("An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, in that it features a just intonation tuning mode, which takes pure and simple numeric ratios like 3/2 and 5/4 and turn these into musical notes directly.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -259,7 +259,7 @@ struct ManualView: View {
             .padding(.top, 10)
             .centeredText()
         
-        Text("The name Diatone comes from the Greek words διατονικός (diatonikos; diatonic), a term that has been used since ancient times to describe scales with 7 notes per octave. The familiar 'do re mi fa sol la ti do' is such a scale, but there are many others as well. The Arithmophone Diatone has 12 different scales to choose from, and each of these can be played in any musical key and in two different tuning modes: just intonation (rational harmonic intervals, where the notes sound perfectly in tune with each other) or equal temperament (standard Western tuning, suitable for playing along with guitars, pianos et cetera).")
+        Text("The name Diatone comes from the Greek words διατονικός (diatonikos; diatonic), a term that has been used since ancient times to describe scales with 7 notes per octave. The familiar 'do re mi fa sol la ti do' is such a scale, but there are many others as well. The Arithmophone Diatone has 12 different scales to choose from, and each of these can be played in any musical key and in two different tuning modes: just intonation (rational harmonic intervals, where the notes sound perfectly in tune with each other) or equal temperament (standard Western tuning, suitable for playing together with guitars, pianos and most electronic instruments).")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -338,7 +338,7 @@ struct ManualView: View {
                 }
             }
         
-        Text(underlinedText("II C: The sound View"))
+        Text(underlinedText("II C: The Sound View"))
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .padding(.top, 10)
@@ -402,13 +402,19 @@ struct ManualView: View {
             .centeredText()
             .id("scaleView")
         
-        Text("The scale view lets you switch between different scales, keys and and tunings. At the top of the view (just below the main page selector) there is an image that shows how the notes of the currently selected scale are related to each other: their distance in semitones for equal temperament scales, and the rational intervals between them for just intonation scales. How you can read these images precisely is explained at the end of section III of this guide, but regardless of that they serve as a quick visual indication of the currently selected scale. Beneath this are 5 options for changing the notes of the keyboard:")
+        Text("The scale view lets you switch between different scales, keys and tunings. At the top of the view (just below the main page selector) there is an image that shows how the notes of the currently selected scale are related to each other: their distance in semitones for equal temperament scales, and the rational intervals between them for just intonation scales. How you can read these images precisely is explained at the end of section III of this guide, but regardless of that they serve as a quick visual indication of the currently selected scale. Beneath this are 5 options for changing the notes of the keyboard:")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("TUNING: here you can switch between equal temperament and just intonation tuning. Equal temperament is the standard tuning system used in Western musical instruments like guitars and pianos, while just intonation uses rational harmonic intervals instead, so that the notes in the scale are in perfect numerical proportions to each other. This tuning method is much more ancient and universal than the modern Western system of equal temperament and has a distinctly 'harmonious' feel to it, though this comes at the expense of less flexibility in playing chords and moving to different keys. Both of these tuning systems have their own distinct character. The differences are fairly subtle but put simply, with just intonation some note combinations sound perfect together while other combinations are quite out of tune, whereas in equal temperament, no note combinations are perfect, but all combinations are quite acceptable. If you'd like to learn more about this, please read the background information in section III of this guide, but you don't need to worry about it if you don't want to. You can simply leave this on 'equal', forget about it and start making some music, and revisit this setting any time you feel like exploring the wonderfully deep connection between notes and numbers.")
+        Text("TUNING: here you can switch between equal temperament and just intonation tuning. Equal temperament is the standard tuning system used in Western musical instruments like guitars and pianos, while just intonation uses rational harmonic intervals instead, so that the notes in the scale are in perfect numerical proportions to each other. This tuning method is much more ancient and universal than the modern Western system of equal temperament and has a distinctly 'harmonious' feel to it, though this comes at the expense of less flexibility in playing chords and moving to different keys.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+            .padding(.bottom, 10)
+        
+        Text("Both of these tuning systems have their own distinct character. The differences are fairly subtle but put simply, with just intonation some note combinations sound perfect together while other combinations are quite out of tune, whereas in equal temperament, no note combinations are perfect, but all combinations are quite acceptable. If you'd like to learn more about this, please read the background information in section III of this guide, but you don't need to worry about it if you don't want to. You can simply leave this on 'equal', forget about it and start making some music, and revisit this setting any time you feel like exploring the wonderfully deep connection between notes and numbers.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -420,7 +426,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("SCALE: this lets you select which musical scale is mapped to the keyboard. Each scale has its own selection of 7 notes and provides its own unique mood. There is more detailed information about the available scales in section III of this guide. To get started without delving in to all of that, just use the Ionian mode for typical 'major' melodies, use the Aeolian mode for typical 'minor' melodies, or try the double harmonic scale for a more spicy flavour.")
+        Text("SCALE: this lets you select which musical scale is mapped to the keyboard. Each scale has its own selection of 7 notes and provides its own unique mood. There is more detailed information about the available scales in section III of this guide. To get started without delving into all of that, just use the Ionian mode for typical 'major' melodies, use the Aeolian mode for typical 'minor' melodies, or try the double harmonic scale for a more spicy flavour.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -459,19 +465,19 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Below the preset selection buttons there are three sliders that let you adjust the sound to your liking. These are automatically reset to their default (centered) positions when a new preset is selected. The 'Volume' slider simply makes the sound softer or louder. Tip: set the volume to the desired level with the main volume controls of your device while the Diatone's volume slider is in its center position, then use the slider for quick 'on the fly' adjustments or expressive control.")
+        Text("Below the preset selection buttons there are three sliders that let you adjust the sound to your liking. These are automatically reset to their default (centered) positions when a new preset is selected. The VOLUME slider simply makes the sound softer or louder. Tip: set the volume to the desired level with the main volume controls of your device while the Diatone's volume slider is in its center position, then use the slider for quick 'on the fly' adjustments or expressive control.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The 'Tone' slider affects different preset sounds in different ways, but it will generally make the sound brighter as you move to the slider to the right, and sometimes also a bit louder and/or more overdriven.")
+        Text("The TONE slider affects different preset sounds in different ways, but it will generally make the sound brighter as you move the slider to the right, and sometimes also a bit louder and/or more overdriven.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The 'Ambience' slider also has a different effect depending on the selected preset, but it generally provides a more spacious sound when moved to the right and a drier, more direct sound when moved to the left.")
+        Text("The AMBIENCE slider also has a different effect depending on the selected preset, but it generally provides a more spacious sound when moved to the right and a drier, more direct sound when moved to the left.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -490,22 +496,32 @@ struct ManualView: View {
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         
-        Text("The tempo control lets you adjust the rate of synchronized modulations and delays, this is particularly useful when you want to play along with existing songs or with other synthesizers/sequencers.")
+        Text("TEMPO lets you adjust the rate of synchronized modulations and delays, this is particularly useful when you want to play along with existing songs or with other synthesizers/sequencers.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         
-        Text("The octave control transposes the keyboard up or down in full octaves and lets you adjust for bass, chord or lead playing.")
+        Text("OCTAVE transposes the keyboard up or down in full octaves and lets you adjust for bass, chord or lead playing.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         
-        Text("The tune control allows you to fine tune the keyboard in steps of 1 cent (a cent is 1/100 of an equal temperament semitone). This is particularly useful when you want to play together with an acoustic instrument like a guitar or piano, that may not be tuned to standard pitch.")
+        Text("TUNE allows you to fine tune the keyboard in steps of 1 cent (a cent is 1/100 of an equal temperament semitone). This is particularly useful when you want to play together with an acoustic instrument like a guitar or piano, that may not be tuned to standard pitch.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
         
-        Text("Finally, the bend control lets you adjust how much the pitch of the notes changes as you move your fingers from left to right (or from right to left of course) while holding down keys. A setting of 0 means no pitch bend, this is the easiest to play and ensures that your notes are always perfectly in tune. Settings between 100 and 250 will allow you to bend the notes in a reasonably controlled manner, giving you access to all the 'notes in between the notes'. This will let you play guitar solo-like note bends and - with some practice and depending on the sound you've selected - you can even play full chromatic scales on the keyboard. It does require more careful playing though, as you'll need to avoid unintentional finger motion. Higher settings of 500 to 750 will allow for very wide pitch slides, great for theremin-like sounds and special effects, but difficult to control. Some of the presets have this pitch bending 'built in' and these also feature sounds that are particularly suited for it. Tip: when using note bending, make sure the keys are displayed with enough size to give you maximum control over the effect - try folding the option view to increase the key size, or if you're using an iPad, try switching to landscape orientation.")
+        Text("BEND lets you adjust how much the pitch of the notes changes as you move your fingers from left to right (or from right to left of course) while holding down keys. A setting of 0 means no pitch bend, this is the easiest to play and ensures that your notes are always perfectly in tune.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("Settings between 100 and 250 will allow you to bend the notes in a reasonably controlled manner, giving you access to all the 'notes in between the notes'. This will let you play guitar solo-like note bends and - with some practice and depending on the sound you've selected - you can even play full chromatic scales on the keyboard. It does require more careful playing though, as you'll need to avoid unintentional finger motion.")
+            .foregroundColor(Color("HighlightColour"))
+            .adaptiveFont("MontserratAlternates-Medium", size: 16)
+            .centeredText()
+        
+        Text("Higher settings of 500 to 750 will allow for very wide pitch slides, great for theremin-like sounds and special effects, but difficult to control. Some of the presets have this pitch bending 'built in' and these also feature sounds that are particularly suited for it. Tip: when using note bending, make sure the keys are displayed with enough size to give you maximum control over the effect - try folding the option view to increase the key size, or if you're using an iPad, try switching to landscape orientation.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -634,7 +650,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("Any whole step / half step note system divides the octave in to 12 semitones, so you can think of the process of making a diatonic scale as picking 7 out of 12 notes. If you have ever played a piano-style keyboard, you may have noticed that there are 7 white keys and 5 black keys for each octave. This is no coincidence. The piano keyboard is essentially a diatonic design, with its 'natural' notes being the white keys. The black keys fill the gaps between the notes that are a whole tone apart, and because there are only five such gaps, there are only five black keys. Some of the white keys (B and C, E and F) are just a semitone apart, and these don't have a black key in between them.")
+        Text("Any whole step / half step note system divides the octave into 12 semitones, so you can think of the process of making a diatonic scale as picking 7 out of 12 notes. If you have ever played a piano-style keyboard, you may have noticed that there are 7 white keys and 5 black keys for each octave. This is no coincidence. The piano keyboard is essentially a diatonic design, with its 'natural' notes being the white keys. The black keys fill the gaps between the notes that are a whole tone apart, and because there are only five such gaps, there are only five black keys. Some of the white keys (B and C, E and F) are just a semitone apart, and these don't have a black key in between them.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -664,7 +680,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("The scales that are available on the Diatone keyboard are divided in to three groups: in the first group are the 7 modes of the strictly diatonic scale, labeled with their traditional Greek names, from Locrian to Lydian. In the second and third group are some melodic and harmonic scales that are not 'strictly' diatonic, but nonetheless satisfy the 'one of each note' requirement. All of these are scales that are commonly used across different musical traditions.")
+        Text("The scales that are available on the Diatone keyboard are divided into three groups: in the first group are the 7 modes of the strictly diatonic scale, labeled with their traditional Greek names, from Locrian to Lydian. In the second and third group are some melodic and harmonic scales that are not 'strictly' diatonic, but nonetheless satisfy the 'one of each note' requirement. All of these are scales that are commonly used across different musical traditions.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -804,7 +820,7 @@ struct ManualView: View {
             .centeredText()
             .padding(.bottom, 10)
         
-        Text("In an equal temperament tuning, the octave is divided in to a number of steps of exactly the same size. If that number is 12, then we get a selection of notes that provides a pretty good approximation of the first 5 harmonics from whichever note we choose to select as the root. In fact, the third harmonic is nearly perfect, although the fifth harmonic is not quite as good (the second and fourth harmonic are octaves, and they are perfect by definition, because it is the octave that is being divided).")
+        Text("In an equal temperament tuning, the octave is divided into a number of steps of exactly the same size. If that number is 12, then we get a selection of notes that provides a pretty good approximation of the first 5 harmonics from whichever note we choose to select as the root. In fact, the third harmonic is nearly perfect, although the fifth harmonic is not quite as good (the second and fourth harmonic are octaves, and they are perfect by definition, because it is the octave that is being divided).")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
@@ -1089,7 +1105,7 @@ struct ManualView: View {
             .centeredText()
             .id("scaleDiagrams")
         
-        Text("The diagrams below show all of the available scales in the Arithmophone Diatone app. The first diagram shows the just intonation scales with ratios inscribed, the second diagram shows those same scales with note names inscribed instead, while the last diagram shows all of the equal temperament scales")
+        Text("The diagrams below show all of the available scales in the Arithmophone Diatone app. The first diagram shows all the scales in equal temperament, the second diagram shows the just intonation scales with ratios inscribed, while the last diagram shows those same scales with note names inscribed instead.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
