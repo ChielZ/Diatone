@@ -485,7 +485,7 @@ struct ManualView: View {
             .centeredText()
             .id("setupView")
         
-        Text("The setup view lets you adjust some further settings that determine how Diatone sounds and how the keyboard responds to your playing. Like the sliders in the sound view, these are also reset when a new preset is loaded.")
+        Text("The setup view lets you adjust some further settings that determine how Diatone sounds and how the keyboard responds to your playing. By default, this setup is reset when a new preset is loaded, just like the sliders in the sound view. If you want to maintain the same setup while you switch between presets, you can tap the 'Per Sound' text to make the setup mode change to 'Global'.")
             .foregroundColor(Color("HighlightColour"))
             .adaptiveFont("MontserratAlternates-Medium", size: 16)
             .centeredText()
