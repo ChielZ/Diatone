@@ -52,7 +52,7 @@
     "AMBIENCE" : {
 
     },
-    "An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, because it features just intonation tuning, which takes pure and simple numeric ratios like 3/2 and 5/4 and turn these in to musical notes directly." : {
+    "An Arithmophone is a thing that turns numbers into sounds, or math into music. Its name is derived from the ancient Greek words ἀριθμός (arithmos; number) and φωνή (phone; sound). The device you're holding in your hands right now is itself an Arithmophone, in the sense that it routinely turns long strings of binary numbers into sounds. But this app is a bit more 'arithmophonic' still, in that it features a just intonation tuning mode, which takes pure and simple numeric ratios like 3/2 and 5/4 and turn these into musical notes directly." : {
 
     },
     "An important characteristic of just intonation is that there are multiple options for each note (except for the root, which is always 1:1). For example, with root D, there is a C at 1:9 (because 1:3 on D is G and 1:3 on G is C - and 1/3 x 1/3 is 1/9), but there is also a C at 9:5 (because 3:1 on D is A, 3:1 on A is E and 1:5 on E is C - and 3/1 x 3/1 x 1/5 = 9/5) These notes share the same name, but they don't have the same frequency - because 9/5 is not equal to 1/9, not even when we change the latter to 16/9 so they fall within the same octave." : {
@@ -67,7 +67,7 @@
     "Any multiple of the root frequency produces a new harmonic and in principle this goes on forever, but the relative loudness of the harmonics decreases as their frequency increases, so in practice the first few harmonics are much more prominent than the higher ones. Simply by combining factors of 2, 3 and 5, we can create all of the diatonic scales that are featured in this app. For example, the ratios and notes of a D major scale might be: 1/1 (D), 9/8 (E), 5/4 (F#), 4/3 (G), 3/2 (A), 5/3 (B), 15/8 (C#), 2/1 (D)." : {
 
     },
-    "Any whole step / half step note system divides the octave in to 12 semitones, so you can think of the process of making a diatonic scale as picking 7 out of 12 notes. If you have ever played a piano-style keyboard, you may have noticed that there are 7 white keys and 5 black keys for each octave. This is no coincidence. The piano keyboard is essentially a diatonic design, with its 'natural' notes being the white keys. The black keys fill the gaps between the notes that are a whole tone apart, and because there are only five such gaps, there are only five black keys. Some of the white keys (B and C, E and F) are just a semitone apart, and these don't have a black key in between them." : {
+    "Any whole step / half step note system divides the octave into 12 semitones, so you can think of the process of making a diatonic scale as picking 7 out of 12 notes. If you have ever played a piano-style keyboard, you may have noticed that there are 7 white keys and 5 black keys for each octave. This is no coincidence. The piano keyboard is essentially a diatonic design, with its 'natural' notes being the white keys. The black keys fill the gaps between the notes that are a whole tone apart, and because there are only five such gaps, there are only five black keys. Some of the white keys (B and C, E and F) are just a semitone apart, and these don't have a black key in between them." : {
 
     },
     "Arithmophone" : {
@@ -86,13 +86,19 @@
     "Because the keyboard of the Arithmophone Diatone has only 7 notes per octave, it is much easier to play scales and melodies on it than on a 'chromatic' instrument like a piano or a guitar: just select the scale you need and there are no 'wrong notes' to worry about anymore. But because it is also very quick and easy to change scales and keys, the Diatone still retains much of the flexibility of standard chromatic instruments, and there is lots of depth to explore here for more advanced users." : {
 
     },
-    "Below the preset selection buttons there are three sliders that let you adjust the sound to your liking. These are automatically reset to their default (centered) positions when a new preset is selected. The 'Volume' slider simply makes the sound softer or louder. Tip: set the volume to the desired level with the main volume controls of your device while the Diatone's volume slider is in its center position, then use the slider for quick 'on the fly' adjustments or expressive control." : {
+    "Below the preset selection buttons there are three sliders that let you adjust the sound to your liking. These are automatically reset to their default (centered) positions when a new preset is selected. The VOLUME slider simply makes the sound softer or louder. Tip: set the volume to the desired level with the main volume controls of your device while the Diatone's volume slider is in its center position, then use the slider for quick 'on the fly' adjustments or expressive control." : {
 
     },
     "BEND %lld" : {
 
     },
+    "BEND lets you adjust how much the pitch of the notes changes as you move your fingers from left to right (or from right to left of course) while holding down keys. A setting of 0 means no pitch bend, this is the easiest to play and ensures that your notes are always perfectly in tune." : {
+
+    },
     "Both of these are the result of wonderfully rich musical traditions. The Arithmophone Diatone lets you get a taste of each approach. If you want to use it to play along with other instruments, then make sure you use the proper tuning system. For typical Western instruments like a guitar or a keyboard, this will be equal temperament, but many instruments from other musical traditions, like the Indian sitar or the Arabic oud, are commonly tuned with just intonation intervals. If you are playing by yourself then it may be worth experimenting a bit to see if you can hear the different feeling each tuning system imparts on your playing. Don't be discouraged if you don't immediately hear the difference: it's subtle and more prominent on some note combinations than on others, but it's definitely there." : {
+
+    },
+    "Both of these tuning systems have their own distinct character. The differences are fairly subtle but put simply, with just intonation some note combinations sound perfect together while other combinations are quite out of tune, whereas in equal temperament, no note combinations are perfect, but all combinations are quite acceptable. If you'd like to learn more about this, please read the background information in section III of this guide, but you don't need to worry about it if you don't want to. You can simply leave this on 'equal', forget about it and start making some music, and revisit this setting any time you feel like exploring the wonderfully deep connection between notes and numbers." : {
 
     },
     "Cancel" : {
@@ -127,9 +133,6 @@
     "EQUAL TEMPERAMENT SCALES WITH NOTE NAMES" : {
 
     },
-    "Finally, the bend control lets you adjust how much the pitch of the notes changes as you move your fingers from left to right (or from right to left of course) while holding down keys. A setting of 0 means no pitch bend, this is the easiest to play and ensures that your notes are always perfectly in tune. Settings between 100 and 250 will allow you to bend the notes in a reasonably controlled manner, giving you access to all the 'notes in between the notes'. This will let you play guitar solo-like note bends and - with some practice and depending on the sound you've selected - you can even play full chromatic scales on the keyboard. It does require more careful playing though, as you'll need to avoid unintentional finger motion. Higher settings of 500 to 750 will allow for very wide pitch slides, great for theremin-like sounds and special effects, but difficult to control. Some of the presets have this pitch bending 'built in' and these also feature sounds that are particularly suited for it. Tip: when using note bending, make sure the keys are displayed with enough size to give you maximum control over the effect - try folding the option view to increase the key size, or if you're using an iPad, try switching to landscape orientation." : {
-
-    },
     "Fold Keyboard" : {
       "comment" : "A button that, when pressed, shows a tooltip with instructions on how to fold a keyboard.",
       "isCommentAutoGenerated" : true
@@ -150,6 +153,9 @@
     "Help" : {
       "comment" : "The title of an alert that appears when a user taps the help button in the example view.",
       "isCommentAutoGenerated" : true
+    },
+    "Higher settings of 500 to 750 will allow for very wide pitch slides, great for theremin-like sounds and special effects, but difficult to control. Some of the presets have this pitch bending 'built in' and these also feature sounds that are particularly suited for it. Tip: when using note bending, make sure the keys are displayed with enough size to give you maximum control over the effect - try folding the option view to increase the key size, or if you're using an iPad, try switching to landscape orientation." : {
+
     },
     "Historically, the term diatonic refers to a particular family of musical scales with 7 notes per octave, that are built out of whole steps (tones) and half steps (semitones) in such a way that the steps are distributed across the octave as evenly as possible." : {
 
@@ -186,7 +192,7 @@
     "III: BACKGROUND" : {
 
     },
-    "In an equal temperament tuning, the octave is divided in to a number of steps of exactly the same size. If that number is 12, then we get a selection of notes that provides a pretty good approximation of the first 5 harmonics from whichever note we choose to select as the root. In fact, the third harmonic is nearly perfect, although the fifth harmonic is not quite as good (the second and fourth harmonic are octaves, and they are perfect by definition, because it is the octave that is being divided)." : {
+    "In an equal temperament tuning, the octave is divided into a number of steps of exactly the same size. If that number is 12, then we get a selection of notes that provides a pretty good approximation of the first 5 harmonics from whichever note we choose to select as the root. In fact, the third harmonic is nearly perfect, although the fifth harmonic is not quite as good (the second and fourth harmonic are octaves, and they are perfect by definition, because it is the octave that is being divided)." : {
 
     },
     "In this section, you can learn about the musical concepts behind the Arithmophone Diatone. Scroll down to read on or click one of the subsection names below to jump there directly. Double tap any of the images in this section to zoom in or out." : {
@@ -446,6 +452,9 @@
         }
       }
     },
+    "OCTAVE transposes the keyboard up or down in full octaves and lets you adjust for bass, chord or lead playing." : {
+
+    },
     "OK" : {
 
     },
@@ -482,19 +491,22 @@
     "SCALE GROUP: the 12 available scales are arranged in 3 groups: modal, melodic and harmonic. The modal scales will probably sound most familiar to most users, as these are essentially all permutations of the familiar 'do re mi fa sol la ti do' scale. The melodic and harmonic scales offer some interesting alternatives: these don't fit the modal pattern, but are commonly used across multiple musical traditions nonetheless." : {
 
     },
-    "SCALE: this lets you select which musical scale is mapped to the keyboard. Each scale has its own selection of 7 notes and provides its own unique mood. There is more detailed information about the available scales in section III of this guide. To get started without delving in to all of that, just use the Ionian mode for typical 'major' melodies, use the Aeolian mode for typical 'minor' melodies, or try the double harmonic scale for a more spicy flavour." : {
+    "SCALE: this lets you select which musical scale is mapped to the keyboard. Each scale has its own selection of 7 notes and provides its own unique mood. There is more detailed information about the available scales in section III of this guide. To get started without delving into all of that, just use the Ionian mode for typical 'major' melodies, use the Aeolian mode for typical 'minor' melodies, or try the double harmonic scale for a more spicy flavour." : {
 
     },
     "Scales and modes" : {
 
     },
+    "Settings between 100 and 250 will allow you to bend the notes in a reasonably controlled manner, giving you access to all the 'notes in between the notes'. This will let you play guitar solo-like note bends and - with some practice and depending on the sound you've selected - you can even play full chromatic scales on the keyboard. It does require more careful playing though, as you'll need to avoid unintentional finger motion." : {
+
+    },
     "TEMPO %lld" : {
 
     },
-    "The 'Ambience' slider also has a different effect depending on the selected preset, but it generally provides a more spacious sound when moved to the right and a drier, more direct sound when moved to the left." : {
+    "TEMPO lets you adjust the rate of synchronized modulations and delays, this is particularly useful when you want to play along with existing songs or with other synthesizers/sequencers." : {
 
     },
-    "The 'Tone' slider affects different preset sounds in different ways, but it will generally make the sound brighter as you move to the slider to the right, and sometimes also a bit louder and/or more overdriven." : {
+    "The AMBIENCE slider also has a different effect depending on the selected preset, but it generally provides a more spacious sound when moved to the right and a drier, more direct sound when moved to the left." : {
 
     },
     "The bottom of the option view always shows the note display, that lets you know which notes are currently mapped to the keyboard by corresponding colours (this changes as you switch to different scales and/or keys)." : {
@@ -509,7 +521,7 @@
     "The diagram below shows some of the most commonly used just intonation ratios, arranged in a so called '3-5 grid': you start with a fundamental note (the ratio 1/1) and then build other notes by multiplying or dividing. Moving left multiplies by 3 (going up a perfect fifth), while moving up multiplies by 5 (going up a major third). You can also divide to go in the opposite direction. With just two harmonic building blocks, this creates a complete lattice of musical notes, all related to each other through simple ratios. To bring the notes within the same octave, simply multiply or divide their ratios by 2 as needed." : {
 
     },
-    "The diagrams below show all of the available scales in the Arithmophone Diatone app. The first diagram shows the just intonation scales with ratios inscribed, the second diagram shows those same scales with note names inscribed instead, while the last diagram shows all of the equal temperament scales" : {
+    "The diagrams below show all of the available scales in the Arithmophone Diatone app. The first diagram shows all the scales in equal temperament, the second diagram shows the just intonation scales with ratios inscribed, while the last diagram shows those same scales with note names inscribed instead." : {
 
     },
     "The Diatone scale selection" : {
@@ -530,10 +542,7 @@
     "The keyboard of the Arithmophone only has seven notes per octave, so it works a little differently from a piano. You don't have 12 notes at your fingertips at all times, but instead you choose which notes you want to map to the keyboard by selecting a key and scale. This is more similar to instruments like the harp or the harmonica, that are tuned to a specific scale - except that retuning to a different scale or key is instant and effortless on the Diatone." : {
 
     },
-    "The name Diatone comes from the Greek words διατονικός (diatonikos; diatonic), a term that has been used since ancient times to describe scales with 7 notes per octave. The familiar 'do re mi fa sol la ti do' is such a scale, but there are many others as well. The Arithmophone Diatone has 12 different scales to choose from, and each of these can be played in any musical key and in two different tuning modes: just intonation (rational harmonic intervals, where the notes sound perfectly in tune with each other) or equal temperament (standard Western tuning, suitable for playing along with guitars, pianos et cetera)." : {
-
-    },
-    "The octave control transposes the keyboard up or down in full octaves and lets you adjust for bass, chord or lead playing." : {
+    "The name Diatone comes from the Greek words διατονικός (diatonikos; diatonic), a term that has been used since ancient times to describe scales with 7 notes per octave. The familiar 'do re mi fa sol la ti do' is such a scale, but there are many others as well. The Arithmophone Diatone has 12 different scales to choose from, and each of these can be played in any musical key and in two different tuning modes: just intonation (rational harmonic intervals, where the notes sound perfectly in tune with each other) or equal temperament (standard Western tuning, suitable for playing together with guitars, pianos and most electronic instruments)." : {
 
     },
     "The scale display in the app shows which of these notes/ratios are used in any particular scale. At the end of this guide, some diagrams are included that show the images for each of the 12 available scales, with ratios and note names inscribed." : {
@@ -542,13 +551,13 @@
     "THE SCALE VIEW" : {
 
     },
-    "The scale view lets you switch between different scales, keys and and tunings. At the top of the view (just below the main page selector) there is an image that shows how the notes of the currently selected scale are related to each other: their distance in semitones for equal temperament scales, and the rational intervals between them for just intonation scales. How you can read these images precisely is explained at the end of section III of this guide, but regardless of that they serve as a quick visual indication of the currently selected scale. Beneath this are 5 options for changing the notes of the keyboard:" : {
+    "The scale view lets you switch between different scales, keys and tunings. At the top of the view (just below the main page selector) there is an image that shows how the notes of the currently selected scale are related to each other: their distance in semitones for equal temperament scales, and the rational intervals between them for just intonation scales. How you can read these images precisely is explained at the end of section III of this guide, but regardless of that they serve as a quick visual indication of the currently selected scale. Beneath this are 5 options for changing the notes of the keyboard:" : {
 
     },
     "The scales" : {
 
     },
-    "The scales that are available on the Diatone keyboard are divided in to three groups: in the first group are the 7 modes of the strictly diatonic scale, labeled with their traditional Greek names, from Locrian to Lydian. In the second and third group are some melodic and harmonic scales that are not 'strictly' diatonic, but nonetheless satisfy the 'one of each note' requirement. All of these are scales that are commonly used across different musical traditions." : {
+    "The scales that are available on the Diatone keyboard are divided into three groups: in the first group are the 7 modes of the strictly diatonic scale, labeled with their traditional Greek names, from Locrian to Lydian. In the second and third group are some melodic and harmonic scales that are not 'strictly' diatonic, but nonetheless satisfy the 'one of each note' requirement. All of these are scales that are commonly used across different musical traditions." : {
 
     },
     "THE SETUP VIEW" : {
@@ -574,13 +583,10 @@
     "The sounds" : {
 
     },
-    "The tempo control lets you adjust the rate of synchronized modulations and delays, this is particularly useful when you want to play along with existing songs or with other synthesizers/sequencers." : {
-
-    },
     "The terms 'scale' and 'mode' are closely related but describe slightly different concepts. You can think of it like this: a scale is a collection of notes arranged from lowest to highest, while a mode is a collection of notes arranged around a specific center. In practice, their meanings overlap and the terms are often used interchangeably, but they are not identical. If we take the selection of notes 'A, B, C, D, E, F, G' and use C as our tonal center, then we are in the Ionian mode, regardless of the order of the notes. If we now play these notes starting from C and up to the next C (C, D, E, F, G, A, B and C again), we are playing a C major scale, sometimes also called the C Ionian scale. In both cases, we use the same set of notes, but in the one case the emphasis is on the order in which we play the notes, while in the other case the emphasis is on the note we attach the most weight to in our playing." : {
 
     },
-    "The tune control allows you to fine tune the keyboard in steps of 1 cent (a cent is 1/100 of an equal temperament semitone). This is particularly useful when you want to play together with an acoustic instrument like a guitar or piano, that may not be tuned to standard pitch." : {
+    "The TONE slider affects different preset sounds in different ways, but it will generally make the sound brighter as you move the slider to the right, and sometimes also a bit louder and/or more overdriven." : {
 
     },
     "This section will guide you through using all the features of the Arithmophone Diatone. Scroll down to read on or click one of the subsection names below to jump there directly." : {
@@ -606,7 +612,10 @@
         }
       }
     },
-    "TUNING: here you can switch between equal temperament and just intonation tuning. Equal temperament is the standard tuning system used in Western musical instruments like guitars and pianos, while just intonation uses rational harmonic intervals instead, so that the notes in the scale are in perfect numerical proportions to each other. This tuning method is much more ancient and universal than the modern Western system of equal temperament and has a distinctly 'harmonious' feel to it, though this comes at the expense of less flexibility in playing chords and moving to different keys. Both of these tuning systems have their own distinct character. The differences are fairly subtle but put simply, with just intonation some note combinations sound perfect together while other combinations are quite out of tune, whereas in equal temperament, no note combinations are perfect, but all combinations are quite acceptable. If you'd like to learn more about this, please read the background information in section III of this guide, but you don't need to worry about it if you don't want to. You can simply leave this on 'equal', forget about it and start making some music, and revisit this setting any time you feel like exploring the wonderfully deep connection between notes and numbers." : {
+    "TUNE allows you to fine tune the keyboard in steps of 1 cent (a cent is 1/100 of an equal temperament semitone). This is particularly useful when you want to play together with an acoustic instrument like a guitar or piano, that may not be tuned to standard pitch." : {
+
+    },
+    "TUNING: here you can switch between equal temperament and just intonation tuning. Equal temperament is the standard tuning system used in Western musical instruments like guitars and pianos, while just intonation uses rational harmonic intervals instead, so that the notes in the scale are in perfect numerical proportions to each other. This tuning method is much more ancient and universal than the modern Western system of equal temperament and has a distinctly 'harmonious' feel to it, though this comes at the expense of less flexibility in playing chords and moving to different keys." : {
 
     },
     "Update" : {

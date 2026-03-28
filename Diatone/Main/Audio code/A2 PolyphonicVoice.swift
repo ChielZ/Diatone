@@ -1274,9 +1274,10 @@ final class PolyphonicVoice {
         // Calculate ramp duration based on envelope stage and timing
         let rampDuration: Float
         if isInAttackPhase && modEnvAttack > 0 {
-            // During attack phase, use remaining attack time as ramp duration for smooth handover
-            let remainingAttack = modEnvAttack - modulationState.modulatorEnvelopeTime
-            rampDuration = Float(max(0.001, remainingAttack))  // Minimum 1ms
+            // During attack phase, use standard control-rate ramp duration.
+            // The calculated target already tracks the linear attack curve, so short ramps
+            // produce smooth results while avoiding AudioKit ramp artifacts at early release.
+            rampDuration = ControlRateConfig.modulationRampDuration
         } else if isInDecayPhase && modEnvDecay < 0.001 && voiceModulation.modulatorEnvelope.amountToModulationIndex != 0.0 {
             // INSTANT DECAY: decay < 1ms AND envelope is modulating this destination
             rampDuration = 0.0
@@ -1480,9 +1481,10 @@ final class PolyphonicVoice {
         // Calculate ramp duration based on envelope stage and timing
         let rampDuration: Float
         if isInAttackPhase && auxEnvAttack > 0 && hasAuxEnv {
-            // During attack phase, use remaining attack time as ramp duration for smooth handover
-            let remainingAttack = auxEnvAttack - modulationState.auxiliaryEnvelopeTime
-            rampDuration = Float(max(0.001, remainingAttack))  // Minimum 1ms
+            // During attack phase, use standard control-rate ramp duration.
+            // The calculated target already tracks the linear attack curve, so short ramps
+            // produce smooth results while avoiding AudioKit ramp artifacts at early release.
+            rampDuration = ControlRateConfig.modulationRampDuration
         } else {
             // Check if we're in decay or release phase with very short time
             let auxEnvDecay = voiceModulation.auxiliaryEnvelope.decay
