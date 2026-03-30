@@ -247,8 +247,6 @@ final class ScaleNavigationManager: ObservableObject {
             return [.minor, .major]
         case .harmonic:
             return [.minor, .double, .major]
-        default:
-            return []
         }
     }
     

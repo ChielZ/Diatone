@@ -854,10 +854,68 @@ final class PolyphonicVoice {
             startLevel: modulationState.loudnessStartLevel
         )
         
+        // When releasing during the attack phase, the attack path in applyCombinedFilterFrequency
+        // and applyCombinedModulationIndex uses a different formula than the release path.
+        // Compute corrected envelope values so the release formula starts from the same
+        // parameter value the attack was producing.
+
+        var correctedModulatorValue: Double? = nil
+        let isInModulatorAttack = modulationState.modulatorEnvelopeTime < voiceModulation.modulatorEnvelope.attack
+            && voiceModulation.modulatorEnvelope.attack > 0
+        if isInModulatorAttack {
+            // Attack formula: startModIndex + (peakModIndex - startModIndex) * progress
+            let attackModIndex = modulationState.modulatorStartModIndex +
+                (modulationState.modulatorPeakModIndex - modulationState.modulatorStartModIndex) * modulatorValue
+            // Release formula expects: baseModulationIndex + envValue * effectiveAmount
+            // Solve for envValue: (attackModIndex - baseModulationIndex) / effectiveAmount
+            var effectiveModEnvAmount = voiceModulation.modulatorEnvelope.amountToModulationIndex
+            if voiceModulation.touchInitial.amountToModEnvelope != 0.0 {
+                effectiveModEnvAmount = ModulationRouter.calculateTouchScaledAmount(
+                    baseAmount: effectiveModEnvAmount,
+                    initialTouchValue: modulationState.initialTouchX,
+                    initialTouchAmount: voiceModulation.touchInitial.amountToModEnvelope
+                )
+            }
+            if abs(effectiveModEnvAmount) > 0.0001 {
+                correctedModulatorValue = (attackModIndex - modulationState.baseModulationIndex) / effectiveModEnvAmount
+            }
+        }
+
+        var correctedAuxiliaryValueForFilter: Double? = nil
+        let isInAuxiliaryAttack = modulationState.auxiliaryEnvelopeTime < voiceModulation.auxiliaryEnvelope.attack
+            && voiceModulation.auxiliaryEnvelope.attack > 0
+        if isInAuxiliaryAttack && voiceModulation.auxiliaryEnvelope.amountToFilterFrequency != 0.0 {
+            // Attack formula: startCutoff + (peakCutoff - startCutoff) * progress (linear in Hz)
+            let attackCutoff = modulationState.auxiliaryStartFilterCutoff +
+                (modulationState.auxiliaryPeakFilterCutoff - modulationState.auxiliaryStartFilterCutoff) * auxiliaryValue
+            // Release formula expects: baseCutoff * 2^(envValue * amount)
+            // Solve for envValue: log2(attackCutoff / baseCutoff) / amount
+            let keyTrackedBaseCutoff: Double
+            if voiceModulation.keyTracking.amountToFilterFrequency != 0.0 {
+                let keyTrackOctaves = modulationState.keyTrackingValue * voiceModulation.keyTracking.amountToFilterFrequency
+                keyTrackedBaseCutoff = modulationState.baseFilterCutoff * pow(2.0, keyTrackOctaves)
+            } else {
+                keyTrackedBaseCutoff = modulationState.baseFilterCutoff
+            }
+            var effectiveAuxEnvFilterAmount = voiceModulation.auxiliaryEnvelope.amountToFilterFrequency
+            if voiceModulation.touchInitial.amountToAuxEnvCutoff != 0.0 {
+                effectiveAuxEnvFilterAmount = ModulationRouter.calculateTouchScaledAmount(
+                    baseAmount: effectiveAuxEnvFilterAmount,
+                    initialTouchValue: modulationState.initialTouchX,
+                    initialTouchAmount: voiceModulation.touchInitial.amountToAuxEnvCutoff
+                )
+            }
+            if abs(effectiveAuxEnvFilterAmount) > 0.0001 && attackCutoff > 0 && keyTrackedBaseCutoff > 0 {
+                correctedAuxiliaryValueForFilter = log2(attackCutoff / keyTrackedBaseCutoff) / effectiveAuxEnvFilterAmount
+            }
+        }
+
         modulationState.closeGate(
             modulatorValue: modulatorValue,
             auxiliaryValue: auxiliaryValue,
-            loudnessValue: loudnessValue
+            loudnessValue: loudnessValue,
+            correctedModulatorValue: correctedModulatorValue,
+            correctedAuxiliaryValueForFilter: correctedAuxiliaryValueForFilter
         )
         
         // Mark voice available after release completes
@@ -1250,7 +1308,16 @@ final class PolyphonicVoice {
                     initialTouchAmount: voiceModulation.touchInitial.amountToModEnvelope
                 )
             }
-            envelopeModIndex = modulationState.baseModulationIndex + modulatorEnvValue * effectiveModEnvAmount
+            // If releasing from attack phase, use corrected envelope value to avoid
+            // discontinuity from the different attack/release formulas
+            let effectiveEnvValue: Double
+            if let corrected = modulationState.correctedModulatorSustainLevel,
+               modulationState.modulatorSustainLevel > 0.0001 {
+                effectiveEnvValue = modulatorEnvValue * (corrected / modulationState.modulatorSustainLevel)
+            } else {
+                effectiveEnvValue = modulatorEnvValue
+            }
+            envelopeModIndex = modulationState.baseModulationIndex + effectiveEnvValue * effectiveModEnvAmount
         }
 
         // Add LFO and aftertouch modulation on top of envelope
@@ -1434,8 +1501,18 @@ final class PolyphonicVoice {
                 keyTrackedBaseCutoff = modulationState.baseFilterCutoff
             }
 
+            // If releasing from attack phase, use corrected envelope value to avoid
+            // discontinuity from the linear-in-Hz attack vs octave-based release formulas
+            let effectiveEnvValue: Double
+            if let corrected = modulationState.correctedAuxiliarySustainLevelForFilter,
+               modulationState.auxiliarySustainLevel > 0.0001 {
+                effectiveEnvValue = auxiliaryEnvValue * (corrected / modulationState.auxiliarySustainLevel)
+            } else {
+                effectiveEnvValue = auxiliaryEnvValue
+            }
+
             // Apply envelope modulation (octave-based)
-            let octaveOffset = auxiliaryEnvValue * effectiveAuxEnvFilterAmount
+            let octaveOffset = effectiveEnvValue * effectiveAuxEnvFilterAmount
             envelopeCutoff = keyTrackedBaseCutoff * pow(2.0, octaveOffset)
         }
 

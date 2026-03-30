@@ -13,12 +13,7 @@ enum Intonation: String, CaseIterable, Equatable {
 }
 
 enum Celestial: String, CaseIterable, Equatable {
-    case moon = "MOON"
-    case center = "CENTER"
-    case sun = "SUN"
-    
-    case easy = "EASY"
-    
+ 
     case locrian = "LOCRIAN"
     case phrygian = "PHRYGIAN"
     case aeolian = "AEOLIAN"
@@ -29,38 +24,30 @@ enum Celestial: String, CaseIterable, Equatable {
     case minor = "MINOR"
     case major = "MAJOR"
     case double = "DOUBLE"
-    case pythagorean = "BALANCED"
-
+    //case balanced = "BALANCED"
+    
     /*
-    case outward = "OUTWARD"
-    case balanced = "BALANCED"
-    case inward = "INWARD"
-    case double = "DOUBLE"
-     */
+     case inward = "INWARD"
+     case outward = "OUTWARD"
+     
+     case balancedL1 = "BALANCED (L1)"
+     case balancedL2 = "BALANCED (L2)"
+     case balancedS1 = "BALANCED (S1)"
+     case balancedS2 = "BALANCED (S2)"
+     case balancedS3 = "BALANCED (S3)"
+     case balancedR1 = "BALANCED (R1)"
+     case balancedR2 = "BALANCED (R2)"
+     case subminor = "SUBMINOR"
+     case supermajor = "SUPERMAJOR"
+    */
+
 }
 
 enum Terrestrial: String, CaseIterable, Equatable {
-    case occident = "OCCIDENT"
-    case meridian = "MERIDIAN"
-    case orient = "ORIENT"
-    
+     
     case modal = "MODE"
     case melodic = "MELODIC"
     case harmonic = "HARMONIC"
-    /*
-    case easy = "EASY"
-    case melodic = "MELODIC"
-    case ascent = "ASCENT"
-    case descent = "DESCENT"
-    case harmonic = "HARMONIC"
-    case melodicL1 = "MELODIC L1"
-    case melodicL2 = "MELODIC L2"
-    case melodicS1 = "MELODIC S1"
-    case melodicS2 = "MELODIC S2"
-    case melodicS3 = "MELODIC S3"
-    case melodicR1 = "MELODIC R1"
-    case melodicR2 = "MELODIC R2"
-     */
 }
 
 enum MusicalKey: String, CaseIterable, Equatable {
@@ -291,7 +278,7 @@ struct ScalesCatalog {
     
     // NEW: DIATONIC SCALES FOR DIATONE APP
     
-    // 1. EASY JI
+    // 1. JI
     
     static let Locrian_JI_E = Scale(
         name: "Locrian",
@@ -356,15 +343,15 @@ struct ScalesCatalog {
         semitonePattern: [0, 2, 3, 5, 7, 9, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
     )
-    
+    /*
     static let Pythagorean_JI_E = Scale(
         name: "Pythagorean",
-        intonation: .ji, celestial: .pythagorean, terrestrial: .melodic,
+        intonation: .ji, celestial: .balanced, terrestrial: .melodic,
         notes: [1.0, 9.0/8.0, 32.0/27.0, 4.0/3.0, 3.0/2.0, 27.0/16.0, 16.0/9.0],
         semitonePattern: [0, 2, 3, 5, 7, 9, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
     )
-    
+    */
     static let MelodicMajor_JI_E = Scale(
         name: "Melodic Major",
         intonation: .ji, celestial: .major, terrestrial: .melodic,
@@ -400,7 +387,7 @@ struct ScalesCatalog {
     
     
     
-    // 2. EASY ET
+    // 2. ET
     
     static let Locrian_ET_E = Scale(
         name: "Locrian",
@@ -465,15 +452,15 @@ struct ScalesCatalog {
         semitonePattern: [0, 2, 3, 5, 7, 9, 11],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
     )
-    
+    /*
     static let Pythagorean_ET_E = Scale(
         name: "Pythagorean",
-        intonation: .et, celestial: .pythagorean, terrestrial: .melodic,
+        intonation: .et, celestial: .balanced, terrestrial: .melodic,
         notes: et([0, 2, 3, 5, 7, 9, 10]),
         semitonePattern: [0, 2, 3, 5, 7, 9, 10],
         letterPattern: [0, 1, 2, 3, 4, 5, 6]
     )
-    
+    */
     static let MelodicMajor_ET_E = Scale(
         name: "Melodic Major",
         intonation: .et, celestial: .major, terrestrial: .melodic,
@@ -509,179 +496,8 @@ struct ScalesCatalog {
     
     
     
-    
-    
-    // 3. JI PRO
-    
-    
-    
-    // 4. ET PRO
-    
-    
-    
-    
-    
-    
-    
-    
-    /*
-    // OLD: PENTATONIC SCALES FOR Diatone APP
-    // Just Intonation (ratios)
-    static let moonOrient_JI = Scale(
-        name: "Moon Orient (JI)",
-        intonation: .ji, celestial: .moon, terrestrial: .orient,
-        notes: [1.0, 16.0/15.0, 4.0/3.0, 3.0/2.0, 8.0/5.0],
-        semitonePattern: [0, 1, 5, 7, 8],
-        letterPattern: [0, 1, 3, 4, 5]
-    )
-
-    static let moonMeridian_JI = Scale(
-        name: "Moon Meridian (JI)",
-        intonation: .ji, celestial: .moon, terrestrial: .meridian,
-        notes: [1.0, 6.0/5.0, 4.0/3.0, 3.0/2.0, 8.0/5.0],
-        semitonePattern: [0, 3, 5, 7, 8],
-        letterPattern: [0, 2, 3, 4, 5]
-    )
-
-    static let moonOccident_JI = Scale(
-        name: "Moon Occident (JI)",
-        intonation: .ji, celestial: .moon, terrestrial: .occident,
-        notes: [1.0, 6.0/5.0, 4.0/3.0, 3.0/2.0, 9.0/5.0],
-        semitonePattern: [0, 3, 5, 7, 10],
-        letterPattern: [0, 2, 3, 4, 6]
-    )
-
-    static let centerOrient_JI = Scale(
-        name: "Center Orient (JI)",
-        intonation: .ji, celestial: .center, terrestrial: .orient,
-        notes: [1.0, 5.0/4.0, 4.0/3.0, 3.0/2.0, 8.0/5.0],
-        semitonePattern: [0, 4, 5, 7, 8],
-        letterPattern: [0, 2, 3, 4, 5]
-    )
-
-    static let centerMeridian_JI = Scale(
-        name: "Center Meridian (JI)",
-        intonation: .ji, celestial: .center, terrestrial: .meridian,
-        notes: [1.0, 9.0/8.0, 4.0/3.0, 3.0/2.0, 16.0/9.0],
-        semitonePattern: [0, 2, 5, 7, 10],
-        letterPattern: [0, 1, 3, 4, 6]
-    )
-
-    static let centerOccident_JI = Scale(
-        name: "Center Occident (JI)",
-        intonation: .ji, celestial: .center, terrestrial: .occident,
-        notes: [1.0, 6.0/5.0, 4.0/3.0, 3.0/2.0, 5.0/3.0],
-        semitonePattern: [0, 3, 5, 7, 9],
-        letterPattern: [0, 2, 3, 4, 5]
-    )
-
-    static let sunOrient_JI = Scale(
-        name: "Sun Orient (JI)",
-        intonation: .ji, celestial: .sun, terrestrial: .orient,
-        notes: [1.0, 5.0/4.0, 4.0/3.0, 3.0/2.0, 15.0/8.0],
-        semitonePattern: [0, 4, 5, 7, 11],
-        letterPattern: [0, 2, 3, 4, 6]
-    )
-
-    static let sunMeridian_JI = Scale(
-        name: "Sun Meridian (JI)",
-        intonation: .ji, celestial: .sun, terrestrial: .meridian,
-        notes: [1.0, 5.0/4.0, 4.0/3.0, 3.0/2.0, 5.0/3.0],
-        semitonePattern: [0, 4, 5, 7, 9],
-        letterPattern: [0, 2, 3, 4, 5]
-    )
-
-    static let sunOccident_JI = Scale(
-        name: "Sun Occident (JI)",
-        intonation: .ji, celestial: .sun, terrestrial: .occident,
-        notes: [1.0, 10.0/9.0, 4.0/3.0, 3.0/2.0, 5.0/3.0],
-        semitonePattern: [0, 2, 5, 7, 9],
-        letterPattern: [0, 1, 3, 4, 5]
-    )
-
-    // Equal Temperament (semitone steps -> 2^(n/12))
-    // Each list is [0, x, y, z, w] semitone steps from tonic.
-    static let moonOrient_ET = Scale(
-        name: "Moon Orient (ET)",
-        intonation: .et, celestial: .moon, terrestrial: .orient,
-        notes: et([0, 1, 5, 7, 8]),
-        semitonePattern: [0, 1, 5, 7, 8],
-        letterPattern: [0, 1, 3, 4, 5]
-    )
-
-    static let moonMeridian_ET = Scale(
-        name: "Moon Meridian (ET)",
-        intonation: .et, celestial: .moon, terrestrial: .meridian,
-        notes: et([0, 3, 5, 7, 8]),
-        semitonePattern: [0, 3, 5, 7, 8],
-        letterPattern: [0, 2, 3, 4, 5]
-    )
-
-    static let moonOccident_ET = Scale(
-        name: "Moon Occident (ET)",
-        intonation: .et, celestial: .moon, terrestrial: .occident,
-        notes: et([0, 3, 5, 7, 10]),
-        semitonePattern: [0, 3, 5, 7, 10],
-        letterPattern: [0, 2, 3, 4, 6]
-    )
-
-    static let centerOrient_ET = Scale(
-        name: "Center Orient (ET)",
-        intonation: .et, celestial: .center, terrestrial: .orient,
-        notes: et([0, 4, 5, 7, 8]),
-        semitonePattern: [0, 4, 5, 7, 8],
-        letterPattern: [0, 2, 3, 4, 5]
-    )
-
-    static let centerMeridian_ET = Scale(
-        name: "Center Meridian (ET)",
-        intonation: .et, celestial: .center, terrestrial: .meridian,
-        notes: et([0, 2, 5, 7, 10]),
-        semitonePattern: [0, 2, 5, 7, 10],
-        letterPattern: [0, 1, 3, 4, 6]
-    )
-
-    static let centerOccident_ET = Scale(
-        name: "Center Occident (ET)",
-        intonation: .et, celestial: .center, terrestrial: .occident,
-        notes: et([0, 3, 5, 7, 9]),
-        semitonePattern: [0, 3, 5, 7, 9],
-        letterPattern: [0, 2, 3, 4, 5]
-    )
-
-    static let sunOrient_ET = Scale(
-        name: "Sun Orient (ET)",
-        intonation: .et, celestial: .sun, terrestrial: .orient,
-        notes: et([0, 4, 5, 7, 11]),
-        semitonePattern: [0, 4, 5, 7, 11],
-        letterPattern: [0, 2, 3, 4, 6]
-    )
-
-    static let sunMeridian_ET = Scale(
-        name: "Sun Meridian (ET)",
-        intonation: .et, celestial: .sun, terrestrial: .meridian,
-        notes: et([0, 4, 5, 7, 9]),
-        semitonePattern: [0, 4, 5, 7, 9],
-        letterPattern: [0, 2, 3, 4, 5]
-    )
-
-    static let sunOccident_ET = Scale(
-        name: "Sun Occident (ET)",
-        intonation: .et, celestial: .sun, terrestrial: .occident,
-        notes: et([0, 2, 5, 7, 9]),
-        semitonePattern: [0, 2, 5, 7, 9],
-        letterPattern: [0, 1, 3, 4, 5]
-    )
-*/
     static let all: [Scale] = [
-        /*
-        moonOrient_JI, moonMeridian_JI, moonOccident_JI,
-        centerOrient_JI, centerMeridian_JI, centerOccident_JI,
-        sunOrient_JI, sunMeridian_JI, sunOccident_JI,
-        moonOrient_ET, moonMeridian_ET, moonOccident_ET,
-        centerOrient_ET, centerMeridian_ET, centerOccident_ET,
-        sunOrient_ET, sunMeridian_ET, sunOccident_ET
-         */
+
         Locrian_JI_E, Phrygian_JI_E, Aeolian_JI_E, Dorian_JI_E, Mixolydian_JI_E, Ionian_JI_E, Lydian_JI_E, MelodicMinor_JI_E, MelodicMajor_JI_E, HarmonicMinor_JI_E, DoubleHarmonic_JI_E, HarmonicMajor_JI_E,
         Locrian_ET_E, Phrygian_ET_E, Aeolian_ET_E, Dorian_ET_E, Mixolydian_ET_E, Ionian_ET_E, Lydian_ET_E, MelodicMinor_ET_E, MelodicMajor_ET_E, HarmonicMinor_ET_E, DoubleHarmonic_ET_E, HarmonicMajor_ET_E
     ]

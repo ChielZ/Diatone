@@ -738,6 +738,13 @@ struct ModulationState {
     var auxiliaryStartFilterCutoff: Double = 1200.0  // Filter cutoff at trigger
     var auxiliaryPeakFilterCutoff: Double = 1200.0   // Target filter cutoff at end of attack
 
+    // Corrected sustain levels for release-during-attack handover
+    // When releasing during the attack phase, the raw envelope value (linear) must be
+    // converted so the release formula (which uses a different mapping) starts from
+    // the same parameter value the attack was producing.
+    var correctedModulatorSustainLevel: Double? = nil  // Corrected for mod index formula
+    var correctedAuxiliarySustainLevelForFilter: Double? = nil  // Corrected for filter octave formula
+
     // Smoothing state for filter modulation
     var lastSmoothedFilterCutoff: Double? = nil  // Last smoothed filter value (for aftertouch smoothing)
     var filterSmoothingFactor: Double = 0.85     // 0.0 = no smoothing, 1.0 = maximum smoothing (0.85 = smooth 60Hz updates)
@@ -754,7 +761,9 @@ struct ModulationState {
         isGateOpen = true
         modulatorSustainLevel = 0.0
         auxiliarySustainLevel = 0.0
-        
+        correctedModulatorSustainLevel = nil
+        correctedAuxiliarySustainLevelForFilter = nil
+
         // Only reset LFO phase if requested (trigger/sync mode)
         // Free mode keeps the phase running
         if resetLFOPhase {
@@ -784,11 +793,14 @@ struct ModulationState {
     
     /// Update state when gate closes (note released)
     /// Captures current envelope values for smooth release
-    mutating func closeGate(modulatorValue: Double, auxiliaryValue: Double, loudnessValue: Double) {
+    mutating func closeGate(modulatorValue: Double, auxiliaryValue: Double, loudnessValue: Double,
+                           correctedModulatorValue: Double? = nil, correctedAuxiliaryValueForFilter: Double? = nil) {
         isGateOpen = false
         modulatorSustainLevel = modulatorValue
         auxiliarySustainLevel = auxiliaryValue
         loudnessSustainLevel = loudnessValue  // NEW: Capture loudness envelope value
+        correctedModulatorSustainLevel = correctedModulatorValue
+        correctedAuxiliarySustainLevelForFilter = correctedAuxiliaryValueForFilter
         // Reset envelope times to 0 for release stage
         modulatorEnvelopeTime = 0.0
         auxiliaryEnvelopeTime = 0.0
