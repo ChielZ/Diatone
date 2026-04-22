@@ -130,8 +130,11 @@ struct MainKeyboardView: View {
     
     @State private var showingOptions: Bool = false
     @State private var currentMainView: MainViewMode = .options
-    @State private var currentOptionsSubView: OptionsSubView = .scale
+    @State private var currentOptionsSubView: OptionsSubView = .sound
     @State private var currentEditSubView: EditSubView = .oscillators
+
+    // Persisted 180° flip — toggled by long-pressing the fold bar, for upside-down playing.
+    @AppStorage("mainView.isUpsideDown") private var isUpsideDown: Bool = false
     
     // Animation timing configurations
     private let unfoldCenterDuration: Double = 0.75      // Center strip unfolds
@@ -160,10 +163,17 @@ struct MainKeyboardView: View {
     
     var body: some View {
         let deviceType = UIDevice.current.userInterfaceIdiom
-        let topSpacing = KeyboardEdgeSpacing.topSpacing(for: deviceType)
-        let bottomSpacing = KeyboardEdgeSpacing.bottomSpacing(for: deviceType)
-        
-        VStack(spacing: 0) {
+        let rawTopSpacing = KeyboardEdgeSpacing.topSpacing(for: deviceType)
+        let rawBottomSpacing = KeyboardEdgeSpacing.bottomSpacing(for: deviceType)
+        // Swap top/bottom spacing when flipped so the spacer stays on the physical bottom.
+        let topSpacing = isUpsideDown ? rawBottomSpacing : rawTopSpacing
+        let bottomSpacing = isUpsideDown ? rawTopSpacing : rawBottomSpacing
+
+        ZStack {
+            // Non-rotating backdrop so the physical safe areas stay filled when flipped.
+            Color("BackgroundColour").ignoresSafeArea()
+
+            VStack(spacing: 0) {
             // Top spacer - prevents accidental edge gestures at screen top
             if topSpacing > 0 {
                 Spacer()
@@ -238,7 +248,12 @@ struct MainKeyboardView: View {
                                 showingOptions: $showingOptions,
                                 onPrevScale: onPrevScale,
                                 onNextScale: onNextScale,
-                                stripWidth: centerConfig.width
+                                stripWidth: centerConfig.width,
+                                onFlipToggle: {
+                                    withAnimation(.easeInOut(duration: 0.5)) {
+                                        isUpsideDown.toggle()
+                                    }
+                                }
                             )
                             .transition(
                                 .scale//(scale: 0.8)
@@ -310,7 +325,8 @@ struct MainKeyboardView: View {
                     .frame(height: bottomSpacing)
             }
         }
-        .background(Color("BackgroundColour").ignoresSafeArea())
+            .rotationEffect(.degrees(isUpsideDown ? 180 : 0))
+        }
     }
 }
 
@@ -320,6 +336,7 @@ private struct NavigationStrip: View {
     var onPrevScale: (() -> Void)? = nil
     var onNextScale: (() -> Void)? = nil
     let stripWidth: CGFloat
+    var onFlipToggle: (() -> Void)? = nil
     
     var body: some View {
         let deviceType = UIDevice.current.userInterfaceIdiom
@@ -359,6 +376,9 @@ private struct NavigationStrip: View {
             .contentShape(Rectangle())
             .onTapGesture {
                 showingOptions = true
+            }
+            .onLongPressGesture(minimumDuration: 1.4) {
+                onFlipToggle?()
             }
         }
         .padding(5)

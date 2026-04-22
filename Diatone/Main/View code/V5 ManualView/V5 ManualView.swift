@@ -76,9 +76,9 @@ struct ManualView: View {
                     // Section I: Introduction
                     ZStack {
                         RoundedRectangle(cornerRadius: radius)
-                            .fill(selectedSection == 0 ? Color("HighlightColour") : Color("SupportColour"))
+                            .fill(Color("SupportColour"))
                         Text("I")
-                            .foregroundColor(Color("BackgroundColour"))
+                            .foregroundColor(selectedSection == 0 ? Color("HighlightColour") : Color("BackgroundColour"))
                             .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
@@ -93,9 +93,9 @@ struct ManualView: View {
                     // Section II: How to Use
                     ZStack {
                         RoundedRectangle(cornerRadius: radius)
-                            .fill(selectedSection == 1 ? Color("HighlightColour") : Color("SupportColour"))
+                            .fill(Color("SupportColour"))
                         Text("II")
-                            .foregroundColor(Color("BackgroundColour"))
+                            .foregroundColor(selectedSection == 1 ? Color("HighlightColour") : Color("BackgroundColour"))
                             .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
@@ -110,9 +110,9 @@ struct ManualView: View {
                     // Section III: Background
                     ZStack {
                         RoundedRectangle(cornerRadius: radius)
-                            .fill(selectedSection == 2 ? Color("HighlightColour") : Color("SupportColour"))
+                            .fill(Color("SupportColour"))
                         Text("III")
-                            .foregroundColor(Color("BackgroundColour"))
+                            .foregroundColor(selectedSection == 2 ? Color("HighlightColour") : Color("BackgroundColour"))
                             .adaptiveFont("MontserratAlternates-Medium", size: 30)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)

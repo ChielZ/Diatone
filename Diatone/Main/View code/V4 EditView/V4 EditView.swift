@@ -191,7 +191,7 @@ struct EditView: View {
                 
                 ZStack { // Row 10 - Close Editor button
                     RoundedRectangle(cornerRadius: radius)
-                        .fill(Color("SupportColour"))
+                        .fill(Color("HighlightColour"))
                     GeometryReader { geometry in
                         Text("･CLOSE EDITOR･")
                             .foregroundColor(Color("BackgroundColour"))

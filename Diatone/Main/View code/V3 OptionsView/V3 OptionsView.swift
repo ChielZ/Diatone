@@ -275,7 +275,7 @@ struct AlignedDraggableSelectorRow<Content: View>: View {
 }
 
 enum OptionsSubView: CaseIterable {
-    case scale, sound, voice
+    case sound, scale, voice
     
     var displayName: String {
         switch self {
