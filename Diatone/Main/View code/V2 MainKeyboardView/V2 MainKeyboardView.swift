@@ -21,7 +21,7 @@ struct KeyboardEdgeSpacing {
     
     // iPhone spacing - typically not needed due to notch/Dynamic Island
     static let iPhoneTopSpacing: CGFloat = 0
-    static let iPhoneBottomSpacing: CGFloat = 0
+    static let iPhoneBottomSpacing: CGFloat = 20
     
     /// Returns appropriate spacing for current device
     static func topSpacing(for device: UIUserInterfaceIdiom) -> CGFloat {

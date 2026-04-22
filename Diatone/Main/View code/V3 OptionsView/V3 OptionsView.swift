@@ -279,8 +279,8 @@ enum OptionsSubView: CaseIterable {
     
     var displayName: String {
         switch self {
-        case .scale: return "SCALE"
         case .sound: return "SOUND"
+        case .scale: return "SCALE"
         case .voice: return "SETUP"
         }
     }
@@ -352,6 +352,12 @@ struct OptionsView: View {
                 // Rows 3-9: Show the current subview
                 Group {
                     switch currentSubView {
+                    
+                    case .sound:
+                        SoundView(
+                            onSwitchToEdit: onSwitchToEdit,
+                            buttonAnchors: buttonAnchors
+                        )
                     case .scale:
                         ScaleView(
                             currentScale: currentScale,
@@ -362,12 +368,6 @@ struct OptionsView: View {
                             onCycleTerrestrial: onCycleTerrestrial,
                             onCycleRotation: onCycleRotation,
                             onCycleKey: onCycleKey
-                        )
-                    case .sound:
-                        SoundView(
-                            
-                            onSwitchToEdit: onSwitchToEdit,
-                            buttonAnchors: buttonAnchors
                         )
                     case .voice:
                         VoiceView(
